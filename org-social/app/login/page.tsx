@@ -35,28 +35,34 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
+    <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4">
       <form
         onSubmit={handleLogin}
-        className="bg-white p-8 rounded shadow-md w-full max-w-md"
+        className="bg-white p-8 rounded shadow-md w-full max-w-md text-black"
       >
-        <h2 className="text-2xl font-semibold mb-6">Login</h2>
+        <h2 className="text-2xl font-semibold mb-6 text-black">Login</h2>
 
+        <label htmlFor="username" className="block mb-2 text-black">
+          Username
+        </label>
         <input
           type="text"
-          placeholder="Username"
+          placeholder=""
           value={username}
           onChange={(e) => setUsername(e.target.value)}
-          className="w-full mb-4 p-2 border rounded"
+          className="w-full mb-4 p-2 border rounded text-black placeholder-black"
           required
         />
 
+        <label htmlFor="password" className="block mb-2 text-black">
+          Password
+        </label>
         <input
           type="password"
-          placeholder="Password"
+          placeholder=""
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          className="w-full mb-4 p-2 border rounded"
+          className="w-full mb-4 p-2 border rounded text-black placeholder-black"
           required
         />
 
@@ -69,7 +75,7 @@ export default function LoginPage() {
 
         {error && <p className="text-red-500 mt-4">{error}</p>}
         {user && (
-          <pre className="mt-4 bg-gray-100 p-2 rounded text-sm overflow-auto">
+          <pre className="mt-4 bg-gray-100 p-2 rounded text-sm overflow-auto text-black">
             {JSON.stringify(user, null, 2)}
           </pre>
         )}
