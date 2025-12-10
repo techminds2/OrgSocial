@@ -53,11 +53,11 @@ export default function LoginPage() {
       >
         <div className="flex flex-col items-center gap-4">
           <img src="/logo.webp" alt="Logo" className="w-60 h-auto "></img>
-          <h2 className="font-semibold  text-black">Wecome back</h2>
-          <p className=" mb-4 text-gray-500">Sign into your account</p>
+          <h2 className="font-semibold  text-black text-lg">Wecome back</h2>
+          <p className=" mb-4 text-gray-500 text-sm">Sign into your account</p>
         </div>
 
-        <label htmlFor="username" className="block mb-2 text-black">
+        <label htmlFor="username" className="block mb-2 text-black text-sm">
           Username
         </label>
         <input
@@ -69,7 +69,7 @@ export default function LoginPage() {
           required
         />
 
-        <label htmlFor="password" className="block mb-2 text-black">
+        <label htmlFor="password" className="block mb-2 text-black text-sm">
           Password
         </label>
         <div className="relative mb-4">
@@ -92,7 +92,7 @@ export default function LoginPage() {
 
         <button
           type="submit"
-          className="w-full bg-blue-500 text-white py-2 rounded hover:bg-blue-600"
+          className="w-full bg-primary text-white py-2 rounded hover:bg-blue-600"
         >
           Login
         </button>
