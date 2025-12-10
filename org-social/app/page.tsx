@@ -8,6 +8,7 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [user, setUser] = useState<any>(null);
+  const [showPassword, setShowPassword] = useState(false);
   const router = useRouter();
 
   const handleLogin = async (e: React.FormEvent) => {
@@ -38,36 +39,56 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4">
+    <div
+      className="min-h-screen flex items-center justify-center px-4"
+      style={{
+        backgroundImage: "url('/bg.jpeg')",
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+      }}
+    >
       <form
         onSubmit={handleLogin}
         className="bg-white p-8 rounded shadow-md w-full max-w-md text-black"
       >
-        <h2 className="text-2xl font-semibold mb-6 text-black">Login</h2>
+        <div className="flex flex-col items-center gap-4">
+          <img src="/logo.webp" alt="Logo" className="w-60 h-auto "></img>
+          <h2 className="font-semibold  text-black">Wecome back</h2>
+          <p className=" mb-4 text-gray-500">Sign into your account</p>
+        </div>
 
         <label htmlFor="username" className="block mb-2 text-black">
           Username
         </label>
         <input
           type="text"
-          placeholder=""
+          placeholder="you@example.techminds.com.np"
           value={username}
           onChange={(e) => setUsername(e.target.value)}
-          className="w-full mb-4 p-2 border rounded text-black placeholder-black"
+          className="w-full mb-4 p-2 border rounded text-black"
           required
         />
 
         <label htmlFor="password" className="block mb-2 text-black">
           Password
         </label>
-        <input
-          type="password"
-          placeholder=""
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          className="w-full mb-4 p-2 border rounded text-black placeholder-black"
-          required
-        />
+        <div className="relative mb-4">
+          <input
+            type={showPassword ? "text" : "password"}
+            placeholder="Enter your password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            className="w-full p-2 border rounded text-black "
+            required
+          />
+          <button
+            type="button"
+            onClick={() => setShowPassword(!showPassword)}
+            className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-600 text-lg"
+          >
+            {showPassword ? "👁️" : "👁️‍🗨️"}
+          </button>
+        </div>
 
         <button
           type="submit"
