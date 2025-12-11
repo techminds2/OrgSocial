@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
@@ -92,11 +93,18 @@ export default function LoginPage() {
 
         <button
           type="submit"
-          className="w-full bg-primary text-white py-2 rounded hover:bg-blue-600"
+          className="w-full bg-primary text-white py-2 rounded hover:bg-secondary"
         >
           Login
         </button>
-
+        <div className="mt-4 text-center">
+          <Link
+            href="/forgot-password"
+            className="text-gray-500 text-sm hover:underline"
+          >
+            Forgot your password?
+          </Link>
+        </div>
         {error && <p className="text-red-500 mt-4">{error}</p>}
         {user && (
           <pre className="mt-4 bg-gray-100 p-2 rounded text-sm overflow-auto text-black">
