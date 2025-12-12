@@ -7,13 +7,29 @@ const SECRET = new TextEncoder().encode(
 
 export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
-  const publicPaths = ["/api/auth/login", "/"];
+  const accessToken = req.cookies.get("accessToken")?.value;
 
-  if (publicPaths.some((path) => pathname.startsWith(path))) {
+  // --- Login page --- //
+  if (pathname === "/") {
+    if (accessToken) {
+      try {
+        await jwtVerify(accessToken, SECRET);
+        // If user is already loggin in, then redirect to dashboard
+        return NextResponse.redirect(new URL("/dashboard", req.url));
+      } catch {
+        // If token is not valid
+        return NextResponse.next();
+      }
+    }
     return NextResponse.next();
   }
 
-  const accessToken = req.cookies.get("accessToken")?.value;
+  //API routes
+  if (pathname.startsWith("/api/auth/login")) {
+    return NextResponse.next();
+  }
+
+  //Protected routed except login page
   if (!accessToken) {
     return NextResponse.redirect(new URL("/", req.url));
   }
@@ -21,12 +37,11 @@ export async function middleware(req: NextRequest) {
   try {
     await jwtVerify(accessToken, SECRET);
     return NextResponse.next();
-  } catch (error) {
-    return NextResponse.redirect(new URL("/login", req.url));
+  } catch {
+    return NextResponse.redirect(new URL("/", req.url));
   }
 }
 
 export const config = {
-  matcher: [    "/((?!api/auth/login|_next/static|_next/image|favicon.ico).*)",
-],
+  matcher: ["/((?!_next/static|_next/image|favicon.ico).*)"],
 };
