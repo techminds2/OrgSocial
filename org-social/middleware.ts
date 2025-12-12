@@ -9,27 +9,22 @@ export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
   const accessToken = req.cookies.get("accessToken")?.value;
 
-  // --- Login page --- //
   if (pathname === "/") {
     if (accessToken) {
       try {
         await jwtVerify(accessToken, SECRET);
-        // If user is already loggin in, then redirect to dashboard
         return NextResponse.redirect(new URL("/dashboard", req.url));
       } catch {
-        // If token is not valid
         return NextResponse.next();
       }
     }
     return NextResponse.next();
-  }
+  }3
 
-  //API routes
   if (pathname.startsWith("/api/auth/login")) {
     return NextResponse.next();
   }
 
-  //Protected routed except login page
   if (!accessToken) {
     return NextResponse.redirect(new URL("/", req.url));
   }
@@ -44,8 +39,8 @@ export async function middleware(req: NextRequest) {
 
 export const config = {
   matcher: [
-    "/", // Login page
-    "/dashboard", // Protected dashboard
-    "/api/:path*", // All API routes
+    "/", 
+    "/dashboard", 
+    "/api/:path*", 
   ],
 };
