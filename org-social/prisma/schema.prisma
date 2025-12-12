@@ -24,7 +24,6 @@ model Post {
   content   String
   createdAt DateTime  @default(now())
   author    User      @relation(fields: [authorId], references: [id])
-  authorId  Int
   comments  Comment[]
   reactions Reaction[]
   files     File[]
@@ -35,24 +34,18 @@ model Comment {
   content   String
   createdAt DateTime  @default(now())
   post      Post      @relation(fields: [postId], references: [id])
-  postId    Int
   author    User      @relation(fields: [authorId], references: [id])
-  authorId  Int
 }
 
 model Reaction {
   id        Int       @id @default(autoincrement())
-  type      String    // e.g., "like", "love", "dislike"
+  type      String    
   post      Post      @relation(fields: [postId], references: [id])
-  postId    Int
   user      User      @relation(fields: [userId], references: [id])
-  userId    Int
 }
 
 model File {
   id        Int       @id @default(autoincrement())
-  url       String
-  filename  String
+  url       String  
   post      Post      @relation(fields: [postId], references: [id])
-  postId    Int
 }
