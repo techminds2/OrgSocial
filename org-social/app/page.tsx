@@ -9,10 +9,13 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const router = useRouter();
+  const [showPassword, setShowPassword] = useState(false);
 
   // Redirect if already logged in
   useEffect(() => {
-    const token = document.cookie.split("; ").find((c) => c.startsWith("accessToken="));
+    const token = document.cookie
+      .split("; ")
+      .find((c) => c.startsWith("accessToken="));
     if (token) {
       router.replace("/dashboard");
     }
@@ -52,7 +55,7 @@ export default function LoginPage() {
       }}
     >
       <form
-        className="bg-white p-8 rounded shadow-md w-full max-w-md text-black relative z-10"
+        className="bg-white p-8 rounded-2xl shadow-md w-full max-w-md text-black relative z-10"
         onSubmit={handleLogin}
       >
         <div className="flex flex-col items-center gap-4">
@@ -67,29 +70,68 @@ export default function LoginPage() {
           placeholder="you@example.techminds.com.np"
           value={username}
           onChange={(e) => setUsername(e.target.value)}
-          className="w-full mb-4 p-2 border rounded text-black"
+          className="w-full mb-4 p-2 border rounded-xl
+         
+          border-gray-300
+          text-gray-900
+          placeholder-gray-500
+          focus:outline-none
+          focus:ring-2
+          focus:ring-blue-500
+          focus:border-blue-500
+          transition
+          duration-200"
           required
         />
-
-        <label className="block mb-2 text-black text-sm">Password</label>
-        <input
-          type="password"
-          placeholder="Enter your password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          className="w-full p-2 border rounded text-black mb-4"
-          required
-        />
+        <div className="relative">
+          <label className="block mb-2 text-black text-sm">Password</label>
+          <input
+            type={showPassword ? "text" : "password"}
+            placeholder="Enter your password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            className="w-full mb-4 p-2 border rounded-xl
+            border-gray-300
+            text-gray-900
+            placeholder-gray-500
+            focus:outline-none
+            focus:ring-2
+            focus:ring-blue-500
+            focus:border-blue-500
+            transition
+            duration-200"
+            required
+          />
+          <button
+            type="button"
+            onClick={() => setShowPassword(!showPassword)}
+            className="absolute right-2 top-1/2 -translate-y-1/3 "
+          >
+            {showPassword ? "🙈" : "👁️"}
+          </button>
+        </div>
 
         <button
           type="submit"
-          className="w-full bg-primary text-white py-2 rounded hover:bg-secondary"
+          disabled={!username || !password} 
+          className={`
+    w-full py-2 rounded-xl 
+    ${
+      !username || !password
+        ? "bg-secondary cursor-not-allowed" 
+        : "bg-primary hover:bg-secondary text-white"
+    } 
+    transition duration-200
+  `}
         >
-          Login
+          Log In
         </button>
 
         <div className="mt-4 text-center">
-          <Link href="/forgot-password" className="text-gray-500 text-sm hover:underline">
+          <Link
+            href="/forgot-password"
+            className="text-gray-500 text-sm hover:underline"
+          >
             Forgot your password?
           </Link>
         </div>
