@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useState } from "react";
 import LogoutButton from "./LogoutButton";
+import Image from "next/image";
 
 interface NavBarProps {
   role?: "admin" | "staff" | "user"; // optional role-based links
@@ -12,13 +13,13 @@ export default function NavBar({ role }: NavBarProps) {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <nav className="bg-white shadow-md sticky top-0 z-50">
+    <nav className="bg-white shadow-md sticky top-0 ">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16 items-center">
           {/* Logo / Brand */}
           <div className="flex-shrink-0 flex items-center">
             <Link href="/" className="text-xl font-bold text-blue-600">
-              TechMinds
+              <Image src="/logo.webp" alt="Logo" width={200} height={40}/>
             </Link>
           </div>
 
