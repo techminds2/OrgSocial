@@ -1,4 +1,6 @@
 import Navbar from "@/components/NavBar";
+import PostForm from "@/components/CreatePost";
+import Sidebar from "@/components/SideBar";
 
 export default function DashboardLayout({
   children,
@@ -8,7 +10,12 @@ export default function DashboardLayout({
   return (
     <>
       <Navbar />
-      <main className="pt-16">{children}</main>
+
+      <div className="flex min-h-screen ">
+        <Sidebar />
+        {/* <PostForm /> */}
+        <main className="flex-1 p-6 bg-gray-50">{children}</main>
+      </div>
     </>
   );
 }
