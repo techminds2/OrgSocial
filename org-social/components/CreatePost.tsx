@@ -2,45 +2,60 @@
 
 import { useRef, useState } from "react";
 
-type UploadedFile = {
-  url: string;
+type SelectedFile = {
+  file: File;
   type: "image" | "video" | "document";
 };
 
 export default function CreatePost() {
   const [content, setContent] = useState("");
-  const [files, setFiles] = useState<UploadedFile[]>([]);
+  const [files, setFiles] = useState<SelectedFile[]>([]);
   const [loading, setLoading] = useState(false);
 
   const photoRef = useRef<HTMLInputElement>(null);
   const videoRef = useRef<HTMLInputElement>(null);
   const docRef = useRef<HTMLInputElement>(null);
 
-  // upload helper
-  const uploadFile = async (file: File, type: UploadedFile["type"]) => {
+  // ✅ ONLY store files locally (NO upload here)
+  const handleSelectFile = (file: File, type: SelectedFile["type"]) => {
+    setFiles(prev => [...prev, { file, type }]);
+  };
+
+  // ✅ Upload happens ONLY here
+  const handlePost = async () => {
     setLoading(true);
 
     const formData = new FormData();
-    formData.append("file", file);
+    formData.append("content", content);
 
-    const res = await fetch("/api/upload", {
-      method: "POST",
-      body: formData,
+    files.forEach(f => {
+      formData.append("files", f.file);
+      formData.append("types", f.type);
     });
 
-    const data = await res.json();
-    console.log(data.url);
+    try {
+      const res = await fetch("/api/upload", {
+        method: "POST",
+        body: formData,
+      });
 
+      const data = await res.json();
+      console.log("POST RESPONSE:", data);
 
-    setFiles((prev) => [...prev, { url: data.url, type }]);
-    setLoading(false);
+      // reset UI
+      setContent("");
+      setFiles([]);
+    } catch (err) {
+      console.error("Post failed", err);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <div className="bg-white rounded-2xl shadow p-4 w-full max-w-2xl">
       {/* Top */}
       <div className="flex gap-4">
-        {/* User avatar (replace later with real image) */}
         <img
           src="/default-avatar.png"
           alt="User"
@@ -50,22 +65,19 @@ export default function CreatePost() {
         <textarea
           placeholder="Write something..."
           value={content}
-          onChange={(e) => setContent(e.target.value)}
+          onChange={e => setContent(e.target.value)}
           rows={3}
           className="w-full resize-none rounded-xl border border-gray-300
-                   p-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                     p-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
       </div>
 
-      {/* Preview uploaded files */}
+      {/* Preview selected files */}
       {files.length > 0 && (
         <div className="mt-4 flex gap-2 flex-wrap">
-          {files.map((file, i) => (
-            <div
-              key={i}
-              className="text-xs bg-gray-100 px-2 py-1 rounded"
-            >
-              {file.type}
+          {files.map((f, i) => (
+            <div key={i} className="text-xs bg-gray-100 px-2 py-1 rounded">
+              {f.type}
             </div>
           ))}
         </div>
@@ -77,50 +89,40 @@ export default function CreatePost() {
         type="file"
         accept="image/*"
         hidden
-        onChange={(e) =>
-          e.target.files &&
-          uploadFile(e.target.files[0], "image")
+        onChange={e =>
+          e.target.files && handleSelectFile(e.target.files[0], "image")
         }
       />
-
       <input
         ref={videoRef}
         type="file"
         accept="video/*"
         hidden
-        onChange={(e) =>
-          e.target.files &&
-          uploadFile(e.target.files[0], "video")
+        onChange={e =>
+          e.target.files && handleSelectFile(e.target.files[0], "video")
         }
       />
-
       <input
         ref={docRef}
         type="file"
         accept=".pdf,.doc,.docx"
         hidden
-        onChange={(e) =>
-          e.target.files &&
-          uploadFile(e.target.files[0], "document")
+        onChange={e =>
+          e.target.files && handleSelectFile(e.target.files[0], "document")
         }
       />
 
       {/* Actions */}
       <div className="mt-4 flex items-center justify-between">
         <div className="flex gap-4 text-sm text-gray-600">
-          <button onClick={() => photoRef.current?.click()}>
-            📷 Photo
-          </button>
-          <button onClick={() => videoRef.current?.click()}>
-            🎥 Video
-          </button>
-          <button onClick={() => docRef.current?.click()}>
-            📄 Document
-          </button>
+          <button onClick={() => photoRef.current?.click()}>📷 Photo</button>
+          <button onClick={() => videoRef.current?.click()}>🎥 Video</button>
+          <button onClick={() => docRef.current?.click()}>📄 Document</button>
         </div>
 
         <button
-          disabled={!content.trim() && files.length === 0 || loading}
+          onClick={handlePost}
+          disabled={(!content.trim() && files.length === 0) || loading}
           className={`px-4 py-2 rounded-xl text-sm font-semibold text-white
             ${
               loading
@@ -130,7 +132,7 @@ export default function CreatePost() {
                 : "bg-gray-300 cursor-not-allowed"
             }`}
         >
-          {loading ? "Uploading..." : "Post"}
+          {loading ? "Posting..." : "Post"}
         </button>
       </div>
     </div>

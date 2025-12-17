@@ -6,33 +6,43 @@ import crypto from "crypto";
 export async function POST(req: Request) {
   try {
     const formData = await req.formData();
-    const file = formData.get("file") as File;
+    const content = formData.get("content") as string;
+    const files = formData.getAll("files") as File[];
+    const types = formData.getAll("types") as string[];
 
-    if (!file) {
-      return NextResponse.json({ error: "No file provided" }, { status: 400 });
+    const uploadedFiles = [];
+
+    for (let i = 0; i < files.length; i++) {
+      const file = files[i];
+
+      console.log("Uploading:", file.name);
+
+      const buffer = Buffer.from(await file.arrayBuffer());
+      const ext = file.name.split(".").pop();
+      const fileName = `${crypto.randomUUID()}.${ext}`;
+      const key = `uploads/${fileName}`;
+
+      await s3.send(
+        new PutObjectCommand({
+          Bucket: process.env.S3_BUCKET!,
+          Key: key,
+          Body: buffer,
+          ContentType: file.type,
+        })
+      );
+
+      uploadedFiles.push({
+        url: `http://172.23.24.166:9000/${process.env.S3_BUCKET}/${key}`,
+        type: types[i],
+      });
     }
 
-    const bytes = await file.arrayBuffer();
-    const buffer = Buffer.from(bytes);
-
-    const ext = file.name.split(".").pop();
-    const fileName = `${crypto.randomUUID()}.${ext}`;
-    const key = `uploads/${fileName}`;
-
-    await s3.send(
-      new PutObjectCommand({
-        Bucket: process.env.S3_BUCKET!,
-        Key: key,
-        Body: buffer,
-        ContentType: file.type,
-      })
-    );
-
-    const fileUrl = `${process.env.S3_ENDPOINT}/${process.env.S3_BUCKET}/${key}`;
-
-    return NextResponse.json({ url: fileUrl });
-  } catch (err) {
-    console.error(err);
-    return NextResponse.json({ error: "Upload failed" }, { status: 500 });
+    return NextResponse.json({
+      success: true,
+      files: uploadedFiles,
+    });
+  } catch (error) {
+    console.error("UPLOAD ERROR:", error);
+    return NextResponse.json({ error: "Post failed" }, { status: 500 });
   }
 }
