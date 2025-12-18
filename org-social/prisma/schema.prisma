@@ -1,10 +1,11 @@
 generator client {
-  provider = "prisma-client"
-  output   = "../src/generated/prisma"
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
 }
 
 datasource db {
   provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
 
@@ -59,9 +60,10 @@ model Reaction {
 }
 
 model File {
-  id        Int       @id @default(autoincrement())
-  url       String  
+  id        Int      @id @default(autoincrement())
+  url       String
+  type      String
 
-  postId    Int                    
-  post      Post      @relation(fields: [postId], references: [id])
+  postId    Int
+  post      Post     @relation(fields: [postId], references: [id])
 }

@@ -18,7 +18,7 @@ export default function CreatePost() {
 
   // ✅ ONLY store files locally (NO upload here)
   const handleSelectFile = (file: File, type: SelectedFile["type"]) => {
-    setFiles(prev => [...prev, { file, type }]);
+    setFiles((prev) => [...prev, { file, type }]);
   };
 
   // ✅ Upload happens ONLY here
@@ -28,7 +28,7 @@ export default function CreatePost() {
     const formData = new FormData();
     formData.append("content", content);
 
-    files.forEach(f => {
+    files.forEach((f) => {
       formData.append("files", f.file);
       formData.append("types", f.type);
     });
@@ -39,8 +39,11 @@ export default function CreatePost() {
         body: formData,
       });
 
-      const data = await res.json();
-      console.log("POST RESPONSE:", data);
+      const text = await res.text();
+      console.log("RAW RESPONSE:", text);
+
+      // const data = await res.json();
+      // console.log("POST RESPONSE:", data);
 
       // reset UI
       setContent("");
@@ -57,7 +60,7 @@ export default function CreatePost() {
       {/* Top */}
       <div className="flex gap-4">
         <img
-          src="/default-avatar.png"
+          src="/logo.webp"
           alt="User"
           className="w-12 h-12 rounded-full object-cover border"
         />
@@ -65,7 +68,7 @@ export default function CreatePost() {
         <textarea
           placeholder="Write something..."
           value={content}
-          onChange={e => setContent(e.target.value)}
+          onChange={(e) => setContent(e.target.value)}
           rows={3}
           className="w-full resize-none rounded-xl border border-gray-300
                      p-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -89,27 +92,33 @@ export default function CreatePost() {
         type="file"
         accept="image/*"
         hidden
-        onChange={e =>
-          e.target.files && handleSelectFile(e.target.files[0], "image")
-        }
+        onChange={(e) => {
+          const f = e.target.files?.[0];
+          if (f) handleSelectFile(f, "image");
+          e.target.value = "";
+        }}
       />
       <input
         ref={videoRef}
         type="file"
         accept="video/*"
         hidden
-        onChange={e =>
-          e.target.files && handleSelectFile(e.target.files[0], "video")
-        }
+        onChange={(e) => {
+          const f = e.target.files?.[0];
+          if (f) handleSelectFile(f, "video");
+          e.target.value = "";
+        }}
       />
       <input
         ref={docRef}
         type="file"
         accept=".pdf,.doc,.docx"
         hidden
-        onChange={e =>
-          e.target.files && handleSelectFile(e.target.files[0], "document")
-        }
+        onChange={(e) => {
+          const f = e.target.files?.[0];
+          if (f) handleSelectFile(f, "document");
+          e.target.value = "";
+        }}
       />
 
       {/* Actions */}
