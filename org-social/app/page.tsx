@@ -30,6 +30,7 @@ export default function LoginPage() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ username, password }),
+        credentials: "include",
       });
 
       const data = await res.json();
@@ -113,12 +114,12 @@ export default function LoginPage() {
 
         <button
           type="submit"
-          disabled={!username || !password} 
+          disabled={!username || !password}
           className={`
     w-full py-2 rounded-xl 
     ${
       !username || !password
-        ? "bg-secondary cursor-not-allowed" 
+        ? "bg-secondary cursor-not-allowed"
         : "bg-primary hover:bg-secondary text-white"
     } 
     transition duration-200
@@ -139,6 +140,5 @@ export default function LoginPage() {
         {error && <p className="text-red-500 mt-4">{error}</p>}
       </form>
     </div>
- 
-);
+  );
 }
