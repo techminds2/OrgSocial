@@ -8,7 +8,7 @@
  *
  * 🟢 You can import this file directly.
  */
-import type * as runtime from "@prisma/client/runtime/client"
+import type * as runtime from "@prisma/client/runtime/library"
 import type * as $Enums from "../enums"
 import type * as Prisma from "../internal/prismaNamespace"
 
@@ -40,6 +40,7 @@ export type UserMinAggregateOutputType = {
   email: string | null
   role: string | null
   isStaff: boolean | null
+  profileImage: string | null
 }
 
 export type UserMaxAggregateOutputType = {
@@ -48,6 +49,7 @@ export type UserMaxAggregateOutputType = {
   email: string | null
   role: string | null
   isStaff: boolean | null
+  profileImage: string | null
 }
 
 export type UserCountAggregateOutputType = {
@@ -56,6 +58,7 @@ export type UserCountAggregateOutputType = {
   email: number
   role: number
   isStaff: number
+  profileImage: number
   _all: number
 }
 
@@ -74,6 +77,7 @@ export type UserMinAggregateInputType = {
   email?: true
   role?: true
   isStaff?: true
+  profileImage?: true
 }
 
 export type UserMaxAggregateInputType = {
@@ -82,6 +86,7 @@ export type UserMaxAggregateInputType = {
   email?: true
   role?: true
   isStaff?: true
+  profileImage?: true
 }
 
 export type UserCountAggregateInputType = {
@@ -90,6 +95,7 @@ export type UserCountAggregateInputType = {
   email?: true
   role?: true
   isStaff?: true
+  profileImage?: true
   _all?: true
 }
 
@@ -185,6 +191,7 @@ export type UserGroupByOutputType = {
   email: string | null
   role: string
   isStaff: boolean
+  profileImage: string | null
   _count: UserCountAggregateOutputType | null
   _avg: UserAvgAggregateOutputType | null
   _sum: UserSumAggregateOutputType | null
@@ -216,6 +223,7 @@ export type UserWhereInput = {
   email?: Prisma.StringNullableFilter<"User"> | string | null
   role?: Prisma.StringFilter<"User"> | string
   isStaff?: Prisma.BoolFilter<"User"> | boolean
+  profileImage?: Prisma.StringNullableFilter<"User"> | string | null
   posts?: Prisma.PostListRelationFilter
   comments?: Prisma.CommentListRelationFilter
   reactions?: Prisma.ReactionListRelationFilter
@@ -227,6 +235,7 @@ export type UserOrderByWithRelationInput = {
   email?: Prisma.SortOrderInput | Prisma.SortOrder
   role?: Prisma.SortOrder
   isStaff?: Prisma.SortOrder
+  profileImage?: Prisma.SortOrderInput | Prisma.SortOrder
   posts?: Prisma.PostOrderByRelationAggregateInput
   comments?: Prisma.CommentOrderByRelationAggregateInput
   reactions?: Prisma.ReactionOrderByRelationAggregateInput
@@ -241,6 +250,7 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   username?: Prisma.StringFilter<"User"> | string
   role?: Prisma.StringFilter<"User"> | string
   isStaff?: Prisma.BoolFilter<"User"> | boolean
+  profileImage?: Prisma.StringNullableFilter<"User"> | string | null
   posts?: Prisma.PostListRelationFilter
   comments?: Prisma.CommentListRelationFilter
   reactions?: Prisma.ReactionListRelationFilter
@@ -252,6 +262,7 @@ export type UserOrderByWithAggregationInput = {
   email?: Prisma.SortOrderInput | Prisma.SortOrder
   role?: Prisma.SortOrder
   isStaff?: Prisma.SortOrder
+  profileImage?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.UserCountOrderByAggregateInput
   _avg?: Prisma.UserAvgOrderByAggregateInput
   _max?: Prisma.UserMaxOrderByAggregateInput
@@ -268,6 +279,7 @@ export type UserScalarWhereWithAggregatesInput = {
   email?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
   role?: Prisma.StringWithAggregatesFilter<"User"> | string
   isStaff?: Prisma.BoolWithAggregatesFilter<"User"> | boolean
+  profileImage?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
 }
 
 export type UserCreateInput = {
@@ -275,6 +287,7 @@ export type UserCreateInput = {
   email?: string | null
   role: string
   isStaff?: boolean
+  profileImage?: string | null
   posts?: Prisma.PostCreateNestedManyWithoutAuthorInput
   comments?: Prisma.CommentCreateNestedManyWithoutAuthorInput
   reactions?: Prisma.ReactionCreateNestedManyWithoutUserInput
@@ -286,6 +299,7 @@ export type UserUncheckedCreateInput = {
   email?: string | null
   role: string
   isStaff?: boolean
+  profileImage?: string | null
   posts?: Prisma.PostUncheckedCreateNestedManyWithoutAuthorInput
   comments?: Prisma.CommentUncheckedCreateNestedManyWithoutAuthorInput
   reactions?: Prisma.ReactionUncheckedCreateNestedManyWithoutUserInput
@@ -296,6 +310,7 @@ export type UserUpdateInput = {
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.StringFieldUpdateOperationsInput | string
   isStaff?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  profileImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   posts?: Prisma.PostUpdateManyWithoutAuthorNestedInput
   comments?: Prisma.CommentUpdateManyWithoutAuthorNestedInput
   reactions?: Prisma.ReactionUpdateManyWithoutUserNestedInput
@@ -307,6 +322,7 @@ export type UserUncheckedUpdateInput = {
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.StringFieldUpdateOperationsInput | string
   isStaff?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  profileImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   posts?: Prisma.PostUncheckedUpdateManyWithoutAuthorNestedInput
   comments?: Prisma.CommentUncheckedUpdateManyWithoutAuthorNestedInput
   reactions?: Prisma.ReactionUncheckedUpdateManyWithoutUserNestedInput
@@ -318,6 +334,7 @@ export type UserCreateManyInput = {
   email?: string | null
   role: string
   isStaff?: boolean
+  profileImage?: string | null
 }
 
 export type UserUpdateManyMutationInput = {
@@ -325,6 +342,7 @@ export type UserUpdateManyMutationInput = {
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.StringFieldUpdateOperationsInput | string
   isStaff?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  profileImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type UserUncheckedUpdateManyInput = {
@@ -333,6 +351,7 @@ export type UserUncheckedUpdateManyInput = {
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.StringFieldUpdateOperationsInput | string
   isStaff?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  profileImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type UserCountOrderByAggregateInput = {
@@ -341,6 +360,7 @@ export type UserCountOrderByAggregateInput = {
   email?: Prisma.SortOrder
   role?: Prisma.SortOrder
   isStaff?: Prisma.SortOrder
+  profileImage?: Prisma.SortOrder
 }
 
 export type UserAvgOrderByAggregateInput = {
@@ -353,6 +373,7 @@ export type UserMaxOrderByAggregateInput = {
   email?: Prisma.SortOrder
   role?: Prisma.SortOrder
   isStaff?: Prisma.SortOrder
+  profileImage?: Prisma.SortOrder
 }
 
 export type UserMinOrderByAggregateInput = {
@@ -361,6 +382,7 @@ export type UserMinOrderByAggregateInput = {
   email?: Prisma.SortOrder
   role?: Prisma.SortOrder
   isStaff?: Prisma.SortOrder
+  profileImage?: Prisma.SortOrder
 }
 
 export type UserSumOrderByAggregateInput = {
@@ -439,6 +461,7 @@ export type UserCreateWithoutPostsInput = {
   email?: string | null
   role: string
   isStaff?: boolean
+  profileImage?: string | null
   comments?: Prisma.CommentCreateNestedManyWithoutAuthorInput
   reactions?: Prisma.ReactionCreateNestedManyWithoutUserInput
 }
@@ -449,6 +472,7 @@ export type UserUncheckedCreateWithoutPostsInput = {
   email?: string | null
   role: string
   isStaff?: boolean
+  profileImage?: string | null
   comments?: Prisma.CommentUncheckedCreateNestedManyWithoutAuthorInput
   reactions?: Prisma.ReactionUncheckedCreateNestedManyWithoutUserInput
 }
@@ -474,6 +498,7 @@ export type UserUpdateWithoutPostsInput = {
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.StringFieldUpdateOperationsInput | string
   isStaff?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  profileImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   comments?: Prisma.CommentUpdateManyWithoutAuthorNestedInput
   reactions?: Prisma.ReactionUpdateManyWithoutUserNestedInput
 }
@@ -484,6 +509,7 @@ export type UserUncheckedUpdateWithoutPostsInput = {
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.StringFieldUpdateOperationsInput | string
   isStaff?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  profileImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   comments?: Prisma.CommentUncheckedUpdateManyWithoutAuthorNestedInput
   reactions?: Prisma.ReactionUncheckedUpdateManyWithoutUserNestedInput
 }
@@ -493,6 +519,7 @@ export type UserCreateWithoutCommentsInput = {
   email?: string | null
   role: string
   isStaff?: boolean
+  profileImage?: string | null
   posts?: Prisma.PostCreateNestedManyWithoutAuthorInput
   reactions?: Prisma.ReactionCreateNestedManyWithoutUserInput
 }
@@ -503,6 +530,7 @@ export type UserUncheckedCreateWithoutCommentsInput = {
   email?: string | null
   role: string
   isStaff?: boolean
+  profileImage?: string | null
   posts?: Prisma.PostUncheckedCreateNestedManyWithoutAuthorInput
   reactions?: Prisma.ReactionUncheckedCreateNestedManyWithoutUserInput
 }
@@ -528,6 +556,7 @@ export type UserUpdateWithoutCommentsInput = {
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.StringFieldUpdateOperationsInput | string
   isStaff?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  profileImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   posts?: Prisma.PostUpdateManyWithoutAuthorNestedInput
   reactions?: Prisma.ReactionUpdateManyWithoutUserNestedInput
 }
@@ -538,6 +567,7 @@ export type UserUncheckedUpdateWithoutCommentsInput = {
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.StringFieldUpdateOperationsInput | string
   isStaff?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  profileImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   posts?: Prisma.PostUncheckedUpdateManyWithoutAuthorNestedInput
   reactions?: Prisma.ReactionUncheckedUpdateManyWithoutUserNestedInput
 }
@@ -547,6 +577,7 @@ export type UserCreateWithoutReactionsInput = {
   email?: string | null
   role: string
   isStaff?: boolean
+  profileImage?: string | null
   posts?: Prisma.PostCreateNestedManyWithoutAuthorInput
   comments?: Prisma.CommentCreateNestedManyWithoutAuthorInput
 }
@@ -557,6 +588,7 @@ export type UserUncheckedCreateWithoutReactionsInput = {
   email?: string | null
   role: string
   isStaff?: boolean
+  profileImage?: string | null
   posts?: Prisma.PostUncheckedCreateNestedManyWithoutAuthorInput
   comments?: Prisma.CommentUncheckedCreateNestedManyWithoutAuthorInput
 }
@@ -582,6 +614,7 @@ export type UserUpdateWithoutReactionsInput = {
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.StringFieldUpdateOperationsInput | string
   isStaff?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  profileImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   posts?: Prisma.PostUpdateManyWithoutAuthorNestedInput
   comments?: Prisma.CommentUpdateManyWithoutAuthorNestedInput
 }
@@ -592,6 +625,7 @@ export type UserUncheckedUpdateWithoutReactionsInput = {
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.StringFieldUpdateOperationsInput | string
   isStaff?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  profileImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   posts?: Prisma.PostUncheckedUpdateManyWithoutAuthorNestedInput
   comments?: Prisma.CommentUncheckedUpdateManyWithoutAuthorNestedInput
 }
@@ -651,6 +685,7 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   email?: boolean
   role?: boolean
   isStaff?: boolean
+  profileImage?: boolean
   posts?: boolean | Prisma.User$postsArgs<ExtArgs>
   comments?: boolean | Prisma.User$commentsArgs<ExtArgs>
   reactions?: boolean | Prisma.User$reactionsArgs<ExtArgs>
@@ -663,6 +698,7 @@ export type UserSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   email?: boolean
   role?: boolean
   isStaff?: boolean
+  profileImage?: boolean
 }, ExtArgs["result"]["user"]>
 
 export type UserSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -671,6 +707,7 @@ export type UserSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   email?: boolean
   role?: boolean
   isStaff?: boolean
+  profileImage?: boolean
 }, ExtArgs["result"]["user"]>
 
 export type UserSelectScalar = {
@@ -679,9 +716,10 @@ export type UserSelectScalar = {
   email?: boolean
   role?: boolean
   isStaff?: boolean
+  profileImage?: boolean
 }
 
-export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "username" | "email" | "role" | "isStaff", ExtArgs["result"]["user"]>
+export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "username" | "email" | "role" | "isStaff" | "profileImage", ExtArgs["result"]["user"]>
 export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   posts?: boolean | Prisma.User$postsArgs<ExtArgs>
   comments?: boolean | Prisma.User$commentsArgs<ExtArgs>
@@ -704,6 +742,7 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     email: string | null
     role: string
     isStaff: boolean
+    profileImage: string | null
   }, ExtArgs["result"]["user"]>
   composites: {}
 }
@@ -1135,6 +1174,7 @@ export interface UserFieldRefs {
   readonly email: Prisma.FieldRef<"User", 'String'>
   readonly role: Prisma.FieldRef<"User", 'String'>
   readonly isStaff: Prisma.FieldRef<"User", 'Boolean'>
+  readonly profileImage: Prisma.FieldRef<"User", 'String'>
 }
     
 

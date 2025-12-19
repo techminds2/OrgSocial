@@ -57,7 +57,7 @@ export default function CreatePost() {
       {/* Top */}
       <div className="flex gap-4">
         <img
-          src="/default-avatar.png"
+          src="/logo.webp"
           alt="User"
           className="w-12 h-12 rounded-full object-cover border"
         />
