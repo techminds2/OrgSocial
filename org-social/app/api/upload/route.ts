@@ -1,44 +1,47 @@
-import { NextResponse } from "next/server";
+export const runtime = "nodejs";
+
+import { NextResponse, NextRequest } from "next/server";
 import { PutObjectCommand } from "@aws-sdk/client-s3";
 import { s3 } from "@/lib/s3";
 import crypto from "crypto";
 import prisma from "@/lib/prisma";
 import { jwtVerify } from "jose";
-import { cookies } from "next/headers";
 
-const SECRET = new TextEncoder().encode((process.env.JWT_SECRET ?? "").trim());
-export const runtime = "nodejs";
+const SECRET_STR = process.env.DJANGO_JWT_SECRET || "";
+const SECRET = new TextEncoder().encode(SECRET_STR);
 
-export async function POST(req: Request) {
+function cleanToken(t: string) {
+  return t
+    .trim()
+    .replace(/^Bearer\s+/i, "")
+    .replace(/^"+|"+$/g, "");
+}
+
+export async function POST(req: NextRequest) {
   try {
-    const cookieStore = cookies();
-    const token = cookieStore.get("accessToken")?.value;
+    const accessTokenRaw = req.cookies.get("accessToken")?.value;
+    const accessToken = accessTokenRaw ? cleanToken(accessTokenRaw) : undefined;
 
-    if (!token)
+    if (!accessToken) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
 
-    const { payload } = await jwtVerify(token, SECRET);
-    const userId = Number(
-      (payload as any).user_id ?? (payload as any).id ?? (payload as any).sub
-    );
+    const { payload } = await jwtVerify(accessToken, SECRET, { algorithms: ["HS256"] });
+    const userId = payload.user_id as number;
 
-    if (!userId)
-      return NextResponse.json({ error: "Invalid token" }, { status: 401 });
+    if (!userId) {
+      return NextResponse.json({ error: "Invalid token payload" }, { status: 401 });
+    }
 
     const formData = await req.formData();
     const content = formData.get("content") as string;
     const files = formData.getAll("files") as File[];
     const types = formData.getAll("types") as string[];
 
-    const post = await prisma.post.create({
-      data: { content, authorId: userId },
-    });
-
-    const uploadedFiles = [];
+    const uploadedFiles: { url: string; type: string }[] = [];
 
     for (let i = 0; i < files.length; i++) {
       const file = files[i];
-      if (!(file instanceof File)) continue;
 
       const ab = await file.arrayBuffer();
       if (!ab || ab.byteLength === 0) continue;
@@ -62,12 +65,24 @@ export async function POST(req: Request) {
       const savedFile = await prisma.file.create({
         data: { url, type: types[i] || "document", postId: post.id },
       });
-
-      uploadedFiles.push(savedFile);
     }
 
-    return NextResponse.json({ success: true, post, files: uploadedFiles });
-  } catch (error: any) {
+    const post = await prisma.post.create({
+      data: {
+        content,
+        author: { connect: { id: userId } },
+        files: {
+          create: uploadedFiles.map((f) => ({ url: f.url })),
+        },
+      },
+      include: { files: true },
+    });
+
+    return NextResponse.json({
+      success: true,
+      post,
+    });
+  } catch (error) {
     console.error("UPLOAD ERROR:", error);
     return NextResponse.json(
       { error: "Post failed", detail: error?.message ?? String(error) },

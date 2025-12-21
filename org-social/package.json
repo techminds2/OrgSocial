@@ -18,6 +18,9 @@
     "react": "19.2.0",
     "react-dom": "19.2.0",
     "react-hook-form": "^7.68.0",
+    "swagger-jsdoc": "^6.2.8",
+    "swagger-ui-dist": "^5.31.0",
+    "swagger-ui-react": "^5.31.0",
     "swr": "^2.3.7"
   },
   "devDependencies": {
@@ -25,6 +28,7 @@
     "@types/node": "^20.19.27",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "@types/swagger-jsdoc": "^6.0.4",
     "autoprefixer": "^10.4.22",
     "dotenv": "^17.2.3",
     "eslint": "^9",
