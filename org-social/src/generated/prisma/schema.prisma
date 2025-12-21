@@ -10,7 +10,7 @@ datasource db {
 
 model User {
   id           Int     @id @default(autoincrement())
-  username     String
+  username     String  @unique
   email        String? @unique
   role         String
   isStaff      Boolean @default(false)
@@ -58,9 +58,9 @@ model Reaction {
 }
 
 model File {
-  id  Int    @id @default(autoincrement())
-  url String
-
+  id     Int     @id @default(autoincrement())
+  url    String
+  type   String?
   postId Int
-  post   Post @relation(fields: [postId], references: [id])
+  post   Post    @relation(fields: [postId], references: [id])
 }
