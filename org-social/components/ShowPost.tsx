@@ -52,9 +52,12 @@ export default function ShowPosts() {
           {/* Author info */}
           <div className="flex items-center gap-3 mb-2">
             <img
-              src={post.author.profileImage || "/logo.webp"}
+              src={post.author.profileImage || "/temp.png"}
               alt={post.author.username}
               className="w-10 h-10 rounded-full object-cover border"
+              onError={(e) => {
+                e.currentTarget.src = "/temp.png";
+              }}
             />
             <div>
               <p className="font-semibold">{post.author.username}</p>

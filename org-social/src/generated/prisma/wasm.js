@@ -193,7 +193,6 @@ const config = {
     "db"
   ],
   "activeProvider": "postgresql",
-  "postinstall": false,
   "inlineDatasources": {
     "db": {
       "url": {
@@ -202,8 +201,8 @@ const config = {
       }
     }
   },
-  "inlineSchema": "generator client {\n  provider = \"prisma-client-js\"\n  output   = \"../src/generated/prisma\"\n}\n\ndatasource db {\n  provider = \"postgresql\"\n  url      = env(\"DATABASE_URL\")\n}\n\nmodel User {\n  id           Int     @id @default(autoincrement())\n  username     String  @unique\n  email        String? @unique\n  role         String\n  isStaff      Boolean @default(false)\n  profileImage String?\n\n  posts     Post[]\n  comments  Comment[]\n  reactions Reaction[]\n}\n\nmodel Post {\n  id        Int      @id @default(autoincrement())\n  content   String\n  createdAt DateTime @default(now())\n\n  authorId Int\n  author   User @relation(fields: [authorId], references: [id])\n\n  comments  Comment[]\n  reactions Reaction[]\n  files     File[]\n}\n\nmodel Comment {\n  id        Int      @id @default(autoincrement())\n  content   String\n  createdAt DateTime @default(now())\n\n  postId Int\n  post   Post @relation(fields: [postId], references: [id])\n\n  authorId Int\n  author   User @relation(fields: [authorId], references: [id])\n}\n\nmodel Reaction {\n  id   Int    @id @default(autoincrement())\n  type String\n\n  postId Int\n  post   Post @relation(fields: [postId], references: [id])\n\n  userId Int\n  user   User @relation(fields: [userId], references: [id])\n}\n\nmodel File {\n  id     Int     @id @default(autoincrement())\n  url    String\n  type   String?\n  postId Int\n  post   Post    @relation(fields: [postId], references: [id])\n}\n",
-  "inlineSchemaHash": "4a823264cf6800ffcf5c5ce6f6f55b7cab4cd9e6778e711019138d614862d6aa",
+  "inlineSchema": "generator client {\n  provider = \"prisma-client-js\"\n  output   = \"../src/generated/prisma\"\n}\n\ndatasource db {\n  provider = \"postgresql\"\n  url      = env(\"DATABASE_URL\")\n}\n\nmodel User {\n  id           Int     @id @default(autoincrement())\n  username     String  @unique\n  email        String? @unique\n  role         String\n  isStaff      Boolean @default(false)\n  profileImage String?\n\n  posts     Post[]\n  comments  Comment[]\n  reactions Reaction[]\n}\n\nmodel Post {\n  id        Int      @id @default(autoincrement())\n  content   String\n  createdAt DateTime @default(now())\n\n  authorId Int\n  author   User @relation(fields: [authorId], references: [id])\n\n  comments  Comment[]\n  reactions Reaction[]\n  files     File[]\n}\n\nmodel Comment {\n  id        Int      @id @default(autoincrement())\n  content   String\n  createdAt DateTime @default(now())\n\n  postId Int\n  post   Post @relation(fields: [postId], references: [id])\n\n  authorId Int\n  author   User @relation(fields: [authorId], references: [id])\n}\n\nmodel Reaction {\n  id   Int    @id @default(autoincrement())\n  type String // \"LIKE\"\n\n  postId Int\n  post   Post @relation(fields: [postId], references: [id])\n\n  userId Int\n  user   User @relation(fields: [userId], references: [id])\n\n  @@unique([postId, userId, type])\n}\n\nmodel File {\n  id     Int     @id @default(autoincrement())\n  url    String\n  type   String?\n  postId Int\n  post   Post    @relation(fields: [postId], references: [id])\n}\n",
+  "inlineSchemaHash": "ae06ada41173f7c5191e0a9661416a69f3a6bb949d919e899821659c2628977a",
   "copyEngine": true
 }
 config.dirname = '/'

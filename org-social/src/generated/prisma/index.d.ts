@@ -7324,6 +7324,7 @@ export namespace Prisma {
 
   export type ReactionWhereUniqueInput = Prisma.AtLeast<{
     id?: number
+    postId_userId_type?: ReactionPostIdUserIdTypeCompoundUniqueInput
     AND?: ReactionWhereInput | ReactionWhereInput[]
     OR?: ReactionWhereInput[]
     NOT?: ReactionWhereInput | ReactionWhereInput[]
@@ -7332,7 +7333,7 @@ export namespace Prisma {
     userId?: IntFilter<"Reaction"> | number
     post?: XOR<PostScalarRelationFilter, PostWhereInput>
     user?: XOR<UserScalarRelationFilter, UserWhereInput>
-  }, "id">
+  }, "id" | "postId_userId_type">
 
   export type ReactionOrderByWithAggregationInput = {
     id?: SortOrder
@@ -7963,6 +7964,12 @@ export namespace Prisma {
     id?: SortOrder
     postId?: SortOrder
     authorId?: SortOrder
+  }
+
+  export type ReactionPostIdUserIdTypeCompoundUniqueInput = {
+    postId: number
+    userId: number
+    type: string
   }
 
   export type ReactionCountOrderByAggregateInput = {
