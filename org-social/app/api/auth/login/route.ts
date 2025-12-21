@@ -3,6 +3,9 @@
  * /api/auth/login:
  *   post:
  *     summary: User login
+ *     description: Logs in the user and returns access and refresh tokens.
+ *     tags:
+ *       - Auth
  *     requestBody:
  *       required: true
  *       content:
@@ -15,11 +18,40 @@
  *             properties:
  *               username:
  *                 type: string
+ *                 example: sworiya
  *               password:
  *                 type: string
+ *                 example: sworiya#123
  *     responses:
  *       200:
  *         description: Login successful
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 accessToken:
+ *                   type: string
+ *                   description: JWT access token
+ *                 refreshToken:
+ *                   type: string
+ *                   description: JWT refresh token
+ *                 user:
+ *                   type: object
+ *                   properties:
+ *                     id:
+ *                       type: integer
+ *                     username:
+ *                       type: string
+ *                     email:
+ *                       type: string
+ *                     role:
+ *                       type: string
+ *                     isStaff:
+ *                       type: boolean
+ *                     profileImage:
+ *                       type: string
+ *                       description: URL of user's profile image
  *       401:
  *         description: Invalid credentials
  */
@@ -31,7 +63,6 @@ import prisma from "@/lib/prisma";
 export async function POST(req: Request) {
   const { username, password } = await req.json();
 
-  // 1️⃣ Login via Django
   const response = await fetch(
     "https://callminds.techminds.com.np/auth/api/token/",
     {
@@ -49,7 +80,6 @@ export async function POST(req: Request) {
   const accessToken = data.access;
   const userId = data.user_id;
 
-  // 2️⃣ Fetch full user details including profile_photo
   const userViewRes = await fetch(
     `https://callminds.techminds.com.np/auth/api/user-view/${userId}/`,
     {
@@ -59,7 +89,8 @@ export async function POST(req: Request) {
 
   const userView = await userViewRes.json();
 
-  // 3️⃣ Upsert user in Prisma
+  console.log("userview: ",userView.data.profile_photo);
+
   const user = await prisma.user.upsert({
   where: { id: data.user_id }, 
   update: {
@@ -79,7 +110,6 @@ export async function POST(req: Request) {
   },
 });
 
-  // 4️⃣ Set cookies
   const res = NextResponse.json({ user });
   res.headers.set(
     "Set-Cookie",

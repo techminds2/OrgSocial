@@ -104,7 +104,7 @@ export async function POST(req: NextRequest) {
       console.log("Files to store in DB:", uploadedFiles);
 
       uploadedFiles.push({
-        url: `http://172.23.24.166:9000/${process.env.S3_BUCKET}/${key}`,
+        url: key,
         type: types[i],
       });
     }
