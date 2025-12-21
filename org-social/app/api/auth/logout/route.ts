@@ -1,3 +1,21 @@
+/**
+ * @swagger
+ * /api/posts:
+ *   post:
+ *     summary: Create post
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               content:
+ *                 type: string
+ *     responses:
+ *       201:
+ *         description: Created
+ */
 import { NextResponse } from "next/server";
 import cookie from "cookie";
 
