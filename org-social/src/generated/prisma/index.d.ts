@@ -5892,18 +5892,21 @@ export namespace Prisma {
   export type FileMinAggregateOutputType = {
     id: number | null
     url: string | null
+    type: string | null
     postId: number | null
   }
 
   export type FileMaxAggregateOutputType = {
     id: number | null
     url: string | null
+    type: string | null
     postId: number | null
   }
 
   export type FileCountAggregateOutputType = {
     id: number
     url: number
+    type: number
     postId: number
     _all: number
   }
@@ -5922,18 +5925,21 @@ export namespace Prisma {
   export type FileMinAggregateInputType = {
     id?: true
     url?: true
+    type?: true
     postId?: true
   }
 
   export type FileMaxAggregateInputType = {
     id?: true
     url?: true
+    type?: true
     postId?: true
   }
 
   export type FileCountAggregateInputType = {
     id?: true
     url?: true
+    type?: true
     postId?: true
     _all?: true
   }
@@ -6027,6 +6033,7 @@ export namespace Prisma {
   export type FileGroupByOutputType = {
     id: number
     url: string
+    type: string | null
     postId: number
     _count: FileCountAggregateOutputType | null
     _avg: FileAvgAggregateOutputType | null
@@ -6052,6 +6059,7 @@ export namespace Prisma {
   export type FileSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     url?: boolean
+    type?: boolean
     postId?: boolean
     post?: boolean | PostDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["file"]>
@@ -6059,6 +6067,7 @@ export namespace Prisma {
   export type FileSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     url?: boolean
+    type?: boolean
     postId?: boolean
     post?: boolean | PostDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["file"]>
@@ -6066,6 +6075,7 @@ export namespace Prisma {
   export type FileSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     url?: boolean
+    type?: boolean
     postId?: boolean
     post?: boolean | PostDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["file"]>
@@ -6073,10 +6083,11 @@ export namespace Prisma {
   export type FileSelectScalar = {
     id?: boolean
     url?: boolean
+    type?: boolean
     postId?: boolean
   }
 
-  export type FileOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "url" | "postId", ExtArgs["result"]["file"]>
+  export type FileOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "url" | "type" | "postId", ExtArgs["result"]["file"]>
   export type FileInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     post?: boolean | PostDefaultArgs<ExtArgs>
   }
@@ -6095,6 +6106,7 @@ export namespace Prisma {
     scalars: $Extensions.GetPayloadResult<{
       id: number
       url: string
+      type: string | null
       postId: number
     }, ExtArgs["result"]["file"]>
     composites: {}
@@ -6522,6 +6534,7 @@ export namespace Prisma {
   interface FileFieldRefs {
     readonly id: FieldRef<"File", 'Int'>
     readonly url: FieldRef<"File", 'String'>
+    readonly type: FieldRef<"File", 'String'>
     readonly postId: FieldRef<"File", 'Int'>
   }
     
@@ -6997,6 +7010,7 @@ export namespace Prisma {
   export const FileScalarFieldEnum: {
     id: 'id',
     url: 'url',
+    type: 'type',
     postId: 'postId'
   };
 
@@ -7127,18 +7141,18 @@ export namespace Prisma {
 
   export type UserWhereUniqueInput = Prisma.AtLeast<{
     id?: number
+    username?: string
     email?: string
     AND?: UserWhereInput | UserWhereInput[]
     OR?: UserWhereInput[]
     NOT?: UserWhereInput | UserWhereInput[]
-    username?: StringFilter<"User"> | string
     role?: StringFilter<"User"> | string
     isStaff?: BoolFilter<"User"> | boolean
     profileImage?: StringNullableFilter<"User"> | string | null
     posts?: PostListRelationFilter
     comments?: CommentListRelationFilter
     reactions?: ReactionListRelationFilter
-  }, "id" | "email">
+  }, "id" | "username" | "email">
 
   export type UserOrderByWithAggregationInput = {
     id?: SortOrder
@@ -7348,6 +7362,7 @@ export namespace Prisma {
     NOT?: FileWhereInput | FileWhereInput[]
     id?: IntFilter<"File"> | number
     url?: StringFilter<"File"> | string
+    type?: StringNullableFilter<"File"> | string | null
     postId?: IntFilter<"File"> | number
     post?: XOR<PostScalarRelationFilter, PostWhereInput>
   }
@@ -7355,6 +7370,7 @@ export namespace Prisma {
   export type FileOrderByWithRelationInput = {
     id?: SortOrder
     url?: SortOrder
+    type?: SortOrderInput | SortOrder
     postId?: SortOrder
     post?: PostOrderByWithRelationInput
   }
@@ -7365,6 +7381,7 @@ export namespace Prisma {
     OR?: FileWhereInput[]
     NOT?: FileWhereInput | FileWhereInput[]
     url?: StringFilter<"File"> | string
+    type?: StringNullableFilter<"File"> | string | null
     postId?: IntFilter<"File"> | number
     post?: XOR<PostScalarRelationFilter, PostWhereInput>
   }, "id">
@@ -7372,6 +7389,7 @@ export namespace Prisma {
   export type FileOrderByWithAggregationInput = {
     id?: SortOrder
     url?: SortOrder
+    type?: SortOrderInput | SortOrder
     postId?: SortOrder
     _count?: FileCountOrderByAggregateInput
     _avg?: FileAvgOrderByAggregateInput
@@ -7386,6 +7404,7 @@ export namespace Prisma {
     NOT?: FileScalarWhereWithAggregatesInput | FileScalarWhereWithAggregatesInput[]
     id?: IntWithAggregatesFilter<"File"> | number
     url?: StringWithAggregatesFilter<"File"> | string
+    type?: StringNullableWithAggregatesFilter<"File"> | string | null
     postId?: IntWithAggregatesFilter<"File"> | number
   }
 
@@ -7615,39 +7634,46 @@ export namespace Prisma {
 
   export type FileCreateInput = {
     url: string
+    type?: string | null
     post: PostCreateNestedOneWithoutFilesInput
   }
 
   export type FileUncheckedCreateInput = {
     id?: number
     url: string
+    type?: string | null
     postId: number
   }
 
   export type FileUpdateInput = {
     url?: StringFieldUpdateOperationsInput | string
+    type?: NullableStringFieldUpdateOperationsInput | string | null
     post?: PostUpdateOneRequiredWithoutFilesNestedInput
   }
 
   export type FileUncheckedUpdateInput = {
     id?: IntFieldUpdateOperationsInput | number
     url?: StringFieldUpdateOperationsInput | string
+    type?: NullableStringFieldUpdateOperationsInput | string | null
     postId?: IntFieldUpdateOperationsInput | number
   }
 
   export type FileCreateManyInput = {
     id?: number
     url: string
+    type?: string | null
     postId: number
   }
 
   export type FileUpdateManyMutationInput = {
     url?: StringFieldUpdateOperationsInput | string
+    type?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type FileUncheckedUpdateManyInput = {
     id?: IntFieldUpdateOperationsInput | number
     url?: StringFieldUpdateOperationsInput | string
+    type?: NullableStringFieldUpdateOperationsInput | string | null
     postId?: IntFieldUpdateOperationsInput | number
   }
 
@@ -7975,6 +8001,7 @@ export namespace Prisma {
   export type FileCountOrderByAggregateInput = {
     id?: SortOrder
     url?: SortOrder
+    type?: SortOrder
     postId?: SortOrder
   }
 
@@ -7986,12 +8013,14 @@ export namespace Prisma {
   export type FileMaxOrderByAggregateInput = {
     id?: SortOrder
     url?: SortOrder
+    type?: SortOrder
     postId?: SortOrder
   }
 
   export type FileMinOrderByAggregateInput = {
     id?: SortOrder
     url?: SortOrder
+    type?: SortOrder
     postId?: SortOrder
   }
 
@@ -8731,11 +8760,13 @@ export namespace Prisma {
 
   export type FileCreateWithoutPostInput = {
     url: string
+    type?: string | null
   }
 
   export type FileUncheckedCreateWithoutPostInput = {
     id?: number
     url: string
+    type?: string | null
   }
 
   export type FileCreateOrConnectWithoutPostInput = {
@@ -8834,6 +8865,7 @@ export namespace Prisma {
     NOT?: FileScalarWhereInput | FileScalarWhereInput[]
     id?: IntFilter<"File"> | number
     url?: StringFilter<"File"> | string
+    type?: StringNullableFilter<"File"> | string | null
     postId?: IntFilter<"File"> | number
   }
 
@@ -9198,6 +9230,7 @@ export namespace Prisma {
   export type FileCreateManyPostInput = {
     id?: number
     url: string
+    type?: string | null
   }
 
   export type CommentUpdateWithoutPostInput = {
@@ -9239,16 +9272,19 @@ export namespace Prisma {
 
   export type FileUpdateWithoutPostInput = {
     url?: StringFieldUpdateOperationsInput | string
+    type?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type FileUncheckedUpdateWithoutPostInput = {
     id?: IntFieldUpdateOperationsInput | number
     url?: StringFieldUpdateOperationsInput | string
+    type?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type FileUncheckedUpdateManyWithoutPostInput = {
     id?: IntFieldUpdateOperationsInput | number
     url?: StringFieldUpdateOperationsInput | string
+    type?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
 

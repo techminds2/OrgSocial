@@ -1,3 +1,43 @@
+/**
+ * @swagger
+ * /api/posts:
+ *   post:
+ *     summary: Create a post with file uploads
+ *     description: >
+ *       Creates a post with text content and optional files.
+ *       Requires authentication via accessToken cookie.
+ *     tags:
+ *       - Posts
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         multipart/form-data:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - content
+ *             properties:
+ *               content:
+ *                 type: string
+ *                 example: Hello world
+ *               files:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *                   format: binary
+ *               types:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *                   required: false
+ *     responses:
+ *       200:
+ *         description: Post created successfully
+ *       401:
+ *         description: Unauthorized
+ *       500:
+ *         description: Server error
+ */
 export const runtime = "nodejs";
 
 import { NextResponse, NextRequest } from "next/server";
@@ -26,11 +66,16 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const { payload } = await jwtVerify(accessToken, SECRET, { algorithms: ["HS256"] });
+    const { payload } = await jwtVerify(accessToken, SECRET, {
+      algorithms: ["HS256"],
+    });
     const userId = payload.user_id as number;
 
     if (!userId) {
-      return NextResponse.json({ error: "Invalid token payload" }, { status: 401 });
+      return NextResponse.json(
+        { error: "Invalid token payload" },
+        { status: 401 }
+      );
     }
 
     const formData = await req.formData();
@@ -56,6 +101,7 @@ export async function POST(req: NextRequest) {
           ContentType: file.type,
         })
       );
+      console.log("Files to store in DB:", uploadedFiles);
 
       uploadedFiles.push({
         url: `http://172.23.24.166:9000/${process.env.S3_BUCKET}/${key}`,
@@ -68,7 +114,9 @@ export async function POST(req: NextRequest) {
         content,
         author: { connect: { id: userId } },
         files: {
-          create: uploadedFiles.map((f) => ({ url: f.url })),
+          create: uploadedFiles.map((f) =>
+            f.type ? { url: f.url, type: f.type } : { url: f.url }
+          ),
         },
       },
       include: { files: true },

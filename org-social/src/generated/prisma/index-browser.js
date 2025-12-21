@@ -155,6 +155,7 @@ exports.Prisma.ReactionScalarFieldEnum = {
 exports.Prisma.FileScalarFieldEnum = {
   id: 'id',
   url: 'url',
+  type: 'type',
   postId: 'postId'
 };
 
