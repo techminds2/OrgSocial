@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { ActionIcon, Text } from "@mantine/core";
+import CommentSection from "./CommentSection";
 
 type FileType = {
   url: string;
@@ -15,12 +16,25 @@ type Post = {
   files: FileType[];
   likedByMe: boolean;
   likeCount: number;
+  comments: {
+    id: number;
+    content: string;
+    createdAt: string;
+    author: {
+      id: number;
+      username: string;
+      profileImage?: string | null;
+    };
+  }[];
   author: {
     id: number;
     username: string;
     profileImage?: string | null;
   };
 };
+
+
+
 
 export default function ShowPosts() {
   const [posts, setPosts] = useState<Post[]>([]);
@@ -89,11 +103,11 @@ export default function ShowPosts() {
           {/* Author info */}
           <div className="flex items-center gap-3 mb-2">
             <img
-              src={post.author.profileImage || "/temp.png"}
+              src={post.author.profileImage || "/noProfilePic.jpg"}
               alt={post.author.username}
               className="w-10 h-10 rounded-full object-cover border"
               onError={(e) => {
-                e.currentTarget.src = "/temp.png";
+                e.currentTarget.src = "/noProfilePic.jpg";
               }}
             />
             <div>
@@ -150,6 +164,10 @@ export default function ShowPosts() {
               👍
             </ActionIcon>
             <Text size="sm">{post.likeCount}</Text>
+            <CommentSection
+  postId={post.id}
+  initialComments={post.comments}
+/>
           </div>
         </div>
       ))}
