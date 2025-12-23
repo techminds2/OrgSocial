@@ -16,12 +16,10 @@ export default function CreatePost() {
   const videoRef = useRef<HTMLInputElement>(null);
   const docRef = useRef<HTMLInputElement>(null);
 
-  // ✅ ONLY store files locally (NO upload here)
   const handleSelectFile = (file: File, type: SelectedFile["type"]) => {
     setFiles((prev) => [...prev, { file, type }]);
   };
 
-  // ✅ Upload happens ONLY here
   const handlePost = async () => {
     setLoading(true);
 
@@ -60,7 +58,7 @@ export default function CreatePost() {
       {/* Top */}
       <div className="flex gap-4">
         <img
-          src="/logo.webp"
+          src="/temp.png"
           alt="User"
           className="w-12 h-12 rounded-full object-cover border"
         />

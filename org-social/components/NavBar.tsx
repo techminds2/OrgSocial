@@ -111,13 +111,7 @@ export default function NavBar({ role }: NavBarProps) {
           >
             About
           </Link>
-          <Link
-            href="/logout"
-            className="block px-4 py-2 text-red-500 hover:bg-gray-100"
-            onClick={() => setIsOpen(false)}
-          >
-            Logout
-          </Link>
+          <LogoutButton/>
         </div>
       )}
     </nav>

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { ActionIcon, Text } from "@mantine/core";
 
 type FileType = {
   url: string;
@@ -12,6 +13,8 @@ type Post = {
   content: string;
   createdAt: string;
   files: FileType[];
+  likedByMe: boolean;
+  likeCount: number;
   author: {
     id: number;
     username: string;
@@ -22,11 +25,14 @@ type Post = {
 export default function ShowPosts() {
   const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(true);
+  const [likingId, setLikingId] = useState<number | null>(null);
 
   useEffect(() => {
     const fetchPosts = async () => {
       try {
-        const res = await fetch("/api/posts"); // Your API route to get posts
+        const res = await fetch("/api/posts", {
+          credentials: "include", 
+        });
         if (!res.ok) throw new Error("Failed to fetch posts");
 
         const data = await res.json();
@@ -41,8 +47,39 @@ export default function ShowPosts() {
     fetchPosts();
   }, []);
 
-  if (loading) return <p className="text-center">Loading posts...</p>;
+  const toggleLike = async (postId: number) => {
+    if (likingId === postId) return;
+    setLikingId(postId);
 
+    try {
+      const res = await fetch(`/api/posts/${postId}/reactions`, {
+        method: "POST",
+        credentials: "include", 
+      });
+
+      if (!res.ok) return;
+
+      const { liked } = await res.json();
+
+      setPosts((prev) =>
+        prev.map((p) =>
+          p.id === postId
+            ? {
+                ...p,
+                likedByMe: liked,
+                likeCount: liked
+                  ? p.likeCount + 1
+                  : p.likeCount - 1,
+              }
+            : p
+        )
+      );
+    } finally {
+      setLikingId(null);
+    }
+  };
+
+  if (loading) return <p className="text-center">Loading posts...</p>;
   if (!posts.length) return <p className="text-center">No posts yet.</p>;
 
   return (
@@ -52,9 +89,12 @@ export default function ShowPosts() {
           {/* Author info */}
           <div className="flex items-center gap-3 mb-2">
             <img
-              src={post.author.profileImage || "/logo.webp"}
+              src={post.author.profileImage || "/temp.png"}
               alt={post.author.username}
               className="w-10 h-10 rounded-full object-cover border"
+              onError={(e) => {
+                e.currentTarget.src = "/temp.png";
+              }}
             />
             <div>
               <p className="font-semibold">{post.author.username}</p>
@@ -65,11 +105,11 @@ export default function ShowPosts() {
           </div>
 
           {/* Post content */}
-          <p className="mb-2">{post.content}</p>
+          <p className="mb-3">{post.content}</p>
 
           {/* Files */}
           {post.files.length > 0 && (
-            <div className="flex gap-2 flex-wrap">
+            <div className="flex gap-2 flex-wrap mb-3">
               {post.files.map((f, i) => {
                 if (f.type === "image")
                   return (
@@ -98,6 +138,19 @@ export default function ShowPosts() {
               })}
             </div>
           )}
+
+          <div className="flex items-center gap-3">
+            <ActionIcon
+              variant={post.likedByMe ? "filled" : "subtle"}
+              color="blue"
+              loading={likingId === post.id}
+              onClick={() => toggleLike(post.id)}
+              radius="xl"
+            >
+              👍
+            </ActionIcon>
+            <Text size="sm">{post.likeCount}</Text>
+          </div>
         </div>
       ))}
     </div>

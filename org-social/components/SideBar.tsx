@@ -8,17 +8,17 @@ type MenuItem =
   | { type: "heading"; label: string };
 
 const menuItems: MenuItem[] = [
-  { type: "link", label: "Home Feed", href: "/dashboard" },
+  // { type: "link", label: "Home Feed", href: "/dashboard" },
 
-  { type: "heading", label: "Tickets" },
-  { type: "link", label: "All Tickets", href: "/dashboard/tickets/all" },
-  { type: "link", label: "My Tickets", href: "/dashboard/tickets/mine" },
+  // { type: "heading", label: "Tickets" },
+  // { type: "link", label: "All Tickets", href: "/dashboard/tickets/all" },
+  // { type: "link", label: "My Tickets", href: "/dashboard/tickets/mine" },
 
-  { type: "heading", label: "My Apps" },
+  // { type: "heading", label: "My Apps" },
 
-  { type: "link", label: "Profile", href: "/dashboard/profile" },
-  { type: "link", label: "My Request", href: "/dashboard/my-request" },
-  { type: "link", label: "Leave Balances", href: "/dashboard/leave-balances" },
+  // { type: "link", label: "Profile", href: "/dashboard/profile" },
+  // { type: "link", label: "My Request", href: "/dashboard/my-request" },
+  // { type: "link", label: "Leave Balances", href: "/dashboard/leave-balances" },
 
   { type: "heading", label: "My Team" },
   { type: "link", label: "My Team Apps", href: "/dashboard/team-apps" },

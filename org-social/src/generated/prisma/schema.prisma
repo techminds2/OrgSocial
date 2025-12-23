@@ -48,13 +48,15 @@ model Comment {
 
 model Reaction {
   id   Int    @id @default(autoincrement())
-  type String
+  type String // "LIKE"
 
   postId Int
   post   Post @relation(fields: [postId], references: [id])
 
   userId Int
   user   User @relation(fields: [userId], references: [id])
+
+  @@unique([postId, userId, type])
 }
 
 model File {
