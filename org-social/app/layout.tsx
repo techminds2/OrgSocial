@@ -7,7 +7,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en">
       {/* <NavBar></NavBar> */}
       <body className="antialiased font-sans" > 
-       <Providers>{children}</Providers> {children}
+       <Providers>{children}</Providers> 
       </body>
     </html>
   );

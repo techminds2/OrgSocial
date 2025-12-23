@@ -47,11 +47,44 @@
  *       500:
  *         description: Server error
  */
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
+import { jwtVerify } from "jose";
 
-export async function GET() {
+export const runtime = "nodejs";
+
+const SECRET = new TextEncoder().encode(
+  process.env.DJANGO_JWT_SECRET || ""
+);
+
+/* -------------------- AUTH HELPER -------------------- */
+async function getUserIdFromRequest(
+  req: NextRequest
+): Promise<number | null> {
   try {
+    const raw = req.cookies.get("accessToken")?.value;
+    if (!raw) return null;
+
+    const token = raw
+      .trim()
+      .replace(/^Bearer\s+/i, "")
+      .replace(/^"+|"+$/g, "");
+
+    const result = await jwtVerify(token, SECRET, {
+      algorithms: ["HS256"],
+    });
+
+    return (result.payload as any).user_id ?? null;
+  } catch {
+    return null;
+  }
+}
+
+/* -------------------- GET POSTS -------------------- */
+export async function GET(req: NextRequest) {
+  try {
+    const userId = await getUserIdFromRequest(req);
+
     const posts = await prisma.post.findMany({
       orderBy: { createdAt: "desc" },
       include: {
@@ -63,22 +96,30 @@ export async function GET() {
           },
         },
         files: true,
+        reactions: true,
       },
     });
 
-    // ✅ Rewrite file URLs here (THIS IS THE PLACE)
-    const postsWithFileUrls = posts.map((post) => ({
-      ...post,
-      files: post.files.map((f) => ({
-        ...f,
-        url: `/api/files/${f.url}`, // f.url = "uploads/xxx.png"
+    const formatted = posts.map((p) => ({
+      id: p.id,
+      content: p.content,
+      createdAt: p.createdAt,
+      author: p.author,
+      files: p.files.map((f) => ({
+        url: `/api/files/${f.url}`,
+        type: f.type || "document",
       })),
+      likeCount: p.reactions.filter((r) => r.type === "LIKE").length,
+      likedByMe: userId
+        ? p.reactions.some(
+            (r) => r.userId === userId && r.type === "LIKE"
+          )
+        : false,
     }));
 
-    // ✅ Return the rewritten data
-    return NextResponse.json({ posts: postsWithFileUrls });
+    return NextResponse.json({ posts: formatted });
   } catch (err) {
-    console.error("Fetch posts error:", err);
+    console.error("GET POSTS ERROR:", err);
     return NextResponse.json(
       { error: "Failed to fetch posts" },
       { status: 500 }
