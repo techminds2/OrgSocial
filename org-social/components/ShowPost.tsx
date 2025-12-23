@@ -1,12 +1,22 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { ActionIcon, Text } from "@mantine/core";
-import CommentSection from "./CommentSection";
+import { useEffect, useState, FormEvent } from "react";
+import { ActionIcon, Text, TextInput, Button } from "@mantine/core";
 
 type FileType = {
   url: string;
   type: "image" | "video" | "document";
+};
+
+type Comment = {
+  id: number;
+  content: string;
+  createdAt: string;
+  author: {
+    id: number;
+    username: string;
+    profileImage?: string | null;
+  };
 };
 
 type Post = {
@@ -16,39 +26,28 @@ type Post = {
   files: FileType[];
   likedByMe: boolean;
   likeCount: number;
-  comments: {
-    id: number;
-    content: string;
-    createdAt: string;
-    author: {
-      id: number;
-      username: string;
-      profileImage?: string | null;
-    };
-  }[];
   author: {
     id: number;
     username: string;
     profileImage?: string | null;
   };
+  comments: Comment[];
 };
-
-
-
 
 export default function ShowPosts() {
   const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(true);
   const [likingId, setLikingId] = useState<number | null>(null);
+  const [commentingId, setCommentingId] = useState<number | null>(null);
+  const [commentInputs, setCommentInputs] = useState<Record<number, string>>(
+    {}
+  );
 
   useEffect(() => {
     const fetchPosts = async () => {
       try {
-        const res = await fetch("/api/posts", {
-          credentials: "include", 
-        });
+        const res = await fetch("/api/posts", { credentials: "include" });
         if (!res.ok) throw new Error("Failed to fetch posts");
-
         const data = await res.json();
         setPosts(data.posts || []);
       } catch (err) {
@@ -57,10 +56,10 @@ export default function ShowPosts() {
         setLoading(false);
       }
     };
-
     fetchPosts();
   }, []);
 
+  /* ---------------- LIKE ---------------- */
   const toggleLike = async (postId: number) => {
     if (likingId === postId) return;
     setLikingId(postId);
@@ -68,28 +67,58 @@ export default function ShowPosts() {
     try {
       const res = await fetch(`/api/posts/${postId}/reactions`, {
         method: "POST",
-        credentials: "include", 
+        credentials: "include",
       });
-
       if (!res.ok) return;
-
       const { liked } = await res.json();
-
       setPosts((prev) =>
         prev.map((p) =>
           p.id === postId
             ? {
                 ...p,
                 likedByMe: liked,
-                likeCount: liked
-                  ? p.likeCount + 1
-                  : p.likeCount - 1,
+                likeCount: liked ? p.likeCount + 1 : p.likeCount - 1,
               }
             : p
         )
       );
     } finally {
       setLikingId(null);
+    }
+  };
+
+  /* ---------------- ADD COMMENT ---------------- */
+  const submitComment = async (postId: number, e: FormEvent) => {
+    e.preventDefault();
+    if (commentingId === postId) return;
+
+    const content = commentInputs[postId]?.trim();
+    if (!content) return;
+
+    setCommentingId(postId);
+
+    try {
+      const res = await fetch(`/api/posts/${postId}/comments`, {
+        method: "POST",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ content }),
+      });
+
+      if (!res.ok) throw new Error("Failed to post comment");
+      const { comment } = await res.json();
+
+      setPosts((prev) =>
+        prev.map((p) =>
+          p.id === postId ? { ...p, comments: [...p.comments, comment] } : p
+        )
+      );
+
+      setCommentInputs((prev) => ({ ...prev, [postId]: "" }));
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setCommentingId(null);
     }
   };
 
@@ -103,12 +132,10 @@ export default function ShowPosts() {
           {/* Author info */}
           <div className="flex items-center gap-3 mb-2">
             <img
-              src={post.author.profileImage || "/noProfilePic.jpg"}
+              src={post.author.profileImage || "/temp.png"}
               alt={post.author.username}
               className="w-10 h-10 rounded-full object-cover border"
-              onError={(e) => {
-                e.currentTarget.src = "/noProfilePic.jpg";
-              }}
+              onError={(e) => (e.currentTarget.src = "/temp.png")}
             />
             <div>
               <p className="font-semibold">{post.author.username}</p>
@@ -153,7 +180,8 @@ export default function ShowPosts() {
             </div>
           )}
 
-          <div className="flex items-center gap-3">
+          {/* Likes */}
+          <div className="flex items-center gap-3 mb-2">
             <ActionIcon
               variant={post.likedByMe ? "filled" : "subtle"}
               color="blue"
@@ -164,10 +192,51 @@ export default function ShowPosts() {
               👍
             </ActionIcon>
             <Text size="sm">{post.likeCount}</Text>
-            <CommentSection
-  postId={post.id}
-  initialComments={post.comments}
-/>
+          </div>
+
+          {/* Comments */}
+          <div className="mt-2">
+            <p className="font-semibold mb-1">Comments:</p>
+            <div className="flex flex-col gap-2 mb-2">
+              {post.comments.map((c) => (
+                <div key={c.id} className="flex items-start gap-2">
+                  <img
+                    src={c.author.profileImage || "/temp.png"}
+                    alt={c.author.username}
+                    className="w-6 h-6 rounded-full object-cover border"
+                    onError={(e) => (e.currentTarget.src = "/temp.png")}
+                  />
+                  <div>
+                    <p className="text-sm font-semibold">{c.author.username}</p>
+                    <p className="text-sm">{c.content}</p>
+                    <p className="text-xs text-gray-400">
+                      {new Date(c.createdAt).toLocaleString()}
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Add comment input */}
+            <form
+              onSubmit={(e) => submitComment(post.id, e)}
+              className="flex gap-2"
+            >
+              <TextInput
+                placeholder="Add a comment..."
+                value={commentInputs[post.id] || ""}
+                onChange={(e) =>
+                  setCommentInputs((prev) => ({
+                    ...prev,
+                    [post.id]: e.target.value,
+                  }))
+                }
+                className="flex-1"
+              />
+              <Button type="submit" loading={commentingId === post.id}>
+                Post
+              </Button>
+            </form>
           </div>
         </div>
       ))}
