@@ -53,14 +53,10 @@ import { jwtVerify } from "jose";
 
 export const runtime = "nodejs";
 
-const SECRET = new TextEncoder().encode(
-  process.env.DJANGO_JWT_SECRET || ""
-);
+const SECRET = new TextEncoder().encode(process.env.DJANGO_JWT_SECRET || "");
 
 /* -------------------- AUTH HELPER -------------------- */
-async function getUserIdFromRequest(
-  req: NextRequest
-): Promise<number | null> {
+async function getUserIdFromRequest(req: NextRequest): Promise<number | null> {
   try {
     const raw = req.cookies.get("accessToken")?.value;
     if (!raw) return null;
@@ -97,6 +93,18 @@ export async function GET(req: NextRequest) {
         },
         files: true,
         reactions: true,
+        comments: {
+          orderBy: { createdAt: "asc" },
+          include: {
+            author: {
+              select: {
+                id: true,
+                username: true,
+                profileImage: true,
+              },
+            },
+          },
+        },
       },
     });
 
@@ -111,10 +119,14 @@ export async function GET(req: NextRequest) {
       })),
       likeCount: p.reactions.filter((r) => r.type === "LIKE").length,
       likedByMe: userId
-        ? p.reactions.some(
-            (r) => r.userId === userId && r.type === "LIKE"
-          )
+        ? p.reactions.some((r) => r.userId === userId && r.type === "LIKE")
         : false,
+      comments: p.comments.map((c) => ({
+        id: c.id,
+        content: c.content,
+        createdAt: c.createdAt,
+        author: c.author,
+      })),
     }));
 
     return NextResponse.json({ posts: formatted });
