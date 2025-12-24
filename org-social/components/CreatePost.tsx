@@ -1,6 +1,13 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
+import {
+  Modal,
+  Button,
+  useMantineTheme,
+  useMantineColorScheme,
+} from "@mantine/core";
+import TipTapEditor from "./TipTapEditor";
 
 type SelectedFile = {
   file: File;
@@ -11,13 +18,21 @@ export default function CreatePost() {
   const [content, setContent] = useState("");
   const [files, setFiles] = useState<SelectedFile[]>([]);
   const [loading, setLoading] = useState(false);
+  const [isEditorOpen, setIsEditorOpen] = useState(false);
+
+  const theme = useMantineTheme();
+  const { colorScheme } = useMantineColorScheme();
+
+  useEffect(() => {
+    console.log("isEditorOpen:", isEditorOpen);
+  }, [isEditorOpen]);
 
   const photoRef = useRef<HTMLInputElement>(null);
   const videoRef = useRef<HTMLInputElement>(null);
   const docRef = useRef<HTMLInputElement>(null);
 
   const handleSelectFile = (file: File, type: SelectedFile["type"]) => {
-    setFiles(prev => [...prev, { file, type }]);
+    setFiles((prev) => [...prev, { file, type }]);
   };
 
   const handlePost = async () => {
@@ -26,7 +41,7 @@ export default function CreatePost() {
     const formData = new FormData();
     formData.append("content", content);
 
-    files.forEach(f => {
+    files.forEach((f) => {
       formData.append("files", f.file);
       formData.append("types", f.type);
     });
@@ -40,9 +55,9 @@ export default function CreatePost() {
       const data = await res.json();
       console.log("POST RESPONSE:", data);
 
-      // reset UI
       setContent("");
       setFiles([]);
+      setIsEditorOpen(false);
     } catch (err) {
       console.error("Post failed", err);
     } finally {
@@ -51,8 +66,7 @@ export default function CreatePost() {
   };
 
   return (
-    <div className="bg-white rounded-2xl shadow p-4 w-full max-w-2xl">
-      {/* Top */}
+    <div className="bg-white rounded-2xl shadow p-4 w-full max-w-2xl relative">
       <div className="flex gap-4">
         <img
           src="/temp.png"
@@ -60,17 +74,18 @@ export default function CreatePost() {
           className="w-12 h-12 rounded-full object-cover border"
         />
 
-        <textarea
-          placeholder="Write something..."
-          value={content}
-          onChange={e => setContent(e.target.value)}
-          rows={3}
-          className="w-full resize-none rounded-xl border border-gray-300
-                     p-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-        />
+        <div
+          onClick={() => setIsEditorOpen(true)}
+          className="flex-1 border rounded-xl p-2 cursor-text text-gray-400"
+        >
+          {content ? (
+            <div dangerouslySetInnerHTML={{ __html: content }} />
+          ) : (
+            "Write something..."
+          )}
+        </div>
       </div>
 
-      {/* Preview selected files */}
       {files.length > 0 && (
         <div className="mt-4 flex gap-2 flex-wrap">
           {files.map((f, i) => (
@@ -81,13 +96,12 @@ export default function CreatePost() {
         </div>
       )}
 
-      {/* Hidden file inputs */}
       <input
         ref={photoRef}
         type="file"
         accept="image/*"
         hidden
-        onChange={e =>
+        onChange={(e) =>
           e.target.files && handleSelectFile(e.target.files[0], "image")
         }
       />
@@ -96,7 +110,7 @@ export default function CreatePost() {
         type="file"
         accept="video/*"
         hidden
-        onChange={e =>
+        onChange={(e) =>
           e.target.files && handleSelectFile(e.target.files[0], "video")
         }
       />
@@ -105,20 +119,26 @@ export default function CreatePost() {
         type="file"
         accept=".pdf,.doc,.docx"
         hidden
-        onChange={e =>
+        onChange={(e) =>
           e.target.files && handleSelectFile(e.target.files[0], "document")
         }
       />
 
-      {/* Actions */}
       <div className="mt-4 flex items-center justify-between">
         <div className="flex gap-4 text-sm text-gray-600">
-          <button onClick={() => photoRef.current?.click()}>📷 Photo</button>
-          <button onClick={() => videoRef.current?.click()}>🎥 Video</button>
-          <button onClick={() => docRef.current?.click()}>📄 Document</button>
+          <button type="button" onClick={() => photoRef.current?.click()}>
+            📷 Photo
+          </button>
+          <button type="button" onClick={() => videoRef.current?.click()}>
+            🎥 Video
+          </button>
+          <button type="button" onClick={() => docRef.current?.click()}>
+            📄 Document
+          </button>
         </div>
 
         <button
+          type="button"
           onClick={handlePost}
           disabled={(!content.trim() && files.length === 0) || loading}
           className={`px-4 py-2 rounded-xl text-sm font-semibold text-white
@@ -133,6 +153,44 @@ export default function CreatePost() {
           {loading ? "Posting..." : "Post"}
         </button>
       </div>
+
+      <Modal
+        opened={isEditorOpen}
+        onClose={() => setIsEditorOpen(false)}
+        title="Add Post"
+        size="xl"
+        centered
+        withinPortal
+        zIndex={10000}
+        overlayProps={{
+          color:
+            colorScheme === "dark"
+              ? theme.colors.dark[9]
+              : theme.colors.gray[2],
+          opacity: 0.75,
+          blur: 3,
+        }}
+      >
+        <div className="flex flex-col h-[65vh]">
+          <TipTapEditor
+            value={content}
+            onChange={setContent}
+            placeholder="Write something..."
+            className="flex-1 overflow-auto"
+            showToolbar
+          />
+
+          <div className="flex justify-end mt-4">
+            <Button
+              onClick={handlePost}
+              disabled={!content.trim() && files.length === 0}
+              loading={loading}
+            >
+              Post
+            </Button>
+          </div>
+        </div>
+      </Modal>
     </div>
   );
 }

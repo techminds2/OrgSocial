@@ -146,7 +146,10 @@ export default function ShowPosts() {
           </div>
 
           {/* Post content */}
-          <p className="mb-3">{post.content}</p>
+          <div
+            className="mb-3 prose max-w-none"
+            dangerouslySetInnerHTML={{ __html: post.content }}
+          />
 
           {/* Files */}
           {post.files.length > 0 && (
