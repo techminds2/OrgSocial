@@ -14,6 +14,30 @@ type SelectedFile = {
   type: "image" | "video" | "document";
 };
 
+const stripHtml = (html: string) =>
+  html
+    .replace(/<style[^>]*>[\s\S]*?<\/style>/gi, "")
+    .replace(/<script[^>]*>[\s\S]*?<\/script>/gi, "")
+    .replace(/<\/?[^>]+(>|$)/g, " ")
+    .replace(/&nbsp;/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+
+const isEmptyTipTap = (html: string) => {
+  const v = (html || "").trim();
+  if (!v) return true;
+
+  // common "empty editor" outputs
+  if (v === "<p></p>" || v === "<p><br></p>") return true;
+
+  // if there's no real text AND no media embeds, treat as empty
+  const text = stripHtml(v);
+  const hasMedia =
+    /<(img|video|iframe|audio)\b/i.test(v) || /<a\b[^>]*href=/i.test(v);
+
+  return text.length === 0 && !hasMedia;
+};
+
 export default function CreatePost() {
   const [content, setContent] = useState("");
   const [files, setFiles] = useState<SelectedFile[]>([]);
@@ -22,6 +46,9 @@ export default function CreatePost() {
 
   const theme = useMantineTheme();
   const { colorScheme } = useMantineColorScheme();
+
+  const isBlank = isEmptyTipTap(content);
+  const canPost = !isBlank || files.length > 0;
 
   useEffect(() => {
     console.log("isEditorOpen:", isEditorOpen);
@@ -78,8 +105,11 @@ export default function CreatePost() {
           onClick={() => setIsEditorOpen(true)}
           className="flex-1 border rounded-xl p-2 cursor-text text-gray-400"
         >
-          {content ? (
-            <div dangerouslySetInnerHTML={{ __html: content }} />
+          {!isBlank ? (
+            <div
+              className="prose prose-sm max-w-none text-gray-900"
+              dangerouslySetInnerHTML={{ __html: content }}
+            />
           ) : (
             "Write something..."
           )}
@@ -140,12 +170,12 @@ export default function CreatePost() {
         <button
           type="button"
           onClick={handlePost}
-          disabled={(!content.trim() && files.length === 0) || loading}
+          disabled={!canPost || loading}
           className={`px-4 py-2 rounded-xl text-sm font-semibold text-white
             ${
               loading
                 ? "bg-gray-400"
-                : content.trim() || files.length
+                : canPost
                 ? "bg-blue-600 hover:bg-blue-700"
                 : "bg-gray-300 cursor-not-allowed"
             }`}
@@ -175,17 +205,13 @@ export default function CreatePost() {
           <TipTapEditor
             value={content}
             onChange={setContent}
-            placeholder="Write something..."
+            // placeholder="Write something..."
             className="flex-1 overflow-auto"
             showToolbar
           />
 
           <div className="flex justify-end mt-4">
-            <Button
-              onClick={handlePost}
-              disabled={!content.trim() && files.length === 0}
-              loading={loading}
-            >
+            <Button onClick={handlePost} disabled={!canPost} loading={loading}>
               Post
             </Button>
           </div>
