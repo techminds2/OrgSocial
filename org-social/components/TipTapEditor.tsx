@@ -24,8 +24,7 @@ export default function TipTapEditor({
 }: Props) {
   const lastEmittedHtmlRef = useRef<string>("");
 
-    const [, forceUpdate] = useReducer((x) => x + 1, 0);
-
+  const [, forceUpdate] = useReducer((x) => x + 1, 0);
 
   const editor = useEditor({
     immediatelyRender: false,
@@ -47,7 +46,7 @@ export default function TipTapEditor({
     editorProps: {
       attributes: {
         class:
-          "ProseMirror prose prose-sm max-w-none w-full min-h-[80px] p-3 focus:outline-none",
+          "ProseMirror post-content w-full min-h-[80px] p-3 focus:outline-none",
         "data-placeholder": placeholder,
       },
     },

@@ -146,8 +146,11 @@ export default function ShowPosts() {
           </div>
 
           {/* Post content */}
+
+
+          
           <div
-            className="mb-3 prose max-w-none"
+            className="post-content mb-3"
             dangerouslySetInnerHTML={{ __html: post.content }}
           />
 

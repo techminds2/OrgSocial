@@ -82,6 +82,10 @@ export default function CreatePost() {
       const data = await res.json();
       console.log("POST RESPONSE:", data);
 
+      window.dispatchEvent(
+        new CustomEvent("post-created", { detail: data.post })
+      );
+
       setContent("");
       setFiles([]);
       setIsEditorOpen(false);
@@ -107,7 +111,7 @@ export default function CreatePost() {
         >
           {!isBlank ? (
             <div
-              className="prose prose-sm max-w-none text-gray-900"
+              className="post-content text-gray-900"
               dangerouslySetInnerHTML={{ __html: content }}
             />
           ) : (
