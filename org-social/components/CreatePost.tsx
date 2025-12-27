@@ -58,6 +58,28 @@ export default function CreatePost() {
   const videoRef = useRef<HTMLInputElement>(null);
   const docRef = useRef<HTMLInputElement>(null);
 
+  // ✅ focus editor automatically when modal opens (no Mantine onOpened needed)
+  const editorHostRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!isEditorOpen) return;
+
+    const t = setTimeout(() => {
+      const root = editorHostRef.current;
+      if (!root) return;
+
+      const el =
+        (root.querySelector(".ProseMirror") as HTMLElement | null) ||
+        (root.querySelector(
+          '[contenteditable="true"]'
+        ) as HTMLElement | null);
+
+      el?.focus();
+    }, 50);
+
+    return () => clearTimeout(t);
+  }, [isEditorOpen]);
+
   const handleSelectFile = (file: File, type: SelectedFile["type"]) => {
     setFiles((prev) => [...prev, { file, type }]);
   };
@@ -77,11 +99,19 @@ export default function CreatePost() {
       const res = await fetch("/api/upload", {
         method: "POST",
         body: formData,
+        credentials: "include",
       });
+
+      if (!res.ok) {
+        const t = await res.text().catch(() => "");
+        console.error("UPLOAD FAILED:", res.status, t);
+        return;
+      }
 
       const data = await res.json();
       console.log("POST RESPONSE:", data);
 
+      // ✅ tell ShowPosts to auto-refresh
       window.dispatchEvent(
         new CustomEvent("post-created", { detail: data.post })
       );
@@ -206,13 +236,16 @@ export default function CreatePost() {
         }}
       >
         <div className="flex flex-col h-[65vh]">
-          <TipTapEditor
-            value={content}
-            onChange={setContent}
-            // placeholder="Write something..."
-            className="flex-1 overflow-auto"
-            showToolbar
-          />
+          {/* ✅ wrapper to find ProseMirror and focus */}
+          <div ref={editorHostRef} className="flex-1 overflow-auto">
+            <TipTapEditor
+              value={content}
+              onChange={setContent}
+              // placeholder="Write something..."
+              className="h-full"
+              showToolbar
+            />
+          </div>
 
           <div className="flex justify-end mt-4">
             <Button onClick={handlePost} disabled={!canPost} loading={loading}>

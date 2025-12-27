@@ -1,7 +1,14 @@
 "use client";
 
-import { useEffect, useState, FormEvent } from "react";
-import { ActionIcon, Text, TextInput, Button, Modal } from "@mantine/core";
+import { useEffect, useMemo, useState, FormEvent } from "react";
+import {
+  ActionIcon,
+  Text,
+  TextInput,
+  Button,
+  Modal,
+  ScrollArea,
+} from "@mantine/core";
 import TipTapEditor from "./TipTapEditor";
 
 type FileType = {
@@ -39,6 +46,7 @@ type Post = {
 export default function ShowPosts() {
   const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(true);
+
   const [likingId, setLikingId] = useState<number | null>(null);
   const [commentingId, setCommentingId] = useState<number | null>(null);
   const [commentInputs, setCommentInputs] = useState<Record<number, string>>(
@@ -48,23 +56,42 @@ export default function ShowPosts() {
   const [editingPost, setEditingPost] = useState<Post | null>(null);
   const [editContent, setEditContent] = useState("");
   const [savingEdit, setSavingEdit] = useState(false);
+
   const [deletingId, setDeletingId] = useState<number | null>(null);
 
+  // ✅ comments modal
+  const [commentsPost, setCommentsPost] = useState<Post | null>(null);
+
   useEffect(() => {
-    const fetchPosts = async () => {
-      try {
-        const res = await fetch("/api/posts", { credentials: "include" });
-        if (!res.ok) throw new Error("Failed to fetch posts");
-        const data = await res.json();
-        setPosts(data.posts || []);
-      } catch (err) {
-        console.error(err);
-      } finally {
-        setLoading(false);
-      }
-    };
+  const fetchPosts = async () => {
+    try {
+      const res = await fetch("/api/posts", { credentials: "include" });
+      if (!res.ok) throw new Error("Failed to fetch posts");
+      const data = await res.json();
+      setPosts(data.posts || []);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // initial load
+  fetchPosts();
+
+  // ✅ auto refresh when a post is created
+  const onPostCreated = () => {
+    setLoading(true);
     fetchPosts();
-  }, []);
+  };
+
+  window.addEventListener("post-created", onPostCreated);
+
+  return () => {
+    window.removeEventListener("post-created", onPostCreated);
+  };
+}, []);
+
 
   /* ---------------- LIKE ---------------- */
   const toggleLike = async (postId: number) => {
@@ -77,6 +104,7 @@ export default function ShowPosts() {
         credentials: "include",
       });
       if (!res.ok) return;
+
       const { liked } = await res.json();
       setPosts((prev) =>
         prev.map((p) =>
@@ -119,6 +147,13 @@ export default function ShowPosts() {
         prev.map((p) =>
           p.id === postId ? { ...p, comments: [...p.comments, comment] } : p
         )
+      );
+
+      // keep modal post in sync too
+      setCommentsPost((cur) =>
+        cur && cur.id === postId
+          ? { ...cur, comments: [...cur.comments, comment] }
+          : cur
       );
 
       setCommentInputs((prev) => ({ ...prev, [postId]: "" }));
@@ -174,7 +209,6 @@ export default function ShowPosts() {
         credentials: "include",
       });
 
-      // ✅ show exact error from server
       if (!res.ok) {
         const text = await res.text().catch(() => "");
         console.error("DELETE FAILED:", {
@@ -186,12 +220,24 @@ export default function ShowPosts() {
       }
 
       setPosts((prev) => prev.filter((p) => p.id !== postId));
+      setCommentsPost((cur) => (cur?.id === postId ? null : cur));
+      setEditingPost((cur) => (cur?.id === postId ? null : cur));
     } catch (err) {
       console.error(err);
     } finally {
       setDeletingId(null);
     }
   };
+
+  /* ---------------- COMMENTS MODAL helpers ---------------- */
+  const openComments = (post: Post) => setCommentsPost(post);
+
+  const media = useMemo(() => {
+    if (!commentsPost) return null;
+    const img = commentsPost.files?.find((f) => f.type === "image") || null;
+    const vid = commentsPost.files?.find((f) => f.type === "video") || null;
+    return { img, vid };
+  }, [commentsPost]);
 
   if (loading) return <p className="text-center">Loading posts...</p>;
   if (!posts.length) return <p className="text-center">No posts yet.</p>;
@@ -246,7 +292,7 @@ export default function ShowPosts() {
               dangerouslySetInnerHTML={{ __html: post.content }}
             />
 
-            {/* Files */}
+            {/* Files preview (keep same behavior) */}
             {post.files.length > 0 && (
               <div className="flex gap-2 flex-wrap mb-3">
                 {post.files.map((f, i) => {
@@ -278,7 +324,7 @@ export default function ShowPosts() {
               </div>
             )}
 
-            {/* Likes */}
+            {/* Likes + Comments button (comments NOT shown outside now) */}
             <div className="flex items-center gap-3 mb-2">
               <ActionIcon
                 variant={post.likedByMe ? "filled" : "subtle"}
@@ -290,59 +336,20 @@ export default function ShowPosts() {
                 👍
               </ActionIcon>
               <Text size="sm">{post.likeCount}</Text>
-            </div>
 
-            {/* Comments */}
-            <div className="mt-2">
-              <p className="font-semibold mb-1">Comments:</p>
-              <div className="flex flex-col gap-2 mb-2">
-                {post.comments.map((c) => (
-                  <div key={c.id} className="flex items-start gap-2">
-                    <img
-                      src={c.author.profileImage || "/temp.png"}
-                      alt={c.author.username}
-                      className="w-6 h-6 rounded-full object-cover border"
-                      onError={(e) => (e.currentTarget.src = "/temp.png")}
-                    />
-                    <div>
-                      <p className="text-sm font-semibold">
-                        {c.author.username}
-                      </p>
-                      <p className="text-sm">{c.content}</p>
-                      <p className="text-xs text-gray-400">
-                        {new Date(c.createdAt).toLocaleString()}
-                      </p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-
-              {/* Add comment input */}
-              <form
-                onSubmit={(e) => submitComment(post.id, e)}
-                className="flex gap-2"
+              <Button
+                size="xs"
+                variant="subtle"
+                onClick={() => openComments(post)}
               >
-                <TextInput
-                  placeholder="Add a comment..."
-                  value={commentInputs[post.id] || ""}
-                  onChange={(e) =>
-                    setCommentInputs((prev) => ({
-                      ...prev,
-                      [post.id]: e.target.value,
-                    }))
-                  }
-                  className="flex-1"
-                />
-                <Button type="submit" loading={commentingId === post.id}>
-                  Post
-                </Button>
-              </form>
+                💬 Comments ({post.comments.length})
+              </Button>
             </div>
           </div>
         ))}
       </div>
 
-      {/* Edit Modal */}
+      {/* Edit Modal (unchanged) */}
       <Modal
         opened={!!editingPost}
         onClose={() => setEditingPost(null)}
@@ -369,6 +376,100 @@ export default function ShowPosts() {
             </Button>
           </div>
         </div>
+      </Modal>
+
+      {/* ✅ Comments Modal (image/video LEFT, comments RIGHT) */}
+      <Modal
+        opened={!!commentsPost}
+        onClose={() => setCommentsPost(null)}
+        title={
+          commentsPost ? `Comments · Post #${commentsPost.id}` : "Comments"
+        }
+        size="xl"
+        centered
+        withinPortal
+        zIndex={11000}
+      >
+        {commentsPost && (
+          <div className="flex gap-4 h-[70vh]">
+            {/* LEFT: media (only if exists) */}
+            <div className="w-1/2 bg-gray-50 rounded-xl flex items-center justify-center overflow-hidden">
+              {media?.img ? (
+                <img
+                  src={media.img.url}
+                  className="w-full h-full object-contain"
+                />
+              ) : media?.vid ? (
+                <video controls className="w-full h-full">
+                  <source src={media.vid.url} />
+                </video>
+              ) : (
+                <div className="text-sm text-gray-500 p-6 text-center">
+                  No media attached
+                </div>
+              )}
+            </div>
+
+            {/* RIGHT: comments */}
+            {/* RIGHT: comments */}
+            <div className="w-1/2 flex flex-col border-l pl-3">
+              {/* Comments list (scrolls) */}
+              <ScrollArea className="flex-1" offsetScrollbars>
+                <div className="flex flex-col gap-3 pr-2 pb-4">
+                  {commentsPost.comments.length === 0 ? (
+                    <p className="text-sm text-gray-500">No comments yet.</p>
+                  ) : (
+                    commentsPost.comments.map((c) => (
+                      <div key={c.id} className="flex items-start gap-2">
+                        <img
+                          src={c.author.profileImage || "/temp.png"}
+                          alt={c.author.username}
+                          className="w-7 h-7 rounded-full object-cover border"
+                          onError={(e) => (e.currentTarget.src = "/temp.png")}
+                        />
+                        <div className="bg-gray-50 rounded-lg px-3 py-2 w-full">
+                          <div className="flex items-center justify-between gap-2">
+                            <p className="text-sm font-semibold">
+                              {c.author.username}
+                            </p>
+                            <p className="text-xs text-gray-400">
+                              {new Date(c.createdAt).toLocaleString()}
+                            </p>
+                          </div>
+                          <p className="text-sm">{c.content}</p>
+                        </div>
+                      </div>
+                    ))
+                  )}
+                </div>
+              </ScrollArea>
+
+              {/* ✅ Fixed bottom comment input */}
+              <form
+                onSubmit={(e) => submitComment(commentsPost.id, e)}
+                className="pt-3 mt-2 border-t flex gap-2 bg-white sticky bottom-0"
+              >
+                <TextInput
+                  placeholder="Write a comment..."
+                  value={commentInputs[commentsPost.id] || ""}
+                  onChange={(e) =>
+                    setCommentInputs((prev) => ({
+                      ...prev,
+                      [commentsPost.id]: e.target.value,
+                    }))
+                  }
+                  className="flex-1"
+                />
+                <Button
+                  type="submit"
+                  loading={commentingId === commentsPost.id}
+                >
+                  Post
+                </Button>
+              </form>
+            </div>
+          </div>
+        )}
       </Modal>
     </>
   );
