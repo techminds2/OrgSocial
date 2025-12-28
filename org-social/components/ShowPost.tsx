@@ -1,3 +1,4 @@
+// ShowPosts.tsx
 "use client";
 
 import { useEffect, useMemo, useState, FormEvent } from "react";
@@ -8,6 +9,7 @@ import {
   Button,
   Modal,
   ScrollArea,
+  Menu, // ✅ NEW
 } from "@mantine/core";
 import TipTapEditor from "./TipTapEditor";
 
@@ -31,6 +33,8 @@ type Post = {
   id: number;
   content: string;
   createdAt: string;
+  updatedAt?: string;
+  isEdited?: boolean;
   files: FileType[];
   likedByMe: boolean;
   likeCount: number;
@@ -56,6 +60,10 @@ export default function ShowPosts() {
   const [editingPost, setEditingPost] = useState<Post | null>(null);
   const [editContent, setEditContent] = useState("");
   const [savingEdit, setSavingEdit] = useState(false);
+
+  // ✅ NEW: attachment edit state
+  const [editKeepFiles, setEditKeepFiles] = useState<FileType[]>([]);
+  const [editNewFiles, setEditNewFiles] = useState<File[]>([]);
 
   const [deletingId, setDeletingId] = useState<number | null>(null);
 
@@ -167,6 +175,8 @@ export default function ShowPosts() {
   const openEdit = (post: Post) => {
     setEditingPost(post);
     setEditContent(post.content || "");
+    setEditKeepFiles(post.files || []);
+    setEditNewFiles([]);
   };
 
   const saveEdit = async () => {
@@ -174,17 +184,38 @@ export default function ShowPosts() {
     setSavingEdit(true);
 
     try {
+      const fd = new FormData();
+      fd.append("content", editContent);
+
+      // keepKeys must be raw keys stored in DB, not "/api/files/..."
+      const keepKeys = (editKeepFiles || []).map((f) =>
+        f.url.startsWith("/api/files/")
+          ? f.url.replace("/api/files/", "")
+          : f.url
+      );
+
+      fd.append("keepKeys", JSON.stringify(keepKeys));
+
+      for (const file of editNewFiles) {
+        fd.append("files", file);
+      }
+
       const res = await fetch(`/api/posts/${editingPost.id}`, {
         method: "PATCH",
         credentials: "include",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ content: editContent }),
+        body: fd,
       });
+
       if (!res.ok) throw new Error("Failed to update post");
       const data = await res.json();
 
       setPosts((prev) =>
         prev.map((p) => (p.id === editingPost.id ? { ...p, ...data.post } : p))
+      );
+
+      // keep modal in sync if open
+      setCommentsPost((cur) =>
+        cur && cur.id === editingPost.id ? { ...cur, ...data.post } : cur
       );
 
       setEditingPost(null);
@@ -259,29 +290,37 @@ export default function ShowPosts() {
                   <p className="font-semibold">{post.author.username}</p>
                   <p className="text-xs text-gray-500">
                     {new Date(post.createdAt).toLocaleString()}
+                    {post.isEdited ? (
+                      <span className="ml-2 text-gray-400">(edited)</span>
+                    ) : null}
                   </p>
                 </div>
               </div>
 
+              {/* ✅ "..." menu for Edit/Delete */}
               {post.isMine && (
-                <div className="flex gap-2">
-                  <Button
-                    size="xs"
-                    variant="light"
-                    onClick={() => openEdit(post)}
-                  >
-                    Edit
-                  </Button>
-                  <Button
-                    size="xs"
-                    color="red"
-                    variant="light"
-                    loading={deletingId === post.id}
-                    onClick={() => deletePost(post.id)}
-                  >
-                    Delete
-                  </Button>
-                </div>
+                <Menu position="bottom-end" withArrow withinPortal>
+                  <Menu.Target>
+                    <ActionIcon
+                      variant="subtle"
+                      radius="xl"
+                      aria-label="Post actions"
+                      loading={deletingId === post.id}
+                    >
+                      ⋯
+                    </ActionIcon>
+                  </Menu.Target>
+
+                  <Menu.Dropdown>
+                    <Menu.Item onClick={() => openEdit(post)}>Edit</Menu.Item>
+                    <Menu.Item
+                      color="red"
+                      onClick={() => deletePost(post.id)}
+                    >
+                      Delete
+                    </Menu.Item>
+                  </Menu.Dropdown>
+                </Menu>
               )}
             </div>
 
@@ -323,7 +362,7 @@ export default function ShowPosts() {
               </div>
             )}
 
-            {/* Likes + Comments button (comments NOT shown outside now) */}
+            {/* Likes + Comments button */}
             <div className="flex items-center gap-3 mb-2">
               <ActionIcon
                 variant={post.likedByMe ? "filled" : "subtle"}
@@ -348,7 +387,7 @@ export default function ShowPosts() {
         ))}
       </div>
 
-      {/* Edit Modal (unchanged) */}
+      {/* Edit Modal */}
       <Modal
         opened={!!editingPost}
         onClose={() => setEditingPost(null)}
@@ -366,6 +405,53 @@ export default function ShowPosts() {
             showToolbar
           />
 
+          {/* attachment editor (unchanged) */}
+          <div className="mt-3">
+            <p className="text-sm font-semibold mb-2">Attachments</p>
+
+            <div className="flex flex-wrap gap-2">
+              {editKeepFiles.map((f, idx) => (
+                <div
+                  key={idx}
+                  className="border rounded p-2 text-xs flex items-center gap-2"
+                >
+                  <span className="truncate max-w-[180px]">
+                    {f.url.split("/").pop()}
+                  </span>
+                  <Button
+                    size="xs"
+                    color="red"
+                    variant="light"
+                    onClick={() =>
+                      setEditKeepFiles((prev) =>
+                        prev.filter((_, i) => i !== idx)
+                      )
+                    }
+                  >
+                    Remove
+                  </Button>
+                </div>
+              ))}
+            </div>
+
+            <div className="mt-3">
+              <input
+                type="file"
+                multiple
+                accept="image/*,video/*,application/pdf"
+                onChange={(e) => {
+                  const files = Array.from(e.target.files || []);
+                  setEditNewFiles((prev) => [...prev, ...files]);
+                }}
+              />
+              {editNewFiles.length > 0 && (
+                <div className="mt-2 text-xs text-gray-600">
+                  New: {editNewFiles.map((f) => f.name).join(", ")}
+                </div>
+              )}
+            </div>
+          </div>
+
           <div className="flex justify-end mt-4 gap-2">
             <Button variant="default" onClick={() => setEditingPost(null)}>
               Cancel
@@ -377,7 +463,7 @@ export default function ShowPosts() {
         </div>
       </Modal>
 
-      {/* ✅ Comments Modal (image/video LEFT, comments RIGHT) */}
+      {/* Comments Modal (unchanged) */}
       <Modal
         opened={!!commentsPost}
         onClose={() => setCommentsPost(null)}
@@ -391,7 +477,6 @@ export default function ShowPosts() {
       >
         {commentsPost && (
           <div className="flex gap-4 h-[70vh]">
-            {/* LEFT: media (only if exists) */}
             <div className="w-1/2 bg-gray-50 rounded-xl flex items-center justify-center overflow-hidden">
               {media?.img ? (
                 <img
@@ -409,10 +494,7 @@ export default function ShowPosts() {
               )}
             </div>
 
-            {/* RIGHT: comments */}
-            {/* RIGHT: comments */}
             <div className="w-1/2 flex flex-col border-l pl-3">
-              {/* Comments list (scrolls) */}
               <ScrollArea className="flex-1" offsetScrollbars>
                 <div className="flex flex-col gap-3 pr-2 pb-4">
                   {commentsPost.comments.length === 0 ? (
@@ -443,7 +525,6 @@ export default function ShowPosts() {
                 </div>
               </ScrollArea>
 
-              {/* ✅ Fixed bottom comment input */}
               <form
                 onSubmit={(e) => submitComment(commentsPost.id, e)}
                 className="pt-3 mt-2 border-t flex gap-2 bg-white sticky bottom-0"

@@ -55,6 +55,17 @@ import { jwtVerify } from "jose";
 
 const SECRET = new TextEncoder().encode(process.env.DJANGO_JWT_SECRET || "");
 
+function normalizeMediaUrl(u?: string | null) {
+  if (!u) return null;
+  const s = String(u).trim();
+  if (!s) return null;
+
+  if (s.startsWith("http://") || s.startsWith("https://")) return s;
+
+  return `/api/files/${s.replace(/^\/+/, "")}`;
+}
+
+
 /* -------------------- AUTH HELPER -------------------- */
 async function getUserIdFromRequest(req: NextRequest): Promise<number | null> {
   try {
@@ -114,9 +125,12 @@ export async function GET(req: NextRequest) {
         id: p.id,
         content: p.content,
         createdAt: p.createdAt,
-        author: p.author,
+        author: {
+          ...p.author,
+          profileImage: normalizeMediaUrl(p.author.profileImage),
+        },
         files: p.files.map((f) => ({
-          url: `/api/files/${f.url}`, // this is the file proxy route
+          url: `/api/files/${f.url}`,
           type: (f.type as any) || "document",
         })),
         likeCount,
@@ -126,7 +140,10 @@ export async function GET(req: NextRequest) {
           id: c.id,
           content: c.content,
           createdAt: c.createdAt,
-          author: c.author,
+          author: {
+            ...c.author,
+            profileImage: normalizeMediaUrl(c.author.profileImage),
+          },
         })),
       };
     });
@@ -134,6 +151,9 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ posts: formatted });
   } catch (err) {
     console.error("GET POSTS ERROR:", err);
-    return NextResponse.json({ error: "Failed to fetch posts" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Failed to fetch posts" },
+      { status: 500 }
+    );
   }
 }

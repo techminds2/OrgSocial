@@ -1274,15 +1274,15 @@ export namespace Prisma {
    */
 
   export type PostCountOutputType = {
+    files: number
     comments: number
     reactions: number
-    files: number
   }
 
   export type PostCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    files?: boolean | PostCountOutputTypeCountFilesArgs
     comments?: boolean | PostCountOutputTypeCountCommentsArgs
     reactions?: boolean | PostCountOutputTypeCountReactionsArgs
-    files?: boolean | PostCountOutputTypeCountFilesArgs
   }
 
   // Custom InputTypes
@@ -1299,6 +1299,13 @@ export namespace Prisma {
   /**
    * PostCountOutputType without action
    */
+  export type PostCountOutputTypeCountFilesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: FileWhereInput
+  }
+
+  /**
+   * PostCountOutputType without action
+   */
   export type PostCountOutputTypeCountCommentsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: CommentWhereInput
   }
@@ -1308,13 +1315,6 @@ export namespace Prisma {
    */
   export type PostCountOutputTypeCountReactionsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: ReactionWhereInput
-  }
-
-  /**
-   * PostCountOutputType without action
-   */
-  export type PostCountOutputTypeCountFilesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: FileWhereInput
   }
 
 
@@ -2521,6 +2521,7 @@ export namespace Prisma {
     id: number | null
     content: string | null
     createdAt: Date | null
+    updatedAt: Date | null
     authorId: number | null
   }
 
@@ -2528,6 +2529,7 @@ export namespace Prisma {
     id: number | null
     content: string | null
     createdAt: Date | null
+    updatedAt: Date | null
     authorId: number | null
   }
 
@@ -2535,6 +2537,7 @@ export namespace Prisma {
     id: number
     content: number
     createdAt: number
+    updatedAt: number
     authorId: number
     _all: number
   }
@@ -2554,6 +2557,7 @@ export namespace Prisma {
     id?: true
     content?: true
     createdAt?: true
+    updatedAt?: true
     authorId?: true
   }
 
@@ -2561,6 +2565,7 @@ export namespace Prisma {
     id?: true
     content?: true
     createdAt?: true
+    updatedAt?: true
     authorId?: true
   }
 
@@ -2568,6 +2573,7 @@ export namespace Prisma {
     id?: true
     content?: true
     createdAt?: true
+    updatedAt?: true
     authorId?: true
     _all?: true
   }
@@ -2662,6 +2668,7 @@ export namespace Prisma {
     id: number
     content: string
     createdAt: Date
+    updatedAt: Date
     authorId: number
     _count: PostCountAggregateOutputType | null
     _avg: PostAvgAggregateOutputType | null
@@ -2688,11 +2695,12 @@ export namespace Prisma {
     id?: boolean
     content?: boolean
     createdAt?: boolean
+    updatedAt?: boolean
     authorId?: boolean
     author?: boolean | UserDefaultArgs<ExtArgs>
+    files?: boolean | Post$filesArgs<ExtArgs>
     comments?: boolean | Post$commentsArgs<ExtArgs>
     reactions?: boolean | Post$reactionsArgs<ExtArgs>
-    files?: boolean | Post$filesArgs<ExtArgs>
     _count?: boolean | PostCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["post"]>
 
@@ -2700,6 +2708,7 @@ export namespace Prisma {
     id?: boolean
     content?: boolean
     createdAt?: boolean
+    updatedAt?: boolean
     authorId?: boolean
     author?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["post"]>
@@ -2708,6 +2717,7 @@ export namespace Prisma {
     id?: boolean
     content?: boolean
     createdAt?: boolean
+    updatedAt?: boolean
     authorId?: boolean
     author?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["post"]>
@@ -2716,15 +2726,16 @@ export namespace Prisma {
     id?: boolean
     content?: boolean
     createdAt?: boolean
+    updatedAt?: boolean
     authorId?: boolean
   }
 
-  export type PostOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "content" | "createdAt" | "authorId", ExtArgs["result"]["post"]>
+  export type PostOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "content" | "createdAt" | "updatedAt" | "authorId", ExtArgs["result"]["post"]>
   export type PostInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     author?: boolean | UserDefaultArgs<ExtArgs>
+    files?: boolean | Post$filesArgs<ExtArgs>
     comments?: boolean | Post$commentsArgs<ExtArgs>
     reactions?: boolean | Post$reactionsArgs<ExtArgs>
-    files?: boolean | Post$filesArgs<ExtArgs>
     _count?: boolean | PostCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type PostIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -2738,14 +2749,15 @@ export namespace Prisma {
     name: "Post"
     objects: {
       author: Prisma.$UserPayload<ExtArgs>
+      files: Prisma.$FilePayload<ExtArgs>[]
       comments: Prisma.$CommentPayload<ExtArgs>[]
       reactions: Prisma.$ReactionPayload<ExtArgs>[]
-      files: Prisma.$FilePayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: number
       content: string
       createdAt: Date
+      updatedAt: Date
       authorId: number
     }, ExtArgs["result"]["post"]>
     composites: {}
@@ -3142,9 +3154,9 @@ export namespace Prisma {
   export interface Prisma__PostClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     author<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    files<T extends Post$filesArgs<ExtArgs> = {}>(args?: Subset<T, Post$filesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$FilePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     comments<T extends Post$commentsArgs<ExtArgs> = {}>(args?: Subset<T, Post$commentsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CommentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     reactions<T extends Post$reactionsArgs<ExtArgs> = {}>(args?: Subset<T, Post$reactionsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ReactionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-    files<T extends Post$filesArgs<ExtArgs> = {}>(args?: Subset<T, Post$filesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$FilePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -3177,6 +3189,7 @@ export namespace Prisma {
     readonly id: FieldRef<"Post", 'Int'>
     readonly content: FieldRef<"Post", 'String'>
     readonly createdAt: FieldRef<"Post", 'DateTime'>
+    readonly updatedAt: FieldRef<"Post", 'DateTime'>
     readonly authorId: FieldRef<"Post", 'Int'>
   }
     
@@ -3574,6 +3587,30 @@ export namespace Prisma {
   }
 
   /**
+   * Post.files
+   */
+  export type Post$filesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the File
+     */
+    select?: FileSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the File
+     */
+    omit?: FileOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FileInclude<ExtArgs> | null
+    where?: FileWhereInput
+    orderBy?: FileOrderByWithRelationInput | FileOrderByWithRelationInput[]
+    cursor?: FileWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: FileScalarFieldEnum | FileScalarFieldEnum[]
+  }
+
+  /**
    * Post.comments
    */
   export type Post$commentsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -3619,30 +3656,6 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: ReactionScalarFieldEnum | ReactionScalarFieldEnum[]
-  }
-
-  /**
-   * Post.files
-   */
-  export type Post$filesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the File
-     */
-    select?: FileSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the File
-     */
-    omit?: FileOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: FileInclude<ExtArgs> | null
-    where?: FileWhereInput
-    orderBy?: FileOrderByWithRelationInput | FileOrderByWithRelationInput[]
-    cursor?: FileWhereUniqueInput
-    take?: number
-    skip?: number
-    distinct?: FileScalarFieldEnum | FileScalarFieldEnum[]
   }
 
   /**
@@ -6980,6 +6993,7 @@ export namespace Prisma {
     id: 'id',
     content: 'content',
     createdAt: 'createdAt',
+    updatedAt: 'updatedAt',
     authorId: 'authorId'
   };
 
@@ -7187,22 +7201,24 @@ export namespace Prisma {
     id?: IntFilter<"Post"> | number
     content?: StringFilter<"Post"> | string
     createdAt?: DateTimeFilter<"Post"> | Date | string
+    updatedAt?: DateTimeFilter<"Post"> | Date | string
     authorId?: IntFilter<"Post"> | number
     author?: XOR<UserScalarRelationFilter, UserWhereInput>
+    files?: FileListRelationFilter
     comments?: CommentListRelationFilter
     reactions?: ReactionListRelationFilter
-    files?: FileListRelationFilter
   }
 
   export type PostOrderByWithRelationInput = {
     id?: SortOrder
     content?: SortOrder
     createdAt?: SortOrder
+    updatedAt?: SortOrder
     authorId?: SortOrder
     author?: UserOrderByWithRelationInput
+    files?: FileOrderByRelationAggregateInput
     comments?: CommentOrderByRelationAggregateInput
     reactions?: ReactionOrderByRelationAggregateInput
-    files?: FileOrderByRelationAggregateInput
   }
 
   export type PostWhereUniqueInput = Prisma.AtLeast<{
@@ -7212,17 +7228,19 @@ export namespace Prisma {
     NOT?: PostWhereInput | PostWhereInput[]
     content?: StringFilter<"Post"> | string
     createdAt?: DateTimeFilter<"Post"> | Date | string
+    updatedAt?: DateTimeFilter<"Post"> | Date | string
     authorId?: IntFilter<"Post"> | number
     author?: XOR<UserScalarRelationFilter, UserWhereInput>
+    files?: FileListRelationFilter
     comments?: CommentListRelationFilter
     reactions?: ReactionListRelationFilter
-    files?: FileListRelationFilter
   }, "id">
 
   export type PostOrderByWithAggregationInput = {
     id?: SortOrder
     content?: SortOrder
     createdAt?: SortOrder
+    updatedAt?: SortOrder
     authorId?: SortOrder
     _count?: PostCountOrderByAggregateInput
     _avg?: PostAvgOrderByAggregateInput
@@ -7238,6 +7256,7 @@ export namespace Prisma {
     id?: IntWithAggregatesFilter<"Post"> | number
     content?: StringWithAggregatesFilter<"Post"> | string
     createdAt?: DateTimeWithAggregatesFilter<"Post"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"Post"> | Date | string
     authorId?: IntWithAggregatesFilter<"Post"> | number
   }
 
@@ -7484,57 +7503,64 @@ export namespace Prisma {
   export type PostCreateInput = {
     content: string
     createdAt?: Date | string
+    updatedAt?: Date | string
     author: UserCreateNestedOneWithoutPostsInput
+    files?: FileCreateNestedManyWithoutPostInput
     comments?: CommentCreateNestedManyWithoutPostInput
     reactions?: ReactionCreateNestedManyWithoutPostInput
-    files?: FileCreateNestedManyWithoutPostInput
   }
 
   export type PostUncheckedCreateInput = {
     id?: number
     content: string
     createdAt?: Date | string
+    updatedAt?: Date | string
     authorId: number
+    files?: FileUncheckedCreateNestedManyWithoutPostInput
     comments?: CommentUncheckedCreateNestedManyWithoutPostInput
     reactions?: ReactionUncheckedCreateNestedManyWithoutPostInput
-    files?: FileUncheckedCreateNestedManyWithoutPostInput
   }
 
   export type PostUpdateInput = {
     content?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     author?: UserUpdateOneRequiredWithoutPostsNestedInput
+    files?: FileUpdateManyWithoutPostNestedInput
     comments?: CommentUpdateManyWithoutPostNestedInput
     reactions?: ReactionUpdateManyWithoutPostNestedInput
-    files?: FileUpdateManyWithoutPostNestedInput
   }
 
   export type PostUncheckedUpdateInput = {
     id?: IntFieldUpdateOperationsInput | number
     content?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     authorId?: IntFieldUpdateOperationsInput | number
+    files?: FileUncheckedUpdateManyWithoutPostNestedInput
     comments?: CommentUncheckedUpdateManyWithoutPostNestedInput
     reactions?: ReactionUncheckedUpdateManyWithoutPostNestedInput
-    files?: FileUncheckedUpdateManyWithoutPostNestedInput
   }
 
   export type PostCreateManyInput = {
     id?: number
     content: string
     createdAt?: Date | string
+    updatedAt?: Date | string
     authorId: number
   }
 
   export type PostUpdateManyMutationInput = {
     content?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type PostUncheckedUpdateManyInput = {
     id?: IntFieldUpdateOperationsInput | number
     content?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     authorId?: IntFieldUpdateOperationsInput | number
   }
 
@@ -7884,6 +7910,7 @@ export namespace Prisma {
     id?: SortOrder
     content?: SortOrder
     createdAt?: SortOrder
+    updatedAt?: SortOrder
     authorId?: SortOrder
   }
 
@@ -7896,6 +7923,7 @@ export namespace Prisma {
     id?: SortOrder
     content?: SortOrder
     createdAt?: SortOrder
+    updatedAt?: SortOrder
     authorId?: SortOrder
   }
 
@@ -7903,6 +7931,7 @@ export namespace Prisma {
     id?: SortOrder
     content?: SortOrder
     createdAt?: SortOrder
+    updatedAt?: SortOrder
     authorId?: SortOrder
   }
 
@@ -8188,6 +8217,13 @@ export namespace Prisma {
     connect?: UserWhereUniqueInput
   }
 
+  export type FileCreateNestedManyWithoutPostInput = {
+    create?: XOR<FileCreateWithoutPostInput, FileUncheckedCreateWithoutPostInput> | FileCreateWithoutPostInput[] | FileUncheckedCreateWithoutPostInput[]
+    connectOrCreate?: FileCreateOrConnectWithoutPostInput | FileCreateOrConnectWithoutPostInput[]
+    createMany?: FileCreateManyPostInputEnvelope
+    connect?: FileWhereUniqueInput | FileWhereUniqueInput[]
+  }
+
   export type CommentCreateNestedManyWithoutPostInput = {
     create?: XOR<CommentCreateWithoutPostInput, CommentUncheckedCreateWithoutPostInput> | CommentCreateWithoutPostInput[] | CommentUncheckedCreateWithoutPostInput[]
     connectOrCreate?: CommentCreateOrConnectWithoutPostInput | CommentCreateOrConnectWithoutPostInput[]
@@ -8202,7 +8238,7 @@ export namespace Prisma {
     connect?: ReactionWhereUniqueInput | ReactionWhereUniqueInput[]
   }
 
-  export type FileCreateNestedManyWithoutPostInput = {
+  export type FileUncheckedCreateNestedManyWithoutPostInput = {
     create?: XOR<FileCreateWithoutPostInput, FileUncheckedCreateWithoutPostInput> | FileCreateWithoutPostInput[] | FileUncheckedCreateWithoutPostInput[]
     connectOrCreate?: FileCreateOrConnectWithoutPostInput | FileCreateOrConnectWithoutPostInput[]
     createMany?: FileCreateManyPostInputEnvelope
@@ -8223,13 +8259,6 @@ export namespace Prisma {
     connect?: ReactionWhereUniqueInput | ReactionWhereUniqueInput[]
   }
 
-  export type FileUncheckedCreateNestedManyWithoutPostInput = {
-    create?: XOR<FileCreateWithoutPostInput, FileUncheckedCreateWithoutPostInput> | FileCreateWithoutPostInput[] | FileUncheckedCreateWithoutPostInput[]
-    connectOrCreate?: FileCreateOrConnectWithoutPostInput | FileCreateOrConnectWithoutPostInput[]
-    createMany?: FileCreateManyPostInputEnvelope
-    connect?: FileWhereUniqueInput | FileWhereUniqueInput[]
-  }
-
   export type DateTimeFieldUpdateOperationsInput = {
     set?: Date | string
   }
@@ -8240,6 +8269,20 @@ export namespace Prisma {
     upsert?: UserUpsertWithoutPostsInput
     connect?: UserWhereUniqueInput
     update?: XOR<XOR<UserUpdateToOneWithWhereWithoutPostsInput, UserUpdateWithoutPostsInput>, UserUncheckedUpdateWithoutPostsInput>
+  }
+
+  export type FileUpdateManyWithoutPostNestedInput = {
+    create?: XOR<FileCreateWithoutPostInput, FileUncheckedCreateWithoutPostInput> | FileCreateWithoutPostInput[] | FileUncheckedCreateWithoutPostInput[]
+    connectOrCreate?: FileCreateOrConnectWithoutPostInput | FileCreateOrConnectWithoutPostInput[]
+    upsert?: FileUpsertWithWhereUniqueWithoutPostInput | FileUpsertWithWhereUniqueWithoutPostInput[]
+    createMany?: FileCreateManyPostInputEnvelope
+    set?: FileWhereUniqueInput | FileWhereUniqueInput[]
+    disconnect?: FileWhereUniqueInput | FileWhereUniqueInput[]
+    delete?: FileWhereUniqueInput | FileWhereUniqueInput[]
+    connect?: FileWhereUniqueInput | FileWhereUniqueInput[]
+    update?: FileUpdateWithWhereUniqueWithoutPostInput | FileUpdateWithWhereUniqueWithoutPostInput[]
+    updateMany?: FileUpdateManyWithWhereWithoutPostInput | FileUpdateManyWithWhereWithoutPostInput[]
+    deleteMany?: FileScalarWhereInput | FileScalarWhereInput[]
   }
 
   export type CommentUpdateManyWithoutPostNestedInput = {
@@ -8270,7 +8313,7 @@ export namespace Prisma {
     deleteMany?: ReactionScalarWhereInput | ReactionScalarWhereInput[]
   }
 
-  export type FileUpdateManyWithoutPostNestedInput = {
+  export type FileUncheckedUpdateManyWithoutPostNestedInput = {
     create?: XOR<FileCreateWithoutPostInput, FileUncheckedCreateWithoutPostInput> | FileCreateWithoutPostInput[] | FileUncheckedCreateWithoutPostInput[]
     connectOrCreate?: FileCreateOrConnectWithoutPostInput | FileCreateOrConnectWithoutPostInput[]
     upsert?: FileUpsertWithWhereUniqueWithoutPostInput | FileUpsertWithWhereUniqueWithoutPostInput[]
@@ -8310,20 +8353,6 @@ export namespace Prisma {
     update?: ReactionUpdateWithWhereUniqueWithoutPostInput | ReactionUpdateWithWhereUniqueWithoutPostInput[]
     updateMany?: ReactionUpdateManyWithWhereWithoutPostInput | ReactionUpdateManyWithWhereWithoutPostInput[]
     deleteMany?: ReactionScalarWhereInput | ReactionScalarWhereInput[]
-  }
-
-  export type FileUncheckedUpdateManyWithoutPostNestedInput = {
-    create?: XOR<FileCreateWithoutPostInput, FileUncheckedCreateWithoutPostInput> | FileCreateWithoutPostInput[] | FileUncheckedCreateWithoutPostInput[]
-    connectOrCreate?: FileCreateOrConnectWithoutPostInput | FileCreateOrConnectWithoutPostInput[]
-    upsert?: FileUpsertWithWhereUniqueWithoutPostInput | FileUpsertWithWhereUniqueWithoutPostInput[]
-    createMany?: FileCreateManyPostInputEnvelope
-    set?: FileWhereUniqueInput | FileWhereUniqueInput[]
-    disconnect?: FileWhereUniqueInput | FileWhereUniqueInput[]
-    delete?: FileWhereUniqueInput | FileWhereUniqueInput[]
-    connect?: FileWhereUniqueInput | FileWhereUniqueInput[]
-    update?: FileUpdateWithWhereUniqueWithoutPostInput | FileUpdateWithWhereUniqueWithoutPostInput[]
-    updateMany?: FileUpdateManyWithWhereWithoutPostInput | FileUpdateManyWithWhereWithoutPostInput[]
-    deleteMany?: FileScalarWhereInput | FileScalarWhereInput[]
   }
 
   export type PostCreateNestedOneWithoutCommentsInput = {
@@ -8548,18 +8577,20 @@ export namespace Prisma {
   export type PostCreateWithoutAuthorInput = {
     content: string
     createdAt?: Date | string
+    updatedAt?: Date | string
+    files?: FileCreateNestedManyWithoutPostInput
     comments?: CommentCreateNestedManyWithoutPostInput
     reactions?: ReactionCreateNestedManyWithoutPostInput
-    files?: FileCreateNestedManyWithoutPostInput
   }
 
   export type PostUncheckedCreateWithoutAuthorInput = {
     id?: number
     content: string
     createdAt?: Date | string
+    updatedAt?: Date | string
+    files?: FileUncheckedCreateNestedManyWithoutPostInput
     comments?: CommentUncheckedCreateNestedManyWithoutPostInput
     reactions?: ReactionUncheckedCreateNestedManyWithoutPostInput
-    files?: FileUncheckedCreateNestedManyWithoutPostInput
   }
 
   export type PostCreateOrConnectWithoutAuthorInput = {
@@ -8639,6 +8670,7 @@ export namespace Prisma {
     id?: IntFilter<"Post"> | number
     content?: StringFilter<"Post"> | string
     createdAt?: DateTimeFilter<"Post"> | Date | string
+    updatedAt?: DateTimeFilter<"Post"> | Date | string
     authorId?: IntFilter<"Post"> | number
   }
 
@@ -8721,6 +8753,27 @@ export namespace Prisma {
     create: XOR<UserCreateWithoutPostsInput, UserUncheckedCreateWithoutPostsInput>
   }
 
+  export type FileCreateWithoutPostInput = {
+    url: string
+    type?: string | null
+  }
+
+  export type FileUncheckedCreateWithoutPostInput = {
+    id?: number
+    url: string
+    type?: string | null
+  }
+
+  export type FileCreateOrConnectWithoutPostInput = {
+    where: FileWhereUniqueInput
+    create: XOR<FileCreateWithoutPostInput, FileUncheckedCreateWithoutPostInput>
+  }
+
+  export type FileCreateManyPostInputEnvelope = {
+    data: FileCreateManyPostInput | FileCreateManyPostInput[]
+    skipDuplicates?: boolean
+  }
+
   export type CommentCreateWithoutPostInput = {
     content: string
     createdAt?: Date | string
@@ -8765,27 +8818,6 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
-  export type FileCreateWithoutPostInput = {
-    url: string
-    type?: string | null
-  }
-
-  export type FileUncheckedCreateWithoutPostInput = {
-    id?: number
-    url: string
-    type?: string | null
-  }
-
-  export type FileCreateOrConnectWithoutPostInput = {
-    where: FileWhereUniqueInput
-    create: XOR<FileCreateWithoutPostInput, FileUncheckedCreateWithoutPostInput>
-  }
-
-  export type FileCreateManyPostInputEnvelope = {
-    data: FileCreateManyPostInput | FileCreateManyPostInput[]
-    skipDuplicates?: boolean
-  }
-
   export type UserUpsertWithoutPostsInput = {
     update: XOR<UserUpdateWithoutPostsInput, UserUncheckedUpdateWithoutPostsInput>
     create: XOR<UserCreateWithoutPostsInput, UserUncheckedCreateWithoutPostsInput>
@@ -8816,6 +8848,32 @@ export namespace Prisma {
     profileImage?: NullableStringFieldUpdateOperationsInput | string | null
     comments?: CommentUncheckedUpdateManyWithoutAuthorNestedInput
     reactions?: ReactionUncheckedUpdateManyWithoutUserNestedInput
+  }
+
+  export type FileUpsertWithWhereUniqueWithoutPostInput = {
+    where: FileWhereUniqueInput
+    update: XOR<FileUpdateWithoutPostInput, FileUncheckedUpdateWithoutPostInput>
+    create: XOR<FileCreateWithoutPostInput, FileUncheckedCreateWithoutPostInput>
+  }
+
+  export type FileUpdateWithWhereUniqueWithoutPostInput = {
+    where: FileWhereUniqueInput
+    data: XOR<FileUpdateWithoutPostInput, FileUncheckedUpdateWithoutPostInput>
+  }
+
+  export type FileUpdateManyWithWhereWithoutPostInput = {
+    where: FileScalarWhereInput
+    data: XOR<FileUpdateManyMutationInput, FileUncheckedUpdateManyWithoutPostInput>
+  }
+
+  export type FileScalarWhereInput = {
+    AND?: FileScalarWhereInput | FileScalarWhereInput[]
+    OR?: FileScalarWhereInput[]
+    NOT?: FileScalarWhereInput | FileScalarWhereInput[]
+    id?: IntFilter<"File"> | number
+    url?: StringFilter<"File"> | string
+    type?: StringNullableFilter<"File"> | string | null
+    postId?: IntFilter<"File"> | number
   }
 
   export type CommentUpsertWithWhereUniqueWithoutPostInput = {
@@ -8850,47 +8908,23 @@ export namespace Prisma {
     data: XOR<ReactionUpdateManyMutationInput, ReactionUncheckedUpdateManyWithoutPostInput>
   }
 
-  export type FileUpsertWithWhereUniqueWithoutPostInput = {
-    where: FileWhereUniqueInput
-    update: XOR<FileUpdateWithoutPostInput, FileUncheckedUpdateWithoutPostInput>
-    create: XOR<FileCreateWithoutPostInput, FileUncheckedCreateWithoutPostInput>
-  }
-
-  export type FileUpdateWithWhereUniqueWithoutPostInput = {
-    where: FileWhereUniqueInput
-    data: XOR<FileUpdateWithoutPostInput, FileUncheckedUpdateWithoutPostInput>
-  }
-
-  export type FileUpdateManyWithWhereWithoutPostInput = {
-    where: FileScalarWhereInput
-    data: XOR<FileUpdateManyMutationInput, FileUncheckedUpdateManyWithoutPostInput>
-  }
-
-  export type FileScalarWhereInput = {
-    AND?: FileScalarWhereInput | FileScalarWhereInput[]
-    OR?: FileScalarWhereInput[]
-    NOT?: FileScalarWhereInput | FileScalarWhereInput[]
-    id?: IntFilter<"File"> | number
-    url?: StringFilter<"File"> | string
-    type?: StringNullableFilter<"File"> | string | null
-    postId?: IntFilter<"File"> | number
-  }
-
   export type PostCreateWithoutCommentsInput = {
     content: string
     createdAt?: Date | string
+    updatedAt?: Date | string
     author: UserCreateNestedOneWithoutPostsInput
-    reactions?: ReactionCreateNestedManyWithoutPostInput
     files?: FileCreateNestedManyWithoutPostInput
+    reactions?: ReactionCreateNestedManyWithoutPostInput
   }
 
   export type PostUncheckedCreateWithoutCommentsInput = {
     id?: number
     content: string
     createdAt?: Date | string
+    updatedAt?: Date | string
     authorId: number
-    reactions?: ReactionUncheckedCreateNestedManyWithoutPostInput
     files?: FileUncheckedCreateNestedManyWithoutPostInput
+    reactions?: ReactionUncheckedCreateNestedManyWithoutPostInput
   }
 
   export type PostCreateOrConnectWithoutCommentsInput = {
@@ -8938,18 +8972,20 @@ export namespace Prisma {
   export type PostUpdateWithoutCommentsInput = {
     content?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     author?: UserUpdateOneRequiredWithoutPostsNestedInput
-    reactions?: ReactionUpdateManyWithoutPostNestedInput
     files?: FileUpdateManyWithoutPostNestedInput
+    reactions?: ReactionUpdateManyWithoutPostNestedInput
   }
 
   export type PostUncheckedUpdateWithoutCommentsInput = {
     id?: IntFieldUpdateOperationsInput | number
     content?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     authorId?: IntFieldUpdateOperationsInput | number
-    reactions?: ReactionUncheckedUpdateManyWithoutPostNestedInput
     files?: FileUncheckedUpdateManyWithoutPostNestedInput
+    reactions?: ReactionUncheckedUpdateManyWithoutPostNestedInput
   }
 
   export type UserUpsertWithoutCommentsInput = {
@@ -8987,18 +9023,20 @@ export namespace Prisma {
   export type PostCreateWithoutReactionsInput = {
     content: string
     createdAt?: Date | string
+    updatedAt?: Date | string
     author: UserCreateNestedOneWithoutPostsInput
-    comments?: CommentCreateNestedManyWithoutPostInput
     files?: FileCreateNestedManyWithoutPostInput
+    comments?: CommentCreateNestedManyWithoutPostInput
   }
 
   export type PostUncheckedCreateWithoutReactionsInput = {
     id?: number
     content: string
     createdAt?: Date | string
+    updatedAt?: Date | string
     authorId: number
-    comments?: CommentUncheckedCreateNestedManyWithoutPostInput
     files?: FileUncheckedCreateNestedManyWithoutPostInput
+    comments?: CommentUncheckedCreateNestedManyWithoutPostInput
   }
 
   export type PostCreateOrConnectWithoutReactionsInput = {
@@ -9046,18 +9084,20 @@ export namespace Prisma {
   export type PostUpdateWithoutReactionsInput = {
     content?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     author?: UserUpdateOneRequiredWithoutPostsNestedInput
-    comments?: CommentUpdateManyWithoutPostNestedInput
     files?: FileUpdateManyWithoutPostNestedInput
+    comments?: CommentUpdateManyWithoutPostNestedInput
   }
 
   export type PostUncheckedUpdateWithoutReactionsInput = {
     id?: IntFieldUpdateOperationsInput | number
     content?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     authorId?: IntFieldUpdateOperationsInput | number
-    comments?: CommentUncheckedUpdateManyWithoutPostNestedInput
     files?: FileUncheckedUpdateManyWithoutPostNestedInput
+    comments?: CommentUncheckedUpdateManyWithoutPostNestedInput
   }
 
   export type UserUpsertWithoutReactionsInput = {
@@ -9095,6 +9135,7 @@ export namespace Prisma {
   export type PostCreateWithoutFilesInput = {
     content: string
     createdAt?: Date | string
+    updatedAt?: Date | string
     author: UserCreateNestedOneWithoutPostsInput
     comments?: CommentCreateNestedManyWithoutPostInput
     reactions?: ReactionCreateNestedManyWithoutPostInput
@@ -9104,6 +9145,7 @@ export namespace Prisma {
     id?: number
     content: string
     createdAt?: Date | string
+    updatedAt?: Date | string
     authorId: number
     comments?: CommentUncheckedCreateNestedManyWithoutPostInput
     reactions?: ReactionUncheckedCreateNestedManyWithoutPostInput
@@ -9128,6 +9170,7 @@ export namespace Prisma {
   export type PostUpdateWithoutFilesInput = {
     content?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     author?: UserUpdateOneRequiredWithoutPostsNestedInput
     comments?: CommentUpdateManyWithoutPostNestedInput
     reactions?: ReactionUpdateManyWithoutPostNestedInput
@@ -9137,6 +9180,7 @@ export namespace Prisma {
     id?: IntFieldUpdateOperationsInput | number
     content?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     authorId?: IntFieldUpdateOperationsInput | number
     comments?: CommentUncheckedUpdateManyWithoutPostNestedInput
     reactions?: ReactionUncheckedUpdateManyWithoutPostNestedInput
@@ -9146,6 +9190,7 @@ export namespace Prisma {
     id?: number
     content: string
     createdAt?: Date | string
+    updatedAt?: Date | string
   }
 
   export type CommentCreateManyAuthorInput = {
@@ -9164,24 +9209,27 @@ export namespace Prisma {
   export type PostUpdateWithoutAuthorInput = {
     content?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    files?: FileUpdateManyWithoutPostNestedInput
     comments?: CommentUpdateManyWithoutPostNestedInput
     reactions?: ReactionUpdateManyWithoutPostNestedInput
-    files?: FileUpdateManyWithoutPostNestedInput
   }
 
   export type PostUncheckedUpdateWithoutAuthorInput = {
     id?: IntFieldUpdateOperationsInput | number
     content?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    files?: FileUncheckedUpdateManyWithoutPostNestedInput
     comments?: CommentUncheckedUpdateManyWithoutPostNestedInput
     reactions?: ReactionUncheckedUpdateManyWithoutPostNestedInput
-    files?: FileUncheckedUpdateManyWithoutPostNestedInput
   }
 
   export type PostUncheckedUpdateManyWithoutAuthorInput = {
     id?: IntFieldUpdateOperationsInput | number
     content?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type CommentUpdateWithoutAuthorInput = {
@@ -9221,6 +9269,12 @@ export namespace Prisma {
     postId?: IntFieldUpdateOperationsInput | number
   }
 
+  export type FileCreateManyPostInput = {
+    id?: number
+    url: string
+    type?: string | null
+  }
+
   export type CommentCreateManyPostInput = {
     id?: number
     content: string
@@ -9234,10 +9288,21 @@ export namespace Prisma {
     userId: number
   }
 
-  export type FileCreateManyPostInput = {
-    id?: number
-    url: string
-    type?: string | null
+  export type FileUpdateWithoutPostInput = {
+    url?: StringFieldUpdateOperationsInput | string
+    type?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type FileUncheckedUpdateWithoutPostInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    url?: StringFieldUpdateOperationsInput | string
+    type?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type FileUncheckedUpdateManyWithoutPostInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    url?: StringFieldUpdateOperationsInput | string
+    type?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type CommentUpdateWithoutPostInput = {
@@ -9275,23 +9340,6 @@ export namespace Prisma {
     id?: IntFieldUpdateOperationsInput | number
     type?: StringFieldUpdateOperationsInput | string
     userId?: IntFieldUpdateOperationsInput | number
-  }
-
-  export type FileUpdateWithoutPostInput = {
-    url?: StringFieldUpdateOperationsInput | string
-    type?: NullableStringFieldUpdateOperationsInput | string | null
-  }
-
-  export type FileUncheckedUpdateWithoutPostInput = {
-    id?: IntFieldUpdateOperationsInput | number
-    url?: StringFieldUpdateOperationsInput | string
-    type?: NullableStringFieldUpdateOperationsInput | string | null
-  }
-
-  export type FileUncheckedUpdateManyWithoutPostInput = {
-    id?: IntFieldUpdateOperationsInput | number
-    url?: StringFieldUpdateOperationsInput | string
-    type?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
 
