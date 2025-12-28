@@ -63,35 +63,34 @@ export default function ShowPosts() {
   const [commentsPost, setCommentsPost] = useState<Post | null>(null);
 
   useEffect(() => {
-  const fetchPosts = async () => {
-    try {
-      const res = await fetch("/api/posts", { credentials: "include" });
-      if (!res.ok) throw new Error("Failed to fetch posts");
-      const data = await res.json();
-      setPosts(data.posts || []);
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setLoading(false);
-    }
-  };
+    const fetchPosts = async () => {
+      try {
+        const res = await fetch("/api/posts", { credentials: "include" });
+        if (!res.ok) throw new Error("Failed to fetch posts");
+        const data = await res.json();
+        setPosts(data.posts || []);
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  // initial load
-  fetchPosts();
-
-  // ✅ auto refresh when a post is created
-  const onPostCreated = () => {
-    setLoading(true);
+    // initial load
     fetchPosts();
-  };
 
-  window.addEventListener("post-created", onPostCreated);
+    // ✅ auto refresh when a post is created
+    const onPostCreated = () => {
+      setLoading(true);
+      fetchPosts();
+    };
 
-  return () => {
-    window.removeEventListener("post-created", onPostCreated);
-  };
-}, []);
+    window.addEventListener("post-created", onPostCreated);
 
+    return () => {
+      window.removeEventListener("post-created", onPostCreated);
+    };
+  }, []);
 
   /* ---------------- LIKE ---------------- */
   const toggleLike = async (postId: number) => {
@@ -244,7 +243,7 @@ export default function ShowPosts() {
 
   return (
     <>
-      <div className="flex flex-col gap-4">
+      <div className="w-full max-w-2xl ml-0 mr-auto flex flex-col gap-4">
         {posts.map((post) => (
           <div key={post.id} className="bg-white shadow rounded-xl p-4">
             {/* Author info + actions */}

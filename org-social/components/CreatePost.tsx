@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState, useEffect } from "react";
+import { useRef, useState, useEffect, useMemo } from "react";
 import {
   Modal,
   Button,
@@ -27,10 +27,8 @@ const isEmptyTipTap = (html: string) => {
   const v = (html || "").trim();
   if (!v) return true;
 
-  // common "empty editor" outputs
   if (v === "<p></p>" || v === "<p><br></p>") return true;
 
-  // if there's no real text AND no media embeds, treat as empty
   const text = stripHtml(v);
   const hasMedia =
     /<(img|video|iframe|audio)\b/i.test(v) || /<a\b[^>]*href=/i.test(v);
@@ -50,15 +48,9 @@ export default function CreatePost() {
   const isBlank = isEmptyTipTap(content);
   const canPost = !isBlank || files.length > 0;
 
-  useEffect(() => {
-    console.log("isEditorOpen:", isEditorOpen);
-  }, [isEditorOpen]);
-
   const photoRef = useRef<HTMLInputElement>(null);
   const videoRef = useRef<HTMLInputElement>(null);
   const docRef = useRef<HTMLInputElement>(null);
-
-  // ✅ focus editor automatically when modal opens (no Mantine onOpened needed)
   const editorHostRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -70,9 +62,7 @@ export default function CreatePost() {
 
       const el =
         (root.querySelector(".ProseMirror") as HTMLElement | null) ||
-        (root.querySelector(
-          '[contenteditable="true"]'
-        ) as HTMLElement | null);
+        (root.querySelector('[contenteditable="true"]') as HTMLElement | null);
 
       el?.focus();
     }, 50);
@@ -83,6 +73,24 @@ export default function CreatePost() {
   const handleSelectFile = (file: File, type: SelectedFile["type"]) => {
     setFiles((prev) => [...prev, { file, type }]);
   };
+
+  const previews = useMemo(() => {
+    const list = files.map((f) => ({
+      ...f,
+      previewUrl:
+        f.type === "document" ? "" : URL.createObjectURL(f.file),
+      name: f.file.name,
+    }));
+    return list;
+  }, [files]);
+
+  useEffect(() => {
+    return () => {
+      previews.forEach((p) => {
+        if (p.previewUrl) URL.revokeObjectURL(p.previewUrl);
+      });
+    };
+  }, [files]);
 
   const handlePost = async () => {
     setLoading(true);
@@ -111,7 +119,6 @@ export default function CreatePost() {
       const data = await res.json();
       console.log("POST RESPONSE:", data);
 
-      // ✅ tell ShowPosts to auto-refresh
       window.dispatchEvent(
         new CustomEvent("post-created", { detail: data.post })
       );
@@ -236,16 +243,70 @@ export default function CreatePost() {
         }}
       >
         <div className="flex flex-col h-[65vh]">
-          {/* ✅ wrapper to find ProseMirror and focus */}
+          {/* editor */}
           <div ref={editorHostRef} className="flex-1 overflow-auto">
             <TipTapEditor
               value={content}
               onChange={setContent}
-              // placeholder="Write something..."
               className="h-full"
               showToolbar
             />
           </div>
+
+          {files.length > 0 && (
+            <div className="mt-3 border rounded-xl p-3 bg-gray-50">
+              <div className="text-sm font-semibold mb-2">Attachments</div>
+
+              <div className="flex gap-3 flex-wrap">
+                {previews.map((p, i) => {
+                  if (p.type === "image") {
+                    return (
+                      <div key={i} className="w-28">
+                        <img
+                          src={p.previewUrl}
+                          className="w-28 h-28 rounded-lg object-cover border"
+                          alt={p.name}
+                        />
+                        <div className="text-[11px] text-gray-600 mt-1 truncate">
+                          {p.name}
+                        </div>
+                      </div>
+                    );
+                  }
+
+                  if (p.type === "video") {
+                    return (
+                      <div key={i} className="w-40">
+                        <video
+                          controls
+                          className="w-40 h-28 rounded-lg border object-cover"
+                        >
+                          <source src={p.previewUrl} />
+                        </video>
+                        <div className="text-[11px] text-gray-600 mt-1 truncate">
+                          {p.name}
+                        </div>
+                      </div>
+                    );
+                  }
+
+                  // document
+                  return (
+                    <div
+                      key={i}
+                      className="flex items-center gap-2 px-3 py-2 rounded-lg border bg-white"
+                    >
+                      <span className="text-lg">📄</span>
+                      <div className="text-sm">
+                        <div className="font-medium">{p.name}</div>
+                        <div className="text-xs text-gray-500">Document</div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
 
           <div className="flex justify-end mt-4">
             <Button onClick={handlePost} disabled={!canPost} loading={loading}>
