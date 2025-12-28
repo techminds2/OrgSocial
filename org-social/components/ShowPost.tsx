@@ -1,7 +1,7 @@
 // ShowPosts.tsx
 "use client";
 
-import { useEffect, useMemo, useState, FormEvent } from "react";
+import { useEffect, useMemo, useRef, useState, FormEvent } from "react";
 import {
   ActionIcon,
   Text,
@@ -9,7 +9,8 @@ import {
   Button,
   Modal,
   ScrollArea,
-  Menu, // ✅ NEW
+  Menu,
+  Loader,
 } from "@mantine/core";
 import TipTapEditor from "./TipTapEditor";
 
@@ -61,36 +62,74 @@ export default function ShowPosts() {
   const [editContent, setEditContent] = useState("");
   const [savingEdit, setSavingEdit] = useState(false);
 
-  // ✅ NEW: attachment edit state
   const [editKeepFiles, setEditKeepFiles] = useState<FileType[]>([]);
   const [editNewFiles, setEditNewFiles] = useState<File[]>([]);
 
   const [deletingId, setDeletingId] = useState<number | null>(null);
 
-  // ✅ comments modal
   const [commentsPost, setCommentsPost] = useState<Post | null>(null);
 
+  const LIMIT = 10;
+  const [nextCursor, setNextCursor] = useState<number | null>(null);
+  const [hasMore, setHasMore] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const loadMoreRef = useRef<HTMLDivElement | null>(null);
+
+  const fetchPosts = async (opts?: {
+    cursor?: number | null;
+    append?: boolean;
+  }) => {
+    const cursor = opts?.cursor ?? null;
+    const append = !!opts?.append;
+
+    try {
+      const qs = new URLSearchParams();
+      qs.set("limit", String(LIMIT));
+      if (cursor) qs.set("cursor", String(cursor));
+
+      const res = await fetch(`/api/posts?${qs.toString()}`, {
+        credentials: "include",
+      });
+      if (!res.ok) throw new Error("Failed to fetch posts");
+
+      const data = await res.json();
+
+      const newPosts: Post[] = data.posts || [];
+      const newCursor: number | null = data.nextCursor ?? null;
+
+      setPosts((prev) => {
+        if (!append) return newPosts;
+
+        // prevent duplicates if cursor overlaps
+        const existing = new Set(prev.map((p) => p.id));
+        const merged = [
+          ...prev,
+          ...newPosts.filter((p) => !existing.has(p.id)),
+        ];
+        return merged;
+      });
+
+      setNextCursor(newCursor);
+      setHasMore(!!newCursor && newPosts.length > 0);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   useEffect(() => {
-    const fetchPosts = async () => {
-      try {
-        const res = await fetch("/api/posts", { credentials: "include" });
-        if (!res.ok) throw new Error("Failed to fetch posts");
-        const data = await res.json();
-        setPosts(data.posts || []);
-      } catch (err) {
-        console.error(err);
-      } finally {
-        setLoading(false);
-      }
+    const initialLoad = async () => {
+      setLoading(true);
+      setHasMore(true);
+      setNextCursor(null);
+      await fetchPosts({ cursor: null, append: false });
+      setLoading(false);
     };
 
     // initial load
-    fetchPosts();
+    initialLoad();
 
-    // ✅ auto refresh when a post is created
     const onPostCreated = () => {
-      setLoading(true);
-      fetchPosts();
+      initialLoad();
     };
 
     window.addEventListener("post-created", onPostCreated);
@@ -99,6 +138,33 @@ export default function ShowPosts() {
       window.removeEventListener("post-created", onPostCreated);
     };
   }, []);
+
+  useEffect(() => {
+    if (!loadMoreRef.current) return;
+
+    const el = loadMoreRef.current;
+
+    const obs = new IntersectionObserver(
+      async (entries) => {
+        const entry = entries[0];
+        if (!entry.isIntersecting) return;
+
+        if (loading || loadingMore) return;
+        if (!hasMore || !nextCursor) return;
+
+        setLoadingMore(true);
+        await fetchPosts({ cursor: nextCursor, append: true });
+        setLoadingMore(false);
+      },
+      { root: null, rootMargin: "200px", threshold: 0 }
+    );
+
+    obs.observe(el);
+
+    return () => {
+      obs.disconnect();
+    };
+  }, [loading, loadingMore, hasMore, nextCursor]);
 
   /* ---------------- LIKE ---------------- */
   const toggleLike = async (postId: number) => {
@@ -313,10 +379,7 @@ export default function ShowPosts() {
 
                   <Menu.Dropdown>
                     <Menu.Item onClick={() => openEdit(post)}>Edit</Menu.Item>
-                    <Menu.Item
-                      color="red"
-                      onClick={() => deletePost(post.id)}
-                    >
+                    <Menu.Item color="red" onClick={() => deletePost(post.id)}>
                       Delete
                     </Menu.Item>
                   </Menu.Dropdown>
@@ -385,6 +448,14 @@ export default function ShowPosts() {
             </div>
           </div>
         ))}
+
+        <div ref={loadMoreRef} />
+
+        {loadingMore && (
+          <div className="flex justify-center mt-2">
+            <Loader size="sm" variant="dots" />
+          </div>
+        )}
       </div>
 
       {/* Edit Modal */}

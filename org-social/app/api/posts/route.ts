@@ -65,7 +65,6 @@ function normalizeMediaUrl(u?: string | null) {
   return `/api/files/${s.replace(/^\/+/, "")}`;
 }
 
-
 /* -------------------- AUTH HELPER -------------------- */
 async function getUserIdFromRequest(req: NextRequest): Promise<number | null> {
   try {
@@ -85,13 +84,27 @@ async function getUserIdFromRequest(req: NextRequest): Promise<number | null> {
   }
 }
 
-/* -------------------- GET POSTS (single fetch) -------------------- */
+/* -------------------- GET POSTS (paged fetch) -------------------- */
 export async function GET(req: NextRequest) {
   try {
     const userId = await getUserIdFromRequest(req);
 
+    const { searchParams } = new URL(req.url);
+    const limitRaw = searchParams.get("limit");
+    const cursorRaw = searchParams.get("cursor");
+
+    const limit = Math.max(1, Math.min(Number(limitRaw || 10), 50));
+    const cursorId = cursorRaw ? Number(cursorRaw) : null;
+
     const posts = await prisma.post.findMany({
-      orderBy: { createdAt: "desc" },
+      take: limit,
+      ...(cursorId
+        ? {
+            cursor: { id: cursorId },
+            skip: 1,
+          }
+        : {}),
+      orderBy: [{ createdAt: "desc" }, { id: "desc" }],
       include: {
         author: {
           select: { id: true, username: true, profileImage: true },
@@ -148,7 +161,9 @@ export async function GET(req: NextRequest) {
       };
     });
 
-    return NextResponse.json({ posts: formatted });
+    const nextCursor = posts.length === limit ? posts[posts.length - 1].id : null;
+
+    return NextResponse.json({ posts: formatted, nextCursor });
   } catch (err) {
     console.error("GET POSTS ERROR:", err);
     return NextResponse.json(
