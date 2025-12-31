@@ -1,3 +1,4 @@
+// ChannelFeed.tsx ✅ (unchanged; shown for completeness)
 "use client";
 
 import CreatePost from "@/components/CreatePost";

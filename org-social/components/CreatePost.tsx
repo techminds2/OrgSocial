@@ -100,7 +100,6 @@ export default function CreatePost({ channelId }: CreatePostProps) {
 
     const formData = new FormData();
     formData.append("content", content);
-    formData.append("channelId", String(channelId));
 
     files.forEach((f) => {
       formData.append("files", f.file);
@@ -108,24 +107,24 @@ export default function CreatePost({ channelId }: CreatePostProps) {
     });
 
     try {
-      const res = await fetch("/api/upload", {
+      const url = channelId
+        ? `/api/channels/${channelId}/posts`
+        : `/api/posts`;
+
+      const res = await fetch(url, {
         method: "POST",
         body: formData,
         credentials: "include",
       });
 
       if (!res.ok) {
-        const t = await res.text().catch(() => "");
-        console.error("UPLOAD FAILED:", res.status, t);
+        const txt = await res.text().catch(() => "");
+        console.error(`CREATE POST FAILED (${res.status}) ${url} :: ${txt}`);
         return;
       }
 
       const data = await res.json();
-      console.log("POST RESPONSE:", data);
-
-      window.dispatchEvent(
-        new CustomEvent("post-created", { detail: data.post })
-      );
+      window.dispatchEvent(new CustomEvent("post-created", { detail: data.post }));
 
       setContent("");
       setFiles([]);
@@ -247,7 +246,6 @@ export default function CreatePost({ channelId }: CreatePostProps) {
         }}
       >
         <div className="flex flex-col h-[65vh]">
-          {/* editor */}
           <div ref={editorHostRef} className="flex-1 overflow-auto">
             <TipTapEditor
               value={content}
@@ -294,7 +292,6 @@ export default function CreatePost({ channelId }: CreatePostProps) {
                     );
                   }
 
-                  // document
                   return (
                     <div
                       key={i}

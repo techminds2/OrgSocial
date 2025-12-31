@@ -1,4 +1,3 @@
-// ShowPosts.tsx
 "use client";
 
 import { useEffect, useMemo, useRef, useState, FormEvent } from "react";
@@ -58,9 +57,7 @@ export default function ShowPosts({ channelId }: ShowPostsProps) {
 
   const [likingId, setLikingId] = useState<number | null>(null);
   const [commentingId, setCommentingId] = useState<number | null>(null);
-  const [commentInputs, setCommentInputs] = useState<Record<number, string>>(
-    {}
-  );
+  const [commentInputs, setCommentInputs] = useState<Record<number, string>>({});
 
   const [editingPost, setEditingPost] = useState<Post | null>(null);
   const [editContent, setEditContent] = useState("");
@@ -70,7 +67,6 @@ export default function ShowPosts({ channelId }: ShowPostsProps) {
   const [editNewFiles, setEditNewFiles] = useState<File[]>([]);
 
   const [deletingId, setDeletingId] = useState<number | null>(null);
-
   const [commentsPost, setCommentsPost] = useState<Post | null>(null);
 
   const LIMIT = 10;
@@ -79,24 +75,26 @@ export default function ShowPosts({ channelId }: ShowPostsProps) {
   const [loadingMore, setLoadingMore] = useState(false);
   const loadMoreRef = useRef<HTMLDivElement | null>(null);
 
-  const fetchPosts = async (opts?: {
-    cursor?: number | null;
-    append?: boolean;
-  }) => {
+  const fetchPosts = async (opts?: { cursor?: number | null; append?: boolean }) => {
     const cursor = opts?.cursor ?? null;
     const append = !!opts?.append;
 
     try {
       const qs = new URLSearchParams();
       qs.set("limit", String(LIMIT));
-      qs.set("channelId", String(channelId));
-
       if (cursor) qs.set("cursor", String(cursor));
 
-      const res = await fetch(`/api/posts?${qs.toString()}`, {
-        credentials: "include",
-      });
-      if (!res.ok) throw new Error("Failed to fetch posts");
+      const url = channelId
+        ? `/api/channels/${channelId}/posts?${qs.toString()}`
+        : `/api/posts?${qs.toString()}`;
+
+      const res = await fetch(url, { credentials: "include" });
+
+      if (!res.ok) {
+        const txt = await res.text().catch(() => "");
+        console.error(`FETCH POSTS FAILED (${res.status}) ${url} :: ${txt}`);
+        throw new Error("Failed to fetch posts");
+      }
 
       const data = await res.json();
 
@@ -105,14 +103,8 @@ export default function ShowPosts({ channelId }: ShowPostsProps) {
 
       setPosts((prev) => {
         if (!append) return newPosts;
-
-        // prevent duplicates if cursor overlaps
         const existing = new Set(prev.map((p) => p.id));
-        const merged = [
-          ...prev,
-          ...newPosts.filter((p) => !existing.has(p.id)),
-        ];
-        return merged;
+        return [...prev, ...newPosts.filter((p) => !existing.has(p.id))];
       });
 
       setNextCursor(newCursor);
@@ -131,30 +123,21 @@ export default function ShowPosts({ channelId }: ShowPostsProps) {
       setLoading(false);
     };
 
-    // initial load
     initialLoad();
 
-    const onPostCreated = () => {
-      initialLoad();
-    };
-
+    const onPostCreated = () => initialLoad();
     window.addEventListener("post-created", onPostCreated);
 
-    return () => {
-      window.removeEventListener("post-created", onPostCreated);
-    };
+    return () => window.removeEventListener("post-created", onPostCreated);
   }, []);
 
   useEffect(() => {
     if (!loadMoreRef.current) return;
-
     const el = loadMoreRef.current;
 
     const obs = new IntersectionObserver(
       async (entries) => {
-        const entry = entries[0];
-        if (!entry.isIntersecting) return;
-
+        if (!entries[0].isIntersecting) return;
         if (loading || loadingMore) return;
         if (!hasMore || !nextCursor) return;
 
@@ -166,10 +149,7 @@ export default function ShowPosts({ channelId }: ShowPostsProps) {
     );
 
     obs.observe(el);
-
-    return () => {
-      obs.disconnect();
-    };
+    return () => obs.disconnect();
   }, [loading, loadingMore, hasMore, nextCursor]);
 
   /* ---------------- LIKE ---------------- */
@@ -228,7 +208,6 @@ export default function ShowPosts({ channelId }: ShowPostsProps) {
         )
       );
 
-      // keep modal post in sync too
       setCommentsPost((cur) =>
         cur && cur.id === postId
           ? { ...cur, comments: [...cur.comments, comment] }
@@ -259,18 +238,12 @@ export default function ShowPosts({ channelId }: ShowPostsProps) {
       const fd = new FormData();
       fd.append("content", editContent);
 
-      // keepKeys must be raw keys stored in DB, not "/api/files/..."
       const keepKeys = (editKeepFiles || []).map((f) =>
-        f.url.startsWith("/api/files/")
-          ? f.url.replace("/api/files/", "")
-          : f.url
+        f.url.startsWith("/api/files/") ? f.url.replace("/api/files/", "") : f.url
       );
-
       fd.append("keepKeys", JSON.stringify(keepKeys));
 
-      for (const file of editNewFiles) {
-        fd.append("files", file);
-      }
+      for (const file of editNewFiles) fd.append("files", file);
 
       const res = await fetch(`/api/posts/${editingPost.id}`, {
         method: "PATCH",
@@ -284,12 +257,7 @@ export default function ShowPosts({ channelId }: ShowPostsProps) {
       setPosts((prev) =>
         prev.map((p) => (p.id === editingPost.id ? { ...p, ...data.post } : p))
       );
-
-      // keep modal in sync if open
-      setCommentsPost((cur) =>
-        cur && cur.id === editingPost.id ? { ...cur, ...data.post } : cur
-      );
-
+      setCommentsPost((cur) => (cur && cur.id === editingPost.id ? { ...cur, ...data.post } : cur));
       setEditingPost(null);
     } catch (err) {
       console.error(err);
@@ -313,11 +281,7 @@ export default function ShowPosts({ channelId }: ShowPostsProps) {
 
       if (!res.ok) {
         const text = await res.text().catch(() => "");
-        console.error("DELETE FAILED:", {
-          status: res.status,
-          statusText: res.statusText,
-          body: text,
-        });
+        console.error(`DELETE FAILED (${res.status}) :: ${text}`);
         throw new Error(`Failed to delete post (HTTP ${res.status})`);
       }
 
@@ -349,7 +313,6 @@ export default function ShowPosts({ channelId }: ShowPostsProps) {
       <div className="w-full max-w-2xl ml-0 mr-auto flex flex-col gap-4">
         {posts.map((post) => (
           <div key={post.id} className="bg-white shadow rounded-xl p-4">
-            {/* Author info + actions */}
             <div className="flex items-center justify-between mb-2">
               <div className="flex items-center gap-3">
                 <img
@@ -362,14 +325,11 @@ export default function ShowPosts({ channelId }: ShowPostsProps) {
                   <p className="font-semibold">{post.author.username}</p>
                   <p className="text-xs text-gray-500">
                     {new Date(post.createdAt).toLocaleString()}
-                    {post.isEdited ? (
-                      <span className="ml-2 text-gray-400">(edited)</span>
-                    ) : null}
+                    {post.isEdited ? <span className="ml-2 text-gray-400">(edited)</span> : null}
                   </p>
                 </div>
               </div>
 
-              {/* ✅ "..." menu for Edit/Delete */}
               {post.isMine && (
                 <Menu position="bottom-end" withArrow withinPortal>
                   <Menu.Target>
@@ -393,24 +353,16 @@ export default function ShowPosts({ channelId }: ShowPostsProps) {
               )}
             </div>
 
-            {/* Post content */}
             <div
               className="post-content mb-3"
               dangerouslySetInnerHTML={{ __html: post.content }}
             />
 
-            {/* Files preview (keep same behavior) */}
             {post.files.length > 0 && (
               <div className="flex gap-2 flex-wrap mb-3">
                 {post.files.map((f, i) => {
                   if (f.type === "image")
-                    return (
-                      <img
-                        key={i}
-                        src={f.url}
-                        className="w-32 h-32 object-cover rounded"
-                      />
-                    );
+                    return <img key={i} src={f.url} className="w-32 h-32 object-cover rounded" />;
                   if (f.type === "video")
                     return (
                       <video key={i} controls className="w-48 h-32 rounded">
@@ -431,7 +383,6 @@ export default function ShowPosts({ channelId }: ShowPostsProps) {
               </div>
             )}
 
-            {/* Likes + Comments button */}
             <div className="flex items-center gap-3 mb-2">
               <ActionIcon
                 variant={post.likedByMe ? "filled" : "subtle"}
@@ -444,11 +395,7 @@ export default function ShowPosts({ channelId }: ShowPostsProps) {
               </ActionIcon>
               <Text size="sm">{post.likeCount}</Text>
 
-              <Button
-                size="xs"
-                variant="subtle"
-                onClick={() => openComments(post)}
-              >
+              <Button size="xs" variant="subtle" onClick={() => openComments(post)}>
                 💬 Comments ({post.comments.length})
               </Button>
             </div>
@@ -464,7 +411,8 @@ export default function ShowPosts({ channelId }: ShowPostsProps) {
         )}
       </div>
 
-      {/* Edit Modal */}
+      {/* Edit Modal + Comments Modal remain exactly as your original (unchanged) */}
+      {/* If you want, I can paste the bottom part too, but it’s identical to what you already have */}
       <Modal
         opened={!!editingPost}
         onClose={() => setEditingPost(null)}
@@ -482,7 +430,6 @@ export default function ShowPosts({ channelId }: ShowPostsProps) {
             showToolbar
           />
 
-          {/* attachment editor (unchanged) */}
           <div className="mt-3">
             <p className="text-sm font-semibold mb-2">Attachments</p>
 
@@ -492,17 +439,13 @@ export default function ShowPosts({ channelId }: ShowPostsProps) {
                   key={idx}
                   className="border rounded p-2 text-xs flex items-center gap-2"
                 >
-                  <span className="truncate max-w-[180px]">
-                    {f.url.split("/").pop()}
-                  </span>
+                  <span className="truncate max-w-[180px]">{f.url.split("/").pop()}</span>
                   <Button
                     size="xs"
                     color="red"
                     variant="light"
                     onClick={() =>
-                      setEditKeepFiles((prev) =>
-                        prev.filter((_, i) => i !== idx)
-                      )
+                      setEditKeepFiles((prev) => prev.filter((_, i) => i !== idx))
                     }
                   >
                     Remove
@@ -540,13 +483,10 @@ export default function ShowPosts({ channelId }: ShowPostsProps) {
         </div>
       </Modal>
 
-      {/* Comments Modal (unchanged) */}
       <Modal
         opened={!!commentsPost}
         onClose={() => setCommentsPost(null)}
-        title={
-          commentsPost ? `Comments · Post #${commentsPost.id}` : "Comments"
-        }
+        title={commentsPost ? `Comments · Post #${commentsPost.id}` : "Comments"}
         size="xl"
         centered
         withinPortal
@@ -556,18 +496,13 @@ export default function ShowPosts({ channelId }: ShowPostsProps) {
           <div className="flex gap-4 h-[70vh]">
             <div className="w-1/2 bg-gray-50 rounded-xl flex items-center justify-center overflow-hidden">
               {media?.img ? (
-                <img
-                  src={media.img.url}
-                  className="w-full h-full object-contain"
-                />
+                <img src={media.img.url} className="w-full h-full object-contain" />
               ) : media?.vid ? (
                 <video controls className="w-full h-full">
                   <source src={media.vid.url} />
                 </video>
               ) : (
-                <div className="text-sm text-gray-500 p-6 text-center">
-                  No media attached
-                </div>
+                <div className="text-sm text-gray-500 p-6 text-center">No media attached</div>
               )}
             </div>
 
@@ -587,9 +522,7 @@ export default function ShowPosts({ channelId }: ShowPostsProps) {
                         />
                         <div className="bg-gray-50 rounded-lg px-3 py-2 w-full">
                           <div className="flex items-center justify-between gap-2">
-                            <p className="text-sm font-semibold">
-                              {c.author.username}
-                            </p>
+                            <p className="text-sm font-semibold">{c.author.username}</p>
                             <p className="text-xs text-gray-400">
                               {new Date(c.createdAt).toLocaleString()}
                             </p>
@@ -617,10 +550,7 @@ export default function ShowPosts({ channelId }: ShowPostsProps) {
                   }
                   className="flex-1"
                 />
-                <Button
-                  type="submit"
-                  loading={commentingId === commentsPost.id}
-                >
+                <Button type="submit" loading={commentingId === commentsPost.id}>
                   Post
                 </Button>
               </form>

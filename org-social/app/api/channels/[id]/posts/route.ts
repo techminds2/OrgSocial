@@ -16,13 +16,16 @@ function normalizeMediaUrl(u?: string | null) {
   return `/api/files/${s.replace(/^\/+/, "")}`;
 }
 
-export async function GET(req: NextRequest, ctx: { params: { id: string } }) {
+/** ✅ Next.js 16: params can be a Promise */
+type Ctx = { params: Promise<{ id: string }> };
+
+export async function GET(req: NextRequest, ctx: Ctx) {
   try {
     const userId = await getUserIdFromRequest(req);
-    if (!userId)
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-    const channelId = Number(ctx.params.id);
+    const { id } = await ctx.params;
+    const channelId = Number(id);
     if (!Number.isFinite(channelId)) {
       return NextResponse.json({ error: "Bad channel id" }, { status: 400 });
     }
@@ -31,11 +34,8 @@ export async function GET(req: NextRequest, ctx: { params: { id: string } }) {
     if (!ok) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
 
     const { searchParams } = new URL(req.url);
-    const limitRaw = searchParams.get("limit");
-    const cursorRaw = searchParams.get("cursor");
-
-    const limit = Math.max(1, Math.min(Number(limitRaw || 10), 50));
-    const cursorId = cursorRaw ? Number(cursorRaw) : null;
+    const limit = Math.max(1, Math.min(Number(searchParams.get("limit") || 10), 50));
+    const cursorId = searchParams.get("cursor") ? Number(searchParams.get("cursor")) : null;
 
     const posts = await prisma.post.findMany({
       where: { channelId },
@@ -48,33 +48,21 @@ export async function GET(req: NextRequest, ctx: { params: { id: string } }) {
         reactions: true,
         comments: {
           orderBy: { createdAt: "asc" },
-          include: {
-            author: {
-              select: { id: true, username: true, profileImage: true },
-            },
-          },
+          include: { author: { select: { id: true, username: true, profileImage: true } } },
         },
       },
     });
 
     const formatted = posts.map((p) => {
-      const likeCount = p.reactions.reduce(
-        (acc, r) => (r.type === "LIKE" ? acc + 1 : acc),
-        0
-      );
-      const likedByMe = p.reactions.some(
-        (r) => r.userId === userId && r.type === "LIKE"
-      );
+      const likeCount = p.reactions.reduce((acc, r) => (r.type === "LIKE" ? acc + 1 : acc), 0);
+      const likedByMe = p.reactions.some((r) => r.userId === userId && r.type === "LIKE");
       const isMine = p.author.id === userId;
 
       return {
         id: p.id,
         content: p.content,
         createdAt: p.createdAt,
-        author: {
-          ...p.author,
-          profileImage: normalizeMediaUrl(p.author.profileImage),
-        },
+        author: { ...p.author, profileImage: normalizeMediaUrl(p.author.profileImage) },
         files: p.files.map((f) => ({
           url: `/api/files/${f.url}`,
           type: (f.type as any) || "document",
@@ -86,33 +74,26 @@ export async function GET(req: NextRequest, ctx: { params: { id: string } }) {
           id: c.id,
           content: c.content,
           createdAt: c.createdAt,
-          author: {
-            ...c.author,
-            profileImage: normalizeMediaUrl(c.author.profileImage),
-          },
+          author: { ...c.author, profileImage: normalizeMediaUrl(c.author.profileImage) },
         })),
       };
     });
 
-    const nextCursor =
-      posts.length === limit ? posts[posts.length - 1].id : null;
+    const nextCursor = posts.length === limit ? posts[posts.length - 1].id : null;
     return NextResponse.json({ posts: formatted, nextCursor });
   } catch (err) {
     console.error("GET CHANNEL POSTS ERROR:", err);
-    return NextResponse.json(
-      { error: "Failed to fetch posts" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "Failed to fetch posts" }, { status: 500 });
   }
 }
 
-export async function POST(req: NextRequest, ctx: { params: { id: string } }) {
+export async function POST(req: NextRequest, ctx: Ctx) {
   try {
     const userId = await getUserIdFromRequest(req);
-    if (!userId)
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-    const channelId = Number(ctx.params.id);
+    const { id } = await ctx.params;
+    const channelId = Number(id);
     if (!Number.isFinite(channelId)) {
       return NextResponse.json({ error: "Bad channel id" }, { status: 400 });
     }
@@ -131,8 +112,7 @@ export async function POST(req: NextRequest, ctx: { params: { id: string } }) {
       const file = files[i];
       const buffer = Buffer.from(await file.arrayBuffer());
       const ext = file.name.split(".").pop() || "bin";
-      const fileName = `${crypto.randomUUID()}.${ext}`;
-      const key = `uploads/${fileName}`;
+      const key = `uploads/${crypto.randomUUID()}.${ext}`;
 
       await s3.send(
         new PutObjectCommand({
@@ -149,12 +129,10 @@ export async function POST(req: NextRequest, ctx: { params: { id: string } }) {
     const post = await prisma.post.create({
       data: {
         content,
-        channel: { connect: { id: channelId } },
-        author: { connect: { id: userId } },
+        channelId,
+        authorId: userId,
         files: {
-          create: uploadedFiles.map((f) =>
-            f.type ? { url: f.url, type: f.type } : { url: f.url }
-          ),
+          create: uploadedFiles.map((f) => (f.type ? { url: f.url, type: f.type } : { url: f.url })),
         },
       },
       include: { files: true },
