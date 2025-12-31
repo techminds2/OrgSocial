@@ -16,9 +16,10 @@ model User {
   isStaff      Boolean @default(false)
   profileImage String?
 
-  posts     Post[]
-  comments  Comment[]
-  reactions Reaction[]
+  posts         Post[]
+  comments      Comment[]
+  reactions     Reaction[]
+  channelMember ChannelMember[]
 }
 
 model Post {
@@ -64,4 +65,27 @@ model File {
   type   String?
   postId Int
   post   Post    @relation(fields: [postId], references: [id])
+}
+
+model Channel {
+  id        Int      @id @default(autoincrement())
+  name      String   @unique
+  createdAt DateTime @default(now())
+
+  bannerKey String? // MinIO key like "channels/<uuid>.png"
+  members   ChannelMember[]
+}
+
+model ChannelMember {
+  id        Int     @id @default(autoincrement())
+  channelId Int
+  userId    Int
+  role      String? // optional: "admin" | "member"
+
+  channel Channel @relation(fields: [channelId], references: [id], onDelete: Cascade)
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([channelId, userId])
+  @@index([userId])
+  @@index([channelId])
 }
