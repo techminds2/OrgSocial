@@ -1,6 +1,7 @@
 import Navbar from "@/components/NavBar";
 import PostForm from "@/components/CreatePost";
 import Sidebar from "@/components/SideBar";
+import ChannelsPanel from "@/components/ChannelPanel";
 
 export default function DashboardLayout({
   children,
@@ -15,6 +16,7 @@ export default function DashboardLayout({
         <Sidebar />
         {/* <PostForm /> */}
         <main className="flex-1 p-6 bg-gray-50">{children}</main>
+        <ChannelsPanel/>
       </div>
     </>
   );

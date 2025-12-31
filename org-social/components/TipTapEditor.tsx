@@ -1,11 +1,13 @@
 "use client";
 
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useReducer, useRef, useState } from "react";
+import type { FC } from "react";
 import { EditorContent, useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import Placeholder from "@tiptap/extension-placeholder";
 import Underline from "@tiptap/extension-underline";
 import Link from "@tiptap/extension-link";
+import TextAlign from "@tiptap/extension-text-align";
 
 type Props = {
   value: string;
@@ -15,14 +17,18 @@ type Props = {
   showToolbar?: boolean;
 };
 
-export default function TipTapEditor({
+const TipTapEditor: FC<Props> = ({
   value,
   onChange,
-  placeholder = "Write something...",
+  placeholder = "",
   className = "",
   showToolbar = true,
-}: Props) {
+}) => {
   const lastEmittedHtmlRef = useRef<string>("");
+  const [, forceUpdate] = useReducer((x) => x + 1, 0);
+
+  const [headingOpen, setHeadingOpen] = useState(false);
+  const [listOpen, setListOpen] = useState(false);
 
   const editor = useEditor({
     immediatelyRender: false,
@@ -34,6 +40,9 @@ export default function TipTapEditor({
         autolink: true,
         linkOnPaste: true,
       }),
+      TextAlign.configure({
+        types: ["heading", "paragraph"],
+      }),
       Placeholder.configure({
         placeholder,
         emptyEditorClass:
@@ -43,7 +52,17 @@ export default function TipTapEditor({
     content: value || "",
     editorProps: {
       attributes: {
-        class: "ProseMirror w-full min-h-[80px] p-3 focus:outline-none",
+        class: [
+          "ProseMirror w-full min-h-[140px] p-3 focus:outline-none",
+          "[&_h1]:text-2xl [&_h1]:font-bold [&_h1]:my-2",
+          "[&_h2]:text-xl [&_h2]:font-bold [&_h2]:my-2",
+          "[&_h3]:text-lg [&_h3]:font-semibold [&_h3]:my-2",
+          "[&_blockquote]:border-l-4 [&_blockquote]:border-gray-300 [&_blockquote]:pl-3 [&_blockquote]:text-gray-600 [&_blockquote]:my-2",
+          "[&_ul]:list-disc [&_ul]:pl-6 [&_ul]:my-2",
+          "[&_ol]:list-decimal [&_ol]:pl-6 [&_ol]:my-2",
+          "[&_a]:text-blue-600 [&_a]:underline",
+          "post-content",
+        ].join(" "),
         "data-placeholder": placeholder,
       },
     },
@@ -54,25 +73,43 @@ export default function TipTapEditor({
     },
   });
 
-  // ✅ Only sync prop->editor when value changes externally
+  useEffect(() => {
+    if (!editor) return;
+
+    const rerender = () => forceUpdate();
+    editor.on("transaction", rerender);
+    editor.on("selectionUpdate", rerender);
+
+    return () => {
+      editor.off("transaction", rerender);
+      editor.off("selectionUpdate", rerender);
+    };
+  }, [editor]);
+
   useEffect(() => {
     if (!editor) return;
 
     const incoming = value || "";
     const lastFromEditor = lastEmittedHtmlRef.current;
 
-    // If parent is just reflecting what editor emitted, do nothing
     if (incoming === lastFromEditor) return;
 
-    // If parent cleared it, clear editor
     if (incoming === "") {
       editor.commands.clearContent(true);
       return;
     }
 
-    // Otherwise parent truly changed the content (e.g., load saved post)
     editor.commands.setContent(incoming, { emitUpdate: false });
   }, [value, editor]);
+
+  useEffect(() => {
+    const close = () => {
+      setHeadingOpen(false);
+      setListOpen(false);
+    };
+    window.addEventListener("click", close);
+    return () => window.removeEventListener("click", close);
+  }, []);
 
   if (!editor) return null;
 
@@ -86,118 +123,221 @@ export default function TipTapEditor({
       type="button"
       title={title}
       aria-label={title}
-      onClick={command}
+      onMouseDown={(e) => {
+        e.preventDefault();
+        command();
+      }}
       className={[
-        "h-9 w-9 inline-flex items-center justify-center rounded-lg border text-sm",
+        "h-9 w-9 inline-flex items-center justify-center rounded-lg text-sm",
         "transition select-none",
-        isActive
-          ? "bg-blue-50 border-blue-200 text-blue-700"
-          : "bg-white hover:bg-gray-50",
+        "bg-transparent hover:bg-gray-100",
+        isActive ? "bg-blue-50 text-blue-700" : "text-gray-700",
       ].join(" ")}
     >
       {icon}
     </button>
   );
 
+  const dropdownButton = (
+    label: React.ReactNode,
+    title: string,
+    isOpen: boolean,
+    setOpen: (v: boolean) => void,
+    isActive?: boolean
+  ) => (
+    <button
+      type="button"
+      title={title}
+      aria-label={title}
+      onMouseDown={(e) => e.preventDefault()}
+      onClick={(e) => {
+        e.stopPropagation();
+        setOpen(!isOpen);
+      }}
+      className={[
+        "h-9 inline-flex items-center gap-2 rounded-lg px-3 text-sm",
+        "transition select-none",
+        "bg-transparent hover:bg-gray-100",
+        isActive ? "bg-blue-50 text-blue-700" : "text-gray-700",
+      ].join(" ")}
+    >
+      <span className="truncate">{label}</span>
+      <span className="text-xs opacity-70">▾</span>
+    </button>
+  );
+
+  const menuItem = (label: string, onPick: () => void, active?: boolean) => (
+    <button
+      type="button"
+      onMouseDown={(e) => {
+        e.preventDefault();
+        onPick();
+      }}
+      className={[
+        "w-full text-left px-3 py-2 text-sm rounded-md",
+        "hover:bg-gray-100 transition",
+        active ? "bg-blue-50 text-blue-700" : "text-gray-700",
+      ].join(" ")}
+    >
+      {label}
+    </button>
+  );
+
+  const currentHeadingLabel = (() => {
+    if (editor.isActive("heading", { level: 1 })) return "Heading 1";
+    if (editor.isActive("heading", { level: 2 })) return "Heading 2";
+    if (editor.isActive("heading", { level: 3 })) return "Heading 3";
+    return "Paragraph";
+  })();
+
+  const headingIsActive =
+    editor.isActive("heading", { level: 1 }) ||
+    editor.isActive("heading", { level: 2 }) ||
+    editor.isActive("heading", { level: 3 });
+
+  const listIsActive = editor.isActive("bulletList") || editor.isActive("orderedList");
+
   const Icon = {
-    Bold: (
-      <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2">
-        <path d="M7 5h7a4 4 0 0 1 0 8H7z" />
-        <path d="M7 13h8a4 4 0 0 1 0 8H7z" />
-      </svg>
-    ),
-    Italic: (
-      <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2">
-        <path d="M19 4h-9" />
-        <path d="M14 20H5" />
-        <path d="M15 4 9 20" />
-      </svg>
-    ),
-    Underline: (
-      <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2">
-        <path d="M6 4v6a6 6 0 0 0 12 0V4" />
-        <path d="M4 20h16" />
-      </svg>
-    ),
-    Strike: (
-      <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2">
-        <path d="M16 4H9a4 4 0 0 0 0 8h6a4 4 0 0 1 0 8H8" />
-        <path d="M4 12h16" />
-      </svg>
-    ),
-    H1: <span className="text-[11px] font-semibold">H1</span>,
-    H2: <span className="text-[11px] font-semibold">H2</span>,
-    H3: <span className="text-[11px] font-semibold">H3</span>,
-    Bullet: (
-      <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2">
-        <path d="M8 6h13" />
-        <path d="M8 12h13" />
-        <path d="M8 18h13" />
-        <path d="M3.5 6h.01" />
-        <path d="M3.5 12h.01" />
-        <path d="M3.5 18h.01" />
-      </svg>
-    ),
-    Ordered: (
-      <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2">
-        <path d="M10 6h11" />
-        <path d="M10 12h11" />
-        <path d="M10 18h11" />
-        <path d="M4 6h1v4" />
-        <path d="M4 12h2" />
-        <path d="M4 12a1 1 0 0 1 2 0c0 1-2 1-2 2v1h2" />
-      </svg>
-    ),
-    Quote: (
-      <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2">
-        <path d="M7 17h4l-1 3H6l1-3Zm10 0h4l-1 3h-4l1-3Z" />
-        <path d="M8 17a6 6 0 0 1 6-6V7a10 10 0 0 0-10 10h4Z" />
-        <path d="M18 17a6 6 0 0 1 6-6V7a10 10 0 0 0-10 10h4Z" />
-      </svg>
-    ),
-    Code: (
-      <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2">
-        <path d="m16 18 6-6-6-6" />
-        <path d="m8 6-6 6 6 6" />
-      </svg>
-    ),
-    Link: (
-      <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2">
-        <path d="M10 13a5 5 0 0 1 0-7l1-1a5 5 0 0 1 7 7l-1 1" />
-        <path d="M14 11a5 5 0 0 1 0 7l-1 1a5 5 0 0 1-7-7l1-1" />
-      </svg>
-    ),
-    Undo: (
-      <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2">
-        <path d="M9 14 4 9l5-5" />
-        <path d="M20 20a8 8 0 0 0-8-8H4" />
-      </svg>
-    ),
-    Redo: (
-      <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2">
-        <path d="m15 4 5 5-5 5" />
-        <path d="M4 20a8 8 0 0 1 8-8h8" />
-      </svg>
-    ),
+    Bold: <span className="text-[12px] font-bold">B</span>,
+    Italic: <span className="text-[12px] italic">I</span>,
+    Underline: <span className="text-[12px] underline">U</span>,
+    Strike: <span className="text-[12px] line-through">S</span>,
+    Code: <span className="text-[12px]">{`</>`}</span>,
+    Link: <span className="text-[12px]">🔗</span>,
+    Undo: <span className="text-[12px]">↶</span>,
+    Redo: <span className="text-[12px]">↷</span>,
+    AlignLeft: <span className="text-[12px]">≡</span>,
+    AlignCenter: <span className="text-[12px]">≣</span>,
+    AlignRight: <span className="text-[12px]">≡</span>,
+    AlignJustify: <span className="text-[12px]">≣</span>,
   };
 
   return (
     <div className={className}>
       {showToolbar && (
-        <div className="mb-2 flex flex-wrap gap-2">
-          {toolbarButton("Bold", Icon.Bold, () => editor.chain().focus().toggleBold().run(), editor.isActive("bold"))}
-          {toolbarButton("Italic", Icon.Italic, () => editor.chain().focus().toggleItalic().run(), editor.isActive("italic"))}
-          {toolbarButton("Underline", Icon.Underline, () => editor.chain().focus().toggleUnderline().run(), editor.isActive("underline"))}
-          {toolbarButton("Strike", Icon.Strike, () => editor.chain().focus().toggleStrike().run(), editor.isActive("strike"))}
+        <div className="mb-2 flex flex-wrap items-center gap-2">
+          {toolbarButton(
+            "Bold",
+            Icon.Bold,
+            () => editor.chain().focus().toggleBold().run(),
+            editor.isActive("bold")
+          )}
+          {toolbarButton(
+            "Italic",
+            Icon.Italic,
+            () => editor.chain().focus().toggleItalic().run(),
+            editor.isActive("italic")
+          )}
+          {toolbarButton(
+            "Underline",
+            Icon.Underline,
+            () => editor.chain().focus().toggleUnderline().run(),
+            editor.isActive("underline")
+          )}
+          {toolbarButton(
+            "Strike",
+            Icon.Strike,
+            () => editor.chain().focus().toggleStrike().run(),
+            editor.isActive("strike")
+          )}
 
-          {toolbarButton("Heading 1", Icon.H1, () => editor.chain().focus().toggleHeading({ level: 1 }).run(), editor.isActive("heading", { level: 1 }))}
-          {toolbarButton("Heading 2", Icon.H2, () => editor.chain().focus().toggleHeading({ level: 2 }).run(), editor.isActive("heading", { level: 2 }))}
-          {toolbarButton("Heading 3", Icon.H3, () => editor.chain().focus().toggleHeading({ level: 3 }).run(), editor.isActive("heading", { level: 3 }))}
+          {/* Headings dropdown */}
+          <div className="relative" onClick={(e) => e.stopPropagation()}>
+            {dropdownButton(
+              currentHeadingLabel,
+              "Headings",
+              headingOpen,
+              (v) => {
+                setHeadingOpen(v);
+                if (v) setListOpen(false);
+              },
+              headingIsActive
+            )}
 
-          {toolbarButton("Bullet list", Icon.Bullet, () => editor.chain().focus().toggleBulletList().run(), editor.isActive("bulletList"))}
-          {toolbarButton("Ordered list", Icon.Ordered, () => editor.chain().focus().toggleOrderedList().run(), editor.isActive("orderedList"))}
-          {toolbarButton("Quote", Icon.Quote, () => editor.chain().focus().toggleBlockquote().run(), editor.isActive("blockquote"))}
-          {toolbarButton("Code block", Icon.Code, () => editor.chain().focus().toggleCodeBlock().run(), editor.isActive("codeBlock"))}
+            {headingOpen && (
+              <div className="absolute z-20 mt-2 w-44 rounded-xl border border-gray-200 bg-white p-2 shadow-lg">
+                {menuItem("Paragraph", () => {
+                  editor.chain().focus().setParagraph().run();
+                  setHeadingOpen(false);
+                }, !headingIsActive)}
+                {menuItem("Heading 1", () => {
+                  editor.chain().focus().toggleHeading({ level: 1 }).run();
+                  setHeadingOpen(false);
+                }, editor.isActive("heading", { level: 1 }))}
+                {menuItem("Heading 2", () => {
+                  editor.chain().focus().toggleHeading({ level: 2 }).run();
+                  setHeadingOpen(false);
+                }, editor.isActive("heading", { level: 2 }))}
+                {menuItem("Heading 3", () => {
+                  editor.chain().focus().toggleHeading({ level: 3 }).run();
+                  setHeadingOpen(false);
+                }, editor.isActive("heading", { level: 3 }))}
+              </div>
+            )}
+          </div>
+
+          {/* Lists dropdown */}
+          <div className="relative" onClick={(e) => e.stopPropagation()}>
+            {dropdownButton(
+              editor.isActive("bulletList")
+                ? "Bullet list"
+                : editor.isActive("orderedList")
+                ? "Ordered list"
+                : "Lists",
+              "Lists",
+              listOpen,
+              (v) => {
+                setListOpen(v);
+                if (v) setHeadingOpen(false);
+              },
+              listIsActive
+            )}
+
+            {listOpen && (
+              <div className="absolute z-20 mt-2 w-44 rounded-xl border border-gray-200 bg-white p-2 shadow-lg">
+                {menuItem("Bullet list", () => {
+                  editor.chain().focus().toggleBulletList().run();
+                  setListOpen(false);
+                }, editor.isActive("bulletList"))}
+                {menuItem("Ordered list", () => {
+                  editor.chain().focus().toggleOrderedList().run();
+                  setListOpen(false);
+                }, editor.isActive("orderedList"))}
+              </div>
+            )}
+          </div>
+
+          {toolbarButton(
+            "Code block",
+            Icon.Code,
+            () => editor.chain().focus().toggleCodeBlock().run(),
+            editor.isActive("codeBlock")
+          )}
+
+          {toolbarButton(
+            "Align left",
+            Icon.AlignLeft,
+            () => editor.chain().focus().setTextAlign("left").run(),
+            editor.isActive({ textAlign: "left" })
+          )}
+          {toolbarButton(
+            "Align center",
+            Icon.AlignCenter,
+            () => editor.chain().focus().setTextAlign("center").run(),
+            editor.isActive({ textAlign: "center" })
+          )}
+          {toolbarButton(
+            "Align right",
+            Icon.AlignRight,
+            () => editor.chain().focus().setTextAlign("right").run(),
+            editor.isActive({ textAlign: "right" })
+          )}
+          {toolbarButton(
+            "Justify",
+            Icon.AlignJustify,
+            () => editor.chain().focus().setTextAlign("justify").run(),
+            editor.isActive({ textAlign: "justify" })
+          )}
 
           {toolbarButton(
             editor.isActive("link") ? "Remove link" : "Add link",
@@ -208,7 +348,13 @@ export default function TipTapEditor({
                 return;
               }
               const url = prompt("Enter URL");
-              if (url) editor.chain().focus().extendMarkRange("link").setLink({ href: url }).run();
+              if (url)
+                editor
+                  .chain()
+                  .focus()
+                  .extendMarkRange("link")
+                  .setLink({ href: url })
+                  .run();
             },
             editor.isActive("link")
           )}
@@ -226,4 +372,6 @@ export default function TipTapEditor({
       </div>
     </div>
   );
-}
+};
+
+export default TipTapEditor;

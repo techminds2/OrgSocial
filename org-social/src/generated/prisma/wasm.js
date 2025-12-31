@@ -106,6 +106,7 @@ exports.Prisma.PostScalarFieldEnum = {
   id: 'id',
   content: 'content',
   createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
   authorId: 'authorId'
 };
 
@@ -131,6 +132,20 @@ exports.Prisma.FileScalarFieldEnum = {
   postId: 'postId'
 };
 
+exports.Prisma.ChannelScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  createdAt: 'createdAt',
+  bannerKey: 'bannerKey'
+};
+
+exports.Prisma.ChannelMemberScalarFieldEnum = {
+  id: 'id',
+  channelId: 'channelId',
+  userId: 'userId',
+  role: 'role'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -152,7 +167,9 @@ exports.Prisma.ModelName = {
   Post: 'Post',
   Comment: 'Comment',
   Reaction: 'Reaction',
-  File: 'File'
+  File: 'File',
+  Channel: 'Channel',
+  ChannelMember: 'ChannelMember'
 };
 /**
  * Create the Client
@@ -193,6 +210,7 @@ const config = {
     "db"
   ],
   "activeProvider": "postgresql",
+  "postinstall": false,
   "inlineDatasources": {
     "db": {
       "url": {
@@ -201,13 +219,13 @@ const config = {
       }
     }
   },
-  "inlineSchema": "generator client {\n  provider = \"prisma-client-js\"\n  output   = \"../src/generated/prisma\"\n}\n\ndatasource db {\n  provider = \"postgresql\"\n  url      = env(\"DATABASE_URL\")\n}\n\nmodel User {\n  id           Int     @id @default(autoincrement())\n  username     String  @unique\n  email        String? @unique\n  role         String\n  isStaff      Boolean @default(false)\n  profileImage String?\n\n  posts     Post[]\n  comments  Comment[]\n  reactions Reaction[]\n}\n\nmodel Post {\n  id        Int      @id @default(autoincrement())\n  content   String\n  createdAt DateTime @default(now())\n\n  authorId Int\n  author   User @relation(fields: [authorId], references: [id])\n\n  comments  Comment[]\n  reactions Reaction[]\n  files     File[]\n}\n\nmodel Comment {\n  id        Int      @id @default(autoincrement())\n  content   String\n  createdAt DateTime @default(now())\n\n  postId Int\n  post   Post @relation(fields: [postId], references: [id])\n\n  authorId Int\n  author   User @relation(fields: [authorId], references: [id])\n}\n\nmodel Reaction {\n  id   Int    @id @default(autoincrement())\n  type String // \"LIKE\"\n\n  postId Int\n  post   Post @relation(fields: [postId], references: [id])\n\n  userId Int\n  user   User @relation(fields: [userId], references: [id])\n\n  @@unique([postId, userId, type])\n}\n\nmodel File {\n  id     Int     @id @default(autoincrement())\n  url    String\n  type   String?\n  postId Int\n  post   Post    @relation(fields: [postId], references: [id])\n}\n",
-  "inlineSchemaHash": "ae06ada41173f7c5191e0a9661416a69f3a6bb949d919e899821659c2628977a",
+  "inlineSchema": "generator client {\n  provider = \"prisma-client-js\"\n  output   = \"../src/generated/prisma\"\n}\n\ndatasource db {\n  provider = \"postgresql\"\n  url      = env(\"DATABASE_URL\")\n}\n\nmodel User {\n  id           Int     @id @default(autoincrement())\n  username     String  @unique\n  email        String? @unique\n  role         String\n  isStaff      Boolean @default(false)\n  profileImage String?\n\n  posts         Post[]\n  comments      Comment[]\n  reactions     Reaction[]\n  channelMember ChannelMember[]\n}\n\nmodel Post {\n  id        Int        @id @default(autoincrement())\n  content   String\n  createdAt DateTime   @default(now())\n  updatedAt DateTime   @updatedAt\n  authorId  Int\n  author    User       @relation(fields: [authorId], references: [id])\n  files     File[]\n  comments  Comment[]\n  reactions Reaction[]\n}\n\nmodel Comment {\n  id        Int      @id @default(autoincrement())\n  content   String\n  createdAt DateTime @default(now())\n\n  postId Int\n  post   Post @relation(fields: [postId], references: [id])\n\n  authorId Int\n  author   User @relation(fields: [authorId], references: [id])\n}\n\nmodel Reaction {\n  id   Int    @id @default(autoincrement())\n  type String // \"LIKE\"\n\n  postId Int\n  post   Post @relation(fields: [postId], references: [id])\n\n  userId Int\n  user   User @relation(fields: [userId], references: [id])\n\n  @@unique([postId, userId, type])\n}\n\nmodel File {\n  id     Int     @id @default(autoincrement())\n  url    String\n  type   String?\n  postId Int\n  post   Post    @relation(fields: [postId], references: [id])\n}\n\nmodel Channel {\n  id        Int      @id @default(autoincrement())\n  name      String   @unique\n  createdAt DateTime @default(now())\n\n  bannerKey String? // MinIO key like \"channels/<uuid>.png\"\n  members   ChannelMember[]\n}\n\nmodel ChannelMember {\n  id        Int     @id @default(autoincrement())\n  channelId Int\n  userId    Int\n  role      String? // optional: \"admin\" | \"member\"\n\n  channel Channel @relation(fields: [channelId], references: [id], onDelete: Cascade)\n  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)\n\n  @@unique([channelId, userId])\n  @@index([userId])\n  @@index([channelId])\n}\n",
+  "inlineSchemaHash": "996980a3bd998dd64b6932b4785f1dbcbf381dacc0be96dacfa5eeffd90dc309",
   "copyEngine": true
 }
 config.dirname = '/'
 
-config.runtimeDataModel = JSON.parse("{\"models\":{\"User\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"username\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"email\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"role\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"isStaff\",\"kind\":\"scalar\",\"type\":\"Boolean\"},{\"name\":\"profileImage\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"posts\",\"kind\":\"object\",\"type\":\"Post\",\"relationName\":\"PostToUser\"},{\"name\":\"comments\",\"kind\":\"object\",\"type\":\"Comment\",\"relationName\":\"CommentToUser\"},{\"name\":\"reactions\",\"kind\":\"object\",\"type\":\"Reaction\",\"relationName\":\"ReactionToUser\"}],\"dbName\":null},\"Post\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"content\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"authorId\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"author\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"PostToUser\"},{\"name\":\"comments\",\"kind\":\"object\",\"type\":\"Comment\",\"relationName\":\"CommentToPost\"},{\"name\":\"reactions\",\"kind\":\"object\",\"type\":\"Reaction\",\"relationName\":\"PostToReaction\"},{\"name\":\"files\",\"kind\":\"object\",\"type\":\"File\",\"relationName\":\"FileToPost\"}],\"dbName\":null},\"Comment\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"content\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"postId\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"post\",\"kind\":\"object\",\"type\":\"Post\",\"relationName\":\"CommentToPost\"},{\"name\":\"authorId\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"author\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"CommentToUser\"}],\"dbName\":null},\"Reaction\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"type\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"postId\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"post\",\"kind\":\"object\",\"type\":\"Post\",\"relationName\":\"PostToReaction\"},{\"name\":\"userId\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"user\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"ReactionToUser\"}],\"dbName\":null},\"File\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"url\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"type\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"postId\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"post\",\"kind\":\"object\",\"type\":\"Post\",\"relationName\":\"FileToPost\"}],\"dbName\":null}},\"enums\":{},\"types\":{}}")
+config.runtimeDataModel = JSON.parse("{\"models\":{\"User\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"username\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"email\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"role\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"isStaff\",\"kind\":\"scalar\",\"type\":\"Boolean\"},{\"name\":\"profileImage\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"posts\",\"kind\":\"object\",\"type\":\"Post\",\"relationName\":\"PostToUser\"},{\"name\":\"comments\",\"kind\":\"object\",\"type\":\"Comment\",\"relationName\":\"CommentToUser\"},{\"name\":\"reactions\",\"kind\":\"object\",\"type\":\"Reaction\",\"relationName\":\"ReactionToUser\"},{\"name\":\"channelMember\",\"kind\":\"object\",\"type\":\"ChannelMember\",\"relationName\":\"ChannelMemberToUser\"}],\"dbName\":null},\"Post\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"content\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"authorId\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"author\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"PostToUser\"},{\"name\":\"files\",\"kind\":\"object\",\"type\":\"File\",\"relationName\":\"FileToPost\"},{\"name\":\"comments\",\"kind\":\"object\",\"type\":\"Comment\",\"relationName\":\"CommentToPost\"},{\"name\":\"reactions\",\"kind\":\"object\",\"type\":\"Reaction\",\"relationName\":\"PostToReaction\"}],\"dbName\":null},\"Comment\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"content\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"postId\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"post\",\"kind\":\"object\",\"type\":\"Post\",\"relationName\":\"CommentToPost\"},{\"name\":\"authorId\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"author\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"CommentToUser\"}],\"dbName\":null},\"Reaction\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"type\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"postId\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"post\",\"kind\":\"object\",\"type\":\"Post\",\"relationName\":\"PostToReaction\"},{\"name\":\"userId\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"user\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"ReactionToUser\"}],\"dbName\":null},\"File\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"url\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"type\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"postId\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"post\",\"kind\":\"object\",\"type\":\"Post\",\"relationName\":\"FileToPost\"}],\"dbName\":null},\"Channel\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"name\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"bannerKey\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"members\",\"kind\":\"object\",\"type\":\"ChannelMember\",\"relationName\":\"ChannelToChannelMember\"}],\"dbName\":null},\"ChannelMember\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"channelId\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"userId\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"role\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"channel\",\"kind\":\"object\",\"type\":\"Channel\",\"relationName\":\"ChannelToChannelMember\"},{\"name\":\"user\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"ChannelMemberToUser\"}],\"dbName\":null}},\"enums\":{},\"types\":{}}")
 defineDmmfProperty(exports.Prisma, config.runtimeDataModel)
 config.engineWasm = {
   getRuntime: async () => require('./query_engine_bg.js'),

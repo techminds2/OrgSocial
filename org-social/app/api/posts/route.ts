@@ -47,13 +47,23 @@
  *       500:
  *         description: Server error
  */
+export const runtime = "nodejs";
+
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { jwtVerify } from "jose";
 
-export const runtime = "nodejs";
-
 const SECRET = new TextEncoder().encode(process.env.DJANGO_JWT_SECRET || "");
+
+function normalizeMediaUrl(u?: string | null) {
+  if (!u) return null;
+  const s = String(u).trim();
+  if (!s) return null;
+
+  if (s.startsWith("http://") || s.startsWith("https://")) return s;
+
+  return `/api/files/${s.replace(/^\/+/, "")}`;
+}
 
 /* -------------------- AUTH HELPER -------------------- */
 async function getUserIdFromRequest(req: NextRequest): Promise<number | null> {
@@ -66,30 +76,38 @@ async function getUserIdFromRequest(req: NextRequest): Promise<number | null> {
       .replace(/^Bearer\s+/i, "")
       .replace(/^"+|"+$/g, "");
 
-    const result = await jwtVerify(token, SECRET, {
-      algorithms: ["HS256"],
-    });
-
-    return (result.payload as any).user_id ?? null;
+    const result = await jwtVerify(token, SECRET, { algorithms: ["HS256"] });
+    const uid = (result.payload as any).user_id;
+    return uid ? Number(uid) : null;
   } catch {
     return null;
   }
 }
 
-/* -------------------- GET POSTS -------------------- */
+/* -------------------- GET POSTS (paged fetch) -------------------- */
 export async function GET(req: NextRequest) {
   try {
     const userId = await getUserIdFromRequest(req);
 
+    const { searchParams } = new URL(req.url);
+    const limitRaw = searchParams.get("limit");
+    const cursorRaw = searchParams.get("cursor");
+
+    const limit = Math.max(1, Math.min(Number(limitRaw || 10), 50));
+    const cursorId = cursorRaw ? Number(cursorRaw) : null;
+
     const posts = await prisma.post.findMany({
-      orderBy: { createdAt: "desc" },
+      take: limit,
+      ...(cursorId
+        ? {
+            cursor: { id: cursorId },
+            skip: 1,
+          }
+        : {}),
+      orderBy: [{ createdAt: "desc" }, { id: "desc" }],
       include: {
         author: {
-          select: {
-            id: true,
-            username: true,
-            profileImage: true,
-          },
+          select: { id: true, username: true, profileImage: true },
         },
         files: true,
         reactions: true,
@@ -97,39 +115,55 @@ export async function GET(req: NextRequest) {
           orderBy: { createdAt: "asc" },
           include: {
             author: {
-              select: {
-                id: true,
-                username: true,
-                profileImage: true,
-              },
+              select: { id: true, username: true, profileImage: true },
             },
           },
         },
       },
     });
 
-    const formatted = posts.map((p) => ({
-      id: p.id,
-      content: p.content,
-      createdAt: p.createdAt,
-      author: p.author,
-      files: p.files.map((f) => ({
-        url: `/api/files/${f.url}`,
-        type: f.type || "document",
-      })),
-      likeCount: p.reactions.filter((r) => r.type === "LIKE").length,
-      likedByMe: userId
-        ? p.reactions.some((r) => r.userId === userId && r.type === "LIKE")
-        : false,
-      comments: p.comments.map((c) => ({
-        id: c.id,
-        content: c.content,
-        createdAt: c.createdAt,
-        author: c.author,
-      })),
-    }));
+    const formatted = posts.map((p) => {
+      const likeCount = p.reactions.reduce(
+        (acc, r) => (r.type === "LIKE" ? acc + 1 : acc),
+        0
+      );
 
-    return NextResponse.json({ posts: formatted });
+      const likedByMe = userId
+        ? p.reactions.some((r) => r.userId === userId && r.type === "LIKE")
+        : false;
+
+      const isMine = userId ? p.author.id === userId : false;
+
+      return {
+        id: p.id,
+        content: p.content,
+        createdAt: p.createdAt,
+        author: {
+          ...p.author,
+          profileImage: normalizeMediaUrl(p.author.profileImage),
+        },
+        files: p.files.map((f) => ({
+          url: `/api/files/${f.url}`,
+          type: (f.type as any) || "document",
+        })),
+        likeCount,
+        likedByMe,
+        isMine,
+        comments: p.comments.map((c) => ({
+          id: c.id,
+          content: c.content,
+          createdAt: c.createdAt,
+          author: {
+            ...c.author,
+            profileImage: normalizeMediaUrl(c.author.profileImage),
+          },
+        })),
+      };
+    });
+
+    const nextCursor = posts.length === limit ? posts[posts.length - 1].id : null;
+
+    return NextResponse.json({ posts: formatted, nextCursor });
   } catch (err) {
     console.error("GET POSTS ERROR:", err);
     return NextResponse.json(

@@ -134,6 +134,7 @@ exports.Prisma.PostScalarFieldEnum = {
   id: 'id',
   content: 'content',
   createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
   authorId: 'authorId'
 };
 
@@ -159,6 +160,20 @@ exports.Prisma.FileScalarFieldEnum = {
   postId: 'postId'
 };
 
+exports.Prisma.ChannelScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  createdAt: 'createdAt',
+  bannerKey: 'bannerKey'
+};
+
+exports.Prisma.ChannelMemberScalarFieldEnum = {
+  id: 'id',
+  channelId: 'channelId',
+  userId: 'userId',
+  role: 'role'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -180,7 +195,9 @@ exports.Prisma.ModelName = {
   Post: 'Post',
   Comment: 'Comment',
   Reaction: 'Reaction',
-  File: 'File'
+  File: 'File',
+  Channel: 'Channel',
+  ChannelMember: 'ChannelMember'
 };
 
 /**
