@@ -9,6 +9,10 @@ import {
 } from "@mantine/core";
 import TipTapEditor from "./TipTapEditor";
 
+type CreatePostProps = {
+  channelId: number;
+};
+
 type SelectedFile = {
   file: File;
   type: "image" | "video" | "document";
@@ -36,7 +40,7 @@ const isEmptyTipTap = (html: string) => {
   return text.length === 0 && !hasMedia;
 };
 
-export default function CreatePost() {
+export default function CreatePost({ channelId }: CreatePostProps) {
   const [content, setContent] = useState("");
   const [files, setFiles] = useState<SelectedFile[]>([]);
   const [loading, setLoading] = useState(false);
@@ -77,8 +81,7 @@ export default function CreatePost() {
   const previews = useMemo(() => {
     const list = files.map((f) => ({
       ...f,
-      previewUrl:
-        f.type === "document" ? "" : URL.createObjectURL(f.file),
+      previewUrl: f.type === "document" ? "" : URL.createObjectURL(f.file),
       name: f.file.name,
     }));
     return list;
@@ -97,6 +100,7 @@ export default function CreatePost() {
 
     const formData = new FormData();
     formData.append("content", content);
+    formData.append("channelId", String(channelId));
 
     files.forEach((f) => {
       formData.append("files", f.file);

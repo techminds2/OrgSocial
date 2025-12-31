@@ -26,10 +26,11 @@ export default function ChannelsPanel() {
   const [modalOpen, setModalOpen] = useState(false);
   const [loading, setLoading] = useState(false);
 
+  // Fetch channels from API
   async function loadChannels() {
     try {
       const res = await fetch("/api/channels", { credentials: "include" });
-      if (!res.ok) return;
+      if (!res.ok) throw new Error("Failed to fetch channels");
       const data = await res.json();
       setChannels(data.channels || []);
     } catch (e) {
@@ -41,18 +42,17 @@ export default function ChannelsPanel() {
     loadChannels();
   }, []);
 
+  // Create new channel
   const addChannel = async () => {
     const trimmed = newChannel.trim();
     if (!trimmed) return;
 
     setLoading(true);
+
     try {
       const formData = new FormData();
       formData.append("name", trimmed);
       if (banner) formData.append("banner", banner);
-
-      // Optional: add members (example)
-      // formData.append("memberIds", JSON.stringify([2, 3, 4]));
 
       const res = await fetch("/api/channels", {
         method: "POST",
@@ -88,51 +88,45 @@ export default function ChannelsPanel() {
 
   return (
     <div className="w-64 bg-gray-50 p-3 border-l flex flex-col h-screen">
+      {/* Header */}
       <div className="flex justify-between items-center mb-3">
         <Text fw={600}>Channels</Text>
-
         <Button
           size="xs"
           onClick={() => setModalOpen(true)}
           variant="filled"
-          vars={() => ({
-            root: {
-              "--button-bg": "var(--color-secondary)",
-              "--button-hover": "var(--color-primary)",
-              "--button-color": "#fff",
-            },
-          })}
+          style={{
+            backgroundColor: "#4F46E5",
+            color: "#fff",
+          }}
         >
           + Add
         </Button>
       </div>
 
+      {/* Channels List */}
       <ScrollArea className="flex-1">
         <div className="flex flex-col gap-2">
           {channels.map((ch) => (
-            <div
-              key={ch.id}
-              className="px-2 py-1 rounded hover:bg-gray-200 cursor-pointer"
-            >
-              <div className="flex items-center justify-between">
-                <Link href={`/channels/${ch.id}`}>
-                  <div className="px-2 py-1 rounded hover:bg-gray-200 cursor-pointer">
-                    # {ch.name}
-                  </div>
-                </Link>
-                {typeof ch.memberCount === "number" ? (
-                  <div className="text-xs text-gray-500">{ch.memberCount}</div>
-                ) : null}
+            <Link key={ch.id} href={`/channels/${ch.id}`}>
+              <div className="px-2 py-1 rounded hover:bg-gray-200 cursor-pointer flex justify-between items-center">
+                <span># {ch.name}</span>
+                {typeof ch.memberCount === "number" && (
+                  <span className="text-xs text-gray-500">{ch.memberCount}</span>
+                )}
               </div>
-            </div>
+            </Link>
           ))}
         </div>
       </ScrollArea>
 
+      {/* Modal for creating a channel */}
       <Modal
         opened={modalOpen}
         onClose={() => setModalOpen(false)}
         title="Add Channel"
+        size="sm"
+        centered
       >
         <TextInput
           placeholder="Channel name"
@@ -154,13 +148,10 @@ export default function ChannelsPanel() {
           fullWidth
           onClick={addChannel}
           loading={loading}
-          vars={() => ({
-            root: {
-              "--button-bg": "var(--color-secondary)",
-              "--button-hover": "var(--color-primary)",
-              "--button-color": "#fff",
-            },
-          })}
+          style={{
+            backgroundColor: "#4F46E5",
+            color: "#fff",
+          }}
         >
           Create
         </Button>

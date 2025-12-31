@@ -14,6 +14,10 @@ import {
 } from "@mantine/core";
 import TipTapEditor from "./TipTapEditor";
 
+type ShowPostsProps = {
+  channelId: number;
+};
+
 type FileType = {
   url: string;
   type: "image" | "video" | "document";
@@ -48,7 +52,7 @@ type Post = {
   comments: Comment[];
 };
 
-export default function ShowPosts() {
+export default function ShowPosts({ channelId }: ShowPostsProps) {
   const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -85,6 +89,8 @@ export default function ShowPosts() {
     try {
       const qs = new URLSearchParams();
       qs.set("limit", String(LIMIT));
+      qs.set("channelId", String(channelId));
+
       if (cursor) qs.set("cursor", String(cursor));
 
       const res = await fetch(`/api/posts?${qs.toString()}`, {

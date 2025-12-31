@@ -2,30 +2,10 @@ export const runtime = "nodejs";
 
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
-import { jwtVerify } from "jose";
 import crypto from "crypto";
 import { PutObjectCommand } from "@aws-sdk/client-s3";
 import { s3 } from "@/lib/s3";
-
-const SECRET = new TextEncoder().encode(process.env.DJANGO_JWT_SECRET || "");
-
-function cleanToken(t: string) {
-  return t.trim().replace(/^Bearer\s+/i, "").replace(/^"+|"+$/g, "");
-}
-
-async function getUserIdFromRequest(req: NextRequest): Promise<number | null> {
-  try {
-    const raw = req.cookies.get("accessToken")?.value;
-    if (!raw) return null;
-
-    const token = cleanToken(raw);
-    const result = await jwtVerify(token, SECRET, { algorithms: ["HS256"] });
-    const uid = (result.payload as any).user_id;
-    return uid ? Number(uid) : null;
-  } catch {
-    return null;
-  }
-}
+import { getUserIdFromRequest } from "@/lib/auth";
 
 function normalizeKeyToFileApi(key?: string | null) {
   if (!key) return null;
@@ -35,17 +15,15 @@ function normalizeKeyToFileApi(key?: string | null) {
   return `/api/files/${s.replace(/^\/+/, "")}`;
 }
 
-/**
- * GET /api/channels
- * Returns channels + member count + banner url
- */
 export async function GET(req: NextRequest) {
   try {
+    const userId = await getUserIdFromRequest(req);
+    if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
     const channels = await prisma.channel.findMany({
+      where: { members: { some: { userId } } },
       orderBy: [{ createdAt: "desc" }, { id: "desc" }],
-      include: {
-        members: true,
-      },
+      include: { members: true },
     });
 
     const formatted = channels.map((c) => ({
@@ -64,13 +42,6 @@ export async function GET(req: NextRequest) {
   }
 }
 
-/**
- * POST /api/channels (multipart/form-data)
- * fields:
- * - name: string (required)
- * - banner: file (optional)
- * - memberIds: JSON string array like "[2,3,4]" (optional)
- */
 export async function POST(req: NextRequest) {
   try {
     const userId = await getUserIdFromRequest(req);
@@ -80,7 +51,6 @@ export async function POST(req: NextRequest) {
     const name = String(formData.get("name") || "").trim();
     if (!name) return NextResponse.json({ error: "name is required" }, { status: 400 });
 
-    // Optional members
     let memberIds: number[] = [];
     const memberIdsRaw = formData.get("memberIds");
     if (typeof memberIdsRaw === "string" && memberIdsRaw.trim()) {
@@ -89,15 +59,11 @@ export async function POST(req: NextRequest) {
         if (Array.isArray(parsed)) {
           memberIds = parsed.map((x) => Number(x)).filter((n) => Number.isFinite(n));
         }
-      } catch {
-        // ignore bad JSON
-      }
+      } catch {}
     }
 
-    // Always include creator as a member
     if (!memberIds.includes(userId)) memberIds.unshift(userId);
 
-    // Optional banner upload
     const banner = formData.get("banner");
     let bannerKey: string | null = null;
 
@@ -129,9 +95,7 @@ export async function POST(req: NextRequest) {
           })),
         },
       },
-      include: {
-        members: true,
-      },
+      include: { members: true },
     });
 
     return NextResponse.json({
@@ -147,13 +111,9 @@ export async function POST(req: NextRequest) {
     });
   } catch (err: any) {
     console.error("CREATE CHANNEL ERROR:", err);
-
-    // Prisma unique error (duplicate name)
     if (err?.code === "P2002") {
       return NextResponse.json({ error: "Channel name already exists" }, { status: 409 });
     }
-
     return NextResponse.json({ error: "Failed to create channel" }, { status: 500 });
   }
 }
- 

@@ -1,0 +1,168 @@
+export const runtime = "nodejs";
+
+import { NextRequest, NextResponse } from "next/server";
+import prisma from "@/lib/prisma";
+import crypto from "crypto";
+import { PutObjectCommand } from "@aws-sdk/client-s3";
+import { s3 } from "@/lib/s3";
+import { getUserIdFromRequest } from "@/lib/auth";
+import { isChannelMember } from "@/lib/channelAccess";
+
+function normalizeMediaUrl(u?: string | null) {
+  if (!u) return null;
+  const s = String(u).trim();
+  if (!s) return null;
+  if (s.startsWith("http://") || s.startsWith("https://")) return s;
+  return `/api/files/${s.replace(/^\/+/, "")}`;
+}
+
+export async function GET(req: NextRequest, ctx: { params: { id: string } }) {
+  try {
+    const userId = await getUserIdFromRequest(req);
+    if (!userId)
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+    const channelId = Number(ctx.params.id);
+    if (!Number.isFinite(channelId)) {
+      return NextResponse.json({ error: "Bad channel id" }, { status: 400 });
+    }
+
+    const ok = await isChannelMember(channelId, userId);
+    if (!ok) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+
+    const { searchParams } = new URL(req.url);
+    const limitRaw = searchParams.get("limit");
+    const cursorRaw = searchParams.get("cursor");
+
+    const limit = Math.max(1, Math.min(Number(limitRaw || 10), 50));
+    const cursorId = cursorRaw ? Number(cursorRaw) : null;
+
+    const posts = await prisma.post.findMany({
+      where: { channelId },
+      take: limit,
+      ...(cursorId ? { cursor: { id: cursorId }, skip: 1 } : {}),
+      orderBy: [{ createdAt: "desc" }, { id: "desc" }],
+      include: {
+        author: { select: { id: true, username: true, profileImage: true } },
+        files: true,
+        reactions: true,
+        comments: {
+          orderBy: { createdAt: "asc" },
+          include: {
+            author: {
+              select: { id: true, username: true, profileImage: true },
+            },
+          },
+        },
+      },
+    });
+
+    const formatted = posts.map((p) => {
+      const likeCount = p.reactions.reduce(
+        (acc, r) => (r.type === "LIKE" ? acc + 1 : acc),
+        0
+      );
+      const likedByMe = p.reactions.some(
+        (r) => r.userId === userId && r.type === "LIKE"
+      );
+      const isMine = p.author.id === userId;
+
+      return {
+        id: p.id,
+        content: p.content,
+        createdAt: p.createdAt,
+        author: {
+          ...p.author,
+          profileImage: normalizeMediaUrl(p.author.profileImage),
+        },
+        files: p.files.map((f) => ({
+          url: `/api/files/${f.url}`,
+          type: (f.type as any) || "document",
+        })),
+        likeCount,
+        likedByMe,
+        isMine,
+        comments: p.comments.map((c) => ({
+          id: c.id,
+          content: c.content,
+          createdAt: c.createdAt,
+          author: {
+            ...c.author,
+            profileImage: normalizeMediaUrl(c.author.profileImage),
+          },
+        })),
+      };
+    });
+
+    const nextCursor =
+      posts.length === limit ? posts[posts.length - 1].id : null;
+    return NextResponse.json({ posts: formatted, nextCursor });
+  } catch (err) {
+    console.error("GET CHANNEL POSTS ERROR:", err);
+    return NextResponse.json(
+      { error: "Failed to fetch posts" },
+      { status: 500 }
+    );
+  }
+}
+
+export async function POST(req: NextRequest, ctx: { params: { id: string } }) {
+  try {
+    const userId = await getUserIdFromRequest(req);
+    if (!userId)
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+    const channelId = Number(ctx.params.id);
+    if (!Number.isFinite(channelId)) {
+      return NextResponse.json({ error: "Bad channel id" }, { status: 400 });
+    }
+
+    const ok = await isChannelMember(channelId, userId);
+    if (!ok) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+
+    const formData = await req.formData();
+    const content = String(formData.get("content") || "");
+    const files = formData.getAll("files") as File[];
+    const types = formData.getAll("types") as string[];
+
+    const uploadedFiles: { url: string; type?: string }[] = [];
+
+    for (let i = 0; i < files.length; i++) {
+      const file = files[i];
+      const buffer = Buffer.from(await file.arrayBuffer());
+      const ext = file.name.split(".").pop() || "bin";
+      const fileName = `${crypto.randomUUID()}.${ext}`;
+      const key = `uploads/${fileName}`;
+
+      await s3.send(
+        new PutObjectCommand({
+          Bucket: process.env.S3_BUCKET!,
+          Key: key,
+          Body: buffer,
+          ContentType: file.type || "application/octet-stream",
+        })
+      );
+
+      uploadedFiles.push({ url: key, type: types[i] });
+    }
+
+    const post = await prisma.post.create({
+      data: {
+        content,
+        channel: { connect: { id: channelId } },
+        author: { connect: { id: userId } },
+        files: {
+          create: uploadedFiles.map((f) =>
+            f.type ? { url: f.url, type: f.type } : { url: f.url }
+          ),
+        },
+      },
+      include: { files: true },
+    });
+
+    return NextResponse.json({ success: true, post });
+  } catch (err) {
+    console.error("CREATE CHANNEL POST ERROR:", err);
+    return NextResponse.json({ error: "Post failed" }, { status: 500 });
+  }
+}

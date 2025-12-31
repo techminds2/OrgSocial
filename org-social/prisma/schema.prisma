@@ -32,12 +32,19 @@ model Post {
   content   String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
   authorId  Int
   author    User     @relation(fields: [authorId], references: [id])
+
+  channelId Int?
+  channel   Channel? @relation(fields: [channelId], references: [id], onDelete: Cascade)
+
   files     File[]
   comments  Comment[]
   reactions Reaction[]
 }
+
+
 
 model Comment {
   id        Int       @id @default(autoincrement())
@@ -77,8 +84,9 @@ model Channel {
   name      String          @unique
   createdAt DateTime        @default(now())
 
-  bannerKey String?         // MinIO key like "channels/<uuid>.png"
+  bannerKey String?
   members   ChannelMember[]
+  posts     Post[]
 }
 
 model ChannelMember {
