@@ -15,6 +15,9 @@ function normalizeKeyToFileApi(key?: string | null) {
   return `/api/files/${s.replace(/^\/+/, "")}`;
 }
 
+type Role = "viewer" | "editor" | "admin";
+const VALID_ROLES: Role[] = ["viewer", "editor", "admin"];
+
 export async function GET(req: NextRequest) {
   try {
     const userId = await getUserIdFromRequest(req);
@@ -51,19 +54,49 @@ export async function POST(req: NextRequest) {
     const name = String(formData.get("name") || "").trim();
     if (!name) return NextResponse.json({ error: "name is required" }, { status: 400 });
 
-    let memberIds: number[] = [];
-    const memberIdsRaw = formData.get("memberIds");
-    if (typeof memberIdsRaw === "string" && memberIdsRaw.trim()) {
+    // -------------------------------
+    // ✅ members-with-roles (preferred)
+    // members = [{"userId": 2, "role":"viewer"}, ...]
+    // fallback: memberIds = [2,3,4]
+    // creator always becomes admin
+    // -------------------------------
+    let members: { userId: number; role: Role }[] = [];
+
+    const membersRaw = formData.get("members");
+    if (typeof membersRaw === "string" && membersRaw.trim()) {
       try {
-        const parsed = JSON.parse(memberIdsRaw);
+        const parsed = JSON.parse(membersRaw);
         if (Array.isArray(parsed)) {
-          memberIds = parsed.map((x) => Number(x)).filter((n) => Number.isFinite(n));
+          members = parsed
+            .map((x) => ({
+              userId: Number(x?.userId),
+              role: (String(x?.role || "viewer") as Role),
+            }))
+            .filter((m) => Number.isFinite(m.userId) && VALID_ROLES.includes(m.role));
         }
       } catch {}
     }
 
-    if (!memberIds.includes(userId)) memberIds.unshift(userId);
+    // fallback: old memberIds
+    if (members.length === 0) {
+      let memberIds: number[] = [];
+      const memberIdsRaw = formData.get("memberIds");
+      if (typeof memberIdsRaw === "string" && memberIdsRaw.trim()) {
+        try {
+          const parsed = JSON.parse(memberIdsRaw);
+          if (Array.isArray(parsed)) {
+            memberIds = parsed.map((x) => Number(x)).filter((n) => Number.isFinite(n));
+          }
+        } catch {}
+      }
+      members = memberIds.map((uid) => ({ userId: uid, role: "viewer" as Role }));
+    }
 
+    // ensure creator is admin and remove duplicates of creator
+    members = members.filter((m) => m.userId !== userId);
+    members.unshift({ userId, role: "admin" });
+
+    // banner upload (unchanged)
     const banner = formData.get("banner");
     let bannerKey: string | null = null;
 
@@ -89,9 +122,9 @@ export async function POST(req: NextRequest) {
         name,
         bannerKey,
         members: {
-          create: memberIds.map((uid) => ({
-            userId: uid,
-            role: uid === userId ? "admin" : "member",
+          create: members.map((m) => ({
+            userId: m.userId,
+            role: m.role,
           })),
         },
       },

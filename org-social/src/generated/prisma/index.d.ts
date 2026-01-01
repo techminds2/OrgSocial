@@ -8556,7 +8556,7 @@ export namespace Prisma {
     id: number
     channelId: number
     userId: number
-    role: string | null
+    role: string
     _count: ChannelMemberCountAggregateOutputType | null
     _avg: ChannelMemberAvgAggregateOutputType | null
     _sum: ChannelMemberSumAggregateOutputType | null
@@ -8636,7 +8636,7 @@ export namespace Prisma {
       id: number
       channelId: number
       userId: number
-      role: string | null
+      role: string
     }, ExtArgs["result"]["channelMember"]>
     composites: {}
   }
@@ -10039,7 +10039,7 @@ export namespace Prisma {
     id?: IntFilter<"ChannelMember"> | number
     channelId?: IntFilter<"ChannelMember"> | number
     userId?: IntFilter<"ChannelMember"> | number
-    role?: StringNullableFilter<"ChannelMember"> | string | null
+    role?: StringFilter<"ChannelMember"> | string
     channel?: XOR<ChannelScalarRelationFilter, ChannelWhereInput>
     user?: XOR<UserScalarRelationFilter, UserWhereInput>
   }
@@ -10048,7 +10048,7 @@ export namespace Prisma {
     id?: SortOrder
     channelId?: SortOrder
     userId?: SortOrder
-    role?: SortOrderInput | SortOrder
+    role?: SortOrder
     channel?: ChannelOrderByWithRelationInput
     user?: UserOrderByWithRelationInput
   }
@@ -10061,7 +10061,7 @@ export namespace Prisma {
     NOT?: ChannelMemberWhereInput | ChannelMemberWhereInput[]
     channelId?: IntFilter<"ChannelMember"> | number
     userId?: IntFilter<"ChannelMember"> | number
-    role?: StringNullableFilter<"ChannelMember"> | string | null
+    role?: StringFilter<"ChannelMember"> | string
     channel?: XOR<ChannelScalarRelationFilter, ChannelWhereInput>
     user?: XOR<UserScalarRelationFilter, UserWhereInput>
   }, "id" | "channelId_userId">
@@ -10070,7 +10070,7 @@ export namespace Prisma {
     id?: SortOrder
     channelId?: SortOrder
     userId?: SortOrder
-    role?: SortOrderInput | SortOrder
+    role?: SortOrder
     _count?: ChannelMemberCountOrderByAggregateInput
     _avg?: ChannelMemberAvgOrderByAggregateInput
     _max?: ChannelMemberMaxOrderByAggregateInput
@@ -10085,7 +10085,7 @@ export namespace Prisma {
     id?: IntWithAggregatesFilter<"ChannelMember"> | number
     channelId?: IntWithAggregatesFilter<"ChannelMember"> | number
     userId?: IntWithAggregatesFilter<"ChannelMember"> | number
-    role?: StringNullableWithAggregatesFilter<"ChannelMember"> | string | null
+    role?: StringWithAggregatesFilter<"ChannelMember"> | string
   }
 
   export type UserCreateInput = {
@@ -10429,7 +10429,7 @@ export namespace Prisma {
   }
 
   export type ChannelMemberCreateInput = {
-    role?: string | null
+    role?: string
     channel: ChannelCreateNestedOneWithoutMembersInput
     user: UserCreateNestedOneWithoutChannelMemberInput
   }
@@ -10438,11 +10438,11 @@ export namespace Prisma {
     id?: number
     channelId: number
     userId: number
-    role?: string | null
+    role?: string
   }
 
   export type ChannelMemberUpdateInput = {
-    role?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: StringFieldUpdateOperationsInput | string
     channel?: ChannelUpdateOneRequiredWithoutMembersNestedInput
     user?: UserUpdateOneRequiredWithoutChannelMemberNestedInput
   }
@@ -10451,25 +10451,25 @@ export namespace Prisma {
     id?: IntFieldUpdateOperationsInput | number
     channelId?: IntFieldUpdateOperationsInput | number
     userId?: IntFieldUpdateOperationsInput | number
-    role?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: StringFieldUpdateOperationsInput | string
   }
 
   export type ChannelMemberCreateManyInput = {
     id?: number
     channelId: number
     userId: number
-    role?: string | null
+    role?: string
   }
 
   export type ChannelMemberUpdateManyMutationInput = {
-    role?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: StringFieldUpdateOperationsInput | string
   }
 
   export type ChannelMemberUncheckedUpdateManyInput = {
     id?: IntFieldUpdateOperationsInput | number
     channelId?: IntFieldUpdateOperationsInput | number
     userId?: IntFieldUpdateOperationsInput | number
-    role?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: StringFieldUpdateOperationsInput | string
   }
 
   export type IntFilter<$PrismaModel = never> = {
@@ -11742,14 +11742,14 @@ export namespace Prisma {
   }
 
   export type ChannelMemberCreateWithoutUserInput = {
-    role?: string | null
+    role?: string
     channel: ChannelCreateNestedOneWithoutMembersInput
   }
 
   export type ChannelMemberUncheckedCreateWithoutUserInput = {
     id?: number
     channelId: number
-    role?: string | null
+    role?: string
   }
 
   export type ChannelMemberCreateOrConnectWithoutUserInput = {
@@ -11866,7 +11866,7 @@ export namespace Prisma {
     id?: IntFilter<"ChannelMember"> | number
     channelId?: IntFilter<"ChannelMember"> | number
     userId?: IntFilter<"ChannelMember"> | number
-    role?: StringNullableFilter<"ChannelMember"> | string | null
+    role?: StringFilter<"ChannelMember"> | string
   }
 
   export type UserCreateWithoutPostsInput = {
@@ -12399,14 +12399,14 @@ export namespace Prisma {
   }
 
   export type ChannelMemberCreateWithoutChannelInput = {
-    role?: string | null
+    role?: string
     user: UserCreateNestedOneWithoutChannelMemberInput
   }
 
   export type ChannelMemberUncheckedCreateWithoutChannelInput = {
     id?: number
     userId: number
-    role?: string | null
+    role?: string
   }
 
   export type ChannelMemberCreateOrConnectWithoutChannelInput = {
@@ -12614,7 +12614,7 @@ export namespace Prisma {
   export type ChannelMemberCreateManyUserInput = {
     id?: number
     channelId: number
-    role?: string | null
+    role?: string
   }
 
   export type PostUpdateWithoutAuthorInput = {
@@ -12684,20 +12684,20 @@ export namespace Prisma {
   }
 
   export type ChannelMemberUpdateWithoutUserInput = {
-    role?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: StringFieldUpdateOperationsInput | string
     channel?: ChannelUpdateOneRequiredWithoutMembersNestedInput
   }
 
   export type ChannelMemberUncheckedUpdateWithoutUserInput = {
     id?: IntFieldUpdateOperationsInput | number
     channelId?: IntFieldUpdateOperationsInput | number
-    role?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: StringFieldUpdateOperationsInput | string
   }
 
   export type ChannelMemberUncheckedUpdateManyWithoutUserInput = {
     id?: IntFieldUpdateOperationsInput | number
     channelId?: IntFieldUpdateOperationsInput | number
-    role?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: StringFieldUpdateOperationsInput | string
   }
 
   export type FileCreateManyPostInput = {
@@ -12776,7 +12776,7 @@ export namespace Prisma {
   export type ChannelMemberCreateManyChannelInput = {
     id?: number
     userId: number
-    role?: string | null
+    role?: string
   }
 
   export type PostCreateManyChannelInput = {
@@ -12788,20 +12788,20 @@ export namespace Prisma {
   }
 
   export type ChannelMemberUpdateWithoutChannelInput = {
-    role?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: StringFieldUpdateOperationsInput | string
     user?: UserUpdateOneRequiredWithoutChannelMemberNestedInput
   }
 
   export type ChannelMemberUncheckedUpdateWithoutChannelInput = {
     id?: IntFieldUpdateOperationsInput | number
     userId?: IntFieldUpdateOperationsInput | number
-    role?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: StringFieldUpdateOperationsInput | string
   }
 
   export type ChannelMemberUncheckedUpdateManyWithoutChannelInput = {
     id?: IntFieldUpdateOperationsInput | number
     userId?: IntFieldUpdateOperationsInput | number
-    role?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: StringFieldUpdateOperationsInput | string
   }
 
   export type PostUpdateWithoutChannelInput = {

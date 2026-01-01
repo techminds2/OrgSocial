@@ -1,4 +1,3 @@
-// ChannelFeed.tsx ✅ (unchanged; shown for completeness)
 "use client";
 
 import CreatePost from "@/components/CreatePost";
@@ -7,9 +6,11 @@ import ShowPosts from "@/components/ShowPost";
 export default function ChannelFeed({
   channelId,
   channelName,
+  role,
 }: {
   channelId: number;
   channelName: string;
+  role: "viewer" | "editor" | "admin";
 }) {
   return (
     <div className="p-6">
@@ -19,10 +20,18 @@ export default function ChannelFeed({
           <p className="text-sm text-gray-500">
             Only members can view and post in this channel.
           </p>
+          <p className="text-xs text-gray-400 mt-1">
+            Your role: <span className="font-medium">{role}</span>
+          </p>
         </div>
 
-        <CreatePost channelId={channelId} />
-        <div className="h-4" />
+        {role !== "viewer" && (
+          <>
+            <CreatePost channelId={channelId} />
+            <div className="h-4" />
+          </>
+        )}
+
         <ShowPosts channelId={channelId} />
       </div>
     </div>

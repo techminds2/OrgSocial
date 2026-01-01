@@ -6,7 +6,7 @@ import crypto from "crypto";
 import { PutObjectCommand } from "@aws-sdk/client-s3";
 import { s3 } from "@/lib/s3";
 import { getUserIdFromRequest } from "@/lib/auth";
-import { isChannelMember } from "@/lib/channelAccess";
+import { isChannelMember, requireChannelRole } from "@/lib/channelAccess";
 
 function normalizeMediaUrl(u?: string | null) {
   if (!u) return null;
@@ -16,7 +16,6 @@ function normalizeMediaUrl(u?: string | null) {
   return `/api/files/${s.replace(/^\/+/, "")}`;
 }
 
-/** ✅ Next.js 16: params can be a Promise */
 type Ctx = { params: Promise<{ id: string }> };
 
 export async function GET(req: NextRequest, ctx: Ctx) {
@@ -98,7 +97,8 @@ export async function POST(req: NextRequest, ctx: Ctx) {
       return NextResponse.json({ error: "Bad channel id" }, { status: 400 });
     }
 
-    const ok = await isChannelMember(channelId, userId);
+    // ✅ only editor/admin can create posts
+    const ok = await requireChannelRole(channelId, userId, ["editor", "admin"]);
     if (!ok) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
 
     const formData = await req.formData();

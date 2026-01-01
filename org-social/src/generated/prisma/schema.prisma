@@ -83,10 +83,10 @@ model Channel {
 }
 
 model ChannelMember {
-  id        Int     @id @default(autoincrement())
+  id        Int    @id @default(autoincrement())
   channelId Int
   userId    Int
-  role      String? // optional: "admin" | "member"
+  role      String @default("viewer") // "viewer" | "editor" | "admin"
 
   channel Channel @relation(fields: [channelId], references: [id], onDelete: Cascade)
   user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)

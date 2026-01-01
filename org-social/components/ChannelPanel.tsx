@@ -1,13 +1,6 @@
 "use client";
 
-import {
-  ScrollArea,
-  Button,
-  Text,
-  Modal,
-  TextInput,
-  FileInput,
-} from "@mantine/core";
+import { ScrollArea, Button, Text, Modal, TextInput, FileInput } from "@mantine/core";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
@@ -19,6 +12,18 @@ type Channel = {
   memberCount?: number;
 };
 
+type UserPick = {
+  id: number;
+  username: string;
+  email?: string | null;
+};
+
+type MemberPick = {
+  userId: number;
+  username: string;
+  role: "viewer" | "editor" | "admin";
+};
+
 export default function ChannelsPanel() {
   const [channels, setChannels] = useState<Channel[]>([]);
   const [newChannel, setNewChannel] = useState("");
@@ -26,7 +31,11 @@ export default function ChannelsPanel() {
   const [modalOpen, setModalOpen] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  // Fetch channels from API
+  // member picker state
+  const [userQuery, setUserQuery] = useState("");
+  const [userResults, setUserResults] = useState<UserPick[]>([]);
+  const [pickedMembers, setPickedMembers] = useState<MemberPick[]>([]);
+
   async function loadChannels() {
     try {
       const res = await fetch("/api/channels", { credentials: "include" });
@@ -42,7 +51,28 @@ export default function ChannelsPanel() {
     loadChannels();
   }, []);
 
-  // Create new channel
+  async function searchUsers(q: string) {
+    const qq = q.trim();
+    if (!qq) {
+      setUserResults([]);
+      return;
+    }
+    try {
+      const res = await fetch(`/api/users/search?q=${encodeURIComponent(qq)}`, {
+        credentials: "include",
+      });
+      const data = await res.json().catch(() => ({}));
+      setUserResults(data.users || []);
+    } catch (e) {
+      console.error("User search failed:", e);
+    }
+  }
+
+  useEffect(() => {
+    const t = setTimeout(() => searchUsers(userQuery), 300);
+    return () => clearTimeout(t);
+  }, [userQuery]);
+
   const addChannel = async () => {
     const trimmed = newChannel.trim();
     if (!trimmed) return;
@@ -53,6 +83,12 @@ export default function ChannelsPanel() {
       const formData = new FormData();
       formData.append("name", trimmed);
       if (banner) formData.append("banner", banner);
+
+      // ✅ send members with role (creator becomes admin in API automatically)
+      formData.append(
+        "members",
+        JSON.stringify(pickedMembers.map((m) => ({ userId: m.userId, role: m.role })))
+      );
 
       const res = await fetch("/api/channels", {
         method: "POST",
@@ -78,6 +114,12 @@ export default function ChannelsPanel() {
       setChannels((prev) => [...prev, created]);
       setNewChannel("");
       setBanner(null);
+
+      // reset picker
+      setUserQuery("");
+      setUserResults([]);
+      setPickedMembers([]);
+
       setModalOpen(false);
     } catch (e) {
       console.error("Create channel error:", e);
@@ -88,23 +130,18 @@ export default function ChannelsPanel() {
 
   return (
     <div className="w-64 bg-gray-50 p-3 border-l flex flex-col h-screen">
-      {/* Header */}
       <div className="flex justify-between items-center mb-3">
         <Text fw={600}>Channels</Text>
         <Button
           size="xs"
           onClick={() => setModalOpen(true)}
           variant="filled"
-          style={{
-            backgroundColor: "#4F46E5",
-            color: "#fff",
-          }}
+          style={{ backgroundColor: "#4F46E5", color: "#fff" }}
         >
           + Add
         </Button>
       </div>
 
-      {/* Channels List */}
       <ScrollArea className="flex-1">
         <div className="flex flex-col gap-2">
           {channels.map((ch) => (
@@ -120,7 +157,6 @@ export default function ChannelsPanel() {
         </div>
       </ScrollArea>
 
-      {/* Modal for creating a channel */}
       <Modal
         opened={modalOpen}
         onClose={() => setModalOpen(false)}
@@ -144,17 +180,101 @@ export default function ChannelsPanel() {
           mb="sm"
         />
 
+        {/* ✅ Member picker */}
+        <TextInput
+          label="Add members"
+          placeholder="Search username/email..."
+          value={userQuery}
+          onChange={(e) => setUserQuery(e.currentTarget.value)}
+          mb="xs"
+        />
+
+        <div className="border rounded p-2 mb-3" style={{ maxHeight: 140, overflow: "auto" }}>
+          {userResults.length === 0 ? (
+            <div className="text-sm text-gray-500">No results</div>
+          ) : (
+            userResults.map((u) => {
+              const already = pickedMembers.some((m) => m.userId === u.id);
+              return (
+                <div key={u.id} className="flex items-center justify-between py-1">
+                  <div className="text-sm">
+                    <div className="font-medium">{u.username}</div>
+                    {u.email && <div className="text-xs text-gray-500">{u.email}</div>}
+                  </div>
+
+                  <Button
+                    size="xs"
+                    variant="light"
+                    disabled={already}
+                    onClick={() =>
+                      setPickedMembers((prev) => [
+                        ...prev,
+                        { userId: u.id, username: u.username, role: "viewer" },
+                      ])
+                    }
+                  >
+                    Add
+                  </Button>
+                </div>
+              );
+            })
+          )}
+        </div>
+
+        <Text fw={600} size="sm" mb={6}>
+          Selected members
+        </Text>
+
+        <div className="flex flex-col gap-2 mb-4">
+          {pickedMembers.length === 0 ? (
+            <div className="text-sm text-gray-500">No members selected</div>
+          ) : (
+            pickedMembers.map((m) => (
+              <div key={m.userId} className="flex items-center justify-between border rounded p-2">
+                <div className="text-sm font-medium">{m.username}</div>
+
+                <div className="flex items-center gap-2">
+                  <select
+                    className="border rounded px-2 py-1 text-sm"
+                    value={m.role}
+                    onChange={(e) => {
+                      const role = e.currentTarget.value as MemberPick["role"];
+                      setPickedMembers((prev) =>
+                        prev.map((x) => (x.userId === m.userId ? { ...x, role } : x))
+                      );
+                    }}
+                  >
+                    <option value="viewer">viewer</option>
+                    <option value="editor">editor</option>
+                    <option value="admin">admin</option>
+                  </select>
+
+                  <Button
+                    size="xs"
+                    color="red"
+                    variant="light"
+                    onClick={() => setPickedMembers((prev) => prev.filter((x) => x.userId !== m.userId))}
+                  >
+                    Remove
+                  </Button>
+                </div>
+              </div>
+            ))
+          )}
+        </div>
+
         <Button
           fullWidth
           onClick={addChannel}
           loading={loading}
-          style={{
-            backgroundColor: "#4F46E5",
-            color: "#fff",
-          }}
+          style={{ backgroundColor: "#4F46E5", color: "#fff" }}
         >
           Create
         </Button>
+
+        <Text size="xs" c="dimmed" mt="xs">
+          Note: You (creator) will automatically be added as <b>admin</b>.
+        </Text>
       </Modal>
     </div>
   );

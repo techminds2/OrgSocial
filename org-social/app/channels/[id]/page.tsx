@@ -7,10 +7,7 @@ import ChannelFeed from "./ChannelFeed";
 const SECRET = new TextEncoder().encode(process.env.DJANGO_JWT_SECRET || "");
 
 function cleanToken(t: string) {
-  return t
-    .trim()
-    .replace(/^Bearer\s+/i, "")
-    .replace(/^"+|"+$/g, "");
+  return t.trim().replace(/^Bearer\s+/i, "").replace(/^"+|"+$/g, "");
 }
 
 async function getUserIdFromCookies() {
@@ -20,17 +17,13 @@ async function getUserIdFromCookies() {
 
   try {
     const token = cleanToken(raw);
-    const { payload } = await jwtVerify(token, SECRET, {
-      algorithms: ["HS256"],
-    });
-
+    const { payload } = await jwtVerify(token, SECRET, { algorithms: ["HS256"] });
     const uid = (payload as any).user_id;
     return uid ? Number(uid) : null;
   } catch {
     return null;
   }
 }
-
 
 export default async function ChannelPage({
   params,
@@ -40,7 +33,7 @@ export default async function ChannelPage({
   const { id } = await params;
 
   const userId = await getUserIdFromCookies();
-  if (!userId) redirect("/login");
+  if (!userId) redirect("/");
 
   const channelId = Number(id);
   if (!Number.isFinite(channelId)) notFound();
@@ -53,7 +46,7 @@ export default async function ChannelPage({
 
   const member = await prisma.channelMember.findUnique({
     where: { channelId_userId: { channelId, userId } },
-    select: { id: true },
+    select: { id: true, role: true },
   });
 
   if (!member) {
@@ -69,5 +62,6 @@ export default async function ChannelPage({
     );
   }
 
-  return <ChannelFeed channelId={channelId} channelName={channel.name} />;
+  const role = (member.role || "viewer") as "viewer" | "editor" | "admin";
+  return <ChannelFeed channelId={channelId} channelName={channel.name} role={role} />;
 }
