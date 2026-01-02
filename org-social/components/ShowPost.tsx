@@ -14,7 +14,7 @@ import {
 import TipTapEditor from "./TipTapEditor";
 
 type ShowPostsProps = {
-  channelId: number;
+  channelId?: number;
 };
 
 type FileType = {

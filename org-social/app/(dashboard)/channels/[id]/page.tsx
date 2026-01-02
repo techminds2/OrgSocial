@@ -63,5 +63,13 @@ export default async function ChannelPage({
   }
 
   const role = (member.role || "viewer") as "viewer" | "editor" | "admin";
-  return <ChannelFeed channelId={channelId} channelName={channel.name} role={role} />;
+
+  return (
+    <ChannelFeed
+      channelId={channelId}
+      channelName={channel.name}
+      bannerKey={channel.bannerKey}
+      role={role}
+    />
+  );
 }

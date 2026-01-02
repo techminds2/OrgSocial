@@ -10,7 +10,7 @@ import {
 import TipTapEditor from "./TipTapEditor";
 
 type CreatePostProps = {
-  channelId: number;
+  channelId?: number;
 };
 
 type SelectedFile = {

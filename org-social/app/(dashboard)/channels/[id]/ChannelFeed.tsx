@@ -7,14 +7,33 @@ export default function ChannelFeed({
   channelId,
   channelName,
   role,
+  bannerKey,
 }: {
   channelId: number;
   channelName: string;
   role: "viewer" | "editor" | "admin";
+  bannerKey?: string | null;
 }) {
+  const bannerUrl = bannerKey
+    ? bannerKey.startsWith("http://") || bannerKey.startsWith("https://")
+      ? bannerKey
+      : `/api/files/${bannerKey.replace(/^\/+/, "")}`
+    : null;
+
   return (
     <div className="p-6">
-      <div className="max-w-5xl mx-auto">
+      <div className="max-w-5xl mx-auto space-y-4">
+        {/* Banner */}
+        {bannerUrl && (
+          <div className="relative h-48 w-full overflow-hidden rounded-xl bg-gray-200 mb-4">
+            <img
+              src={bannerUrl}
+              alt={`${channelName} banner`}
+              className="h-full w-full object-cover"
+            />
+          </div>
+        )}
+
         <div className="mb-4">
           <h1 className="text-xl font-semibold">#{channelName}</h1>
           <p className="text-sm text-gray-500">
