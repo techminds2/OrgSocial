@@ -25,7 +25,7 @@ export async function GET(req: NextRequest) {
     const cursorId = searchParams.get("cursor") ? Number(searchParams.get("cursor")) : null;
 
     const posts = await prisma.post.findMany({
-      where: { channelId: null }, // ✅ dashboard-only
+      where: { channelId: null }, 
       take: limit,
       ...(cursorId ? { cursor: { id: cursorId }, skip: 1 } : {}),
       orderBy: [{ createdAt: "desc" }, { id: "desc" }],
@@ -107,7 +107,7 @@ export async function POST(req: NextRequest) {
     const post = await prisma.post.create({
       data: {
         content,
-        channelId: null, // ✅ dashboard post
+        channelId: null, 
         authorId: userId,
         files: {
           create: uploadedFiles.map((f) => (f.type ? { url: f.url, type: f.type } : { url: f.url })),

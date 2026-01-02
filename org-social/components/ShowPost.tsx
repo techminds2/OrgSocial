@@ -12,6 +12,10 @@ import {
   Loader,
 } from "@mantine/core";
 import TipTapEditor from "./TipTapEditor";
+// Import from Heroicons
+import { HeartIcon as HeartOutline } from "@heroicons/react/24/outline";
+import { HeartIcon as HeartSolid } from "@heroicons/react/24/solid";
+import { ChatBubbleLeftIcon } from "@heroicons/react/24/outline";
 
 type ShowPostsProps = {
   channelId?: number;
@@ -57,7 +61,9 @@ export default function ShowPosts({ channelId }: ShowPostsProps) {
 
   const [likingId, setLikingId] = useState<number | null>(null);
   const [commentingId, setCommentingId] = useState<number | null>(null);
-  const [commentInputs, setCommentInputs] = useState<Record<number, string>>({});
+  const [commentInputs, setCommentInputs] = useState<Record<number, string>>(
+    {}
+  );
 
   const [editingPost, setEditingPost] = useState<Post | null>(null);
   const [editContent, setEditContent] = useState("");
@@ -75,7 +81,10 @@ export default function ShowPosts({ channelId }: ShowPostsProps) {
   const [loadingMore, setLoadingMore] = useState(false);
   const loadMoreRef = useRef<HTMLDivElement | null>(null);
 
-  const fetchPosts = async (opts?: { cursor?: number | null; append?: boolean }) => {
+  const fetchPosts = async (opts?: {
+    cursor?: number | null;
+    append?: boolean;
+  }) => {
     const cursor = opts?.cursor ?? null;
     const append = !!opts?.append;
 
@@ -239,7 +248,9 @@ export default function ShowPosts({ channelId }: ShowPostsProps) {
       fd.append("content", editContent);
 
       const keepKeys = (editKeepFiles || []).map((f) =>
-        f.url.startsWith("/api/files/") ? f.url.replace("/api/files/", "") : f.url
+        f.url.startsWith("/api/files/")
+          ? f.url.replace("/api/files/", "")
+          : f.url
       );
       fd.append("keepKeys", JSON.stringify(keepKeys));
 
@@ -257,7 +268,9 @@ export default function ShowPosts({ channelId }: ShowPostsProps) {
       setPosts((prev) =>
         prev.map((p) => (p.id === editingPost.id ? { ...p, ...data.post } : p))
       );
-      setCommentsPost((cur) => (cur && cur.id === editingPost.id ? { ...cur, ...data.post } : cur));
+      setCommentsPost((cur) =>
+        cur && cur.id === editingPost.id ? { ...cur, ...data.post } : cur
+      );
       setEditingPost(null);
     } catch (err) {
       console.error(err);
@@ -325,7 +338,9 @@ export default function ShowPosts({ channelId }: ShowPostsProps) {
                   <p className="font-semibold">{post.author.username}</p>
                   <p className="text-xs text-gray-500">
                     {new Date(post.createdAt).toLocaleString()}
-                    {post.isEdited ? <span className="ml-2 text-gray-400">(edited)</span> : null}
+                    {post.isEdited ? (
+                      <span className="ml-2 text-gray-400">(edited)</span>
+                    ) : null}
                   </p>
                 </div>
               </div>
@@ -362,7 +377,13 @@ export default function ShowPosts({ channelId }: ShowPostsProps) {
               <div className="flex gap-2 flex-wrap mb-3">
                 {post.files.map((f, i) => {
                   if (f.type === "image")
-                    return <img key={i} src={f.url} className="w-32 h-32 object-cover rounded" />;
+                    return (
+                      <img
+                        key={i}
+                        src={f.url}
+                        className="w-32 h-32 object-cover rounded"
+                      />
+                    );
                   if (f.type === "video")
                     return (
                       <video key={i} controls className="w-48 h-32 rounded">
@@ -384,19 +405,32 @@ export default function ShowPosts({ channelId }: ShowPostsProps) {
             )}
 
             <div className="flex items-center gap-3 mb-2">
+              {/* Like / Heart */}
               <ActionIcon
                 variant={post.likedByMe ? "filled" : "subtle"}
-                color="blue"
+                color={post.likedByMe ? "red" : "gray"}
                 loading={likingId === post.id}
                 onClick={() => toggleLike(post.id)}
                 radius="xl"
               >
-                👍
+                {post.likedByMe ? (
+                  <HeartSolid className="w-5 h-5 text-white" />
+                ) : (
+                  <HeartOutline className="w-5 h-5" />
+                )}
               </ActionIcon>
               <Text size="sm">{post.likeCount}</Text>
 
-              <Button size="xs" variant="subtle" onClick={() => openComments(post)}>
-                💬 Comments ({post.comments.length})
+              {/* Comments */}
+              <Button
+                size="xs"
+                variant="subtle"
+                color="dark"
+                className="flex items-center"
+                onClick={() => openComments(post)}
+              >
+                <ChatBubbleLeftIcon className="w-4 h-4 text-black" />
+                <span className="ml-2">Comments ({post.comments.length})</span>
               </Button>
             </div>
           </div>
@@ -439,13 +473,17 @@ export default function ShowPosts({ channelId }: ShowPostsProps) {
                   key={idx}
                   className="border rounded p-2 text-xs flex items-center gap-2"
                 >
-                  <span className="truncate max-w-[180px]">{f.url.split("/").pop()}</span>
+                  <span className="truncate max-w-[180px]">
+                    {f.url.split("/").pop()}
+                  </span>
                   <Button
                     size="xs"
                     color="red"
                     variant="light"
                     onClick={() =>
-                      setEditKeepFiles((prev) => prev.filter((_, i) => i !== idx))
+                      setEditKeepFiles((prev) =>
+                        prev.filter((_, i) => i !== idx)
+                      )
                     }
                   >
                     Remove
@@ -486,7 +524,9 @@ export default function ShowPosts({ channelId }: ShowPostsProps) {
       <Modal
         opened={!!commentsPost}
         onClose={() => setCommentsPost(null)}
-        title={commentsPost ? `Comments · Post #${commentsPost.id}` : "Comments"}
+        title={
+          commentsPost ? `Comments · Post #${commentsPost.id}` : "Comments"
+        }
         size="xl"
         centered
         withinPortal
@@ -496,13 +536,18 @@ export default function ShowPosts({ channelId }: ShowPostsProps) {
           <div className="flex gap-4 h-[70vh]">
             <div className="w-1/2 bg-gray-50 rounded-xl flex items-center justify-center overflow-hidden">
               {media?.img ? (
-                <img src={media.img.url} className="w-full h-full object-contain" />
+                <img
+                  src={media.img.url}
+                  className="w-full h-full object-contain"
+                />
               ) : media?.vid ? (
                 <video controls className="w-full h-full">
                   <source src={media.vid.url} />
                 </video>
               ) : (
-                <div className="text-sm text-gray-500 p-6 text-center">No media attached</div>
+                <div className="text-sm text-gray-500 p-6 text-center">
+                  No media attached
+                </div>
               )}
             </div>
 
@@ -522,7 +567,9 @@ export default function ShowPosts({ channelId }: ShowPostsProps) {
                         />
                         <div className="bg-gray-50 rounded-lg px-3 py-2 w-full">
                           <div className="flex items-center justify-between gap-2">
-                            <p className="text-sm font-semibold">{c.author.username}</p>
+                            <p className="text-sm font-semibold">
+                              {c.author.username}
+                            </p>
                             <p className="text-xs text-gray-400">
                               {new Date(c.createdAt).toLocaleString()}
                             </p>
@@ -550,7 +597,10 @@ export default function ShowPosts({ channelId }: ShowPostsProps) {
                   }
                   className="flex-1"
                 />
-                <Button type="submit" loading={commentingId === commentsPost.id}>
+                <Button
+                  type="submit"
+                  loading={commentingId === commentsPost.id}
+                >
                   Post
                 </Button>
               </form>

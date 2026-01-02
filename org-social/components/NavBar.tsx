@@ -29,43 +29,27 @@ export default function NavBar({ profileImage }: NavBarProps) {
 
   return (
     <nav className="bg-white shadow-md">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between h-16 items-center">
-          {/* Logo */}
-          <div className="flex-shrink-0 flex items-center">
-            <Link href="/" className="text-xl font-bold text-blue-600">
-              <Image src="/logo.webp" alt="Logo" width={200} height={40} />
-            </Link>
-          </div>
+      <div className="  py-1 lg:px-8 flex justify-end items-center ">
+        <Menu shadow="md" width={180} position="bottom-end" withArrow>
+          <Menu.Target>
+            {/* not a button (avoid nested button issues) */}
+            <div className="cursor-pointer">
+              <Avatar src={profileImage || "/temp.png"} radius="xl" size={40} />
+            </div>
+          </Menu.Target>
 
-          {/* Profile dropdown ONLY */}
-          <div className="flex items-center">
-            <Menu shadow="md" width={180} position="bottom-end" withArrow>
-              <Menu.Target>
-                {/* not a button (avoid nested button issues) */}
-                <div className="cursor-pointer">
-                  <Avatar
-                    src={profileImage || "/temp.png"}
-                    radius="xl"
-                    size={40}
-                  />
-                </div>
-              </Menu.Target>
+          <Menu.Dropdown>
+            <Menu.Item component={Link} href="/profile">
+              Profile
+            </Menu.Item>
 
-              <Menu.Dropdown>
-                <Menu.Item component={Link} href="/profile">
-                  Profile
-                </Menu.Item>
+            <Menu.Divider />
 
-                <Menu.Divider />
-
-                <Menu.Item color="red" onClick={handleLogout}>
-                  Logout
-                </Menu.Item>
-              </Menu.Dropdown>
-            </Menu>
-          </div>
-        </div>
+            <Menu.Item color="red" onClick={handleLogout}>
+              Logout
+            </Menu.Item>
+          </Menu.Dropdown>
+        </Menu>
       </div>
     </nav>
   );

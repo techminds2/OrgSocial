@@ -20,6 +20,8 @@ model User {
   comments      Comment[]
   reactions     Reaction[]
   channelMember ChannelMember[]
+
+  createdChannels Channel[] @relation("ChannelCreator")
 }
 
 model Post {
@@ -76,6 +78,9 @@ model Channel {
   id        Int      @id @default(autoincrement())
   name      String   @unique
   createdAt DateTime @default(now())
+
+  createdById Int
+  createdBy   User @relation("ChannelCreator", fields: [createdById], references: [id])
 
   bannerKey String?
   members   ChannelMember[]

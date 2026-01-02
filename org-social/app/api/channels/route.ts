@@ -54,12 +54,7 @@ export async function POST(req: NextRequest) {
     const name = String(formData.get("name") || "").trim();
     if (!name) return NextResponse.json({ error: "name is required" }, { status: 400 });
 
-    // -------------------------------
-    // ✅ members-with-roles (preferred)
-    // members = [{"userId": 2, "role":"viewer"}, ...]
-    // fallback: memberIds = [2,3,4]
-    // creator always becomes admin
-    // -------------------------------
+  
     let members: { userId: number; role: Role }[] = [];
 
     const membersRaw = formData.get("members");
@@ -121,6 +116,7 @@ export async function POST(req: NextRequest) {
       data: {
         name,
         bannerKey,
+        createdBy: { connect: { id: userId } },
         members: {
           create: members.map((m) => ({
             userId: m.userId,

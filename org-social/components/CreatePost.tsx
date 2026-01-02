@@ -8,6 +8,11 @@ import {
   useMantineColorScheme,
 } from "@mantine/core";
 import TipTapEditor from "./TipTapEditor";
+import {
+  PhotoIcon,
+  VideoCameraIcon,
+  DocumentTextIcon,
+} from "@heroicons/react/24/outline";
 
 type CreatePostProps = {
   channelId?: number;
@@ -107,9 +112,7 @@ export default function CreatePost({ channelId }: CreatePostProps) {
     });
 
     try {
-      const url = channelId
-        ? `/api/channels/${channelId}/posts`
-        : `/api/posts`;
+      const url = channelId ? `/api/channels/${channelId}/posts` : `/api/posts`;
 
       const res = await fetch(url, {
         method: "POST",
@@ -124,7 +127,9 @@ export default function CreatePost({ channelId }: CreatePostProps) {
       }
 
       const data = await res.json();
-      window.dispatchEvent(new CustomEvent("post-created", { detail: data.post }));
+      window.dispatchEvent(
+        new CustomEvent("post-created", { detail: data.post })
+      );
 
       setContent("");
       setFiles([]);
@@ -200,15 +205,34 @@ export default function CreatePost({ channelId }: CreatePostProps) {
 
       <div className="mt-4 flex items-center justify-between">
         <div className="flex gap-4 text-sm text-gray-600">
-          <button type="button" onClick={() => photoRef.current?.click()}>
-            📷 Photo
-          </button>
-          <button type="button" onClick={() => videoRef.current?.click()}>
-            🎥 Video
-          </button>
-          <button type="button" onClick={() => docRef.current?.click()}>
-            📄 Document
-          </button>
+          <div className="flex gap-2">
+            <button
+              type="button"
+              onClick={() => photoRef.current?.click()}
+              className="flex items-center gap-1 px-2 py-1 rounded hover:bg-gray-100"
+            >
+              <PhotoIcon className="w-5 h-5" />
+              Photo
+            </button>
+
+            <button
+              type="button"
+              onClick={() => videoRef.current?.click()}
+              className="flex items-center gap-1 px-2 py-1 rounded hover:bg-gray-100"
+            >
+              <VideoCameraIcon className="w-5 h-5" />
+              Video
+            </button>
+
+            <button
+              type="button"
+              onClick={() => docRef.current?.click()}
+              className="flex items-center gap-1 px-2 py-1 rounded hover:bg-gray-100"
+            >
+              <DocumentTextIcon className="w-5 h-5" />
+              Document
+            </button>
+          </div>
         </div>
 
         <button
@@ -220,7 +244,7 @@ export default function CreatePost({ channelId }: CreatePostProps) {
               loading
                 ? "bg-gray-400"
                 : canPost
-                ? "bg-blue-600 hover:bg-blue-700"
+                ? "bg-primary"
                 : "bg-gray-300 cursor-not-allowed"
             }`}
         >
@@ -310,7 +334,23 @@ export default function CreatePost({ channelId }: CreatePostProps) {
           )}
 
           <div className="flex justify-end mt-4">
-            <Button onClick={handlePost} disabled={!canPost} loading={loading}>
+            <Button
+              onClick={handlePost}
+              disabled={!canPost}
+              loading={loading}
+              style={{
+                backgroundColor: "var(--color-primary)",
+                color: "white",
+                transition: "background-color 0.2s",
+              }}
+              onMouseEnter={(e) =>
+                (e.currentTarget.style.backgroundColor =
+                  "var(--color-secondary)")
+              }
+              onMouseLeave={(e) =>
+                (e.currentTarget.style.backgroundColor = "var(--color-primary)")
+              }
+            >
               Post
             </Button>
           </div>

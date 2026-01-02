@@ -165,6 +165,7 @@ exports.Prisma.ChannelScalarFieldEnum = {
   id: 'id',
   name: 'name',
   createdAt: 'createdAt',
+  createdById: 'createdById',
   bannerKey: 'bannerKey'
 };
 

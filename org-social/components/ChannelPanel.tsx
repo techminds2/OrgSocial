@@ -1,8 +1,16 @@
 "use client";
 
-import { ScrollArea, Button, Text, Modal, TextInput, FileInput } from "@mantine/core";
+import {
+  ScrollArea,
+  Button,
+  Text,
+  Modal,
+  TextInput,
+  FileInput,
+} from "@mantine/core";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
+import Cropper from "react-easy-crop";
 
 type Channel = {
   id: number;
@@ -24,6 +32,43 @@ type MemberPick = {
   role: "viewer" | "editor" | "admin";
 };
 
+// helper to get cropped image as File
+async function getCroppedImg(imageSrc: string, crop: any) {
+  const createImage = (url: string) =>
+    new Promise<HTMLImageElement>((resolve, reject) => {
+      const img = new Image();
+      img.src = url;
+      img.onload = () => resolve(img);
+      img.onerror = (e) => reject(e);
+    });
+
+  const image = await createImage(imageSrc);
+  const canvas = document.createElement("canvas");
+  canvas.width = crop.width;
+  canvas.height = crop.height;
+  const ctx = canvas.getContext("2d");
+  if (!ctx) throw new Error("Canvas context failed");
+
+  ctx.drawImage(
+    image,
+    crop.x,
+    crop.y,
+    crop.width,
+    crop.height,
+    0,
+    0,
+    crop.width,
+    crop.height
+  );
+
+  return new Promise<File>((resolve, reject) => {
+    canvas.toBlob((blob) => {
+      if (!blob) return reject("Canvas is empty");
+      resolve(new File([blob], "banner.png", { type: "image/png" }));
+    }, "image/png");
+  });
+}
+
 export default function ChannelsPanel() {
   const [channels, setChannels] = useState<Channel[]>([]);
   const [newChannel, setNewChannel] = useState("");
@@ -35,6 +80,13 @@ export default function ChannelsPanel() {
   const [userQuery, setUserQuery] = useState("");
   const [userResults, setUserResults] = useState<UserPick[]>([]);
   const [pickedMembers, setPickedMembers] = useState<MemberPick[]>([]);
+
+  // cropper state
+  const [cropModalOpen, setCropModalOpen] = useState(false);
+  const [cropImage, setCropImage] = useState<string | null>(null);
+  const [crop, setCrop] = useState({ x: 0, y: 0 });
+  const [zoom, setZoom] = useState(1);
+  const [croppedAreaPixels, setCroppedAreaPixels] = useState<any>(null);
 
   async function loadChannels() {
     try {
@@ -84,10 +136,11 @@ export default function ChannelsPanel() {
       formData.append("name", trimmed);
       if (banner) formData.append("banner", banner);
 
-      // ✅ send members with role (creator becomes admin in API automatically)
       formData.append(
         "members",
-        JSON.stringify(pickedMembers.map((m) => ({ userId: m.userId, role: m.role })))
+        JSON.stringify(
+          pickedMembers.map((m) => ({ userId: m.userId, role: m.role }))
+        )
       );
 
       const res = await fetch("/api/channels", {
@@ -115,7 +168,6 @@ export default function ChannelsPanel() {
       setNewChannel("");
       setBanner(null);
 
-      // reset picker
       setUserQuery("");
       setUserResults([]);
       setPickedMembers([]);
@@ -128,15 +180,47 @@ export default function ChannelsPanel() {
     }
   };
 
+  // handle file input
+  const onBannerChange = (file: File | null) => {
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      setCropImage(reader.result as string);
+      setCropModalOpen(true);
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const onCropComplete = useCallback((_: any, croppedPixels: any) => {
+    setCroppedAreaPixels(croppedPixels);
+  }, []);
+
+  const handleCropSave = useCallback(async () => {
+    if (!cropImage || !croppedAreaPixels) return;
+    const croppedFile = await getCroppedImg(cropImage, croppedAreaPixels);
+    setBanner(croppedFile);
+    setCropModalOpen(false);
+  }, [cropImage, croppedAreaPixels]);
+
   return (
-    <div className="w-64 bg-gray-50 p-3 border-l flex flex-col h-screen">
+    <div className="w-64 bg-gray-50 p-3  flex flex-col h-screen">
       <div className="flex justify-between items-center mb-3">
         <Text fw={600}>Channels</Text>
         <Button
           size="xs"
-          onClick={() => setModalOpen(true)}
           variant="filled"
-          style={{ backgroundColor: "#4F46E5", color: "#fff" }}
+          onClick={() => setModalOpen(true)}
+          style={{
+            backgroundColor: "var(--color-primary)",
+            color: "white",
+            transition: "background-color 0.2s",
+          }}
+          onMouseEnter={(e) =>
+            (e.currentTarget.style.backgroundColor = "var(--color-secondary)")
+          }
+          onMouseLeave={(e) =>
+            (e.currentTarget.style.backgroundColor = "var(--color-primary)")
+          }
         >
           + Add
         </Button>
@@ -149,7 +233,9 @@ export default function ChannelsPanel() {
               <div className="px-2 py-1 rounded hover:bg-gray-200 cursor-pointer flex justify-between items-center">
                 <span># {ch.name}</span>
                 {typeof ch.memberCount === "number" && (
-                  <span className="text-xs text-gray-500">{ch.memberCount}</span>
+                  <span className="text-xs text-gray-500">
+                    {ch.memberCount}
+                  </span>
                 )}
               </div>
             </Link>
@@ -175,12 +261,11 @@ export default function ChannelsPanel() {
           label="Banner photo (optional)"
           placeholder="Pick banner image"
           value={banner}
-          onChange={setBanner}
+          onChange={onBannerChange}
           accept="image/*"
           mb="sm"
         />
 
-        {/* ✅ Member picker */}
         <TextInput
           label="Add members"
           placeholder="Search username/email..."
@@ -189,17 +274,25 @@ export default function ChannelsPanel() {
           mb="xs"
         />
 
-        <div className="border rounded p-2 mb-3" style={{ maxHeight: 140, overflow: "auto" }}>
+        <div
+          className="border rounded p-2 mb-3"
+          style={{ maxHeight: 140, overflow: "auto" }}
+        >
           {userResults.length === 0 ? (
             <div className="text-sm text-gray-500">No results</div>
           ) : (
             userResults.map((u) => {
               const already = pickedMembers.some((m) => m.userId === u.id);
               return (
-                <div key={u.id} className="flex items-center justify-between py-1">
+                <div
+                  key={u.id}
+                  className="flex items-center justify-between py-1"
+                >
                   <div className="text-sm">
                     <div className="font-medium">{u.username}</div>
-                    {u.email && <div className="text-xs text-gray-500">{u.email}</div>}
+                    {u.email && (
+                      <div className="text-xs text-gray-500">{u.email}</div>
+                    )}
                   </div>
 
                   <Button
@@ -230,7 +323,10 @@ export default function ChannelsPanel() {
             <div className="text-sm text-gray-500">No members selected</div>
           ) : (
             pickedMembers.map((m) => (
-              <div key={m.userId} className="flex items-center justify-between border rounded p-2">
+              <div
+                key={m.userId}
+                className="flex items-center justify-between border rounded p-2"
+              >
                 <div className="text-sm font-medium">{m.username}</div>
 
                 <div className="flex items-center gap-2">
@@ -240,7 +336,9 @@ export default function ChannelsPanel() {
                     onChange={(e) => {
                       const role = e.currentTarget.value as MemberPick["role"];
                       setPickedMembers((prev) =>
-                        prev.map((x) => (x.userId === m.userId ? { ...x, role } : x))
+                        prev.map((x) =>
+                          x.userId === m.userId ? { ...x, role } : x
+                        )
                       );
                     }}
                   >
@@ -253,7 +351,11 @@ export default function ChannelsPanel() {
                     size="xs"
                     color="red"
                     variant="light"
-                    onClick={() => setPickedMembers((prev) => prev.filter((x) => x.userId !== m.userId))}
+                    onClick={() =>
+                      setPickedMembers((prev) =>
+                        prev.filter((x) => x.userId !== m.userId)
+                      )
+                    }
                   >
                     Remove
                   </Button>
@@ -267,7 +369,17 @@ export default function ChannelsPanel() {
           fullWidth
           onClick={addChannel}
           loading={loading}
-          style={{ backgroundColor: "#4F46E5", color: "#fff" }}
+          style={{
+            backgroundColor: "var(--color-primary)",
+            color: "white",
+            transition: "background-color 0.2s",
+          }}
+          onMouseEnter={(e) =>
+            (e.currentTarget.style.backgroundColor = "var(--color-secondary)")
+          }
+          onMouseLeave={(e) =>
+            (e.currentTarget.style.backgroundColor = "var(--color-primary)")
+          }
         >
           Create
         </Button>
@@ -275,6 +387,35 @@ export default function ChannelsPanel() {
         <Text size="xs" c="dimmed" mt="xs">
           Note: You (creator) will automatically be added as <b>admin</b>.
         </Text>
+      </Modal>
+
+      {/* Crop modal */}
+      <Modal
+        opened={cropModalOpen}
+        onClose={() => setCropModalOpen(false)}
+        title="Crop Banner"
+        size="lg"
+        centered
+      >
+        {cropImage && (
+          <div className="relative w-full h-96 bg-gray-200">
+            <Cropper
+              image={cropImage}
+              crop={crop}
+              zoom={zoom}
+              aspect={16 / 9}
+              onCropChange={setCrop}
+              onZoomChange={setZoom}
+              onCropComplete={onCropComplete}
+            />
+          </div>
+        )}
+        <div className="mt-4 flex justify-end gap-2">
+          <Button variant="outline" onClick={() => setCropModalOpen(false)}>
+            Cancel
+          </Button>
+          <Button onClick={handleCropSave}>Save</Button>
+        </div>
       </Modal>
     </div>
   );
