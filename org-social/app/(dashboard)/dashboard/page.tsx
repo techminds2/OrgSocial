@@ -1,6 +1,6 @@
 "use client";
 import CreatePost from "@/components/CreatePost";
-import LogoutButton from "@/components/LogoutButton";
+// import LogoutButton from "@/components/LogoutButton";
 import ShowPosts from "@/components/ShowPost";
 import { useRouter } from "next/navigation";
 import React from "react";
@@ -13,7 +13,7 @@ const Dashboard = () => {
   };
 
   return (
-    <div>
+    <div className="">
       {/* <h1>Dashboard</h1> */}
       <CreatePost></CreatePost>
       <ShowPosts></ShowPosts>

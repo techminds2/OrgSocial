@@ -135,7 +135,8 @@ exports.Prisma.PostScalarFieldEnum = {
   content: 'content',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
-  authorId: 'authorId'
+  authorId: 'authorId',
+  channelId: 'channelId'
 };
 
 exports.Prisma.CommentScalarFieldEnum = {
@@ -164,6 +165,7 @@ exports.Prisma.ChannelScalarFieldEnum = {
   id: 'id',
   name: 'name',
   createdAt: 'createdAt',
+  createdById: 'createdById',
   bannerKey: 'bannerKey'
 };
 

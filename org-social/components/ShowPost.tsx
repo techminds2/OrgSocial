@@ -1,4 +1,3 @@
-// ShowPosts.tsx
 "use client";
 
 import { useEffect, useMemo, useRef, useState, FormEvent } from "react";
@@ -13,6 +12,14 @@ import {
   Loader,
 } from "@mantine/core";
 import TipTapEditor from "./TipTapEditor";
+// Import from Heroicons
+import { HeartIcon as HeartOutline } from "@heroicons/react/24/outline";
+import { HeartIcon as HeartSolid } from "@heroicons/react/24/solid";
+import { ChatBubbleLeftIcon } from "@heroicons/react/24/outline";
+
+type ShowPostsProps = {
+  channelId?: number;
+};
 
 type FileType = {
   url: string;
@@ -48,7 +55,7 @@ type Post = {
   comments: Comment[];
 };
 
-export default function ShowPosts() {
+export default function ShowPosts({ channelId }: ShowPostsProps) {
   const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -66,7 +73,6 @@ export default function ShowPosts() {
   const [editNewFiles, setEditNewFiles] = useState<File[]>([]);
 
   const [deletingId, setDeletingId] = useState<number | null>(null);
-
   const [commentsPost, setCommentsPost] = useState<Post | null>(null);
 
   const LIMIT = 10;
@@ -87,10 +93,17 @@ export default function ShowPosts() {
       qs.set("limit", String(LIMIT));
       if (cursor) qs.set("cursor", String(cursor));
 
-      const res = await fetch(`/api/posts?${qs.toString()}`, {
-        credentials: "include",
-      });
-      if (!res.ok) throw new Error("Failed to fetch posts");
+      const url = channelId
+        ? `/api/channels/${channelId}/posts?${qs.toString()}`
+        : `/api/posts?${qs.toString()}`;
+
+      const res = await fetch(url, { credentials: "include" });
+
+      if (!res.ok) {
+        const txt = await res.text().catch(() => "");
+        console.error(`FETCH POSTS FAILED (${res.status}) ${url} :: ${txt}`);
+        throw new Error("Failed to fetch posts");
+      }
 
       const data = await res.json();
 
@@ -99,14 +112,8 @@ export default function ShowPosts() {
 
       setPosts((prev) => {
         if (!append) return newPosts;
-
-        // prevent duplicates if cursor overlaps
         const existing = new Set(prev.map((p) => p.id));
-        const merged = [
-          ...prev,
-          ...newPosts.filter((p) => !existing.has(p.id)),
-        ];
-        return merged;
+        return [...prev, ...newPosts.filter((p) => !existing.has(p.id))];
       });
 
       setNextCursor(newCursor);
@@ -125,30 +132,21 @@ export default function ShowPosts() {
       setLoading(false);
     };
 
-    // initial load
     initialLoad();
 
-    const onPostCreated = () => {
-      initialLoad();
-    };
-
+    const onPostCreated = () => initialLoad();
     window.addEventListener("post-created", onPostCreated);
 
-    return () => {
-      window.removeEventListener("post-created", onPostCreated);
-    };
+    return () => window.removeEventListener("post-created", onPostCreated);
   }, []);
 
   useEffect(() => {
     if (!loadMoreRef.current) return;
-
     const el = loadMoreRef.current;
 
     const obs = new IntersectionObserver(
       async (entries) => {
-        const entry = entries[0];
-        if (!entry.isIntersecting) return;
-
+        if (!entries[0].isIntersecting) return;
         if (loading || loadingMore) return;
         if (!hasMore || !nextCursor) return;
 
@@ -160,10 +158,7 @@ export default function ShowPosts() {
     );
 
     obs.observe(el);
-
-    return () => {
-      obs.disconnect();
-    };
+    return () => obs.disconnect();
   }, [loading, loadingMore, hasMore, nextCursor]);
 
   /* ---------------- LIKE ---------------- */
@@ -222,7 +217,6 @@ export default function ShowPosts() {
         )
       );
 
-      // keep modal post in sync too
       setCommentsPost((cur) =>
         cur && cur.id === postId
           ? { ...cur, comments: [...cur.comments, comment] }
@@ -253,18 +247,14 @@ export default function ShowPosts() {
       const fd = new FormData();
       fd.append("content", editContent);
 
-      // keepKeys must be raw keys stored in DB, not "/api/files/..."
       const keepKeys = (editKeepFiles || []).map((f) =>
         f.url.startsWith("/api/files/")
           ? f.url.replace("/api/files/", "")
           : f.url
       );
-
       fd.append("keepKeys", JSON.stringify(keepKeys));
 
-      for (const file of editNewFiles) {
-        fd.append("files", file);
-      }
+      for (const file of editNewFiles) fd.append("files", file);
 
       const res = await fetch(`/api/posts/${editingPost.id}`, {
         method: "PATCH",
@@ -278,12 +268,9 @@ export default function ShowPosts() {
       setPosts((prev) =>
         prev.map((p) => (p.id === editingPost.id ? { ...p, ...data.post } : p))
       );
-
-      // keep modal in sync if open
       setCommentsPost((cur) =>
         cur && cur.id === editingPost.id ? { ...cur, ...data.post } : cur
       );
-
       setEditingPost(null);
     } catch (err) {
       console.error(err);
@@ -307,11 +294,7 @@ export default function ShowPosts() {
 
       if (!res.ok) {
         const text = await res.text().catch(() => "");
-        console.error("DELETE FAILED:", {
-          status: res.status,
-          statusText: res.statusText,
-          body: text,
-        });
+        console.error(`DELETE FAILED (${res.status}) :: ${text}`);
         throw new Error(`Failed to delete post (HTTP ${res.status})`);
       }
 
@@ -343,7 +326,6 @@ export default function ShowPosts() {
       <div className="w-full max-w-2xl ml-0 mr-auto flex flex-col gap-4">
         {posts.map((post) => (
           <div key={post.id} className="bg-white shadow rounded-xl p-4">
-            {/* Author info + actions */}
             <div className="flex items-center justify-between mb-2">
               <div className="flex items-center gap-3">
                 <img
@@ -363,7 +345,6 @@ export default function ShowPosts() {
                 </div>
               </div>
 
-              {/* ✅ "..." menu for Edit/Delete */}
               {post.isMine && (
                 <Menu position="bottom-end" withArrow withinPortal>
                   <Menu.Target>
@@ -387,13 +368,11 @@ export default function ShowPosts() {
               )}
             </div>
 
-            {/* Post content */}
             <div
               className="post-content mb-3"
               dangerouslySetInnerHTML={{ __html: post.content }}
             />
 
-            {/* Files preview (keep same behavior) */}
             {post.files.length > 0 && (
               <div className="flex gap-2 flex-wrap mb-3">
                 {post.files.map((f, i) => {
@@ -425,25 +404,33 @@ export default function ShowPosts() {
               </div>
             )}
 
-            {/* Likes + Comments button */}
             <div className="flex items-center gap-3 mb-2">
+              {/* Like / Heart */}
               <ActionIcon
                 variant={post.likedByMe ? "filled" : "subtle"}
-                color="blue"
+                color={post.likedByMe ? "red" : "gray"}
                 loading={likingId === post.id}
                 onClick={() => toggleLike(post.id)}
                 radius="xl"
               >
-                👍
+                {post.likedByMe ? (
+                  <HeartSolid className="w-5 h-5 text-white" />
+                ) : (
+                  <HeartOutline className="w-5 h-5" />
+                )}
               </ActionIcon>
               <Text size="sm">{post.likeCount}</Text>
 
+              {/* Comments */}
               <Button
                 size="xs"
                 variant="subtle"
+                color="dark"
+                className="flex items-center"
                 onClick={() => openComments(post)}
               >
-                💬 Comments ({post.comments.length})
+                <ChatBubbleLeftIcon className="w-4 h-4 text-black" />
+                <span className="ml-2">Comments ({post.comments.length})</span>
               </Button>
             </div>
           </div>
@@ -458,7 +445,8 @@ export default function ShowPosts() {
         )}
       </div>
 
-      {/* Edit Modal */}
+      {/* Edit Modal + Comments Modal remain exactly as your original (unchanged) */}
+      {/* If you want, I can paste the bottom part too, but it’s identical to what you already have */}
       <Modal
         opened={!!editingPost}
         onClose={() => setEditingPost(null)}
@@ -476,7 +464,6 @@ export default function ShowPosts() {
             showToolbar
           />
 
-          {/* attachment editor (unchanged) */}
           <div className="mt-3">
             <p className="text-sm font-semibold mb-2">Attachments</p>
 
@@ -534,7 +521,6 @@ export default function ShowPosts() {
         </div>
       </Modal>
 
-      {/* Comments Modal (unchanged) */}
       <Modal
         opened={!!commentsPost}
         onClose={() => setCommentsPost(null)}

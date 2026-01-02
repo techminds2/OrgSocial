@@ -1,0 +1,75 @@
+import prisma from "@/lib/prisma";
+import { cookies } from "next/headers";
+import { jwtVerify } from "jose";
+import { redirect, notFound } from "next/navigation";
+import ChannelFeed from "./ChannelFeed";
+
+const SECRET = new TextEncoder().encode(process.env.DJANGO_JWT_SECRET || "");
+
+function cleanToken(t: string) {
+  return t.trim().replace(/^Bearer\s+/i, "").replace(/^"+|"+$/g, "");
+}
+
+async function getUserIdFromCookies() {
+  const cookieStore = await cookies();
+  const raw = cookieStore.get("accessToken")?.value;
+  if (!raw) return null;
+
+  try {
+    const token = cleanToken(raw);
+    const { payload } = await jwtVerify(token, SECRET, { algorithms: ["HS256"] });
+    const uid = (payload as any).user_id;
+    return uid ? Number(uid) : null;
+  } catch {
+    return null;
+  }
+}
+
+export default async function ChannelPage({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  const { id } = await params;
+
+  const userId = await getUserIdFromCookies();
+  if (!userId) redirect("/");
+
+  const channelId = Number(id);
+  if (!Number.isFinite(channelId)) notFound();
+
+  const channel = await prisma.channel.findUnique({
+    where: { id: channelId },
+    select: { id: true, name: true, bannerKey: true },
+  });
+  if (!channel) notFound();
+
+  const member = await prisma.channelMember.findUnique({
+    where: { channelId_userId: { channelId, userId } },
+    select: { id: true, role: true },
+  });
+
+  if (!member) {
+    return (
+      <div className="p-6">
+        <div className="max-w-xl bg-white border rounded-xl p-4">
+          <h2 className="text-lg font-semibold">Access denied</h2>
+          <p className="text-sm text-gray-600 mt-1">
+            You are not a member of this channel.
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  const role = (member.role || "viewer") as "viewer" | "editor" | "admin";
+
+  return (
+    <ChannelFeed
+      channelId={channelId}
+      channelName={channel.name}
+      bannerKey={channel.bannerKey}
+      role={role}
+    />
+  );
+}

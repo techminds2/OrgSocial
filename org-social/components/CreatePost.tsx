@@ -8,6 +8,15 @@ import {
   useMantineColorScheme,
 } from "@mantine/core";
 import TipTapEditor from "./TipTapEditor";
+import {
+  PhotoIcon,
+  VideoCameraIcon,
+  DocumentTextIcon,
+} from "@heroicons/react/24/outline";
+
+type CreatePostProps = {
+  channelId?: number;
+};
 
 type SelectedFile = {
   file: File;
@@ -36,7 +45,7 @@ const isEmptyTipTap = (html: string) => {
   return text.length === 0 && !hasMedia;
 };
 
-export default function CreatePost() {
+export default function CreatePost({ channelId }: CreatePostProps) {
   const [content, setContent] = useState("");
   const [files, setFiles] = useState<SelectedFile[]>([]);
   const [loading, setLoading] = useState(false);
@@ -77,8 +86,7 @@ export default function CreatePost() {
   const previews = useMemo(() => {
     const list = files.map((f) => ({
       ...f,
-      previewUrl:
-        f.type === "document" ? "" : URL.createObjectURL(f.file),
+      previewUrl: f.type === "document" ? "" : URL.createObjectURL(f.file),
       name: f.file.name,
     }));
     return list;
@@ -104,21 +112,21 @@ export default function CreatePost() {
     });
 
     try {
-      const res = await fetch("/api/upload", {
+      const url = channelId ? `/api/channels/${channelId}/posts` : `/api/posts`;
+
+      const res = await fetch(url, {
         method: "POST",
         body: formData,
         credentials: "include",
       });
 
       if (!res.ok) {
-        const t = await res.text().catch(() => "");
-        console.error("UPLOAD FAILED:", res.status, t);
+        const txt = await res.text().catch(() => "");
+        console.error(`CREATE POST FAILED (${res.status}) ${url} :: ${txt}`);
         return;
       }
 
       const data = await res.json();
-      console.log("POST RESPONSE:", data);
-
       window.dispatchEvent(
         new CustomEvent("post-created", { detail: data.post })
       );
@@ -197,15 +205,34 @@ export default function CreatePost() {
 
       <div className="mt-4 flex items-center justify-between">
         <div className="flex gap-4 text-sm text-gray-600">
-          <button type="button" onClick={() => photoRef.current?.click()}>
-            📷 Photo
-          </button>
-          <button type="button" onClick={() => videoRef.current?.click()}>
-            🎥 Video
-          </button>
-          <button type="button" onClick={() => docRef.current?.click()}>
-            📄 Document
-          </button>
+          <div className="flex gap-2">
+            <button
+              type="button"
+              onClick={() => photoRef.current?.click()}
+              className="flex items-center gap-1 px-2 py-1 rounded hover:bg-gray-100"
+            >
+              <PhotoIcon className="w-5 h-5" />
+              Photo
+            </button>
+
+            <button
+              type="button"
+              onClick={() => videoRef.current?.click()}
+              className="flex items-center gap-1 px-2 py-1 rounded hover:bg-gray-100"
+            >
+              <VideoCameraIcon className="w-5 h-5" />
+              Video
+            </button>
+
+            <button
+              type="button"
+              onClick={() => docRef.current?.click()}
+              className="flex items-center gap-1 px-2 py-1 rounded hover:bg-gray-100"
+            >
+              <DocumentTextIcon className="w-5 h-5" />
+              Document
+            </button>
+          </div>
         </div>
 
         <button
@@ -217,7 +244,7 @@ export default function CreatePost() {
               loading
                 ? "bg-gray-400"
                 : canPost
-                ? "bg-blue-600 hover:bg-blue-700"
+                ? "bg-primary"
                 : "bg-gray-300 cursor-not-allowed"
             }`}
         >
@@ -243,7 +270,6 @@ export default function CreatePost() {
         }}
       >
         <div className="flex flex-col h-[65vh]">
-          {/* editor */}
           <div ref={editorHostRef} className="flex-1 overflow-auto">
             <TipTapEditor
               value={content}
@@ -290,7 +316,6 @@ export default function CreatePost() {
                     );
                   }
 
-                  // document
                   return (
                     <div
                       key={i}
@@ -309,7 +334,23 @@ export default function CreatePost() {
           )}
 
           <div className="flex justify-end mt-4">
-            <Button onClick={handlePost} disabled={!canPost} loading={loading}>
+            <Button
+              onClick={handlePost}
+              disabled={!canPost}
+              loading={loading}
+              style={{
+                backgroundColor: "var(--color-primary)",
+                color: "white",
+                transition: "background-color 0.2s",
+              }}
+              onMouseEnter={(e) =>
+                (e.currentTarget.style.backgroundColor =
+                  "var(--color-secondary)")
+              }
+              onMouseLeave={(e) =>
+                (e.currentTarget.style.backgroundColor = "var(--color-primary)")
+              }
+            >
               Post
             </Button>
           </div>

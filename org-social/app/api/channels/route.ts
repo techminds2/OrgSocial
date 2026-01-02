@@ -2,30 +2,10 @@ export const runtime = "nodejs";
 
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
-import { jwtVerify } from "jose";
 import crypto from "crypto";
 import { PutObjectCommand } from "@aws-sdk/client-s3";
 import { s3 } from "@/lib/s3";
-
-const SECRET = new TextEncoder().encode(process.env.DJANGO_JWT_SECRET || "");
-
-function cleanToken(t: string) {
-  return t.trim().replace(/^Bearer\s+/i, "").replace(/^"+|"+$/g, "");
-}
-
-async function getUserIdFromRequest(req: NextRequest): Promise<number | null> {
-  try {
-    const raw = req.cookies.get("accessToken")?.value;
-    if (!raw) return null;
-
-    const token = cleanToken(raw);
-    const result = await jwtVerify(token, SECRET, { algorithms: ["HS256"] });
-    const uid = (result.payload as any).user_id;
-    return uid ? Number(uid) : null;
-  } catch {
-    return null;
-  }
-}
+import { getUserIdFromRequest } from "@/lib/auth";
 
 function normalizeKeyToFileApi(key?: string | null) {
   if (!key) return null;
@@ -35,17 +15,18 @@ function normalizeKeyToFileApi(key?: string | null) {
   return `/api/files/${s.replace(/^\/+/, "")}`;
 }
 
-/**
- * GET /api/channels
- * Returns channels + member count + banner url
- */
+type Role = "viewer" | "editor" | "admin";
+const VALID_ROLES: Role[] = ["viewer", "editor", "admin"];
+
 export async function GET(req: NextRequest) {
   try {
+    const userId = await getUserIdFromRequest(req);
+    if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
     const channels = await prisma.channel.findMany({
+      where: { members: { some: { userId } } },
       orderBy: [{ createdAt: "desc" }, { id: "desc" }],
-      include: {
-        members: true,
-      },
+      include: { members: true },
     });
 
     const formatted = channels.map((c) => ({
@@ -64,13 +45,6 @@ export async function GET(req: NextRequest) {
   }
 }
 
-/**
- * POST /api/channels (multipart/form-data)
- * fields:
- * - name: string (required)
- * - banner: file (optional)
- * - memberIds: JSON string array like "[2,3,4]" (optional)
- */
 export async function POST(req: NextRequest) {
   try {
     const userId = await getUserIdFromRequest(req);
@@ -80,24 +54,44 @@ export async function POST(req: NextRequest) {
     const name = String(formData.get("name") || "").trim();
     if (!name) return NextResponse.json({ error: "name is required" }, { status: 400 });
 
-    // Optional members
-    let memberIds: number[] = [];
-    const memberIdsRaw = formData.get("memberIds");
-    if (typeof memberIdsRaw === "string" && memberIdsRaw.trim()) {
+  
+    let members: { userId: number; role: Role }[] = [];
+
+    const membersRaw = formData.get("members");
+    if (typeof membersRaw === "string" && membersRaw.trim()) {
       try {
-        const parsed = JSON.parse(memberIdsRaw);
+        const parsed = JSON.parse(membersRaw);
         if (Array.isArray(parsed)) {
-          memberIds = parsed.map((x) => Number(x)).filter((n) => Number.isFinite(n));
+          members = parsed
+            .map((x) => ({
+              userId: Number(x?.userId),
+              role: (String(x?.role || "viewer") as Role),
+            }))
+            .filter((m) => Number.isFinite(m.userId) && VALID_ROLES.includes(m.role));
         }
-      } catch {
-        // ignore bad JSON
-      }
+      } catch {}
     }
 
-    // Always include creator as a member
-    if (!memberIds.includes(userId)) memberIds.unshift(userId);
+    // fallback: old memberIds
+    if (members.length === 0) {
+      let memberIds: number[] = [];
+      const memberIdsRaw = formData.get("memberIds");
+      if (typeof memberIdsRaw === "string" && memberIdsRaw.trim()) {
+        try {
+          const parsed = JSON.parse(memberIdsRaw);
+          if (Array.isArray(parsed)) {
+            memberIds = parsed.map((x) => Number(x)).filter((n) => Number.isFinite(n));
+          }
+        } catch {}
+      }
+      members = memberIds.map((uid) => ({ userId: uid, role: "viewer" as Role }));
+    }
 
-    // Optional banner upload
+    // ensure creator is admin and remove duplicates of creator
+    members = members.filter((m) => m.userId !== userId);
+    members.unshift({ userId, role: "admin" });
+
+    // banner upload (unchanged)
     const banner = formData.get("banner");
     let bannerKey: string | null = null;
 
@@ -122,16 +116,15 @@ export async function POST(req: NextRequest) {
       data: {
         name,
         bannerKey,
+        createdBy: { connect: { id: userId } },
         members: {
-          create: memberIds.map((uid) => ({
-            userId: uid,
-            role: uid === userId ? "admin" : "member",
+          create: members.map((m) => ({
+            userId: m.userId,
+            role: m.role,
           })),
         },
       },
-      include: {
-        members: true,
-      },
+      include: { members: true },
     });
 
     return NextResponse.json({
@@ -147,13 +140,9 @@ export async function POST(req: NextRequest) {
     });
   } catch (err: any) {
     console.error("CREATE CHANNEL ERROR:", err);
-
-    // Prisma unique error (duplicate name)
     if (err?.code === "P2002") {
       return NextResponse.json({ error: "Channel name already exists" }, { status: 409 });
     }
-
     return NextResponse.json({ error: "Failed to create channel" }, { status: 500 });
   }
 }
- 

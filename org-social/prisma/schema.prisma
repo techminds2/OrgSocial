@@ -18,11 +18,12 @@ model User {
   isStaff      Boolean  @default(false)
   profileImage String?
 
-  posts     Post[]
-  comments  Comment[]
-  reactions Reaction[]
+  posts         Post[]
+  comments      Comment[]
+  reactions     Reaction[]
   channelMember ChannelMember[]
 
+  createdChannels Channel[] @relation("ChannelCreator")
 }
 
 
@@ -32,12 +33,19 @@ model Post {
   content   String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
   authorId  Int
   author    User     @relation(fields: [authorId], references: [id])
+
+  channelId Int?
+  channel   Channel? @relation(fields: [channelId], references: [id], onDelete: Cascade)
+
   files     File[]
   comments  Comment[]
   reactions Reaction[]
 }
+
+
 
 model Comment {
   id        Int       @id @default(autoincrement())
@@ -77,15 +85,19 @@ model Channel {
   name      String          @unique
   createdAt DateTime        @default(now())
 
-  bannerKey String?         // MinIO key like "channels/<uuid>.png"
+  createdById Int
+  createdBy   User          @relation("ChannelCreator", fields: [createdById], references: [id])
+
+  bannerKey String?
   members   ChannelMember[]
+  posts     Post[]
 }
 
 model ChannelMember {
   id        Int      @id @default(autoincrement())
   channelId Int
   userId    Int
-  role      String?  // optional: "admin" | "member"
+  role      String   @default("viewer") // "viewer" | "editor" | "admin"
 
   channel   Channel  @relation(fields: [channelId], references: [id], onDelete: Cascade)
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -94,3 +106,4 @@ model ChannelMember {
   @@index([userId])
   @@index([channelId])
 }
+

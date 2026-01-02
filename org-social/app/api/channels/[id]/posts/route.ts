@@ -6,6 +6,7 @@ import crypto from "crypto";
 import { PutObjectCommand } from "@aws-sdk/client-s3";
 import { s3 } from "@/lib/s3";
 import { getUserIdFromRequest } from "@/lib/auth";
+import { isChannelMember, requireChannelRole } from "@/lib/channelAccess";
 
 function normalizeMediaUrl(u?: string | null) {
   if (!u) return null;
@@ -15,17 +16,28 @@ function normalizeMediaUrl(u?: string | null) {
   return `/api/files/${s.replace(/^\/+/, "")}`;
 }
 
-export async function GET(req: NextRequest) {
+type Ctx = { params: Promise<{ id: string }> };
+
+export async function GET(req: NextRequest, ctx: Ctx) {
   try {
     const userId = await getUserIdFromRequest(req);
     if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+    const { id } = await ctx.params;
+    const channelId = Number(id);
+    if (!Number.isFinite(channelId)) {
+      return NextResponse.json({ error: "Bad channel id" }, { status: 400 });
+    }
+
+    const ok = await isChannelMember(channelId, userId);
+    if (!ok) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
 
     const { searchParams } = new URL(req.url);
     const limit = Math.max(1, Math.min(Number(searchParams.get("limit") || 10), 50));
     const cursorId = searchParams.get("cursor") ? Number(searchParams.get("cursor")) : null;
 
     const posts = await prisma.post.findMany({
-      where: { channelId: null }, 
+      where: { channelId },
       take: limit,
       ...(cursorId ? { cursor: { id: cursorId }, skip: 1 } : {}),
       orderBy: [{ createdAt: "desc" }, { id: "desc" }],
@@ -68,16 +80,26 @@ export async function GET(req: NextRequest) {
 
     const nextCursor = posts.length === limit ? posts[posts.length - 1].id : null;
     return NextResponse.json({ posts: formatted, nextCursor });
-  } catch (err: any) {
-    console.error("GET DASHBOARD POSTS ERROR:", err);
+  } catch (err) {
+    console.error("GET CHANNEL POSTS ERROR:", err);
     return NextResponse.json({ error: "Failed to fetch posts" }, { status: 500 });
   }
 }
 
-export async function POST(req: NextRequest) {
+export async function POST(req: NextRequest, ctx: Ctx) {
   try {
     const userId = await getUserIdFromRequest(req);
     if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+    const { id } = await ctx.params;
+    const channelId = Number(id);
+    if (!Number.isFinite(channelId)) {
+      return NextResponse.json({ error: "Bad channel id" }, { status: 400 });
+    }
+
+    // ✅ only editor/admin can create posts
+    const ok = await requireChannelRole(channelId, userId, ["editor", "admin"]);
+    if (!ok) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
 
     const formData = await req.formData();
     const content = String(formData.get("content") || "");
@@ -107,7 +129,7 @@ export async function POST(req: NextRequest) {
     const post = await prisma.post.create({
       data: {
         content,
-        channelId: null, 
+        channelId,
         authorId: userId,
         files: {
           create: uploadedFiles.map((f) => (f.type ? { url: f.url, type: f.type } : { url: f.url })),
@@ -117,8 +139,8 @@ export async function POST(req: NextRequest) {
     });
 
     return NextResponse.json({ success: true, post });
-  } catch (err: any) {
-    console.error("CREATE DASHBOARD POST ERROR:", err);
+  } catch (err) {
+    console.error("CREATE CHANNEL POST ERROR:", err);
     return NextResponse.json({ error: "Post failed" }, { status: 500 });
   }
 }
