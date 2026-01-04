@@ -1,22 +1,37 @@
 export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { getUserIdFromRequest } from "@/lib/auth";
 
 export async function GET(req: NextRequest) {
-  const userId = await getUserIdFromRequest(req);
-  if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  const userIdRaw = await getUserIdFromRequest(req);
+  console.log("[notif] userIdRaw:", userIdRaw, "type:", typeof userIdRaw);
 
-  // channels where I'm admin
+  if (!userIdRaw) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  const userId = typeof userIdRaw === "string" ? Number(userIdRaw) : userIdRaw;
+  if (!Number.isFinite(userId)) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
   const adminChannels = await prisma.channelMember.findMany({
     where: { userId, role: "admin" },
     select: { channelId: true },
   });
 
   const channelIds = adminChannels.map((x) => x.channelId);
+  console.log("[notif] channelIds:", channelIds);
+
   if (channelIds.length === 0) {
-    return NextResponse.json({ count: 0, notifications: [] });
+    return NextResponse.json(
+      { count: 0, notifications: [] },
+      { headers: { "Cache-Control": "no-store, max-age=0" } }
+    );
   }
 
   const pending = await prisma.joinRequest.findMany({
@@ -28,6 +43,8 @@ export async function GET(req: NextRequest) {
       user: { select: { id: true, username: true, email: true, profileImage: true } },
     },
   });
+
+  console.log("[notif] pendingCount:", pending.length);
 
   const notifications = pending.map((r) => ({
     id: r.id,
@@ -41,5 +58,8 @@ export async function GET(req: NextRequest) {
     href: `/channels/${r.channel.id}/requests`,
   }));
 
-  return NextResponse.json({ count: pending.length, notifications });
+  return NextResponse.json(
+    { count: pending.length, notifications },
+    { headers: { "Cache-Control": "no-store, max-age=0" } }
+  );
 }
