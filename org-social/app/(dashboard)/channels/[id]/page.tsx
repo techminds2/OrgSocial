@@ -3,6 +3,7 @@ import { cookies } from "next/headers";
 import { jwtVerify } from "jose";
 import { redirect, notFound } from "next/navigation";
 import ChannelFeed from "./ChannelFeed";
+import JoinRequestGate from "./JoinRequestGate";
 
 const SECRET = new TextEncoder().encode(process.env.DJANGO_JWT_SECRET || "");
 
@@ -40,7 +41,7 @@ export default async function ChannelPage({
 
   const channel = await prisma.channel.findUnique({
     where: { id: channelId },
-    select: { id: true, name: true, bannerKey: true },
+    select: { id: true, name: true, bannerKey: true, visibility: true },
   });
   if (!channel) notFound();
 
@@ -49,27 +50,39 @@ export default async function ChannelPage({
     select: { id: true, role: true },
   });
 
-  if (!member) {
+  // ✅ If member, show feed normally
+  if (member) {
+    const role = (member.role || "viewer") as "viewer" | "editor" | "admin";
     return (
-      <div className="p-6">
-        <div className="max-w-xl bg-white border rounded-xl p-4">
-          <h2 className="text-lg font-semibold">Access denied</h2>
-          <p className="text-sm text-gray-600 mt-1">
-            You are not a member of this channel.
-          </p>
-        </div>
-      </div>
+      <ChannelFeed
+        channelId={channelId}
+        channelName={channel.name}
+        bannerKey={channel.bannerKey}
+        role={role}
+      />
     );
   }
 
-  const role = (member.role || "viewer") as "viewer" | "editor" | "admin";
+  // ✅ Not a member: if public, show request gate
+  if (channel.visibility === "public") {
+    return (
+      <JoinRequestGate
+        channelId={channelId}
+        channelName={channel.name}
+        bannerKey={channel.bannerKey}
+      />
+    );
+  }
 
+  // ✅ Private + not member => deny
   return (
-    <ChannelFeed
-      channelId={channelId}
-      channelName={channel.name}
-      bannerKey={channel.bannerKey}
-      role={role}
-    />
+    <div className="p-6">
+      <div className="max-w-xl bg-white border rounded-xl p-4">
+        <h2 className="text-lg font-semibold">Access denied</h2>
+        <p className="text-sm text-gray-600 mt-1">
+          This is a private channel. You are not a member.
+        </p>
+      </div>
+    </div>
   );
 }

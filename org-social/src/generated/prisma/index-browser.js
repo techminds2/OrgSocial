@@ -166,7 +166,8 @@ exports.Prisma.ChannelScalarFieldEnum = {
   name: 'name',
   createdAt: 'createdAt',
   createdById: 'createdById',
-  bannerKey: 'bannerKey'
+  bannerKey: 'bannerKey',
+  visibility: 'visibility'
 };
 
 exports.Prisma.ChannelMemberScalarFieldEnum = {
@@ -174,6 +175,15 @@ exports.Prisma.ChannelMemberScalarFieldEnum = {
   channelId: 'channelId',
   userId: 'userId',
   role: 'role'
+};
+
+exports.Prisma.JoinRequestScalarFieldEnum = {
+  id: 'id',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  channelId: 'channelId',
+  userId: 'userId',
+  status: 'status'
 };
 
 exports.Prisma.SortOrder = {
@@ -199,7 +209,8 @@ exports.Prisma.ModelName = {
   Reaction: 'Reaction',
   File: 'File',
   Channel: 'Channel',
-  ChannelMember: 'ChannelMember'
+  ChannelMember: 'ChannelMember',
+  JoinRequest: 'JoinRequest'
 };
 
 /**

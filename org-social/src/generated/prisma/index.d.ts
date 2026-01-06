@@ -48,6 +48,11 @@ export type Channel = $Result.DefaultSelection<Prisma.$ChannelPayload>
  * 
  */
 export type ChannelMember = $Result.DefaultSelection<Prisma.$ChannelMemberPayload>
+/**
+ * Model JoinRequest
+ * 
+ */
+export type JoinRequest = $Result.DefaultSelection<Prisma.$JoinRequestPayload>
 
 /**
  * ##  Prisma Client ʲˢ
@@ -236,6 +241,16 @@ export class PrismaClient<
     * ```
     */
   get channelMember(): Prisma.ChannelMemberDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.joinRequest`: Exposes CRUD operations for the **JoinRequest** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more JoinRequests
+    * const joinRequests = await prisma.joinRequest.findMany()
+    * ```
+    */
+  get joinRequest(): Prisma.JoinRequestDelegate<ExtArgs, ClientOptions>;
 }
 
 export namespace Prisma {
@@ -683,7 +698,8 @@ export namespace Prisma {
     Reaction: 'Reaction',
     File: 'File',
     Channel: 'Channel',
-    ChannelMember: 'ChannelMember'
+    ChannelMember: 'ChannelMember',
+    JoinRequest: 'JoinRequest'
   };
 
   export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -702,7 +718,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "user" | "post" | "comment" | "reaction" | "file" | "channel" | "channelMember"
+      modelProps: "user" | "post" | "comment" | "reaction" | "file" | "channel" | "channelMember" | "joinRequest"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -1224,6 +1240,80 @@ export namespace Prisma {
           }
         }
       }
+      JoinRequest: {
+        payload: Prisma.$JoinRequestPayload<ExtArgs>
+        fields: Prisma.JoinRequestFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.JoinRequestFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$JoinRequestPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.JoinRequestFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$JoinRequestPayload>
+          }
+          findFirst: {
+            args: Prisma.JoinRequestFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$JoinRequestPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.JoinRequestFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$JoinRequestPayload>
+          }
+          findMany: {
+            args: Prisma.JoinRequestFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$JoinRequestPayload>[]
+          }
+          create: {
+            args: Prisma.JoinRequestCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$JoinRequestPayload>
+          }
+          createMany: {
+            args: Prisma.JoinRequestCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.JoinRequestCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$JoinRequestPayload>[]
+          }
+          delete: {
+            args: Prisma.JoinRequestDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$JoinRequestPayload>
+          }
+          update: {
+            args: Prisma.JoinRequestUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$JoinRequestPayload>
+          }
+          deleteMany: {
+            args: Prisma.JoinRequestDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.JoinRequestUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.JoinRequestUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$JoinRequestPayload>[]
+          }
+          upsert: {
+            args: Prisma.JoinRequestUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$JoinRequestPayload>
+          }
+          aggregate: {
+            args: Prisma.JoinRequestAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateJoinRequest>
+          }
+          groupBy: {
+            args: Prisma.JoinRequestGroupByArgs<ExtArgs>
+            result: $Utils.Optional<JoinRequestGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.JoinRequestCountArgs<ExtArgs>
+            result: $Utils.Optional<JoinRequestCountAggregateOutputType> | number
+          }
+        }
+      }
     }
   } & {
     other: {
@@ -1327,6 +1417,7 @@ export namespace Prisma {
     file?: FileOmit
     channel?: ChannelOmit
     channelMember?: ChannelMemberOmit
+    joinRequest?: JoinRequestOmit
   }
 
   /* Types for Logging */
@@ -1412,6 +1503,7 @@ export namespace Prisma {
     reactions: number
     channelMember: number
     createdChannels: number
+    joinRequests: number
   }
 
   export type UserCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -1420,6 +1512,7 @@ export namespace Prisma {
     reactions?: boolean | UserCountOutputTypeCountReactionsArgs
     channelMember?: boolean | UserCountOutputTypeCountChannelMemberArgs
     createdChannels?: boolean | UserCountOutputTypeCountCreatedChannelsArgs
+    joinRequests?: boolean | UserCountOutputTypeCountJoinRequestsArgs
   }
 
   // Custom InputTypes
@@ -1466,6 +1559,13 @@ export namespace Prisma {
    */
   export type UserCountOutputTypeCountCreatedChannelsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: ChannelWhereInput
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountJoinRequestsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: JoinRequestWhereInput
   }
 
 
@@ -1525,11 +1625,13 @@ export namespace Prisma {
   export type ChannelCountOutputType = {
     members: number
     posts: number
+    joinRequests: number
   }
 
   export type ChannelCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     members?: boolean | ChannelCountOutputTypeCountMembersArgs
     posts?: boolean | ChannelCountOutputTypeCountPostsArgs
+    joinRequests?: boolean | ChannelCountOutputTypeCountJoinRequestsArgs
   }
 
   // Custom InputTypes
@@ -1555,6 +1657,13 @@ export namespace Prisma {
    */
   export type ChannelCountOutputTypeCountPostsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: PostWhereInput
+  }
+
+  /**
+   * ChannelCountOutputType without action
+   */
+  export type ChannelCountOutputTypeCountJoinRequestsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: JoinRequestWhereInput
   }
 
 
@@ -1773,6 +1882,7 @@ export namespace Prisma {
     reactions?: boolean | User$reactionsArgs<ExtArgs>
     channelMember?: boolean | User$channelMemberArgs<ExtArgs>
     createdChannels?: boolean | User$createdChannelsArgs<ExtArgs>
+    joinRequests?: boolean | User$joinRequestsArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["user"]>
 
@@ -1810,6 +1920,7 @@ export namespace Prisma {
     reactions?: boolean | User$reactionsArgs<ExtArgs>
     channelMember?: boolean | User$channelMemberArgs<ExtArgs>
     createdChannels?: boolean | User$createdChannelsArgs<ExtArgs>
+    joinRequests?: boolean | User$joinRequestsArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type UserIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
@@ -1823,6 +1934,7 @@ export namespace Prisma {
       reactions: Prisma.$ReactionPayload<ExtArgs>[]
       channelMember: Prisma.$ChannelMemberPayload<ExtArgs>[]
       createdChannels: Prisma.$ChannelPayload<ExtArgs>[]
+      joinRequests: Prisma.$JoinRequestPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: number
@@ -2230,6 +2342,7 @@ export namespace Prisma {
     reactions<T extends User$reactionsArgs<ExtArgs> = {}>(args?: Subset<T, User$reactionsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ReactionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     channelMember<T extends User$channelMemberArgs<ExtArgs> = {}>(args?: Subset<T, User$channelMemberArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ChannelMemberPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     createdChannels<T extends User$createdChannelsArgs<ExtArgs> = {}>(args?: Subset<T, User$createdChannelsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ChannelPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    joinRequests<T extends User$joinRequestsArgs<ExtArgs> = {}>(args?: Subset<T, User$joinRequestsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$JoinRequestPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -2770,6 +2883,30 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: ChannelScalarFieldEnum | ChannelScalarFieldEnum[]
+  }
+
+  /**
+   * User.joinRequests
+   */
+  export type User$joinRequestsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the JoinRequest
+     */
+    select?: JoinRequestSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the JoinRequest
+     */
+    omit?: JoinRequestOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: JoinRequestInclude<ExtArgs> | null
+    where?: JoinRequestWhereInput
+    orderBy?: JoinRequestOrderByWithRelationInput | JoinRequestOrderByWithRelationInput[]
+    cursor?: JoinRequestWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: JoinRequestScalarFieldEnum | JoinRequestScalarFieldEnum[]
   }
 
   /**
@@ -7331,6 +7468,7 @@ export namespace Prisma {
     createdAt: Date | null
     createdById: number | null
     bannerKey: string | null
+    visibility: string | null
   }
 
   export type ChannelMaxAggregateOutputType = {
@@ -7339,6 +7477,7 @@ export namespace Prisma {
     createdAt: Date | null
     createdById: number | null
     bannerKey: string | null
+    visibility: string | null
   }
 
   export type ChannelCountAggregateOutputType = {
@@ -7347,6 +7486,7 @@ export namespace Prisma {
     createdAt: number
     createdById: number
     bannerKey: number
+    visibility: number
     _all: number
   }
 
@@ -7367,6 +7507,7 @@ export namespace Prisma {
     createdAt?: true
     createdById?: true
     bannerKey?: true
+    visibility?: true
   }
 
   export type ChannelMaxAggregateInputType = {
@@ -7375,6 +7516,7 @@ export namespace Prisma {
     createdAt?: true
     createdById?: true
     bannerKey?: true
+    visibility?: true
   }
 
   export type ChannelCountAggregateInputType = {
@@ -7383,6 +7525,7 @@ export namespace Prisma {
     createdAt?: true
     createdById?: true
     bannerKey?: true
+    visibility?: true
     _all?: true
   }
 
@@ -7478,6 +7621,7 @@ export namespace Prisma {
     createdAt: Date
     createdById: number
     bannerKey: string | null
+    visibility: string
     _count: ChannelCountAggregateOutputType | null
     _avg: ChannelAvgAggregateOutputType | null
     _sum: ChannelSumAggregateOutputType | null
@@ -7505,9 +7649,11 @@ export namespace Prisma {
     createdAt?: boolean
     createdById?: boolean
     bannerKey?: boolean
+    visibility?: boolean
     createdBy?: boolean | UserDefaultArgs<ExtArgs>
     members?: boolean | Channel$membersArgs<ExtArgs>
     posts?: boolean | Channel$postsArgs<ExtArgs>
+    joinRequests?: boolean | Channel$joinRequestsArgs<ExtArgs>
     _count?: boolean | ChannelCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["channel"]>
 
@@ -7517,6 +7663,7 @@ export namespace Prisma {
     createdAt?: boolean
     createdById?: boolean
     bannerKey?: boolean
+    visibility?: boolean
     createdBy?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["channel"]>
 
@@ -7526,6 +7673,7 @@ export namespace Prisma {
     createdAt?: boolean
     createdById?: boolean
     bannerKey?: boolean
+    visibility?: boolean
     createdBy?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["channel"]>
 
@@ -7535,13 +7683,15 @@ export namespace Prisma {
     createdAt?: boolean
     createdById?: boolean
     bannerKey?: boolean
+    visibility?: boolean
   }
 
-  export type ChannelOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "createdAt" | "createdById" | "bannerKey", ExtArgs["result"]["channel"]>
+  export type ChannelOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "createdAt" | "createdById" | "bannerKey" | "visibility", ExtArgs["result"]["channel"]>
   export type ChannelInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     createdBy?: boolean | UserDefaultArgs<ExtArgs>
     members?: boolean | Channel$membersArgs<ExtArgs>
     posts?: boolean | Channel$postsArgs<ExtArgs>
+    joinRequests?: boolean | Channel$joinRequestsArgs<ExtArgs>
     _count?: boolean | ChannelCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type ChannelIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -7557,6 +7707,7 @@ export namespace Prisma {
       createdBy: Prisma.$UserPayload<ExtArgs>
       members: Prisma.$ChannelMemberPayload<ExtArgs>[]
       posts: Prisma.$PostPayload<ExtArgs>[]
+      joinRequests: Prisma.$JoinRequestPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: number
@@ -7564,6 +7715,7 @@ export namespace Prisma {
       createdAt: Date
       createdById: number
       bannerKey: string | null
+      visibility: string
     }, ExtArgs["result"]["channel"]>
     composites: {}
   }
@@ -7961,6 +8113,7 @@ export namespace Prisma {
     createdBy<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     members<T extends Channel$membersArgs<ExtArgs> = {}>(args?: Subset<T, Channel$membersArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ChannelMemberPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     posts<T extends Channel$postsArgs<ExtArgs> = {}>(args?: Subset<T, Channel$postsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PostPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    joinRequests<T extends Channel$joinRequestsArgs<ExtArgs> = {}>(args?: Subset<T, Channel$joinRequestsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$JoinRequestPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -7995,6 +8148,7 @@ export namespace Prisma {
     readonly createdAt: FieldRef<"Channel", 'DateTime'>
     readonly createdById: FieldRef<"Channel", 'Int'>
     readonly bannerKey: FieldRef<"Channel", 'String'>
+    readonly visibility: FieldRef<"Channel", 'String'>
   }
     
 
@@ -8436,6 +8590,30 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: PostScalarFieldEnum | PostScalarFieldEnum[]
+  }
+
+  /**
+   * Channel.joinRequests
+   */
+  export type Channel$joinRequestsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the JoinRequest
+     */
+    select?: JoinRequestSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the JoinRequest
+     */
+    omit?: JoinRequestOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: JoinRequestInclude<ExtArgs> | null
+    where?: JoinRequestWhereInput
+    orderBy?: JoinRequestOrderByWithRelationInput | JoinRequestOrderByWithRelationInput[]
+    cursor?: JoinRequestWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: JoinRequestScalarFieldEnum | JoinRequestScalarFieldEnum[]
   }
 
   /**
@@ -9553,6 +9731,1127 @@ export namespace Prisma {
 
 
   /**
+   * Model JoinRequest
+   */
+
+  export type AggregateJoinRequest = {
+    _count: JoinRequestCountAggregateOutputType | null
+    _avg: JoinRequestAvgAggregateOutputType | null
+    _sum: JoinRequestSumAggregateOutputType | null
+    _min: JoinRequestMinAggregateOutputType | null
+    _max: JoinRequestMaxAggregateOutputType | null
+  }
+
+  export type JoinRequestAvgAggregateOutputType = {
+    id: number | null
+    channelId: number | null
+    userId: number | null
+  }
+
+  export type JoinRequestSumAggregateOutputType = {
+    id: number | null
+    channelId: number | null
+    userId: number | null
+  }
+
+  export type JoinRequestMinAggregateOutputType = {
+    id: number | null
+    createdAt: Date | null
+    updatedAt: Date | null
+    channelId: number | null
+    userId: number | null
+    status: string | null
+  }
+
+  export type JoinRequestMaxAggregateOutputType = {
+    id: number | null
+    createdAt: Date | null
+    updatedAt: Date | null
+    channelId: number | null
+    userId: number | null
+    status: string | null
+  }
+
+  export type JoinRequestCountAggregateOutputType = {
+    id: number
+    createdAt: number
+    updatedAt: number
+    channelId: number
+    userId: number
+    status: number
+    _all: number
+  }
+
+
+  export type JoinRequestAvgAggregateInputType = {
+    id?: true
+    channelId?: true
+    userId?: true
+  }
+
+  export type JoinRequestSumAggregateInputType = {
+    id?: true
+    channelId?: true
+    userId?: true
+  }
+
+  export type JoinRequestMinAggregateInputType = {
+    id?: true
+    createdAt?: true
+    updatedAt?: true
+    channelId?: true
+    userId?: true
+    status?: true
+  }
+
+  export type JoinRequestMaxAggregateInputType = {
+    id?: true
+    createdAt?: true
+    updatedAt?: true
+    channelId?: true
+    userId?: true
+    status?: true
+  }
+
+  export type JoinRequestCountAggregateInputType = {
+    id?: true
+    createdAt?: true
+    updatedAt?: true
+    channelId?: true
+    userId?: true
+    status?: true
+    _all?: true
+  }
+
+  export type JoinRequestAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which JoinRequest to aggregate.
+     */
+    where?: JoinRequestWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of JoinRequests to fetch.
+     */
+    orderBy?: JoinRequestOrderByWithRelationInput | JoinRequestOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: JoinRequestWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` JoinRequests from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` JoinRequests.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned JoinRequests
+    **/
+    _count?: true | JoinRequestCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: JoinRequestAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: JoinRequestSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: JoinRequestMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: JoinRequestMaxAggregateInputType
+  }
+
+  export type GetJoinRequestAggregateType<T extends JoinRequestAggregateArgs> = {
+        [P in keyof T & keyof AggregateJoinRequest]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateJoinRequest[P]>
+      : GetScalarType<T[P], AggregateJoinRequest[P]>
+  }
+
+
+
+
+  export type JoinRequestGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: JoinRequestWhereInput
+    orderBy?: JoinRequestOrderByWithAggregationInput | JoinRequestOrderByWithAggregationInput[]
+    by: JoinRequestScalarFieldEnum[] | JoinRequestScalarFieldEnum
+    having?: JoinRequestScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: JoinRequestCountAggregateInputType | true
+    _avg?: JoinRequestAvgAggregateInputType
+    _sum?: JoinRequestSumAggregateInputType
+    _min?: JoinRequestMinAggregateInputType
+    _max?: JoinRequestMaxAggregateInputType
+  }
+
+  export type JoinRequestGroupByOutputType = {
+    id: number
+    createdAt: Date
+    updatedAt: Date
+    channelId: number
+    userId: number
+    status: string
+    _count: JoinRequestCountAggregateOutputType | null
+    _avg: JoinRequestAvgAggregateOutputType | null
+    _sum: JoinRequestSumAggregateOutputType | null
+    _min: JoinRequestMinAggregateOutputType | null
+    _max: JoinRequestMaxAggregateOutputType | null
+  }
+
+  type GetJoinRequestGroupByPayload<T extends JoinRequestGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<JoinRequestGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof JoinRequestGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], JoinRequestGroupByOutputType[P]>
+            : GetScalarType<T[P], JoinRequestGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type JoinRequestSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    channelId?: boolean
+    userId?: boolean
+    status?: boolean
+    channel?: boolean | ChannelDefaultArgs<ExtArgs>
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["joinRequest"]>
+
+  export type JoinRequestSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    channelId?: boolean
+    userId?: boolean
+    status?: boolean
+    channel?: boolean | ChannelDefaultArgs<ExtArgs>
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["joinRequest"]>
+
+  export type JoinRequestSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    channelId?: boolean
+    userId?: boolean
+    status?: boolean
+    channel?: boolean | ChannelDefaultArgs<ExtArgs>
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["joinRequest"]>
+
+  export type JoinRequestSelectScalar = {
+    id?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    channelId?: boolean
+    userId?: boolean
+    status?: boolean
+  }
+
+  export type JoinRequestOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "createdAt" | "updatedAt" | "channelId" | "userId" | "status", ExtArgs["result"]["joinRequest"]>
+  export type JoinRequestInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    channel?: boolean | ChannelDefaultArgs<ExtArgs>
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }
+  export type JoinRequestIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    channel?: boolean | ChannelDefaultArgs<ExtArgs>
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }
+  export type JoinRequestIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    channel?: boolean | ChannelDefaultArgs<ExtArgs>
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }
+
+  export type $JoinRequestPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "JoinRequest"
+    objects: {
+      channel: Prisma.$ChannelPayload<ExtArgs>
+      user: Prisma.$UserPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: number
+      createdAt: Date
+      updatedAt: Date
+      channelId: number
+      userId: number
+      status: string
+    }, ExtArgs["result"]["joinRequest"]>
+    composites: {}
+  }
+
+  type JoinRequestGetPayload<S extends boolean | null | undefined | JoinRequestDefaultArgs> = $Result.GetResult<Prisma.$JoinRequestPayload, S>
+
+  type JoinRequestCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<JoinRequestFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: JoinRequestCountAggregateInputType | true
+    }
+
+  export interface JoinRequestDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['JoinRequest'], meta: { name: 'JoinRequest' } }
+    /**
+     * Find zero or one JoinRequest that matches the filter.
+     * @param {JoinRequestFindUniqueArgs} args - Arguments to find a JoinRequest
+     * @example
+     * // Get one JoinRequest
+     * const joinRequest = await prisma.joinRequest.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends JoinRequestFindUniqueArgs>(args: SelectSubset<T, JoinRequestFindUniqueArgs<ExtArgs>>): Prisma__JoinRequestClient<$Result.GetResult<Prisma.$JoinRequestPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one JoinRequest that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {JoinRequestFindUniqueOrThrowArgs} args - Arguments to find a JoinRequest
+     * @example
+     * // Get one JoinRequest
+     * const joinRequest = await prisma.joinRequest.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends JoinRequestFindUniqueOrThrowArgs>(args: SelectSubset<T, JoinRequestFindUniqueOrThrowArgs<ExtArgs>>): Prisma__JoinRequestClient<$Result.GetResult<Prisma.$JoinRequestPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first JoinRequest that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {JoinRequestFindFirstArgs} args - Arguments to find a JoinRequest
+     * @example
+     * // Get one JoinRequest
+     * const joinRequest = await prisma.joinRequest.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends JoinRequestFindFirstArgs>(args?: SelectSubset<T, JoinRequestFindFirstArgs<ExtArgs>>): Prisma__JoinRequestClient<$Result.GetResult<Prisma.$JoinRequestPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first JoinRequest that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {JoinRequestFindFirstOrThrowArgs} args - Arguments to find a JoinRequest
+     * @example
+     * // Get one JoinRequest
+     * const joinRequest = await prisma.joinRequest.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends JoinRequestFindFirstOrThrowArgs>(args?: SelectSubset<T, JoinRequestFindFirstOrThrowArgs<ExtArgs>>): Prisma__JoinRequestClient<$Result.GetResult<Prisma.$JoinRequestPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more JoinRequests that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {JoinRequestFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all JoinRequests
+     * const joinRequests = await prisma.joinRequest.findMany()
+     * 
+     * // Get first 10 JoinRequests
+     * const joinRequests = await prisma.joinRequest.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const joinRequestWithIdOnly = await prisma.joinRequest.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends JoinRequestFindManyArgs>(args?: SelectSubset<T, JoinRequestFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$JoinRequestPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a JoinRequest.
+     * @param {JoinRequestCreateArgs} args - Arguments to create a JoinRequest.
+     * @example
+     * // Create one JoinRequest
+     * const JoinRequest = await prisma.joinRequest.create({
+     *   data: {
+     *     // ... data to create a JoinRequest
+     *   }
+     * })
+     * 
+     */
+    create<T extends JoinRequestCreateArgs>(args: SelectSubset<T, JoinRequestCreateArgs<ExtArgs>>): Prisma__JoinRequestClient<$Result.GetResult<Prisma.$JoinRequestPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many JoinRequests.
+     * @param {JoinRequestCreateManyArgs} args - Arguments to create many JoinRequests.
+     * @example
+     * // Create many JoinRequests
+     * const joinRequest = await prisma.joinRequest.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends JoinRequestCreateManyArgs>(args?: SelectSubset<T, JoinRequestCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many JoinRequests and returns the data saved in the database.
+     * @param {JoinRequestCreateManyAndReturnArgs} args - Arguments to create many JoinRequests.
+     * @example
+     * // Create many JoinRequests
+     * const joinRequest = await prisma.joinRequest.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many JoinRequests and only return the `id`
+     * const joinRequestWithIdOnly = await prisma.joinRequest.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends JoinRequestCreateManyAndReturnArgs>(args?: SelectSubset<T, JoinRequestCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$JoinRequestPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a JoinRequest.
+     * @param {JoinRequestDeleteArgs} args - Arguments to delete one JoinRequest.
+     * @example
+     * // Delete one JoinRequest
+     * const JoinRequest = await prisma.joinRequest.delete({
+     *   where: {
+     *     // ... filter to delete one JoinRequest
+     *   }
+     * })
+     * 
+     */
+    delete<T extends JoinRequestDeleteArgs>(args: SelectSubset<T, JoinRequestDeleteArgs<ExtArgs>>): Prisma__JoinRequestClient<$Result.GetResult<Prisma.$JoinRequestPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one JoinRequest.
+     * @param {JoinRequestUpdateArgs} args - Arguments to update one JoinRequest.
+     * @example
+     * // Update one JoinRequest
+     * const joinRequest = await prisma.joinRequest.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends JoinRequestUpdateArgs>(args: SelectSubset<T, JoinRequestUpdateArgs<ExtArgs>>): Prisma__JoinRequestClient<$Result.GetResult<Prisma.$JoinRequestPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more JoinRequests.
+     * @param {JoinRequestDeleteManyArgs} args - Arguments to filter JoinRequests to delete.
+     * @example
+     * // Delete a few JoinRequests
+     * const { count } = await prisma.joinRequest.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends JoinRequestDeleteManyArgs>(args?: SelectSubset<T, JoinRequestDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more JoinRequests.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {JoinRequestUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many JoinRequests
+     * const joinRequest = await prisma.joinRequest.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends JoinRequestUpdateManyArgs>(args: SelectSubset<T, JoinRequestUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more JoinRequests and returns the data updated in the database.
+     * @param {JoinRequestUpdateManyAndReturnArgs} args - Arguments to update many JoinRequests.
+     * @example
+     * // Update many JoinRequests
+     * const joinRequest = await prisma.joinRequest.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more JoinRequests and only return the `id`
+     * const joinRequestWithIdOnly = await prisma.joinRequest.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends JoinRequestUpdateManyAndReturnArgs>(args: SelectSubset<T, JoinRequestUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$JoinRequestPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one JoinRequest.
+     * @param {JoinRequestUpsertArgs} args - Arguments to update or create a JoinRequest.
+     * @example
+     * // Update or create a JoinRequest
+     * const joinRequest = await prisma.joinRequest.upsert({
+     *   create: {
+     *     // ... data to create a JoinRequest
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the JoinRequest we want to update
+     *   }
+     * })
+     */
+    upsert<T extends JoinRequestUpsertArgs>(args: SelectSubset<T, JoinRequestUpsertArgs<ExtArgs>>): Prisma__JoinRequestClient<$Result.GetResult<Prisma.$JoinRequestPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of JoinRequests.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {JoinRequestCountArgs} args - Arguments to filter JoinRequests to count.
+     * @example
+     * // Count the number of JoinRequests
+     * const count = await prisma.joinRequest.count({
+     *   where: {
+     *     // ... the filter for the JoinRequests we want to count
+     *   }
+     * })
+    **/
+    count<T extends JoinRequestCountArgs>(
+      args?: Subset<T, JoinRequestCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], JoinRequestCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a JoinRequest.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {JoinRequestAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends JoinRequestAggregateArgs>(args: Subset<T, JoinRequestAggregateArgs>): Prisma.PrismaPromise<GetJoinRequestAggregateType<T>>
+
+    /**
+     * Group by JoinRequest.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {JoinRequestGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends JoinRequestGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: JoinRequestGroupByArgs['orderBy'] }
+        : { orderBy?: JoinRequestGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, JoinRequestGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetJoinRequestGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the JoinRequest model
+   */
+  readonly fields: JoinRequestFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for JoinRequest.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__JoinRequestClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    channel<T extends ChannelDefaultArgs<ExtArgs> = {}>(args?: Subset<T, ChannelDefaultArgs<ExtArgs>>): Prisma__ChannelClient<$Result.GetResult<Prisma.$ChannelPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the JoinRequest model
+   */
+  interface JoinRequestFieldRefs {
+    readonly id: FieldRef<"JoinRequest", 'Int'>
+    readonly createdAt: FieldRef<"JoinRequest", 'DateTime'>
+    readonly updatedAt: FieldRef<"JoinRequest", 'DateTime'>
+    readonly channelId: FieldRef<"JoinRequest", 'Int'>
+    readonly userId: FieldRef<"JoinRequest", 'Int'>
+    readonly status: FieldRef<"JoinRequest", 'String'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * JoinRequest findUnique
+   */
+  export type JoinRequestFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the JoinRequest
+     */
+    select?: JoinRequestSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the JoinRequest
+     */
+    omit?: JoinRequestOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: JoinRequestInclude<ExtArgs> | null
+    /**
+     * Filter, which JoinRequest to fetch.
+     */
+    where: JoinRequestWhereUniqueInput
+  }
+
+  /**
+   * JoinRequest findUniqueOrThrow
+   */
+  export type JoinRequestFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the JoinRequest
+     */
+    select?: JoinRequestSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the JoinRequest
+     */
+    omit?: JoinRequestOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: JoinRequestInclude<ExtArgs> | null
+    /**
+     * Filter, which JoinRequest to fetch.
+     */
+    where: JoinRequestWhereUniqueInput
+  }
+
+  /**
+   * JoinRequest findFirst
+   */
+  export type JoinRequestFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the JoinRequest
+     */
+    select?: JoinRequestSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the JoinRequest
+     */
+    omit?: JoinRequestOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: JoinRequestInclude<ExtArgs> | null
+    /**
+     * Filter, which JoinRequest to fetch.
+     */
+    where?: JoinRequestWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of JoinRequests to fetch.
+     */
+    orderBy?: JoinRequestOrderByWithRelationInput | JoinRequestOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for JoinRequests.
+     */
+    cursor?: JoinRequestWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` JoinRequests from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` JoinRequests.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of JoinRequests.
+     */
+    distinct?: JoinRequestScalarFieldEnum | JoinRequestScalarFieldEnum[]
+  }
+
+  /**
+   * JoinRequest findFirstOrThrow
+   */
+  export type JoinRequestFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the JoinRequest
+     */
+    select?: JoinRequestSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the JoinRequest
+     */
+    omit?: JoinRequestOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: JoinRequestInclude<ExtArgs> | null
+    /**
+     * Filter, which JoinRequest to fetch.
+     */
+    where?: JoinRequestWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of JoinRequests to fetch.
+     */
+    orderBy?: JoinRequestOrderByWithRelationInput | JoinRequestOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for JoinRequests.
+     */
+    cursor?: JoinRequestWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` JoinRequests from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` JoinRequests.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of JoinRequests.
+     */
+    distinct?: JoinRequestScalarFieldEnum | JoinRequestScalarFieldEnum[]
+  }
+
+  /**
+   * JoinRequest findMany
+   */
+  export type JoinRequestFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the JoinRequest
+     */
+    select?: JoinRequestSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the JoinRequest
+     */
+    omit?: JoinRequestOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: JoinRequestInclude<ExtArgs> | null
+    /**
+     * Filter, which JoinRequests to fetch.
+     */
+    where?: JoinRequestWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of JoinRequests to fetch.
+     */
+    orderBy?: JoinRequestOrderByWithRelationInput | JoinRequestOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing JoinRequests.
+     */
+    cursor?: JoinRequestWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` JoinRequests from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` JoinRequests.
+     */
+    skip?: number
+    distinct?: JoinRequestScalarFieldEnum | JoinRequestScalarFieldEnum[]
+  }
+
+  /**
+   * JoinRequest create
+   */
+  export type JoinRequestCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the JoinRequest
+     */
+    select?: JoinRequestSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the JoinRequest
+     */
+    omit?: JoinRequestOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: JoinRequestInclude<ExtArgs> | null
+    /**
+     * The data needed to create a JoinRequest.
+     */
+    data: XOR<JoinRequestCreateInput, JoinRequestUncheckedCreateInput>
+  }
+
+  /**
+   * JoinRequest createMany
+   */
+  export type JoinRequestCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many JoinRequests.
+     */
+    data: JoinRequestCreateManyInput | JoinRequestCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * JoinRequest createManyAndReturn
+   */
+  export type JoinRequestCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the JoinRequest
+     */
+    select?: JoinRequestSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the JoinRequest
+     */
+    omit?: JoinRequestOmit<ExtArgs> | null
+    /**
+     * The data used to create many JoinRequests.
+     */
+    data: JoinRequestCreateManyInput | JoinRequestCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: JoinRequestIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * JoinRequest update
+   */
+  export type JoinRequestUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the JoinRequest
+     */
+    select?: JoinRequestSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the JoinRequest
+     */
+    omit?: JoinRequestOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: JoinRequestInclude<ExtArgs> | null
+    /**
+     * The data needed to update a JoinRequest.
+     */
+    data: XOR<JoinRequestUpdateInput, JoinRequestUncheckedUpdateInput>
+    /**
+     * Choose, which JoinRequest to update.
+     */
+    where: JoinRequestWhereUniqueInput
+  }
+
+  /**
+   * JoinRequest updateMany
+   */
+  export type JoinRequestUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update JoinRequests.
+     */
+    data: XOR<JoinRequestUpdateManyMutationInput, JoinRequestUncheckedUpdateManyInput>
+    /**
+     * Filter which JoinRequests to update
+     */
+    where?: JoinRequestWhereInput
+    /**
+     * Limit how many JoinRequests to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * JoinRequest updateManyAndReturn
+   */
+  export type JoinRequestUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the JoinRequest
+     */
+    select?: JoinRequestSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the JoinRequest
+     */
+    omit?: JoinRequestOmit<ExtArgs> | null
+    /**
+     * The data used to update JoinRequests.
+     */
+    data: XOR<JoinRequestUpdateManyMutationInput, JoinRequestUncheckedUpdateManyInput>
+    /**
+     * Filter which JoinRequests to update
+     */
+    where?: JoinRequestWhereInput
+    /**
+     * Limit how many JoinRequests to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: JoinRequestIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * JoinRequest upsert
+   */
+  export type JoinRequestUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the JoinRequest
+     */
+    select?: JoinRequestSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the JoinRequest
+     */
+    omit?: JoinRequestOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: JoinRequestInclude<ExtArgs> | null
+    /**
+     * The filter to search for the JoinRequest to update in case it exists.
+     */
+    where: JoinRequestWhereUniqueInput
+    /**
+     * In case the JoinRequest found by the `where` argument doesn't exist, create a new JoinRequest with this data.
+     */
+    create: XOR<JoinRequestCreateInput, JoinRequestUncheckedCreateInput>
+    /**
+     * In case the JoinRequest was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<JoinRequestUpdateInput, JoinRequestUncheckedUpdateInput>
+  }
+
+  /**
+   * JoinRequest delete
+   */
+  export type JoinRequestDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the JoinRequest
+     */
+    select?: JoinRequestSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the JoinRequest
+     */
+    omit?: JoinRequestOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: JoinRequestInclude<ExtArgs> | null
+    /**
+     * Filter which JoinRequest to delete.
+     */
+    where: JoinRequestWhereUniqueInput
+  }
+
+  /**
+   * JoinRequest deleteMany
+   */
+  export type JoinRequestDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which JoinRequests to delete
+     */
+    where?: JoinRequestWhereInput
+    /**
+     * Limit how many JoinRequests to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * JoinRequest without action
+   */
+  export type JoinRequestDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the JoinRequest
+     */
+    select?: JoinRequestSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the JoinRequest
+     */
+    omit?: JoinRequestOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: JoinRequestInclude<ExtArgs> | null
+  }
+
+
+  /**
    * Enums
    */
 
@@ -9626,7 +10925,8 @@ export namespace Prisma {
     name: 'name',
     createdAt: 'createdAt',
     createdById: 'createdById',
-    bannerKey: 'bannerKey'
+    bannerKey: 'bannerKey',
+    visibility: 'visibility'
   };
 
   export type ChannelScalarFieldEnum = (typeof ChannelScalarFieldEnum)[keyof typeof ChannelScalarFieldEnum]
@@ -9640,6 +10940,18 @@ export namespace Prisma {
   };
 
   export type ChannelMemberScalarFieldEnum = (typeof ChannelMemberScalarFieldEnum)[keyof typeof ChannelMemberScalarFieldEnum]
+
+
+  export const JoinRequestScalarFieldEnum: {
+    id: 'id',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt',
+    channelId: 'channelId',
+    userId: 'userId',
+    status: 'status'
+  };
+
+  export type JoinRequestScalarFieldEnum = (typeof JoinRequestScalarFieldEnum)[keyof typeof JoinRequestScalarFieldEnum]
 
 
   export const SortOrder: {
@@ -9752,6 +11064,7 @@ export namespace Prisma {
     reactions?: ReactionListRelationFilter
     channelMember?: ChannelMemberListRelationFilter
     createdChannels?: ChannelListRelationFilter
+    joinRequests?: JoinRequestListRelationFilter
   }
 
   export type UserOrderByWithRelationInput = {
@@ -9766,6 +11079,7 @@ export namespace Prisma {
     reactions?: ReactionOrderByRelationAggregateInput
     channelMember?: ChannelMemberOrderByRelationAggregateInput
     createdChannels?: ChannelOrderByRelationAggregateInput
+    joinRequests?: JoinRequestOrderByRelationAggregateInput
   }
 
   export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -9783,6 +11097,7 @@ export namespace Prisma {
     reactions?: ReactionListRelationFilter
     channelMember?: ChannelMemberListRelationFilter
     createdChannels?: ChannelListRelationFilter
+    joinRequests?: JoinRequestListRelationFilter
   }, "id" | "username" | "email">
 
   export type UserOrderByWithAggregationInput = {
@@ -10062,9 +11377,11 @@ export namespace Prisma {
     createdAt?: DateTimeFilter<"Channel"> | Date | string
     createdById?: IntFilter<"Channel"> | number
     bannerKey?: StringNullableFilter<"Channel"> | string | null
+    visibility?: StringFilter<"Channel"> | string
     createdBy?: XOR<UserScalarRelationFilter, UserWhereInput>
     members?: ChannelMemberListRelationFilter
     posts?: PostListRelationFilter
+    joinRequests?: JoinRequestListRelationFilter
   }
 
   export type ChannelOrderByWithRelationInput = {
@@ -10073,9 +11390,11 @@ export namespace Prisma {
     createdAt?: SortOrder
     createdById?: SortOrder
     bannerKey?: SortOrderInput | SortOrder
+    visibility?: SortOrder
     createdBy?: UserOrderByWithRelationInput
     members?: ChannelMemberOrderByRelationAggregateInput
     posts?: PostOrderByRelationAggregateInput
+    joinRequests?: JoinRequestOrderByRelationAggregateInput
   }
 
   export type ChannelWhereUniqueInput = Prisma.AtLeast<{
@@ -10087,9 +11406,11 @@ export namespace Prisma {
     createdAt?: DateTimeFilter<"Channel"> | Date | string
     createdById?: IntFilter<"Channel"> | number
     bannerKey?: StringNullableFilter<"Channel"> | string | null
+    visibility?: StringFilter<"Channel"> | string
     createdBy?: XOR<UserScalarRelationFilter, UserWhereInput>
     members?: ChannelMemberListRelationFilter
     posts?: PostListRelationFilter
+    joinRequests?: JoinRequestListRelationFilter
   }, "id" | "name">
 
   export type ChannelOrderByWithAggregationInput = {
@@ -10098,6 +11419,7 @@ export namespace Prisma {
     createdAt?: SortOrder
     createdById?: SortOrder
     bannerKey?: SortOrderInput | SortOrder
+    visibility?: SortOrder
     _count?: ChannelCountOrderByAggregateInput
     _avg?: ChannelAvgOrderByAggregateInput
     _max?: ChannelMaxOrderByAggregateInput
@@ -10114,6 +11436,7 @@ export namespace Prisma {
     createdAt?: DateTimeWithAggregatesFilter<"Channel"> | Date | string
     createdById?: IntWithAggregatesFilter<"Channel"> | number
     bannerKey?: StringNullableWithAggregatesFilter<"Channel"> | string | null
+    visibility?: StringWithAggregatesFilter<"Channel"> | string
   }
 
   export type ChannelMemberWhereInput = {
@@ -10172,6 +11495,72 @@ export namespace Prisma {
     role?: StringWithAggregatesFilter<"ChannelMember"> | string
   }
 
+  export type JoinRequestWhereInput = {
+    AND?: JoinRequestWhereInput | JoinRequestWhereInput[]
+    OR?: JoinRequestWhereInput[]
+    NOT?: JoinRequestWhereInput | JoinRequestWhereInput[]
+    id?: IntFilter<"JoinRequest"> | number
+    createdAt?: DateTimeFilter<"JoinRequest"> | Date | string
+    updatedAt?: DateTimeFilter<"JoinRequest"> | Date | string
+    channelId?: IntFilter<"JoinRequest"> | number
+    userId?: IntFilter<"JoinRequest"> | number
+    status?: StringFilter<"JoinRequest"> | string
+    channel?: XOR<ChannelScalarRelationFilter, ChannelWhereInput>
+    user?: XOR<UserScalarRelationFilter, UserWhereInput>
+  }
+
+  export type JoinRequestOrderByWithRelationInput = {
+    id?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    channelId?: SortOrder
+    userId?: SortOrder
+    status?: SortOrder
+    channel?: ChannelOrderByWithRelationInput
+    user?: UserOrderByWithRelationInput
+  }
+
+  export type JoinRequestWhereUniqueInput = Prisma.AtLeast<{
+    id?: number
+    channelId_userId?: JoinRequestChannelIdUserIdCompoundUniqueInput
+    AND?: JoinRequestWhereInput | JoinRequestWhereInput[]
+    OR?: JoinRequestWhereInput[]
+    NOT?: JoinRequestWhereInput | JoinRequestWhereInput[]
+    createdAt?: DateTimeFilter<"JoinRequest"> | Date | string
+    updatedAt?: DateTimeFilter<"JoinRequest"> | Date | string
+    channelId?: IntFilter<"JoinRequest"> | number
+    userId?: IntFilter<"JoinRequest"> | number
+    status?: StringFilter<"JoinRequest"> | string
+    channel?: XOR<ChannelScalarRelationFilter, ChannelWhereInput>
+    user?: XOR<UserScalarRelationFilter, UserWhereInput>
+  }, "id" | "channelId_userId">
+
+  export type JoinRequestOrderByWithAggregationInput = {
+    id?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    channelId?: SortOrder
+    userId?: SortOrder
+    status?: SortOrder
+    _count?: JoinRequestCountOrderByAggregateInput
+    _avg?: JoinRequestAvgOrderByAggregateInput
+    _max?: JoinRequestMaxOrderByAggregateInput
+    _min?: JoinRequestMinOrderByAggregateInput
+    _sum?: JoinRequestSumOrderByAggregateInput
+  }
+
+  export type JoinRequestScalarWhereWithAggregatesInput = {
+    AND?: JoinRequestScalarWhereWithAggregatesInput | JoinRequestScalarWhereWithAggregatesInput[]
+    OR?: JoinRequestScalarWhereWithAggregatesInput[]
+    NOT?: JoinRequestScalarWhereWithAggregatesInput | JoinRequestScalarWhereWithAggregatesInput[]
+    id?: IntWithAggregatesFilter<"JoinRequest"> | number
+    createdAt?: DateTimeWithAggregatesFilter<"JoinRequest"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"JoinRequest"> | Date | string
+    channelId?: IntWithAggregatesFilter<"JoinRequest"> | number
+    userId?: IntWithAggregatesFilter<"JoinRequest"> | number
+    status?: StringWithAggregatesFilter<"JoinRequest"> | string
+  }
+
   export type UserCreateInput = {
     username: string
     email?: string | null
@@ -10183,6 +11572,7 @@ export namespace Prisma {
     reactions?: ReactionCreateNestedManyWithoutUserInput
     channelMember?: ChannelMemberCreateNestedManyWithoutUserInput
     createdChannels?: ChannelCreateNestedManyWithoutCreatedByInput
+    joinRequests?: JoinRequestCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateInput = {
@@ -10197,6 +11587,7 @@ export namespace Prisma {
     reactions?: ReactionUncheckedCreateNestedManyWithoutUserInput
     channelMember?: ChannelMemberUncheckedCreateNestedManyWithoutUserInput
     createdChannels?: ChannelUncheckedCreateNestedManyWithoutCreatedByInput
+    joinRequests?: JoinRequestUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserUpdateInput = {
@@ -10210,6 +11601,7 @@ export namespace Prisma {
     reactions?: ReactionUpdateManyWithoutUserNestedInput
     channelMember?: ChannelMemberUpdateManyWithoutUserNestedInput
     createdChannels?: ChannelUpdateManyWithoutCreatedByNestedInput
+    joinRequests?: JoinRequestUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateInput = {
@@ -10224,6 +11616,7 @@ export namespace Prisma {
     reactions?: ReactionUncheckedUpdateManyWithoutUserNestedInput
     channelMember?: ChannelMemberUncheckedUpdateManyWithoutUserNestedInput
     createdChannels?: ChannelUncheckedUpdateManyWithoutCreatedByNestedInput
+    joinRequests?: JoinRequestUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UserCreateManyInput = {
@@ -10466,9 +11859,11 @@ export namespace Prisma {
     name: string
     createdAt?: Date | string
     bannerKey?: string | null
+    visibility?: string
     createdBy: UserCreateNestedOneWithoutCreatedChannelsInput
     members?: ChannelMemberCreateNestedManyWithoutChannelInput
     posts?: PostCreateNestedManyWithoutChannelInput
+    joinRequests?: JoinRequestCreateNestedManyWithoutChannelInput
   }
 
   export type ChannelUncheckedCreateInput = {
@@ -10477,17 +11872,21 @@ export namespace Prisma {
     createdAt?: Date | string
     createdById: number
     bannerKey?: string | null
+    visibility?: string
     members?: ChannelMemberUncheckedCreateNestedManyWithoutChannelInput
     posts?: PostUncheckedCreateNestedManyWithoutChannelInput
+    joinRequests?: JoinRequestUncheckedCreateNestedManyWithoutChannelInput
   }
 
   export type ChannelUpdateInput = {
     name?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     bannerKey?: NullableStringFieldUpdateOperationsInput | string | null
+    visibility?: StringFieldUpdateOperationsInput | string
     createdBy?: UserUpdateOneRequiredWithoutCreatedChannelsNestedInput
     members?: ChannelMemberUpdateManyWithoutChannelNestedInput
     posts?: PostUpdateManyWithoutChannelNestedInput
+    joinRequests?: JoinRequestUpdateManyWithoutChannelNestedInput
   }
 
   export type ChannelUncheckedUpdateInput = {
@@ -10496,8 +11895,10 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     createdById?: IntFieldUpdateOperationsInput | number
     bannerKey?: NullableStringFieldUpdateOperationsInput | string | null
+    visibility?: StringFieldUpdateOperationsInput | string
     members?: ChannelMemberUncheckedUpdateManyWithoutChannelNestedInput
     posts?: PostUncheckedUpdateManyWithoutChannelNestedInput
+    joinRequests?: JoinRequestUncheckedUpdateManyWithoutChannelNestedInput
   }
 
   export type ChannelCreateManyInput = {
@@ -10506,12 +11907,14 @@ export namespace Prisma {
     createdAt?: Date | string
     createdById: number
     bannerKey?: string | null
+    visibility?: string
   }
 
   export type ChannelUpdateManyMutationInput = {
     name?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     bannerKey?: NullableStringFieldUpdateOperationsInput | string | null
+    visibility?: StringFieldUpdateOperationsInput | string
   }
 
   export type ChannelUncheckedUpdateManyInput = {
@@ -10520,6 +11923,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     createdById?: IntFieldUpdateOperationsInput | number
     bannerKey?: NullableStringFieldUpdateOperationsInput | string | null
+    visibility?: StringFieldUpdateOperationsInput | string
   }
 
   export type ChannelMemberCreateInput = {
@@ -10564,6 +11968,64 @@ export namespace Prisma {
     channelId?: IntFieldUpdateOperationsInput | number
     userId?: IntFieldUpdateOperationsInput | number
     role?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type JoinRequestCreateInput = {
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    status?: string
+    channel: ChannelCreateNestedOneWithoutJoinRequestsInput
+    user: UserCreateNestedOneWithoutJoinRequestsInput
+  }
+
+  export type JoinRequestUncheckedCreateInput = {
+    id?: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    channelId: number
+    userId: number
+    status?: string
+  }
+
+  export type JoinRequestUpdateInput = {
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    status?: StringFieldUpdateOperationsInput | string
+    channel?: ChannelUpdateOneRequiredWithoutJoinRequestsNestedInput
+    user?: UserUpdateOneRequiredWithoutJoinRequestsNestedInput
+  }
+
+  export type JoinRequestUncheckedUpdateInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    channelId?: IntFieldUpdateOperationsInput | number
+    userId?: IntFieldUpdateOperationsInput | number
+    status?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type JoinRequestCreateManyInput = {
+    id?: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    channelId: number
+    userId: number
+    status?: string
+  }
+
+  export type JoinRequestUpdateManyMutationInput = {
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    status?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type JoinRequestUncheckedUpdateManyInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    channelId?: IntFieldUpdateOperationsInput | number
+    userId?: IntFieldUpdateOperationsInput | number
+    status?: StringFieldUpdateOperationsInput | string
   }
 
   export type IntFilter<$PrismaModel = never> = {
@@ -10642,6 +12104,12 @@ export namespace Prisma {
     none?: ChannelWhereInput
   }
 
+  export type JoinRequestListRelationFilter = {
+    every?: JoinRequestWhereInput
+    some?: JoinRequestWhereInput
+    none?: JoinRequestWhereInput
+  }
+
   export type SortOrderInput = {
     sort: SortOrder
     nulls?: NullsOrder
@@ -10664,6 +12132,10 @@ export namespace Prisma {
   }
 
   export type ChannelOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type JoinRequestOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -10990,6 +12462,7 @@ export namespace Prisma {
     createdAt?: SortOrder
     createdById?: SortOrder
     bannerKey?: SortOrder
+    visibility?: SortOrder
   }
 
   export type ChannelAvgOrderByAggregateInput = {
@@ -11003,6 +12476,7 @@ export namespace Prisma {
     createdAt?: SortOrder
     createdById?: SortOrder
     bannerKey?: SortOrder
+    visibility?: SortOrder
   }
 
   export type ChannelMinOrderByAggregateInput = {
@@ -11011,6 +12485,7 @@ export namespace Prisma {
     createdAt?: SortOrder
     createdById?: SortOrder
     bannerKey?: SortOrder
+    visibility?: SortOrder
   }
 
   export type ChannelSumOrderByAggregateInput = {
@@ -11061,6 +12536,50 @@ export namespace Prisma {
     userId?: SortOrder
   }
 
+  export type JoinRequestChannelIdUserIdCompoundUniqueInput = {
+    channelId: number
+    userId: number
+  }
+
+  export type JoinRequestCountOrderByAggregateInput = {
+    id?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    channelId?: SortOrder
+    userId?: SortOrder
+    status?: SortOrder
+  }
+
+  export type JoinRequestAvgOrderByAggregateInput = {
+    id?: SortOrder
+    channelId?: SortOrder
+    userId?: SortOrder
+  }
+
+  export type JoinRequestMaxOrderByAggregateInput = {
+    id?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    channelId?: SortOrder
+    userId?: SortOrder
+    status?: SortOrder
+  }
+
+  export type JoinRequestMinOrderByAggregateInput = {
+    id?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    channelId?: SortOrder
+    userId?: SortOrder
+    status?: SortOrder
+  }
+
+  export type JoinRequestSumOrderByAggregateInput = {
+    id?: SortOrder
+    channelId?: SortOrder
+    userId?: SortOrder
+  }
+
   export type PostCreateNestedManyWithoutAuthorInput = {
     create?: XOR<PostCreateWithoutAuthorInput, PostUncheckedCreateWithoutAuthorInput> | PostCreateWithoutAuthorInput[] | PostUncheckedCreateWithoutAuthorInput[]
     connectOrCreate?: PostCreateOrConnectWithoutAuthorInput | PostCreateOrConnectWithoutAuthorInput[]
@@ -11096,6 +12615,13 @@ export namespace Prisma {
     connect?: ChannelWhereUniqueInput | ChannelWhereUniqueInput[]
   }
 
+  export type JoinRequestCreateNestedManyWithoutUserInput = {
+    create?: XOR<JoinRequestCreateWithoutUserInput, JoinRequestUncheckedCreateWithoutUserInput> | JoinRequestCreateWithoutUserInput[] | JoinRequestUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: JoinRequestCreateOrConnectWithoutUserInput | JoinRequestCreateOrConnectWithoutUserInput[]
+    createMany?: JoinRequestCreateManyUserInputEnvelope
+    connect?: JoinRequestWhereUniqueInput | JoinRequestWhereUniqueInput[]
+  }
+
   export type PostUncheckedCreateNestedManyWithoutAuthorInput = {
     create?: XOR<PostCreateWithoutAuthorInput, PostUncheckedCreateWithoutAuthorInput> | PostCreateWithoutAuthorInput[] | PostUncheckedCreateWithoutAuthorInput[]
     connectOrCreate?: PostCreateOrConnectWithoutAuthorInput | PostCreateOrConnectWithoutAuthorInput[]
@@ -11129,6 +12655,13 @@ export namespace Prisma {
     connectOrCreate?: ChannelCreateOrConnectWithoutCreatedByInput | ChannelCreateOrConnectWithoutCreatedByInput[]
     createMany?: ChannelCreateManyCreatedByInputEnvelope
     connect?: ChannelWhereUniqueInput | ChannelWhereUniqueInput[]
+  }
+
+  export type JoinRequestUncheckedCreateNestedManyWithoutUserInput = {
+    create?: XOR<JoinRequestCreateWithoutUserInput, JoinRequestUncheckedCreateWithoutUserInput> | JoinRequestCreateWithoutUserInput[] | JoinRequestUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: JoinRequestCreateOrConnectWithoutUserInput | JoinRequestCreateOrConnectWithoutUserInput[]
+    createMany?: JoinRequestCreateManyUserInputEnvelope
+    connect?: JoinRequestWhereUniqueInput | JoinRequestWhereUniqueInput[]
   }
 
   export type StringFieldUpdateOperationsInput = {
@@ -11213,6 +12746,20 @@ export namespace Prisma {
     deleteMany?: ChannelScalarWhereInput | ChannelScalarWhereInput[]
   }
 
+  export type JoinRequestUpdateManyWithoutUserNestedInput = {
+    create?: XOR<JoinRequestCreateWithoutUserInput, JoinRequestUncheckedCreateWithoutUserInput> | JoinRequestCreateWithoutUserInput[] | JoinRequestUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: JoinRequestCreateOrConnectWithoutUserInput | JoinRequestCreateOrConnectWithoutUserInput[]
+    upsert?: JoinRequestUpsertWithWhereUniqueWithoutUserInput | JoinRequestUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: JoinRequestCreateManyUserInputEnvelope
+    set?: JoinRequestWhereUniqueInput | JoinRequestWhereUniqueInput[]
+    disconnect?: JoinRequestWhereUniqueInput | JoinRequestWhereUniqueInput[]
+    delete?: JoinRequestWhereUniqueInput | JoinRequestWhereUniqueInput[]
+    connect?: JoinRequestWhereUniqueInput | JoinRequestWhereUniqueInput[]
+    update?: JoinRequestUpdateWithWhereUniqueWithoutUserInput | JoinRequestUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: JoinRequestUpdateManyWithWhereWithoutUserInput | JoinRequestUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: JoinRequestScalarWhereInput | JoinRequestScalarWhereInput[]
+  }
+
   export type IntFieldUpdateOperationsInput = {
     set?: number
     increment?: number
@@ -11289,6 +12836,20 @@ export namespace Prisma {
     update?: ChannelUpdateWithWhereUniqueWithoutCreatedByInput | ChannelUpdateWithWhereUniqueWithoutCreatedByInput[]
     updateMany?: ChannelUpdateManyWithWhereWithoutCreatedByInput | ChannelUpdateManyWithWhereWithoutCreatedByInput[]
     deleteMany?: ChannelScalarWhereInput | ChannelScalarWhereInput[]
+  }
+
+  export type JoinRequestUncheckedUpdateManyWithoutUserNestedInput = {
+    create?: XOR<JoinRequestCreateWithoutUserInput, JoinRequestUncheckedCreateWithoutUserInput> | JoinRequestCreateWithoutUserInput[] | JoinRequestUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: JoinRequestCreateOrConnectWithoutUserInput | JoinRequestCreateOrConnectWithoutUserInput[]
+    upsert?: JoinRequestUpsertWithWhereUniqueWithoutUserInput | JoinRequestUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: JoinRequestCreateManyUserInputEnvelope
+    set?: JoinRequestWhereUniqueInput | JoinRequestWhereUniqueInput[]
+    disconnect?: JoinRequestWhereUniqueInput | JoinRequestWhereUniqueInput[]
+    delete?: JoinRequestWhereUniqueInput | JoinRequestWhereUniqueInput[]
+    connect?: JoinRequestWhereUniqueInput | JoinRequestWhereUniqueInput[]
+    update?: JoinRequestUpdateWithWhereUniqueWithoutUserInput | JoinRequestUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: JoinRequestUpdateManyWithWhereWithoutUserInput | JoinRequestUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: JoinRequestScalarWhereInput | JoinRequestScalarWhereInput[]
   }
 
   export type UserCreateNestedOneWithoutPostsInput = {
@@ -11549,6 +13110,13 @@ export namespace Prisma {
     connect?: PostWhereUniqueInput | PostWhereUniqueInput[]
   }
 
+  export type JoinRequestCreateNestedManyWithoutChannelInput = {
+    create?: XOR<JoinRequestCreateWithoutChannelInput, JoinRequestUncheckedCreateWithoutChannelInput> | JoinRequestCreateWithoutChannelInput[] | JoinRequestUncheckedCreateWithoutChannelInput[]
+    connectOrCreate?: JoinRequestCreateOrConnectWithoutChannelInput | JoinRequestCreateOrConnectWithoutChannelInput[]
+    createMany?: JoinRequestCreateManyChannelInputEnvelope
+    connect?: JoinRequestWhereUniqueInput | JoinRequestWhereUniqueInput[]
+  }
+
   export type ChannelMemberUncheckedCreateNestedManyWithoutChannelInput = {
     create?: XOR<ChannelMemberCreateWithoutChannelInput, ChannelMemberUncheckedCreateWithoutChannelInput> | ChannelMemberCreateWithoutChannelInput[] | ChannelMemberUncheckedCreateWithoutChannelInput[]
     connectOrCreate?: ChannelMemberCreateOrConnectWithoutChannelInput | ChannelMemberCreateOrConnectWithoutChannelInput[]
@@ -11561,6 +13129,13 @@ export namespace Prisma {
     connectOrCreate?: PostCreateOrConnectWithoutChannelInput | PostCreateOrConnectWithoutChannelInput[]
     createMany?: PostCreateManyChannelInputEnvelope
     connect?: PostWhereUniqueInput | PostWhereUniqueInput[]
+  }
+
+  export type JoinRequestUncheckedCreateNestedManyWithoutChannelInput = {
+    create?: XOR<JoinRequestCreateWithoutChannelInput, JoinRequestUncheckedCreateWithoutChannelInput> | JoinRequestCreateWithoutChannelInput[] | JoinRequestUncheckedCreateWithoutChannelInput[]
+    connectOrCreate?: JoinRequestCreateOrConnectWithoutChannelInput | JoinRequestCreateOrConnectWithoutChannelInput[]
+    createMany?: JoinRequestCreateManyChannelInputEnvelope
+    connect?: JoinRequestWhereUniqueInput | JoinRequestWhereUniqueInput[]
   }
 
   export type UserUpdateOneRequiredWithoutCreatedChannelsNestedInput = {
@@ -11599,6 +13174,20 @@ export namespace Prisma {
     deleteMany?: PostScalarWhereInput | PostScalarWhereInput[]
   }
 
+  export type JoinRequestUpdateManyWithoutChannelNestedInput = {
+    create?: XOR<JoinRequestCreateWithoutChannelInput, JoinRequestUncheckedCreateWithoutChannelInput> | JoinRequestCreateWithoutChannelInput[] | JoinRequestUncheckedCreateWithoutChannelInput[]
+    connectOrCreate?: JoinRequestCreateOrConnectWithoutChannelInput | JoinRequestCreateOrConnectWithoutChannelInput[]
+    upsert?: JoinRequestUpsertWithWhereUniqueWithoutChannelInput | JoinRequestUpsertWithWhereUniqueWithoutChannelInput[]
+    createMany?: JoinRequestCreateManyChannelInputEnvelope
+    set?: JoinRequestWhereUniqueInput | JoinRequestWhereUniqueInput[]
+    disconnect?: JoinRequestWhereUniqueInput | JoinRequestWhereUniqueInput[]
+    delete?: JoinRequestWhereUniqueInput | JoinRequestWhereUniqueInput[]
+    connect?: JoinRequestWhereUniqueInput | JoinRequestWhereUniqueInput[]
+    update?: JoinRequestUpdateWithWhereUniqueWithoutChannelInput | JoinRequestUpdateWithWhereUniqueWithoutChannelInput[]
+    updateMany?: JoinRequestUpdateManyWithWhereWithoutChannelInput | JoinRequestUpdateManyWithWhereWithoutChannelInput[]
+    deleteMany?: JoinRequestScalarWhereInput | JoinRequestScalarWhereInput[]
+  }
+
   export type ChannelMemberUncheckedUpdateManyWithoutChannelNestedInput = {
     create?: XOR<ChannelMemberCreateWithoutChannelInput, ChannelMemberUncheckedCreateWithoutChannelInput> | ChannelMemberCreateWithoutChannelInput[] | ChannelMemberUncheckedCreateWithoutChannelInput[]
     connectOrCreate?: ChannelMemberCreateOrConnectWithoutChannelInput | ChannelMemberCreateOrConnectWithoutChannelInput[]
@@ -11627,6 +13216,20 @@ export namespace Prisma {
     deleteMany?: PostScalarWhereInput | PostScalarWhereInput[]
   }
 
+  export type JoinRequestUncheckedUpdateManyWithoutChannelNestedInput = {
+    create?: XOR<JoinRequestCreateWithoutChannelInput, JoinRequestUncheckedCreateWithoutChannelInput> | JoinRequestCreateWithoutChannelInput[] | JoinRequestUncheckedCreateWithoutChannelInput[]
+    connectOrCreate?: JoinRequestCreateOrConnectWithoutChannelInput | JoinRequestCreateOrConnectWithoutChannelInput[]
+    upsert?: JoinRequestUpsertWithWhereUniqueWithoutChannelInput | JoinRequestUpsertWithWhereUniqueWithoutChannelInput[]
+    createMany?: JoinRequestCreateManyChannelInputEnvelope
+    set?: JoinRequestWhereUniqueInput | JoinRequestWhereUniqueInput[]
+    disconnect?: JoinRequestWhereUniqueInput | JoinRequestWhereUniqueInput[]
+    delete?: JoinRequestWhereUniqueInput | JoinRequestWhereUniqueInput[]
+    connect?: JoinRequestWhereUniqueInput | JoinRequestWhereUniqueInput[]
+    update?: JoinRequestUpdateWithWhereUniqueWithoutChannelInput | JoinRequestUpdateWithWhereUniqueWithoutChannelInput[]
+    updateMany?: JoinRequestUpdateManyWithWhereWithoutChannelInput | JoinRequestUpdateManyWithWhereWithoutChannelInput[]
+    deleteMany?: JoinRequestScalarWhereInput | JoinRequestScalarWhereInput[]
+  }
+
   export type ChannelCreateNestedOneWithoutMembersInput = {
     create?: XOR<ChannelCreateWithoutMembersInput, ChannelUncheckedCreateWithoutMembersInput>
     connectOrCreate?: ChannelCreateOrConnectWithoutMembersInput
@@ -11653,6 +13256,34 @@ export namespace Prisma {
     upsert?: UserUpsertWithoutChannelMemberInput
     connect?: UserWhereUniqueInput
     update?: XOR<XOR<UserUpdateToOneWithWhereWithoutChannelMemberInput, UserUpdateWithoutChannelMemberInput>, UserUncheckedUpdateWithoutChannelMemberInput>
+  }
+
+  export type ChannelCreateNestedOneWithoutJoinRequestsInput = {
+    create?: XOR<ChannelCreateWithoutJoinRequestsInput, ChannelUncheckedCreateWithoutJoinRequestsInput>
+    connectOrCreate?: ChannelCreateOrConnectWithoutJoinRequestsInput
+    connect?: ChannelWhereUniqueInput
+  }
+
+  export type UserCreateNestedOneWithoutJoinRequestsInput = {
+    create?: XOR<UserCreateWithoutJoinRequestsInput, UserUncheckedCreateWithoutJoinRequestsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutJoinRequestsInput
+    connect?: UserWhereUniqueInput
+  }
+
+  export type ChannelUpdateOneRequiredWithoutJoinRequestsNestedInput = {
+    create?: XOR<ChannelCreateWithoutJoinRequestsInput, ChannelUncheckedCreateWithoutJoinRequestsInput>
+    connectOrCreate?: ChannelCreateOrConnectWithoutJoinRequestsInput
+    upsert?: ChannelUpsertWithoutJoinRequestsInput
+    connect?: ChannelWhereUniqueInput
+    update?: XOR<XOR<ChannelUpdateToOneWithWhereWithoutJoinRequestsInput, ChannelUpdateWithoutJoinRequestsInput>, ChannelUncheckedUpdateWithoutJoinRequestsInput>
+  }
+
+  export type UserUpdateOneRequiredWithoutJoinRequestsNestedInput = {
+    create?: XOR<UserCreateWithoutJoinRequestsInput, UserUncheckedCreateWithoutJoinRequestsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutJoinRequestsInput
+    upsert?: UserUpsertWithoutJoinRequestsInput
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutJoinRequestsInput, UserUpdateWithoutJoinRequestsInput>, UserUncheckedUpdateWithoutJoinRequestsInput>
   }
 
   export type NestedIntFilter<$PrismaModel = never> = {
@@ -11931,8 +13562,10 @@ export namespace Prisma {
     name: string
     createdAt?: Date | string
     bannerKey?: string | null
+    visibility?: string
     members?: ChannelMemberCreateNestedManyWithoutChannelInput
     posts?: PostCreateNestedManyWithoutChannelInput
+    joinRequests?: JoinRequestCreateNestedManyWithoutChannelInput
   }
 
   export type ChannelUncheckedCreateWithoutCreatedByInput = {
@@ -11940,8 +13573,10 @@ export namespace Prisma {
     name: string
     createdAt?: Date | string
     bannerKey?: string | null
+    visibility?: string
     members?: ChannelMemberUncheckedCreateNestedManyWithoutChannelInput
     posts?: PostUncheckedCreateNestedManyWithoutChannelInput
+    joinRequests?: JoinRequestUncheckedCreateNestedManyWithoutChannelInput
   }
 
   export type ChannelCreateOrConnectWithoutCreatedByInput = {
@@ -11951,6 +13586,31 @@ export namespace Prisma {
 
   export type ChannelCreateManyCreatedByInputEnvelope = {
     data: ChannelCreateManyCreatedByInput | ChannelCreateManyCreatedByInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type JoinRequestCreateWithoutUserInput = {
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    status?: string
+    channel: ChannelCreateNestedOneWithoutJoinRequestsInput
+  }
+
+  export type JoinRequestUncheckedCreateWithoutUserInput = {
+    id?: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    channelId: number
+    status?: string
+  }
+
+  export type JoinRequestCreateOrConnectWithoutUserInput = {
+    where: JoinRequestWhereUniqueInput
+    create: XOR<JoinRequestCreateWithoutUserInput, JoinRequestUncheckedCreateWithoutUserInput>
+  }
+
+  export type JoinRequestCreateManyUserInputEnvelope = {
+    data: JoinRequestCreateManyUserInput | JoinRequestCreateManyUserInput[]
     skipDuplicates?: boolean
   }
 
@@ -12086,6 +13746,35 @@ export namespace Prisma {
     createdAt?: DateTimeFilter<"Channel"> | Date | string
     createdById?: IntFilter<"Channel"> | number
     bannerKey?: StringNullableFilter<"Channel"> | string | null
+    visibility?: StringFilter<"Channel"> | string
+  }
+
+  export type JoinRequestUpsertWithWhereUniqueWithoutUserInput = {
+    where: JoinRequestWhereUniqueInput
+    update: XOR<JoinRequestUpdateWithoutUserInput, JoinRequestUncheckedUpdateWithoutUserInput>
+    create: XOR<JoinRequestCreateWithoutUserInput, JoinRequestUncheckedCreateWithoutUserInput>
+  }
+
+  export type JoinRequestUpdateWithWhereUniqueWithoutUserInput = {
+    where: JoinRequestWhereUniqueInput
+    data: XOR<JoinRequestUpdateWithoutUserInput, JoinRequestUncheckedUpdateWithoutUserInput>
+  }
+
+  export type JoinRequestUpdateManyWithWhereWithoutUserInput = {
+    where: JoinRequestScalarWhereInput
+    data: XOR<JoinRequestUpdateManyMutationInput, JoinRequestUncheckedUpdateManyWithoutUserInput>
+  }
+
+  export type JoinRequestScalarWhereInput = {
+    AND?: JoinRequestScalarWhereInput | JoinRequestScalarWhereInput[]
+    OR?: JoinRequestScalarWhereInput[]
+    NOT?: JoinRequestScalarWhereInput | JoinRequestScalarWhereInput[]
+    id?: IntFilter<"JoinRequest"> | number
+    createdAt?: DateTimeFilter<"JoinRequest"> | Date | string
+    updatedAt?: DateTimeFilter<"JoinRequest"> | Date | string
+    channelId?: IntFilter<"JoinRequest"> | number
+    userId?: IntFilter<"JoinRequest"> | number
+    status?: StringFilter<"JoinRequest"> | string
   }
 
   export type UserCreateWithoutPostsInput = {
@@ -12098,6 +13787,7 @@ export namespace Prisma {
     reactions?: ReactionCreateNestedManyWithoutUserInput
     channelMember?: ChannelMemberCreateNestedManyWithoutUserInput
     createdChannels?: ChannelCreateNestedManyWithoutCreatedByInput
+    joinRequests?: JoinRequestCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutPostsInput = {
@@ -12111,6 +13801,7 @@ export namespace Prisma {
     reactions?: ReactionUncheckedCreateNestedManyWithoutUserInput
     channelMember?: ChannelMemberUncheckedCreateNestedManyWithoutUserInput
     createdChannels?: ChannelUncheckedCreateNestedManyWithoutCreatedByInput
+    joinRequests?: JoinRequestUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutPostsInput = {
@@ -12122,8 +13813,10 @@ export namespace Prisma {
     name: string
     createdAt?: Date | string
     bannerKey?: string | null
+    visibility?: string
     createdBy: UserCreateNestedOneWithoutCreatedChannelsInput
     members?: ChannelMemberCreateNestedManyWithoutChannelInput
+    joinRequests?: JoinRequestCreateNestedManyWithoutChannelInput
   }
 
   export type ChannelUncheckedCreateWithoutPostsInput = {
@@ -12132,7 +13825,9 @@ export namespace Prisma {
     createdAt?: Date | string
     createdById: number
     bannerKey?: string | null
+    visibility?: string
     members?: ChannelMemberUncheckedCreateNestedManyWithoutChannelInput
+    joinRequests?: JoinRequestUncheckedCreateNestedManyWithoutChannelInput
   }
 
   export type ChannelCreateOrConnectWithoutPostsInput = {
@@ -12226,6 +13921,7 @@ export namespace Prisma {
     reactions?: ReactionUpdateManyWithoutUserNestedInput
     channelMember?: ChannelMemberUpdateManyWithoutUserNestedInput
     createdChannels?: ChannelUpdateManyWithoutCreatedByNestedInput
+    joinRequests?: JoinRequestUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutPostsInput = {
@@ -12239,6 +13935,7 @@ export namespace Prisma {
     reactions?: ReactionUncheckedUpdateManyWithoutUserNestedInput
     channelMember?: ChannelMemberUncheckedUpdateManyWithoutUserNestedInput
     createdChannels?: ChannelUncheckedUpdateManyWithoutCreatedByNestedInput
+    joinRequests?: JoinRequestUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type ChannelUpsertWithoutPostsInput = {
@@ -12256,8 +13953,10 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     bannerKey?: NullableStringFieldUpdateOperationsInput | string | null
+    visibility?: StringFieldUpdateOperationsInput | string
     createdBy?: UserUpdateOneRequiredWithoutCreatedChannelsNestedInput
     members?: ChannelMemberUpdateManyWithoutChannelNestedInput
+    joinRequests?: JoinRequestUpdateManyWithoutChannelNestedInput
   }
 
   export type ChannelUncheckedUpdateWithoutPostsInput = {
@@ -12266,7 +13965,9 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     createdById?: IntFieldUpdateOperationsInput | number
     bannerKey?: NullableStringFieldUpdateOperationsInput | string | null
+    visibility?: StringFieldUpdateOperationsInput | string
     members?: ChannelMemberUncheckedUpdateManyWithoutChannelNestedInput
+    joinRequests?: JoinRequestUncheckedUpdateManyWithoutChannelNestedInput
   }
 
   export type FileUpsertWithWhereUniqueWithoutPostInput = {
@@ -12363,6 +14064,7 @@ export namespace Prisma {
     reactions?: ReactionCreateNestedManyWithoutUserInput
     channelMember?: ChannelMemberCreateNestedManyWithoutUserInput
     createdChannels?: ChannelCreateNestedManyWithoutCreatedByInput
+    joinRequests?: JoinRequestCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutCommentsInput = {
@@ -12376,6 +14078,7 @@ export namespace Prisma {
     reactions?: ReactionUncheckedCreateNestedManyWithoutUserInput
     channelMember?: ChannelMemberUncheckedCreateNestedManyWithoutUserInput
     createdChannels?: ChannelUncheckedCreateNestedManyWithoutCreatedByInput
+    joinRequests?: JoinRequestUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutCommentsInput = {
@@ -12436,6 +14139,7 @@ export namespace Prisma {
     reactions?: ReactionUpdateManyWithoutUserNestedInput
     channelMember?: ChannelMemberUpdateManyWithoutUserNestedInput
     createdChannels?: ChannelUpdateManyWithoutCreatedByNestedInput
+    joinRequests?: JoinRequestUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutCommentsInput = {
@@ -12449,6 +14153,7 @@ export namespace Prisma {
     reactions?: ReactionUncheckedUpdateManyWithoutUserNestedInput
     channelMember?: ChannelMemberUncheckedUpdateManyWithoutUserNestedInput
     createdChannels?: ChannelUncheckedUpdateManyWithoutCreatedByNestedInput
+    joinRequests?: JoinRequestUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type PostCreateWithoutReactionsInput = {
@@ -12487,6 +14192,7 @@ export namespace Prisma {
     comments?: CommentCreateNestedManyWithoutAuthorInput
     channelMember?: ChannelMemberCreateNestedManyWithoutUserInput
     createdChannels?: ChannelCreateNestedManyWithoutCreatedByInput
+    joinRequests?: JoinRequestCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutReactionsInput = {
@@ -12500,6 +14206,7 @@ export namespace Prisma {
     comments?: CommentUncheckedCreateNestedManyWithoutAuthorInput
     channelMember?: ChannelMemberUncheckedCreateNestedManyWithoutUserInput
     createdChannels?: ChannelUncheckedCreateNestedManyWithoutCreatedByInput
+    joinRequests?: JoinRequestUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutReactionsInput = {
@@ -12560,6 +14267,7 @@ export namespace Prisma {
     comments?: CommentUpdateManyWithoutAuthorNestedInput
     channelMember?: ChannelMemberUpdateManyWithoutUserNestedInput
     createdChannels?: ChannelUpdateManyWithoutCreatedByNestedInput
+    joinRequests?: JoinRequestUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutReactionsInput = {
@@ -12573,6 +14281,7 @@ export namespace Prisma {
     comments?: CommentUncheckedUpdateManyWithoutAuthorNestedInput
     channelMember?: ChannelMemberUncheckedUpdateManyWithoutUserNestedInput
     createdChannels?: ChannelUncheckedUpdateManyWithoutCreatedByNestedInput
+    joinRequests?: JoinRequestUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type PostCreateWithoutFilesInput = {
@@ -12643,6 +14352,7 @@ export namespace Prisma {
     comments?: CommentCreateNestedManyWithoutAuthorInput
     reactions?: ReactionCreateNestedManyWithoutUserInput
     channelMember?: ChannelMemberCreateNestedManyWithoutUserInput
+    joinRequests?: JoinRequestCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutCreatedChannelsInput = {
@@ -12656,6 +14366,7 @@ export namespace Prisma {
     comments?: CommentUncheckedCreateNestedManyWithoutAuthorInput
     reactions?: ReactionUncheckedCreateNestedManyWithoutUserInput
     channelMember?: ChannelMemberUncheckedCreateNestedManyWithoutUserInput
+    joinRequests?: JoinRequestUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutCreatedChannelsInput = {
@@ -12715,6 +14426,31 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type JoinRequestCreateWithoutChannelInput = {
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    status?: string
+    user: UserCreateNestedOneWithoutJoinRequestsInput
+  }
+
+  export type JoinRequestUncheckedCreateWithoutChannelInput = {
+    id?: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    userId: number
+    status?: string
+  }
+
+  export type JoinRequestCreateOrConnectWithoutChannelInput = {
+    where: JoinRequestWhereUniqueInput
+    create: XOR<JoinRequestCreateWithoutChannelInput, JoinRequestUncheckedCreateWithoutChannelInput>
+  }
+
+  export type JoinRequestCreateManyChannelInputEnvelope = {
+    data: JoinRequestCreateManyChannelInput | JoinRequestCreateManyChannelInput[]
+    skipDuplicates?: boolean
+  }
+
   export type UserUpsertWithoutCreatedChannelsInput = {
     update: XOR<UserUpdateWithoutCreatedChannelsInput, UserUncheckedUpdateWithoutCreatedChannelsInput>
     create: XOR<UserCreateWithoutCreatedChannelsInput, UserUncheckedCreateWithoutCreatedChannelsInput>
@@ -12736,6 +14472,7 @@ export namespace Prisma {
     comments?: CommentUpdateManyWithoutAuthorNestedInput
     reactions?: ReactionUpdateManyWithoutUserNestedInput
     channelMember?: ChannelMemberUpdateManyWithoutUserNestedInput
+    joinRequests?: JoinRequestUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutCreatedChannelsInput = {
@@ -12749,6 +14486,7 @@ export namespace Prisma {
     comments?: CommentUncheckedUpdateManyWithoutAuthorNestedInput
     reactions?: ReactionUncheckedUpdateManyWithoutUserNestedInput
     channelMember?: ChannelMemberUncheckedUpdateManyWithoutUserNestedInput
+    joinRequests?: JoinRequestUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type ChannelMemberUpsertWithWhereUniqueWithoutChannelInput = {
@@ -12783,12 +14521,30 @@ export namespace Prisma {
     data: XOR<PostUpdateManyMutationInput, PostUncheckedUpdateManyWithoutChannelInput>
   }
 
+  export type JoinRequestUpsertWithWhereUniqueWithoutChannelInput = {
+    where: JoinRequestWhereUniqueInput
+    update: XOR<JoinRequestUpdateWithoutChannelInput, JoinRequestUncheckedUpdateWithoutChannelInput>
+    create: XOR<JoinRequestCreateWithoutChannelInput, JoinRequestUncheckedCreateWithoutChannelInput>
+  }
+
+  export type JoinRequestUpdateWithWhereUniqueWithoutChannelInput = {
+    where: JoinRequestWhereUniqueInput
+    data: XOR<JoinRequestUpdateWithoutChannelInput, JoinRequestUncheckedUpdateWithoutChannelInput>
+  }
+
+  export type JoinRequestUpdateManyWithWhereWithoutChannelInput = {
+    where: JoinRequestScalarWhereInput
+    data: XOR<JoinRequestUpdateManyMutationInput, JoinRequestUncheckedUpdateManyWithoutChannelInput>
+  }
+
   export type ChannelCreateWithoutMembersInput = {
     name: string
     createdAt?: Date | string
     bannerKey?: string | null
+    visibility?: string
     createdBy: UserCreateNestedOneWithoutCreatedChannelsInput
     posts?: PostCreateNestedManyWithoutChannelInput
+    joinRequests?: JoinRequestCreateNestedManyWithoutChannelInput
   }
 
   export type ChannelUncheckedCreateWithoutMembersInput = {
@@ -12797,7 +14553,9 @@ export namespace Prisma {
     createdAt?: Date | string
     createdById: number
     bannerKey?: string | null
+    visibility?: string
     posts?: PostUncheckedCreateNestedManyWithoutChannelInput
+    joinRequests?: JoinRequestUncheckedCreateNestedManyWithoutChannelInput
   }
 
   export type ChannelCreateOrConnectWithoutMembersInput = {
@@ -12815,6 +14573,7 @@ export namespace Prisma {
     comments?: CommentCreateNestedManyWithoutAuthorInput
     reactions?: ReactionCreateNestedManyWithoutUserInput
     createdChannels?: ChannelCreateNestedManyWithoutCreatedByInput
+    joinRequests?: JoinRequestCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutChannelMemberInput = {
@@ -12828,6 +14587,7 @@ export namespace Prisma {
     comments?: CommentUncheckedCreateNestedManyWithoutAuthorInput
     reactions?: ReactionUncheckedCreateNestedManyWithoutUserInput
     createdChannels?: ChannelUncheckedCreateNestedManyWithoutCreatedByInput
+    joinRequests?: JoinRequestUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutChannelMemberInput = {
@@ -12850,8 +14610,10 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     bannerKey?: NullableStringFieldUpdateOperationsInput | string | null
+    visibility?: StringFieldUpdateOperationsInput | string
     createdBy?: UserUpdateOneRequiredWithoutCreatedChannelsNestedInput
     posts?: PostUpdateManyWithoutChannelNestedInput
+    joinRequests?: JoinRequestUpdateManyWithoutChannelNestedInput
   }
 
   export type ChannelUncheckedUpdateWithoutMembersInput = {
@@ -12860,7 +14622,9 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     createdById?: IntFieldUpdateOperationsInput | number
     bannerKey?: NullableStringFieldUpdateOperationsInput | string | null
+    visibility?: StringFieldUpdateOperationsInput | string
     posts?: PostUncheckedUpdateManyWithoutChannelNestedInput
+    joinRequests?: JoinRequestUncheckedUpdateManyWithoutChannelNestedInput
   }
 
   export type UserUpsertWithoutChannelMemberInput = {
@@ -12884,6 +14648,7 @@ export namespace Prisma {
     comments?: CommentUpdateManyWithoutAuthorNestedInput
     reactions?: ReactionUpdateManyWithoutUserNestedInput
     createdChannels?: ChannelUpdateManyWithoutCreatedByNestedInput
+    joinRequests?: JoinRequestUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutChannelMemberInput = {
@@ -12896,6 +14661,135 @@ export namespace Prisma {
     posts?: PostUncheckedUpdateManyWithoutAuthorNestedInput
     comments?: CommentUncheckedUpdateManyWithoutAuthorNestedInput
     reactions?: ReactionUncheckedUpdateManyWithoutUserNestedInput
+    createdChannels?: ChannelUncheckedUpdateManyWithoutCreatedByNestedInput
+    joinRequests?: JoinRequestUncheckedUpdateManyWithoutUserNestedInput
+  }
+
+  export type ChannelCreateWithoutJoinRequestsInput = {
+    name: string
+    createdAt?: Date | string
+    bannerKey?: string | null
+    visibility?: string
+    createdBy: UserCreateNestedOneWithoutCreatedChannelsInput
+    members?: ChannelMemberCreateNestedManyWithoutChannelInput
+    posts?: PostCreateNestedManyWithoutChannelInput
+  }
+
+  export type ChannelUncheckedCreateWithoutJoinRequestsInput = {
+    id?: number
+    name: string
+    createdAt?: Date | string
+    createdById: number
+    bannerKey?: string | null
+    visibility?: string
+    members?: ChannelMemberUncheckedCreateNestedManyWithoutChannelInput
+    posts?: PostUncheckedCreateNestedManyWithoutChannelInput
+  }
+
+  export type ChannelCreateOrConnectWithoutJoinRequestsInput = {
+    where: ChannelWhereUniqueInput
+    create: XOR<ChannelCreateWithoutJoinRequestsInput, ChannelUncheckedCreateWithoutJoinRequestsInput>
+  }
+
+  export type UserCreateWithoutJoinRequestsInput = {
+    username: string
+    email?: string | null
+    role: string
+    isStaff?: boolean
+    profileImage?: string | null
+    posts?: PostCreateNestedManyWithoutAuthorInput
+    comments?: CommentCreateNestedManyWithoutAuthorInput
+    reactions?: ReactionCreateNestedManyWithoutUserInput
+    channelMember?: ChannelMemberCreateNestedManyWithoutUserInput
+    createdChannels?: ChannelCreateNestedManyWithoutCreatedByInput
+  }
+
+  export type UserUncheckedCreateWithoutJoinRequestsInput = {
+    id?: number
+    username: string
+    email?: string | null
+    role: string
+    isStaff?: boolean
+    profileImage?: string | null
+    posts?: PostUncheckedCreateNestedManyWithoutAuthorInput
+    comments?: CommentUncheckedCreateNestedManyWithoutAuthorInput
+    reactions?: ReactionUncheckedCreateNestedManyWithoutUserInput
+    channelMember?: ChannelMemberUncheckedCreateNestedManyWithoutUserInput
+    createdChannels?: ChannelUncheckedCreateNestedManyWithoutCreatedByInput
+  }
+
+  export type UserCreateOrConnectWithoutJoinRequestsInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutJoinRequestsInput, UserUncheckedCreateWithoutJoinRequestsInput>
+  }
+
+  export type ChannelUpsertWithoutJoinRequestsInput = {
+    update: XOR<ChannelUpdateWithoutJoinRequestsInput, ChannelUncheckedUpdateWithoutJoinRequestsInput>
+    create: XOR<ChannelCreateWithoutJoinRequestsInput, ChannelUncheckedCreateWithoutJoinRequestsInput>
+    where?: ChannelWhereInput
+  }
+
+  export type ChannelUpdateToOneWithWhereWithoutJoinRequestsInput = {
+    where?: ChannelWhereInput
+    data: XOR<ChannelUpdateWithoutJoinRequestsInput, ChannelUncheckedUpdateWithoutJoinRequestsInput>
+  }
+
+  export type ChannelUpdateWithoutJoinRequestsInput = {
+    name?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    bannerKey?: NullableStringFieldUpdateOperationsInput | string | null
+    visibility?: StringFieldUpdateOperationsInput | string
+    createdBy?: UserUpdateOneRequiredWithoutCreatedChannelsNestedInput
+    members?: ChannelMemberUpdateManyWithoutChannelNestedInput
+    posts?: PostUpdateManyWithoutChannelNestedInput
+  }
+
+  export type ChannelUncheckedUpdateWithoutJoinRequestsInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    name?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdById?: IntFieldUpdateOperationsInput | number
+    bannerKey?: NullableStringFieldUpdateOperationsInput | string | null
+    visibility?: StringFieldUpdateOperationsInput | string
+    members?: ChannelMemberUncheckedUpdateManyWithoutChannelNestedInput
+    posts?: PostUncheckedUpdateManyWithoutChannelNestedInput
+  }
+
+  export type UserUpsertWithoutJoinRequestsInput = {
+    update: XOR<UserUpdateWithoutJoinRequestsInput, UserUncheckedUpdateWithoutJoinRequestsInput>
+    create: XOR<UserCreateWithoutJoinRequestsInput, UserUncheckedCreateWithoutJoinRequestsInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutJoinRequestsInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutJoinRequestsInput, UserUncheckedUpdateWithoutJoinRequestsInput>
+  }
+
+  export type UserUpdateWithoutJoinRequestsInput = {
+    username?: StringFieldUpdateOperationsInput | string
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: StringFieldUpdateOperationsInput | string
+    isStaff?: BoolFieldUpdateOperationsInput | boolean
+    profileImage?: NullableStringFieldUpdateOperationsInput | string | null
+    posts?: PostUpdateManyWithoutAuthorNestedInput
+    comments?: CommentUpdateManyWithoutAuthorNestedInput
+    reactions?: ReactionUpdateManyWithoutUserNestedInput
+    channelMember?: ChannelMemberUpdateManyWithoutUserNestedInput
+    createdChannels?: ChannelUpdateManyWithoutCreatedByNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutJoinRequestsInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    username?: StringFieldUpdateOperationsInput | string
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: StringFieldUpdateOperationsInput | string
+    isStaff?: BoolFieldUpdateOperationsInput | boolean
+    profileImage?: NullableStringFieldUpdateOperationsInput | string | null
+    posts?: PostUncheckedUpdateManyWithoutAuthorNestedInput
+    comments?: CommentUncheckedUpdateManyWithoutAuthorNestedInput
+    reactions?: ReactionUncheckedUpdateManyWithoutUserNestedInput
+    channelMember?: ChannelMemberUncheckedUpdateManyWithoutUserNestedInput
     createdChannels?: ChannelUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
@@ -12931,6 +14825,15 @@ export namespace Prisma {
     name: string
     createdAt?: Date | string
     bannerKey?: string | null
+    visibility?: string
+  }
+
+  export type JoinRequestCreateManyUserInput = {
+    id?: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    channelId: number
+    status?: string
   }
 
   export type PostUpdateWithoutAuthorInput = {
@@ -13020,8 +14923,10 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     bannerKey?: NullableStringFieldUpdateOperationsInput | string | null
+    visibility?: StringFieldUpdateOperationsInput | string
     members?: ChannelMemberUpdateManyWithoutChannelNestedInput
     posts?: PostUpdateManyWithoutChannelNestedInput
+    joinRequests?: JoinRequestUpdateManyWithoutChannelNestedInput
   }
 
   export type ChannelUncheckedUpdateWithoutCreatedByInput = {
@@ -13029,8 +14934,10 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     bannerKey?: NullableStringFieldUpdateOperationsInput | string | null
+    visibility?: StringFieldUpdateOperationsInput | string
     members?: ChannelMemberUncheckedUpdateManyWithoutChannelNestedInput
     posts?: PostUncheckedUpdateManyWithoutChannelNestedInput
+    joinRequests?: JoinRequestUncheckedUpdateManyWithoutChannelNestedInput
   }
 
   export type ChannelUncheckedUpdateManyWithoutCreatedByInput = {
@@ -13038,6 +14945,30 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     bannerKey?: NullableStringFieldUpdateOperationsInput | string | null
+    visibility?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type JoinRequestUpdateWithoutUserInput = {
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    status?: StringFieldUpdateOperationsInput | string
+    channel?: ChannelUpdateOneRequiredWithoutJoinRequestsNestedInput
+  }
+
+  export type JoinRequestUncheckedUpdateWithoutUserInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    channelId?: IntFieldUpdateOperationsInput | number
+    status?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type JoinRequestUncheckedUpdateManyWithoutUserInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    channelId?: IntFieldUpdateOperationsInput | number
+    status?: StringFieldUpdateOperationsInput | string
   }
 
   export type FileCreateManyPostInput = {
@@ -13127,6 +15058,14 @@ export namespace Prisma {
     authorId: number
   }
 
+  export type JoinRequestCreateManyChannelInput = {
+    id?: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    userId: number
+    status?: string
+  }
+
   export type ChannelMemberUpdateWithoutChannelInput = {
     role?: StringFieldUpdateOperationsInput | string
     user?: UserUpdateOneRequiredWithoutChannelMemberNestedInput
@@ -13171,6 +15110,29 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     authorId?: IntFieldUpdateOperationsInput | number
+  }
+
+  export type JoinRequestUpdateWithoutChannelInput = {
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    status?: StringFieldUpdateOperationsInput | string
+    user?: UserUpdateOneRequiredWithoutJoinRequestsNestedInput
+  }
+
+  export type JoinRequestUncheckedUpdateWithoutChannelInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    userId?: IntFieldUpdateOperationsInput | number
+    status?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type JoinRequestUncheckedUpdateManyWithoutChannelInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    userId?: IntFieldUpdateOperationsInput | number
+    status?: StringFieldUpdateOperationsInput | string
   }
 
 

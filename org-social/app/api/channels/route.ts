@@ -18,6 +18,9 @@ function normalizeKeyToFileApi(key?: string | null) {
 type Role = "viewer" | "editor" | "admin";
 const VALID_ROLES: Role[] = ["viewer", "editor", "admin"];
 
+type Visibility = "public" | "private";
+const VALID_VISIBILITY: Visibility[] = ["public", "private"];
+
 export async function GET(req: NextRequest) {
   try {
     const userId = await getUserIdFromRequest(req);
@@ -36,6 +39,7 @@ export async function GET(req: NextRequest) {
       bannerKey: c.bannerKey,
       bannerUrl: normalizeKeyToFileApi(c.bannerKey),
       memberCount: c.members.length,
+      visibility: (c.visibility as Visibility) || "private",
     }));
 
     return NextResponse.json({ channels: formatted });
@@ -54,7 +58,12 @@ export async function POST(req: NextRequest) {
     const name = String(formData.get("name") || "").trim();
     if (!name) return NextResponse.json({ error: "name is required" }, { status: 400 });
 
-  
+    // ✅ NEW: visibility
+    const visibilityRaw = String(formData.get("visibility") || "private").trim().toLowerCase();
+    const visibility: Visibility = VALID_VISIBILITY.includes(visibilityRaw as Visibility)
+      ? (visibilityRaw as Visibility)
+      : "private";
+
     let members: { userId: number; role: Role }[] = [];
 
     const membersRaw = formData.get("members");
@@ -116,6 +125,7 @@ export async function POST(req: NextRequest) {
       data: {
         name,
         bannerKey,
+        visibility, // ✅ NEW
         createdBy: { connect: { id: userId } },
         members: {
           create: members.map((m) => ({
@@ -135,6 +145,7 @@ export async function POST(req: NextRequest) {
         createdAt: channel.createdAt,
         bannerKey: channel.bannerKey,
         bannerUrl: normalizeKeyToFileApi(channel.bannerKey),
+        visibility: channel.visibility,
         members: channel.members,
       },
     });

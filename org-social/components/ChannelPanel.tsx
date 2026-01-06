@@ -18,6 +18,18 @@ type Channel = {
   createdAt: string;
   bannerKey?: string | null;
   memberCount?: number;
+  visibility?: "public" | "private";
+};
+
+type PublicChannel = {
+  id: number;
+  name: string;
+  createdAt: string;
+  visibility: "public";
+  memberCount: number;
+  isMember: boolean;
+  hasPendingRequest: boolean;
+  pendingRequestId: number | null;
 };
 
 type UserPick = {
@@ -71,7 +83,11 @@ async function getCroppedImg(imageSrc: string, crop: any) {
 
 export default function ChannelsPanel() {
   const [channels, setChannels] = useState<Channel[]>([]);
+  const [publicChannels, setPublicChannels] = useState<PublicChannel[]>([]);
+
   const [newChannel, setNewChannel] = useState("");
+  const [visibility, setVisibility] = useState<"public" | "private">("private");
+
   const [banner, setBanner] = useState<File | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -99,8 +115,20 @@ export default function ChannelsPanel() {
     }
   }
 
+  async function loadPublicChannels() {
+    try {
+      const res = await fetch("/api/channels/public", { credentials: "include" });
+      if (!res.ok) return;
+      const data = await res.json();
+      setPublicChannels(data.channels || []);
+    } catch (e) {
+      console.error("Load public channels failed:", e);
+    }
+  }
+
   useEffect(() => {
     loadChannels();
+    loadPublicChannels();
   }, []);
 
   async function searchUsers(q: string) {
@@ -134,6 +162,7 @@ export default function ChannelsPanel() {
     try {
       const formData = new FormData();
       formData.append("name", trimmed);
+      formData.append("visibility", visibility); // ✅ NEW
       if (banner) formData.append("banner", banner);
 
       formData.append(
@@ -162,17 +191,22 @@ export default function ChannelsPanel() {
         createdAt: data.channel.createdAt,
         bannerKey: data.channel.bannerKey,
         memberCount: data.channel.members?.length,
+        visibility: data.channel.visibility,
       };
 
       setChannels((prev) => [...prev, created]);
       setNewChannel("");
       setBanner(null);
+      setVisibility("private");
 
       setUserQuery("");
       setUserResults([]);
       setPickedMembers([]);
 
       setModalOpen(false);
+
+      // refresh public list (in case channel is public)
+      loadPublicChannels();
     } catch (e) {
       console.error("Create channel error:", e);
     } finally {
@@ -202,8 +236,38 @@ export default function ChannelsPanel() {
     setCropModalOpen(false);
   }, [cropImage, croppedAreaPixels]);
 
+  async function requestJoin(channelId: number) {
+    try {
+      const res = await fetch(`/api/channels/${channelId}/join-request`, {
+        method: "POST",
+        credentials: "include",
+      });
+      if (!res.ok) {
+        const t = await res.text().catch(() => "");
+        console.error("REQUEST JOIN FAILED:", res.status, t);
+        return;
+      }
+      await loadPublicChannels();
+    } catch (e) {
+      console.error("Request join error:", e);
+    }
+  }
+
+  async function cancelJoinRequest(channelId: number) {
+    try {
+      const res = await fetch(`/api/channels/${channelId}/join-request`, {
+        method: "DELETE",
+        credentials: "include",
+      });
+      if (!res.ok) return;
+      await loadPublicChannels();
+    } catch (e) {
+      console.error("Cancel join request error:", e);
+    }
+  }
+
   return (
-    <div className="w-64 bg-gray-50 p-3  flex flex-col h-screen">
+    <div className="w-64 bg-gray-50 p-3 flex flex-col h-screen">
       <div className="flex justify-between items-center mb-3">
         <Text fw={600}>Channels</Text>
         <Button
@@ -231,15 +295,66 @@ export default function ChannelsPanel() {
           {channels.map((ch) => (
             <Link key={ch.id} href={`/channels/${ch.id}`}>
               <div className="px-2 py-1 rounded hover:bg-gray-200 cursor-pointer flex justify-between items-center">
-                <span># {ch.name}</span>
+                <span>
+                  # {ch.name}
+                  {ch.visibility === "public" && (
+                    <span className="ml-2 text-[10px] px-1 py-[1px] rounded bg-green-100 text-green-700">
+                      public
+                    </span>
+                  )}
+                </span>
                 {typeof ch.memberCount === "number" && (
-                  <span className="text-xs text-gray-500">
-                    {ch.memberCount}
-                  </span>
+                  <span className="text-xs text-gray-500">{ch.memberCount}</span>
                 )}
               </div>
             </Link>
           ))}
+
+          {/* ✅ Public channels browse */}
+          <div className="mt-4 pt-3 border-t">
+            <Text size="sm" fw={600} className="mb-2">
+              Public channels
+            </Text>
+
+            {publicChannels.length === 0 ? (
+              <div className="text-xs text-gray-500">No public channels</div>
+            ) : (
+              publicChannels.map((c) => (
+                <div
+                  key={c.id}
+                  className="px-2 py-2 rounded hover:bg-gray-100 flex justify-between items-center"
+                >
+                  <div className="text-sm">
+                    <div className="font-medium"># {c.name}</div>
+                    <div className="text-xs text-gray-500">{c.memberCount} members</div>
+                  </div>
+
+                  {c.isMember ? (
+                    <Link href={`/channels/${c.id}`}>
+                      <Button size="xs" variant="light">Open</Button>
+                    </Link>
+                  ) : c.hasPendingRequest ? (
+                    <Button
+                      size="xs"
+                      variant="light"
+                      color="red"
+                      onClick={() => cancelJoinRequest(c.id)}
+                    >
+                      Cancel
+                    </Button>
+                  ) : (
+                    <Button
+                      size="xs"
+                      variant="light"
+                      onClick={() => requestJoin(c.id)}
+                    >
+                      Request
+                    </Button>
+                  )}
+                </div>
+              ))
+            )}
+          </div>
         </div>
       </ScrollArea>
 
@@ -256,6 +371,24 @@ export default function ChannelsPanel() {
           onChange={(e) => setNewChannel(e.currentTarget.value)}
           mb="sm"
         />
+
+        {/* ✅ NEW: visibility selector */}
+        <div className="mb-3">
+          <label className="text-sm font-medium block mb-1">Visibility</label>
+          <select
+            className="border rounded px-2 py-2 w-full text-sm"
+            value={visibility}
+            onChange={(e) => setVisibility(e.currentTarget.value as any)}
+          >
+            <option value="private">Private </option>
+            <option value="public">Public </option>
+          </select>
+          <div className="text-xs text-gray-500 mt-1">
+            {visibility === "public"
+              ? "Public: anyone can request, admin must approve."
+              : "Private: only admin can add members directly."}
+          </div>
+        </div>
 
         <FileInput
           label="Banner photo (optional)"

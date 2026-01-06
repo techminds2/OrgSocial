@@ -5,10 +5,8 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url = env("DATABASE_URL")
+  url      = env("DATABASE_URL")
 }
-
-
 
 model User {
   id           Int      @id @default(autoincrement())
@@ -24,9 +22,10 @@ model User {
   channelMember ChannelMember[]
 
   createdChannels Channel[] @relation("ChannelCreator")
+
+  // ✅ NEW
+  joinRequests JoinRequest[]
 }
-
-
 
 model Post {
   id        Int      @id @default(autoincrement())
@@ -45,18 +44,16 @@ model Post {
   reactions Reaction[]
 }
 
-
-
 model Comment {
-  id        Int       @id @default(autoincrement())
+  id        Int      @id @default(autoincrement())
   content   String
-  createdAt DateTime  @default(now())
+  createdAt DateTime @default(now())
 
-  postId    Int                    
-  post      Post      @relation(fields: [postId], references: [id])
+  postId    Int
+  post      Post     @relation(fields: [postId], references: [id])
 
-  authorId  Int                    
-  author    User      @relation(fields: [authorId], references: [id])
+  authorId  Int
+  author    User     @relation(fields: [authorId], references: [id])
 }
 
 model Reaction {
@@ -73,37 +70,62 @@ model Reaction {
 }
 
 model File {
-  id     Int    @id @default(autoincrement())
+  id     Int     @id @default(autoincrement())
   url    String
-  type   String?   
+  type   String?
   postId Int
-  post   Post   @relation(fields: [postId], references: [id])
+  post   Post    @relation(fields: [postId], references: [id])
 }
 
 model Channel {
-  id        Int             @id @default(autoincrement())
-  name      String          @unique
-  createdAt DateTime        @default(now())
+  id          Int      @id @default(autoincrement())
+  name        String   @unique
+  createdAt   DateTime @default(now())
 
   createdById Int
-  createdBy   User          @relation("ChannelCreator", fields: [createdById], references: [id])
+  createdBy   User     @relation("ChannelCreator", fields: [createdById], references: [id])
 
-  bannerKey String?
-  members   ChannelMember[]
-  posts     Post[]
+  bannerKey   String?
+
+  // ✅ NEW: "public" | "private"
+  visibility  String   @default("private")
+
+  members     ChannelMember[]
+  posts       Post[]
+
+  // ✅ NEW
+  joinRequests JoinRequest[]
 }
 
 model ChannelMember {
-  id        Int      @id @default(autoincrement())
+  id        Int     @id @default(autoincrement())
   channelId Int
   userId    Int
-  role      String   @default("viewer") // "viewer" | "editor" | "admin"
+  role      String  @default("viewer") // "viewer" | "editor" | "admin"
 
-  channel   Channel  @relation(fields: [channelId], references: [id], onDelete: Cascade)
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  channel   Channel @relation(fields: [channelId], references: [id], onDelete: Cascade)
+  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([channelId, userId])
   @@index([userId])
   @@index([channelId])
 }
 
+model JoinRequest {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  channelId Int
+  userId    Int
+
+  // "pending" | "approved" | "rejected"
+  status    String   @default("pending")
+
+  channel   Channel  @relation(fields: [channelId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([channelId, userId])
+  @@index([channelId, status])
+  @@index([userId, status])
+}
