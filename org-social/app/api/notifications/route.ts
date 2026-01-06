@@ -17,6 +17,7 @@ export async function GET(req: NextRequest) {
     status: res.status,
     headers: {
       "content-type": res.headers.get("content-type") ?? "application/json",
+      "Cache-Control": "no-store, max-age=0",
     },
   });
 }

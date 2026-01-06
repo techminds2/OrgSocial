@@ -8,7 +8,6 @@ import { getUserIdFromRequest } from "@/lib/auth";
 
 export async function GET(req: NextRequest) {
   const userIdRaw = await getUserIdFromRequest(req);
-  console.log("[notif] userIdRaw:", userIdRaw, "type:", typeof userIdRaw);
 
   if (!userIdRaw) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -25,7 +24,6 @@ export async function GET(req: NextRequest) {
   });
 
   const channelIds = adminChannels.map((x) => x.channelId);
-  console.log("[notif] channelIds:", channelIds);
 
   if (channelIds.length === 0) {
     return NextResponse.json(
@@ -43,8 +41,6 @@ export async function GET(req: NextRequest) {
       user: { select: { id: true, username: true, email: true, profileImage: true } },
     },
   });
-
-  console.log("[notif] pendingCount:", pending.length);
 
   const notifications = pending.map((r) => ({
     id: r.id,

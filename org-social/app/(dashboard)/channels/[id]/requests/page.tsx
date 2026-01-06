@@ -4,6 +4,10 @@ import { jwtVerify } from "jose";
 import { redirect, notFound } from "next/navigation";
 import RequestsClient from "./RequestsClient";
 
+export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 const SECRET = new TextEncoder().encode(process.env.DJANGO_JWT_SECRET || "");
 
 function cleanToken(t: string) {
@@ -43,6 +47,7 @@ export default async function RequestsPage({
     where: { channelId_userId: { channelId, userId } },
     select: { role: true },
   });
+
   if (!me || me.role !== "admin") {
     return (
       <div className="p-6">
