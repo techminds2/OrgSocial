@@ -1,9 +1,6 @@
 import { jwtVerify, decodeProtectedHeader } from "jose";
 import { NextRequest, NextResponse } from "next/server";
-
-const SECRET_STR = process.env.DJANGO_JWT_SECRET || "";
-const SECRET = new TextEncoder().encode(SECRET_STR);
-
+import { DJANGO_JWT_SECRET as SECRET } from "@/lib/jwtSecret";
 
 function cleanToken(t: string) {
   return t
@@ -12,11 +9,10 @@ function cleanToken(t: string) {
     .replace(/^"+|"+$/g, "");
 }
 
-export async function proxy(req: NextRequest) {
+export default async function proxy(req: NextRequest) {
   const { pathname } = req.nextUrl;
   const accessTokenRaw = req.cookies.get("accessToken")?.value;
   const accessToken = accessTokenRaw ? cleanToken(accessTokenRaw) : undefined;
-
 
   if (pathname === "/") {
     if (accessToken) {

@@ -46,9 +46,11 @@ import { s3 } from "@/lib/s3";
 import crypto from "crypto";
 import prisma from "@/lib/prisma";
 import { jwtVerify } from "jose";
+import { DJANGO_JWT_SECRET as SECRET } from "@/lib/jwtSecret";
 
-const SECRET_STR = process.env.DJANGO_JWT_SECRET || "";
-const SECRET = new TextEncoder().encode(SECRET_STR);
+
+// const SECRET_STR = process.env.DJANGO_JWT_SECRET || "";
+// const SECRET = new TextEncoder().encode(SECRET_STR);
 
 function cleanToken(t: string) {
   return t

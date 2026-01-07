@@ -4,8 +4,7 @@ import { jwtVerify } from "jose";
 import { redirect, notFound } from "next/navigation";
 import ChannelFeed from "./ChannelFeed";
 import JoinRequestGate from "./JoinRequestGate";
-
-const SECRET = new TextEncoder().encode(process.env.DJANGO_JWT_SECRET || "");
+import { DJANGO_JWT_SECRET as SECRET } from "@/lib/jwtSecret";
 
 function cleanToken(t: string) {
   return t.trim().replace(/^Bearer\s+/i, "").replace(/^"+|"+$/g, "");
@@ -50,7 +49,6 @@ export default async function ChannelPage({
     select: { id: true, role: true },
   });
 
-  // ✅ If member, show feed normally
   if (member) {
     const role = (member.role || "viewer") as "viewer" | "editor" | "admin";
     return (
@@ -63,7 +61,6 @@ export default async function ChannelPage({
     );
   }
 
-  // ✅ Not a member: if public, show request gate
   if (channel.visibility === "public") {
     return (
       <JoinRequestGate
@@ -74,7 +71,6 @@ export default async function ChannelPage({
     );
   }
 
-  // ✅ Private + not member => deny
   return (
     <div className="p-6">
       <div className="max-w-xl bg-white border rounded-xl p-4">

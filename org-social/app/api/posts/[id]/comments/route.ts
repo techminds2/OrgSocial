@@ -3,8 +3,9 @@ export const runtime = "nodejs";
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { jwtVerify } from "jose";
+import { DJANGO_JWT_SECRET as SECRET } from "@/lib/jwtSecret";
 
-const SECRET = new TextEncoder().encode(process.env.DJANGO_JWT_SECRET || "");
+// const SECRET = new TextEncoder().encode(process.env.DJANGO_JWT_SECRET || "");
 
 function cleanToken(token: string) {
   return token.trim().replace(/^Bearer\s+/i, "").replace(/^"+|"+$/g, "");

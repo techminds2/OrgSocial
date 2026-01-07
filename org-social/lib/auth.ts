@@ -1,7 +1,6 @@
 import { NextRequest } from "next/server";
 import { jwtVerify } from "jose";
-
-const SECRET = new TextEncoder().encode(process.env.DJANGO_JWT_SECRET || "");
+import { DJANGO_JWT_SECRET as SECRET } from "@/lib/jwtSecret";
 
 function cleanToken(t: string) {
   return t

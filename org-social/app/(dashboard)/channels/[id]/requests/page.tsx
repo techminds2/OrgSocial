@@ -3,12 +3,11 @@ import { cookies } from "next/headers";
 import { jwtVerify } from "jose";
 import { redirect, notFound } from "next/navigation";
 import RequestsClient from "./RequestsClient";
+import { DJANGO_JWT_SECRET as SECRET } from "@/lib/jwtSecret";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
-
-const SECRET = new TextEncoder().encode(process.env.DJANGO_JWT_SECRET || "");
 
 function cleanToken(t: string) {
   return t.trim().replace(/^Bearer\s+/i, "").replace(/^"+|"+$/g, "");
@@ -42,7 +41,6 @@ export default async function RequestsPage({
   const channelId = Number(id);
   if (!Number.isFinite(channelId)) notFound();
 
-  // must be admin
   const me = await prisma.channelMember.findUnique({
     where: { channelId_userId: { channelId, userId } },
     select: { role: true },
