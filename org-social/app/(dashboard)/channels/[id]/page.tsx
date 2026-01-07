@@ -40,7 +40,13 @@ export default async function ChannelPage({
 
   const channel = await prisma.channel.findUnique({
     where: { id: channelId },
-    select: { id: true, name: true, bannerKey: true, visibility: true },
+    select: {
+      id: true,
+      name: true,
+      bannerKey: true,
+      visibility: true,
+      createdById: true, // ✅ added
+    },
   });
   if (!channel) notFound();
 
@@ -48,6 +54,8 @@ export default async function ChannelPage({
     where: { channelId_userId: { channelId, userId } },
     select: { id: true, role: true },
   });
+
+  const canDelete = channel.createdById === userId || member?.role === "admin"; // ✅ added
 
   if (member) {
     const role = (member.role || "viewer") as "viewer" | "editor" | "admin";
@@ -57,6 +65,7 @@ export default async function ChannelPage({
         channelName={channel.name}
         bannerKey={channel.bannerKey}
         role={role}
+        canDelete={canDelete} // ✅ added
       />
     );
   }
