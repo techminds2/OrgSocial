@@ -21,8 +21,9 @@ type Notification = {
   id: number;
   message: string;
   createdAt: string | Date;
-  channelId: number;
+  channelId?: number;
   href: string;
+  type?: "post" | "join-request";
 };
 
 export default function NavBar({ profileImage }: NavBarProps) {
@@ -31,13 +32,13 @@ export default function NavBar({ profileImage }: NavBarProps) {
   const [loadingNotifications, setLoadingNotifications] = useState(true);
   const [username, setUsername] = useState<string>("");
 
-  // Fetch notifications
+  // Fetch notifications including join-requests
   useEffect(() => {
     let mounted = true;
 
     async function fetchNotifications() {
       try {
-        const res = await fetch("/api/notifications", {
+        const res = await fetch("/api/notifications/join-requests", {
           method: "GET",
           credentials: "include",
           headers: { Accept: "application/json" },
@@ -64,7 +65,7 @@ export default function NavBar({ profileImage }: NavBarProps) {
     };
   }, []);
 
-  // Fetch logged-in user info
+  // Fetch logged-in user info (kept unchanged)
   useEffect(() => {
     let mounted = true;
 
@@ -134,25 +135,28 @@ export default function NavBar({ profileImage }: NavBarProps) {
                   No notifications
                 </Text>
               ) : (
-                visibleNotifications.map((n) => (
-                  <Menu.Item
-                    key={n.id}
-                    onClick={() => {
-                      const match = n.href?.match(/\/posts\/(\d+)/);
-                      if (!match) return;
+                visibleNotifications.map((n) =>
+                  n.type === "post" ? (
+                    <Menu.Item
+                      key={n.id}
+                      onClick={() => {
+                        const match = n.href?.match(/\/posts\/(\d+)/);
+                        if (!match) return;
 
-                      const postId = Number(match[1]);
-
-                      window.dispatchEvent(
-                        new CustomEvent("open-post-modal", {
-                          detail: { postId },
-                        })
-                      );
-                    }}
-                  >
-                    {n.message}
-                  </Menu.Item>
-                ))
+                        const postId = Number(match[1]);
+                        window.dispatchEvent(
+                          new CustomEvent("open-post-modal", { detail: { postId } })
+                        );
+                      }}
+                    >
+                      {n.message}
+                    </Menu.Item>
+                  ) : (
+                    <Menu.Item key={n.id} component={Link} href={n.href}>
+                      {n.message}
+                    </Menu.Item>
+                  )
+                )
               )}
             </ScrollArea.Autosize>
             <Menu.Divider />
@@ -167,9 +171,7 @@ export default function NavBar({ profileImage }: NavBarProps) {
           <Menu.Target>
             <div className="flex items-center cursor-pointer gap-2">
               <Avatar src={profileImage || "/temp.png"} radius="xl" size={40} />
-              <span className="font-medium text-gray-700">
-                {username || "User"}
-              </span>
+              <span className="font-medium text-gray-700">{username || "User"}</span>
             </div>
           </Menu.Target>
 

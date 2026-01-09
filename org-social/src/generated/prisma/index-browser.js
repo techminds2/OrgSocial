@@ -196,6 +196,13 @@ exports.Prisma.NotificationScalarFieldEnum = {
   createdAt: 'createdAt'
 };
 
+exports.Prisma.SavedPostScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  postId: 'postId',
+  createdAt: 'createdAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -221,7 +228,8 @@ exports.Prisma.ModelName = {
   Channel: 'Channel',
   ChannelMember: 'ChannelMember',
   JoinRequest: 'JoinRequest',
-  Notification: 'Notification'
+  Notification: 'Notification',
+  SavedPost: 'SavedPost'
 };
 
 /**

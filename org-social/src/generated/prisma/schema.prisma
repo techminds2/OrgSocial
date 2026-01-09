@@ -133,3 +133,12 @@ model Notification {
 
   user User @relation(fields: [userId], references: [id])
 }
+
+model SavedPost {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  postId    Int
+  createdAt DateTime @default(now())
+
+  @@unique([userId, postId])
+}
