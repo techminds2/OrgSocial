@@ -14,7 +14,6 @@ import {
 import { BellIcon } from "@heroicons/react/24/outline";
 
 interface NavBarProps {
-  role?: "admin" | "staff" | "user";
   profileImage?: string | null;
 }
 
@@ -22,16 +21,18 @@ type Notification = {
   id: number;
   message: string;
   createdAt: string | Date;
-  channelId: number;
+  channelId?: number;
   href: string;
+  type?: "post" | "join-request";
 };
 
 export default function NavBar({ profileImage }: NavBarProps) {
   const router = useRouter();
   const [notifications, setNotifications] = useState<Notification[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [username, setUsername] = useState<string>(""); // <-- store username
+  const [loadingNotifications, setLoadingNotifications] = useState(true);
+  const [username, setUsername] = useState<string>("");
 
+  // Fetch notifications including join-requests
   useEffect(() => {
     let mounted = true;
 
@@ -44,37 +45,45 @@ export default function NavBar({ profileImage }: NavBarProps) {
           cache: "no-store",
         });
 
-        const text = await res.text();
+        const data = await res.json();
 
-        if (!res.ok) {
-          console.error(
-            "Notifications API failed:",
-            res.status,
-            res.statusText,
-            text
-          );
-          return;
-        }
-
-        const data = text ? JSON.parse(text) : { notifications: [] };
         if (mounted) {
           setNotifications(
             Array.isArray(data.notifications) ? data.notifications : []
           );
-
-          // If API returns user info, extract username for profile display
-          if (data.user && data.user.username) {
-            setUsername(data.user.username);
-          }
         }
-      } catch (error) {
-        console.error("Error fetching notifications:", error);
+      } catch (err) {
+        console.error("Failed to fetch notifications:", err);
       } finally {
-        if (mounted) setLoading(false);
+        if (mounted) setLoadingNotifications(false);
       }
     }
 
     fetchNotifications();
+    return () => {
+      mounted = false;
+    };
+  }, []);
+
+  // Fetch logged-in user info (kept unchanged)
+  useEffect(() => {
+    let mounted = true;
+
+    async function fetchUser() {
+      try {
+        const res = await fetch("/api/auth/me", {
+          credentials: "include",
+        });
+        if (!res.ok) throw new Error("Not authenticated");
+
+        const data = await res.json();
+        if (mounted && data.username) setUsername(data.username);
+      } catch (err) {
+        console.error("Failed to fetch user:", err);
+      }
+    }
+
+    fetchUser();
     return () => {
       mounted = false;
     };
@@ -88,8 +97,8 @@ export default function NavBar({ profileImage }: NavBarProps) {
         method: "POST",
         credentials: "include",
       });
-    } catch (e) {
-      console.error("Logout failed:", e);
+    } catch (err) {
+      console.error("Logout failed:", err);
     } finally {
       router.push("/");
       router.refresh?.();
@@ -116,9 +125,8 @@ export default function NavBar({ profileImage }: NavBarProps) {
 
           <Menu.Dropdown>
             <Menu.Label>Notifications</Menu.Label>
-
             <ScrollArea.Autosize mah={300}>
-              {loading ? (
+              {loadingNotifications ? (
                 <div className="flex justify-center py-4">
                   <Loader size="sm" />
                 </div>
@@ -127,16 +135,31 @@ export default function NavBar({ profileImage }: NavBarProps) {
                   No notifications
                 </Text>
               ) : (
-                visibleNotifications.map((n) => (
-                  <Menu.Item key={n.id} component={Link} href={n.href}>
-                    {n.message}
-                  </Menu.Item>
-                ))
+                visibleNotifications.map((n) =>
+                  n.type === "post" ? (
+                    <Menu.Item
+                      key={n.id}
+                      onClick={() => {
+                        const match = n.href?.match(/\/posts\/(\d+)/);
+                        if (!match) return;
+
+                        const postId = Number(match[1]);
+                        window.dispatchEvent(
+                          new CustomEvent("open-post-modal", { detail: { postId } })
+                        );
+                      }}
+                    >
+                      {n.message}
+                    </Menu.Item>
+                  ) : (
+                    <Menu.Item key={n.id} component={Link} href={n.href}>
+                      {n.message}
+                    </Menu.Item>
+                  )
+                )
               )}
             </ScrollArea.Autosize>
-
             <Menu.Divider />
-
             <Menu.Item component={Link} href="/notifications">
               View all notifications
             </Menu.Item>
@@ -148,7 +171,7 @@ export default function NavBar({ profileImage }: NavBarProps) {
           <Menu.Target>
             <div className="flex items-center cursor-pointer gap-2">
               <Avatar src={profileImage || "/temp.png"} radius="xl" size={40} />
-              <span className="font-medium text-gray-700">{username}</span>
+              <span className="font-medium text-gray-700">{username || "User"}</span>
             </div>
           </Menu.Target>
 
@@ -156,9 +179,7 @@ export default function NavBar({ profileImage }: NavBarProps) {
             <Menu.Item component={Link} href="/profile">
               Profile
             </Menu.Item>
-
             <Menu.Divider />
-
             <Menu.Item color="red" onClick={handleLogout}>
               Logout
             </Menu.Item>

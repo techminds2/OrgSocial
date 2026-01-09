@@ -24,7 +24,8 @@ const VALID_VISIBILITY: Visibility[] = ["public", "private"];
 export async function GET(req: NextRequest) {
   try {
     const userId = await getUserIdFromRequest(req);
-    if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    if (!userId)
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
     const channels = await prisma.channel.findMany({
       where: { members: { some: { userId } } },
@@ -45,22 +46,30 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ channels: formatted });
   } catch (err) {
     console.error("GET CHANNELS ERROR:", err);
-    return NextResponse.json({ error: "Failed to load channels" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Failed to load channels" },
+      { status: 500 }
+    );
   }
 }
 
 export async function POST(req: NextRequest) {
   try {
     const userId = await getUserIdFromRequest(req);
-    if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    if (!userId)
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
     const formData = await req.formData();
     const name = String(formData.get("name") || "").trim();
-    if (!name) return NextResponse.json({ error: "name is required" }, { status: 400 });
+    if (!name)
+      return NextResponse.json({ error: "name is required" }, { status: 400 });
 
-    // ✅ NEW: visibility
-    const visibilityRaw = String(formData.get("visibility") || "private").trim().toLowerCase();
-    const visibility: Visibility = VALID_VISIBILITY.includes(visibilityRaw as Visibility)
+    const visibilityRaw = String(formData.get("visibility") || "private")
+      .trim()
+      .toLowerCase();
+    const visibility: Visibility = VALID_VISIBILITY.includes(
+      visibilityRaw as Visibility
+    )
       ? (visibilityRaw as Visibility)
       : "private";
 
@@ -74,14 +83,15 @@ export async function POST(req: NextRequest) {
           members = parsed
             .map((x) => ({
               userId: Number(x?.userId),
-              role: (String(x?.role || "viewer") as Role),
+              role: String(x?.role || "viewer") as Role,
             }))
-            .filter((m) => Number.isFinite(m.userId) && VALID_ROLES.includes(m.role));
+            .filter(
+              (m) => Number.isFinite(m.userId) && VALID_ROLES.includes(m.role)
+            );
         }
       } catch {}
     }
 
-    // fallback: old memberIds
     if (members.length === 0) {
       let memberIds: number[] = [];
       const memberIdsRaw = formData.get("memberIds");
@@ -89,18 +99,18 @@ export async function POST(req: NextRequest) {
         try {
           const parsed = JSON.parse(memberIdsRaw);
           if (Array.isArray(parsed)) {
-            memberIds = parsed.map((x) => Number(x)).filter((n) => Number.isFinite(n));
+            memberIds = parsed
+              .map((x) => Number(x))
+              .filter((n) => Number.isFinite(n));
           }
         } catch {}
       }
       members = memberIds.map((uid) => ({ userId: uid, role: "viewer" as Role }));
     }
 
-    // ensure creator is admin and remove duplicates of creator
     members = members.filter((m) => m.userId !== userId);
     members.unshift({ userId, role: "admin" });
 
-    // banner upload (unchanged)
     const banner = formData.get("banner");
     let bannerKey: string | null = null;
 
@@ -125,7 +135,7 @@ export async function POST(req: NextRequest) {
       data: {
         name,
         bannerKey,
-        visibility, // ✅ NEW
+        visibility,
         createdBy: { connect: { id: userId } },
         members: {
           create: members.map((m) => ({
@@ -152,8 +162,14 @@ export async function POST(req: NextRequest) {
   } catch (err: any) {
     console.error("CREATE CHANNEL ERROR:", err);
     if (err?.code === "P2002") {
-      return NextResponse.json({ error: "Channel name already exists" }, { status: 409 });
+      return NextResponse.json(
+        { error: "Channel name already exists" },
+        { status: 409 }
+      );
     }
-    return NextResponse.json({ error: "Failed to create channel" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Failed to create channel" },
+      { status: 500 }
+    );
   }
 }

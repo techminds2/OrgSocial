@@ -186,6 +186,23 @@ exports.Prisma.JoinRequestScalarFieldEnum = {
   status: 'status'
 };
 
+exports.Prisma.NotificationScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  type: 'type',
+  message: 'message',
+  href: 'href',
+  isRead: 'isRead',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.SavedPostScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  postId: 'postId',
+  createdAt: 'createdAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -210,7 +227,9 @@ exports.Prisma.ModelName = {
   File: 'File',
   Channel: 'Channel',
   ChannelMember: 'ChannelMember',
-  JoinRequest: 'JoinRequest'
+  JoinRequest: 'JoinRequest',
+  Notification: 'Notification',
+  SavedPost: 'SavedPost'
 };
 
 /**

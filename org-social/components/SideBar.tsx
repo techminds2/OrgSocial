@@ -12,7 +12,9 @@ type MenuItem =
 const MENU_ITEMS: MenuItem[] = [
   { type: "heading", label: "My Team" },
   { type: "link", label: "My Team Apps", href: "/dashboard/team-apps" },
-  { type: "link", label: "Team Directory", href: "/dashboard/team-directory" },
+  { type: "link", label: "Team Directory", href: "/team-directory" },
+  { type: "link", label: "To-do List", href: "/" },
+
 ];
 
 const getLinkClasses = (active: boolean) =>

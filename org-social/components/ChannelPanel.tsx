@@ -11,6 +11,7 @@ import {
 import Link from "next/link";
 import { useEffect, useState, useCallback } from "react";
 import Cropper from "react-easy-crop";
+import { useSearchParams, useRouter } from "next/navigation";
 
 type Channel = {
   id: number;
@@ -82,6 +83,9 @@ async function getCroppedImg(imageSrc: string, crop: any) {
 }
 
 export default function ChannelsPanel() {
+  const searchParams = useSearchParams();
+  const router = useRouter();
+
   const [channels, setChannels] = useState<Channel[]>([]);
   const [publicChannels, setPublicChannels] = useState<PublicChannel[]>([]);
 
@@ -117,7 +121,9 @@ export default function ChannelsPanel() {
 
   async function loadPublicChannels() {
     try {
-      const res = await fetch("/api/channels/public", { credentials: "include" });
+      const res = await fetch("/api/channels/public", {
+        credentials: "include",
+      });
       if (!res.ok) return;
       const data = await res.json();
       setPublicChannels(data.channels || []);
@@ -129,6 +135,19 @@ export default function ChannelsPanel() {
   useEffect(() => {
     loadChannels();
     loadPublicChannels();
+
+    const raw = new URLSearchParams(window.location.search).get(
+      "deletedChannelId"
+    );
+    if (!raw) return;
+
+    const id = Number(raw);
+    if (!Number.isFinite(id)) return;
+
+    setChannels((prev) => prev.filter((c) => c.id !== id));
+    setPublicChannels((prev) => prev.filter((c) => c.id !== id));
+
+    window.history.replaceState({}, "", "/dashboard");
   }, []);
 
   async function searchUsers(q: string) {
@@ -147,11 +166,23 @@ export default function ChannelsPanel() {
       console.error("User search failed:", e);
     }
   }
-
   useEffect(() => {
     const t = setTimeout(() => searchUsers(userQuery), 300);
     return () => clearTimeout(t);
   }, [userQuery]);
+
+  useEffect(() => {
+    const handler = (e: any) => {
+      const id = Number(e?.detail?.id);
+      if (!Number.isFinite(id)) return;
+
+      setChannels((prev) => prev.filter((c) => c.id !== id));
+      setPublicChannels((prev) => prev.filter((c) => c.id !== id));
+    };
+
+    window.addEventListener("channel-deleted", handler as any);
+    return () => window.removeEventListener("channel-deleted", handler as any);
+  }, []);
 
   const addChannel = async () => {
     const trimmed = newChannel.trim();
@@ -162,7 +193,7 @@ export default function ChannelsPanel() {
     try {
       const formData = new FormData();
       formData.append("name", trimmed);
-      formData.append("visibility", visibility); // ✅ NEW
+      formData.append("visibility", visibility);
       if (banner) formData.append("banner", banner);
 
       formData.append(
@@ -304,7 +335,9 @@ export default function ChannelsPanel() {
                   )}
                 </span>
                 {typeof ch.memberCount === "number" && (
-                  <span className="text-xs text-gray-500">{ch.memberCount}</span>
+                  <span className="text-xs text-gray-500">
+                    {ch.memberCount}
+                  </span>
                 )}
               </div>
             </Link>
@@ -326,12 +359,16 @@ export default function ChannelsPanel() {
                 >
                   <div className="text-sm">
                     <div className="font-medium"># {c.name}</div>
-                    <div className="text-xs text-gray-500">{c.memberCount} members</div>
+                    <div className="text-xs text-gray-500">
+                      {c.memberCount} members
+                    </div>
                   </div>
 
                   {c.isMember ? (
                     <Link href={`/channels/${c.id}`}>
-                      <Button size="xs" variant="light">Open</Button>
+                      <Button size="xs" variant="light">
+                        Open
+                      </Button>
                     </Link>
                   ) : c.hasPendingRequest ? (
                     <Button

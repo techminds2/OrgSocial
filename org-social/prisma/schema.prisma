@@ -22,8 +22,7 @@ model User {
   channelMember ChannelMember[]
 
   createdChannels Channel[] @relation("ChannelCreator")
-
-  // ✅ NEW
+  notifications Notification[]
   joinRequests JoinRequest[]
 }
 
@@ -86,14 +85,11 @@ model Channel {
   createdBy   User     @relation("ChannelCreator", fields: [createdById], references: [id])
 
   bannerKey   String?
-
-  // ✅ NEW: "public" | "private"
   visibility  String   @default("private")
 
   members     ChannelMember[]
   posts       Post[]
 
-  // ✅ NEW
   joinRequests JoinRequest[]
 }
 
@@ -115,17 +111,34 @@ model JoinRequest {
   id        Int      @id @default(autoincrement())
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-
   channelId Int
   userId    Int
-
-  // "pending" | "approved" | "rejected"
   status    String   @default("pending")
-
   channel   Channel  @relation(fields: [channelId], references: [id], onDelete: Cascade)
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([channelId, userId])
   @@index([channelId, status])
   @@index([userId, status])
+}
+
+model Notification {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  type      String
+  message   String
+  href      String?
+  isRead    Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id])
+}
+
+model SavedPost {
+  id     Int   @id @default(autoincrement())
+  userId Int
+  postId Int
+  createdAt DateTime @default(now())
+
+  @@unique([userId, postId])
 }

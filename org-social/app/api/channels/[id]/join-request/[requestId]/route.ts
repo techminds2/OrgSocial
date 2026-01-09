@@ -1,75 +1,96 @@
-export const runtime = "nodejs";
-
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { getUserIdFromRequest } from "@/lib/auth";
-import { requireChannelRole } from "@/lib/channelAccess";
 
-type Ctx = { params: Promise<{ id: string; requestId: string }> };
+export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
-function num(v: string) {
-  const n = Number(v);
-  return Number.isFinite(n) ? n : null;
+function noStoreJson(body: any, status = 200) {
+  return NextResponse.json(body, {
+    status,
+    headers: { "Cache-Control": "no-store, max-age=0" },
+  });
 }
 
-export async function PATCH(req: NextRequest, ctx: Ctx) {
+export async function PATCH(
+  req: NextRequest,
+  ctx: { params: Promise<{ id: string; requestId: string }> }
+) {
   try {
-    const userId = await getUserIdFromRequest(req);
-    if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    const userIdRaw = await getUserIdFromRequest(req);
+    const userId = typeof userIdRaw === "string" ? Number(userIdRaw) : userIdRaw;
+
+    if (!userId || !Number.isFinite(userId)) {
+      return noStoreJson({ error: "Unauthorized" }, 401);
+    }
 
     const { id, requestId } = await ctx.params;
-    const channelId = num(id);
-    const jrId = num(requestId);
+    const channelId = Number(id);
+    const jrId = Number(requestId);
 
-    if (!channelId) return NextResponse.json({ error: "Bad channel id" }, { status: 400 });
-    if (!jrId) return NextResponse.json({ error: "Bad request id" }, { status: 400 });
-
-    const ok = await requireChannelRole(channelId, userId, ["admin"]);
-    if (!ok) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
-
-    const body = await req.json().catch(() => ({}));
-    const action = String(body.action || "").toLowerCase(); // "approve" | "reject"
-    if (!["approve", "reject"].includes(action)) {
-      return NextResponse.json({ error: "action must be approve or reject" }, { status: 400 });
+    if (!Number.isFinite(channelId) || channelId <= 0 || !Number.isFinite(jrId) || jrId <= 0) {
+      return noStoreJson({ error: "Bad params", got: { id, requestId } }, 400);
     }
 
-    const jr = await prisma.joinRequest.findUnique({
-      where: { id: jrId },
-      select: { id: true, channelId: true, userId: true, status: true },
+    // admin check
+    const me = await prisma.channelMember.findUnique({
+      where: { channelId_userId: { channelId, userId } },
+      select: { role: true },
     });
 
-    if (!jr || jr.channelId !== channelId) {
-      return NextResponse.json({ error: "Request not found" }, { status: 404 });
+    if (!me || me.role !== "admin") {
+      return noStoreJson({ error: "Forbidden" }, 403);
     }
 
-    if (action === "reject") {
-      const updated = await prisma.joinRequest.update({
+    const body = await req.json().catch(() => ({}));
+    const action = body?.action as "approve" | "reject";
+
+    if (action !== "approve" && action !== "reject") {
+      return noStoreJson({ error: "Invalid action", got: body?.action }, 400);
+    }
+
+    // IMPORTANT: ensure it belongs to this channel AND is still pending
+    const jr = await prisma.joinRequest.findFirst({
+      where: { id: jrId, channelId },
+      select: { id: true, userId: true, status: true, channelId: true },
+    });
+
+    if (!jr) {
+      return noStoreJson({ error: "Join request not found" }, 404);
+    }
+
+    if (jr.status !== "pending") {
+      return noStoreJson(
+        { error: "Already handled", status: jr.status },
+        409
+      );
+    }
+
+    if (action === "approve") {
+      await prisma.$transaction([
+        prisma.channelMember.upsert({
+          where: { channelId_userId: { channelId, userId: jr.userId } },
+          update: {}, // keep existing role if already member
+          create: { channelId, userId: jr.userId, role: "viewer" },
+        }),
+        prisma.joinRequest.update({
+          where: { id: jrId },
+          data: { status: "approved" },
+        }),
+      ]);
+    } else {
+      await prisma.joinRequest.update({
         where: { id: jrId },
         data: { status: "rejected" },
       });
-      return NextResponse.json({ success: true, request: updated });
     }
 
-    // approve
-    const result = await prisma.$transaction(async (tx) => {
-      await tx.joinRequest.update({
-        where: { id: jrId },
-        data: { status: "approved" },
-      });
-
-      // ensure member exists
-      await tx.channelMember.upsert({
-        where: { channelId_userId: { channelId, userId: jr.userId } },
-        update: { role: "viewer" },
-        create: { channelId, userId: jr.userId, role: "viewer" },
-      });
-
-      return true;
-    });
-
-    return NextResponse.json({ success: result });
-  } catch (err) {
-    console.error("APPROVE/REJECT ERROR:", err);
-    return NextResponse.json({ error: "Failed to update request" }, { status: 500 });
+    return noStoreJson({ ok: true });
+  } catch (e: any) {
+    return noStoreJson(
+      { error: "Action failed", detail: String(e?.message || e) },
+      500
+    );
   }
 }

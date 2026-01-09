@@ -6,8 +6,10 @@ import { jwtVerify } from "jose";
 import { DeleteObjectCommand, PutObjectCommand } from "@aws-sdk/client-s3";
 import { s3 } from "@/lib/s3";
 import crypto from "crypto";
+import { DJANGO_JWT_SECRET as SECRET } from "@/lib/jwtSecret";
 
-const SECRET = new TextEncoder().encode(process.env.DJANGO_JWT_SECRET || "");
+
+// const SECRET = new TextEncoder().encode(process.env.DJANGO_JWT_SECRET || "");
 
 function cleanToken(t: string) {
   return t
