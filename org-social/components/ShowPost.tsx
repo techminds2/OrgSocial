@@ -81,6 +81,20 @@ export default function ShowPosts({ channelId }: ShowPostsProps) {
   const [loadingMore, setLoadingMore] = useState(false);
   const loadMoreRef = useRef<HTMLDivElement | null>(null);
 
+  useEffect(() => {
+    const handler = (e: Event) => {
+      const { postId } = (e as CustomEvent).detail || {};
+      if (!postId) return;
+
+      const post = posts.find((p) => p.id === postId);
+      if (post) {
+        setCommentsPost(post);
+      }
+    };
+
+    window.addEventListener("open-post-modal", handler);
+    return () => window.removeEventListener("open-post-modal", handler);
+  }, [posts]);
   const fetchPosts = async (opts?: {
     cursor?: number | null;
     append?: boolean;

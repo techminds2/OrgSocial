@@ -37,7 +37,7 @@ export default function NavBar({ profileImage }: NavBarProps) {
 
     async function fetchNotifications() {
       try {
-        const res = await fetch("/api/notifications/join-requests", {
+        const res = await fetch("/api/notifications", {
           method: "GET",
           credentials: "include",
           headers: { Accept: "application/json" },
@@ -45,10 +45,12 @@ export default function NavBar({ profileImage }: NavBarProps) {
         });
 
         const data = await res.json();
-        if (mounted)
+
+        if (mounted) {
           setNotifications(
             Array.isArray(data.notifications) ? data.notifications : []
           );
+        }
       } catch (err) {
         console.error("Failed to fetch notifications:", err);
       } finally {
@@ -133,7 +135,21 @@ export default function NavBar({ profileImage }: NavBarProps) {
                 </Text>
               ) : (
                 visibleNotifications.map((n) => (
-                  <Menu.Item key={n.id} component={Link} href={n.href}>
+                  <Menu.Item
+                    key={n.id}
+                    onClick={() => {
+                      const match = n.href?.match(/\/posts\/(\d+)/);
+                      if (!match) return;
+
+                      const postId = Number(match[1]);
+
+                      window.dispatchEvent(
+                        new CustomEvent("open-post-modal", {
+                          detail: { postId },
+                        })
+                      );
+                    }}
+                  >
                     {n.message}
                   </Menu.Item>
                 ))
