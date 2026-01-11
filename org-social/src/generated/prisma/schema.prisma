@@ -24,6 +24,7 @@ model User {
   createdChannels Channel[]      @relation("ChannelCreator")
   notifications   Notification[]
   joinRequests    JoinRequest[]
+  savedPosts      SavedPost[]
 }
 
 model Post {
@@ -41,6 +42,7 @@ model Post {
   files     File[]
   comments  Comment[]
   reactions Reaction[]
+  savedBy   SavedPost[]
 }
 
 model Comment {
@@ -140,5 +142,10 @@ model SavedPost {
   postId    Int
   createdAt DateTime @default(now())
 
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  post Post @relation(fields: [postId], references: [id], onDelete: Cascade)
+
   @@unique([userId, postId])
+  @@index([userId])
+  @@index([postId])
 }
