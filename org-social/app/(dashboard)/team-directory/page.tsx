@@ -120,8 +120,8 @@ export default function TeamDirectoryPage() {
             <Divider my="sm" />
 
             <Group mb="xs">
-              <Text fw={500}>Role:</Text>
-              <Badge variant="light">{selectedUser.role}</Badge>
+              <Text fw={500}>Job Title:</Text>
+              <Badge variant="light">{selectedUser.job_title}</Badge>
             </Group>
 
             <Text size="sm">
@@ -130,10 +130,6 @@ export default function TeamDirectoryPage() {
 
             <Text size="sm">
               <strong>Department:</strong> {selectedUser.department || "—"}
-            </Text>
-
-            <Text size="sm">
-              <strong>Job Title:</strong> {selectedUser.job_title || "—"}
             </Text>
 
             <Text size="sm">
