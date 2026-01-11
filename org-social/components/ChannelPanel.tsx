@@ -285,17 +285,17 @@ export default function ChannelsPanel() {
   }
 
   async function cancelJoinRequest(channelId: number) {
-    try {
-      const res = await fetch(`/api/channels/${channelId}/join-request`, {
-        method: "DELETE",
-        credentials: "include",
-      });
-      if (!res.ok) return;
-      await loadPublicChannels();
-    } catch (e) {
-      console.error("Cancel join request error:", e);
-    }
+  try {
+    const res = await fetch(`/api/channels/${channelId}/join-request`, {
+      method: "DELETE",
+      credentials: "include",
+    });
+    if (!res.ok) return;
+    await loadPublicChannels(); // refresh UI
+  } catch (e) {
+    console.error("Cancel join request error:", e);
   }
+}
 
   return (
     <div className="w-64 bg-gray-50 p-3 flex flex-col h-screen">

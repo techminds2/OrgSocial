@@ -117,3 +117,41 @@ export async function POST(
     return noStoreJson({ error: "Failed to create join request" }, 500);
   }
 }
+
+export async function DELETE(
+  req: NextRequest,
+  ctx: { params: Promise<{ id: string }> }
+) {
+  const userIdRaw = await getUserIdFromRequest(req);
+  const userId = typeof userIdRaw === "string" ? Number(userIdRaw) : userIdRaw;
+
+  if (!userId || !Number.isFinite(userId)) {
+    return noStoreJson({ error: "Unauthorized" }, 401);
+  }
+
+  const { id } = await ctx.params;
+  const channelId = Number(id);
+
+  if (!Number.isFinite(channelId)) {
+    return noStoreJson({ error: "Bad channel id", got: id }, 400);
+  }
+
+  try {
+    // Delete join request only if it belongs to this user
+    const deleted = await prisma.joinRequest.deleteMany({
+      where: { channelId, userId, status: "pending" },
+    });
+
+    if (deleted.count === 0) {
+      return noStoreJson({ ok: false, error: "No pending request found" }, 404);
+    }
+
+    // Optional: notify admins that the request was cancelled
+    // You can implement a notification system here:
+    // await prisma.notification.createMany({...})
+
+    return noStoreJson({ ok: true });
+  } catch (e: any) {
+    return noStoreJson({ error: "Failed to cancel join request", detail: e?.message }, 500);
+  }
+}
