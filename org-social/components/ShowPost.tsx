@@ -16,9 +16,12 @@ import TipTapEditor from "./TipTapEditor";
 import { HeartIcon as HeartOutline } from "@heroicons/react/24/outline";
 import { HeartIcon as HeartSolid } from "@heroicons/react/24/solid";
 import { ChatBubbleLeftIcon } from "@heroicons/react/24/outline";
+import { StarIcon as StarOutline } from "@heroicons/react/24/outline";
+import { StarIcon as StarSolid } from "@heroicons/react/24/solid";
 
 type ShowPostsProps = {
   channelId?: number;
+  posts?: Post[];
 };
 
 type FileType = {
@@ -46,6 +49,8 @@ type Post = {
   files: FileType[];
   likedByMe: boolean;
   likeCount: number;
+  saved?: boolean;
+  savedAt?: string;
   isMine: boolean;
   author: {
     id: number;
@@ -55,8 +60,13 @@ type Post = {
   comments: Comment[];
 };
 
-export default function ShowPosts({ channelId }: ShowPostsProps) {
-  const [posts, setPosts] = useState<Post[]>([]);
+export default function ShowPosts({
+  channelId,
+  posts: propPosts,
+}: ShowPostsProps) {
+  const isControlled = Array.isArray(propPosts); // ✅ Saved posts page will control
+  const [posts, setPosts] = useState<Post[]>(propPosts ?? []);
+
   const [loading, setLoading] = useState(true);
 
   const [likingId, setLikingId] = useState<number | null>(null);
@@ -82,19 +92,31 @@ export default function ShowPosts({ channelId }: ShowPostsProps) {
   const loadMoreRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
-    const handler = (e: Event) => {
-      const { postId } = (e as CustomEvent).detail || {};
-      if (!postId) return;
+    if (isControlled) {
+      setPosts(propPosts ?? []);
+      setLoading(false);
+      setHasMore(false);
+      setNextCursor(null);
+      return;
+    }
 
-      const post = posts.find((p) => p.id === postId);
-      if (post) {
-        setCommentsPost(post);
-      }
+    const initialLoad = async () => {
+      setLoading(true);
+      setHasMore(true);
+      setNextCursor(null);
+      await fetchPosts({ cursor: null, append: false });
+      setLoading(false);
     };
 
-    window.addEventListener("open-post-modal", handler);
-    return () => window.removeEventListener("open-post-modal", handler);
-  }, [posts]);
+    initialLoad();
+
+    const onPostCreated = () => initialLoad();
+    window.addEventListener("post-created", onPostCreated);
+
+    return () => window.removeEventListener("post-created", onPostCreated);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isControlled, channelId, propPosts]);
+
   const fetchPosts = async (opts?: {
     cursor?: number | null;
     append?: boolean;
@@ -136,23 +158,6 @@ export default function ShowPosts({ channelId }: ShowPostsProps) {
       console.error(err);
     }
   };
-
-  useEffect(() => {
-    const initialLoad = async () => {
-      setLoading(true);
-      setHasMore(true);
-      setNextCursor(null);
-      await fetchPosts({ cursor: null, append: false });
-      setLoading(false);
-    };
-
-    initialLoad();
-
-    const onPostCreated = () => initialLoad();
-    window.addEventListener("post-created", onPostCreated);
-
-    return () => window.removeEventListener("post-created", onPostCreated);
-  }, []);
 
   useEffect(() => {
     if (!loadMoreRef.current) return;
@@ -351,7 +356,9 @@ export default function ShowPosts({ channelId }: ShowPostsProps) {
                 <div>
                   <p className="font-semibold">{post.author.username}</p>
                   <p className="text-xs text-gray-500">
-                    {new Date(post.createdAt).toLocaleString()}
+                    {post.savedAt
+                      ? `Saved on ${new Date(post.savedAt).toLocaleString()}`
+                      : new Date(post.createdAt).toLocaleString()}
                     {post.isEdited ? (
                       <span className="ml-2 text-gray-400">(edited)</span>
                     ) : null}
@@ -445,6 +452,40 @@ export default function ShowPosts({ channelId }: ShowPostsProps) {
               >
                 <ChatBubbleLeftIcon className="w-4 h-4 text-black" />
                 <span className="ml-2">Comments ({post.comments.length})</span>
+              </Button>
+              {/* Save / Favorite */}
+              <Button
+                size="xs"
+                variant="subtle"
+                color="yellow"
+                className="flex items-center gap-1"
+                onClick={async () => {
+                  try {
+                    const res = await fetch(`/api/posts/${post.id}/save`, {
+                      method: "POST",
+                      credentials: "include",
+                    });
+                    if (!res.ok) return;
+                    const { saved } = await res.json();
+                    setPosts((prev) =>
+                      prev.map((p) => (p.id === post.id ? { ...p, saved } : p))
+                    );
+                  } catch (err) {
+                    console.error(err);
+                  }
+                }}
+              >
+                {post.saved ? (
+                  <>
+                    <StarSolid className="h-4 w-4 text-yellow-500" />
+                    {/* <span>Saved</span> */}
+                  </>
+                ) : (
+                  <>
+                    <StarOutline className="h-4 w-4" />
+                    {/* <span>Save</span> */}
+                  </>
+                )}
               </Button>
             </div>
           </div>
