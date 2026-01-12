@@ -1,7 +1,17 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Loader, Avatar, Paper, Divider, Container, Text } from "@mantine/core";
+import {
+  Loader,
+  Avatar,
+  Paper,
+  Divider,
+  Container,
+  Text,
+  Button,
+  Group,
+} from "@mantine/core";
+import ShowPosts from "@/components/ShowPost";
 
 type User = {
   id: number;
@@ -28,63 +38,64 @@ type Post = {
 
 export default function ProfilePage() {
   const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [loadingUser, setLoadingUser] = useState(true);
+
+  const [activeTab, setActiveTab] = useState<"myPosts" | "savedPosts">(
+    "myPosts"
+  );
   const [posts, setPosts] = useState<Post[]>([]);
   const [loadingPosts, setLoadingPosts] = useState(true);
 
+  // Fetch user info
   useEffect(() => {
     let mounted = true;
-
     async function fetchUser() {
       try {
         const res = await fetch("/api/auth/me", { credentials: "include" });
         if (!res.ok) throw new Error("Not authenticated");
-
         const data: User = await res.json();
         if (mounted) setUser(data);
       } catch (err) {
         console.error(err);
       } finally {
-        if (mounted) setLoading(false);
+        if (mounted) setLoadingUser(false);
       }
     }
-
     fetchUser();
     return () => {
       mounted = false;
     };
   }, []);
 
+  // Fetch posts based on active tab
   useEffect(() => {
     let mounted = true;
-
-    async function fetchMyPosts() {
+    async function fetchPosts() {
+      setLoadingPosts(true);
       try {
-        const res = await fetch("/api/users/me/posts", {
-          credentials: "include",
-        });
-
+        const endpoint =
+          activeTab === "myPosts" ? "/api/users/me/posts" : "/api/save-posts";
+        const res = await fetch(endpoint, { credentials: "include" });
         if (!res.ok) {
-          const t = await res.text();
-          throw new Error(t);
+          const text = await res.text();
+          throw new Error(text);
         }
-
         const data = await res.json();
-        if (mounted) setPosts(data.posts);
+        if (mounted) setPosts(data.posts || []);
       } catch (err) {
-        console.error("FETCH POSTS FAILED:", err);
+        console.error(err);
+        if (mounted) setPosts([]);
       } finally {
         if (mounted) setLoadingPosts(false);
       }
     }
-
-    fetchMyPosts();
+    fetchPosts();
     return () => {
       mounted = false;
     };
-  }, []);
+  }, [activeTab]);
 
-  if (loading)
+  if (loadingUser)
     return (
       <div className="flex justify-center py-20">
         <Loader size="lg" />
@@ -98,10 +109,32 @@ export default function ProfilePage() {
       </div>
     );
 
+  // Map posts exactly like your original code
+  const mappedPosts = posts.map((p) => ({
+    id: p.id,
+    content: p.content,
+    createdAt: p.createdAt,
+    files: (p.files ?? []).map((f) => ({
+      url: f.url ?? "/temp.png",
+      type: (f.type as any) || "document",
+    })),
+    likedByMe: false,
+    likeCount: 0,
+    isMine: true,
+    author: {
+      id: user.id,
+      username: user.username || "Unknown",
+      profileImage: user.profile_photo,
+    },
+    comments: [], // default empty
+    saved: false,
+    savedAt: undefined,
+    channel: p.channel ?? null, // <-- keeps channel info
+  }));
+
   return (
     <Container size="sm" className="py-10">
       <Paper shadow="md" className="p-6 rounded-md">
-        {/* User Info */}
         <div className="flex flex-col items-center gap-2">
           <Avatar
             size={100}
@@ -112,7 +145,6 @@ export default function ProfilePage() {
             {user.first_name} {user.last_name} ({user.username})
           </Text>
           <Text className="text-sm text-gray-500">{user.email}</Text>
-          {/* <Text className="text-sm text-gray-500">Role: {user.role || "N/A"}</Text> */}
           {user.job_title && (
             <Text className="text-sm text-gray-500">
               Job Title: {user.job_title}
@@ -134,36 +166,69 @@ export default function ProfilePage() {
             </Text>
           )}
         </div>
-
-        <Divider className="my-4" />
-
-        {/* <Text className="text-sm text-gray-500">User ID: {user.id}</Text> */}
       </Paper>
-      <Divider className="my-4" />
 
-      <Text className="font-semibold mb-2">My Posts</Text>
+      <Divider className="mb-4" />
+
+      {/* Tabs for My Posts / Saved Posts */}
+      <Group justify="left" mb="md">
+        <Button
+          variant="subtle"
+          onClick={() => setActiveTab("myPosts")}
+          styles={(theme) => ({
+            root: {
+              background: "transparent",
+              color: theme.colors.dark[9],
+              border: "none",
+              padding: "6px 12px",
+              borderBottom:
+                activeTab === "myPosts"
+                  ? `2px solid ${theme.colors.blue[6]}`
+                  : "none",
+              borderRadius: 0,
+              cursor: "pointer",
+              transition: "border-bottom 0.2s",
+              "&:hover": {
+                background: "transparent",
+              },
+            },
+          })}
+        >
+          My Posts
+        </Button>
+
+        <Button
+          variant="subtle"
+          onClick={() => setActiveTab("savedPosts")}
+          styles={(theme) => ({
+            root: {
+              background: "transparent",
+              color: theme.colors.dark[9],
+              border: "none",
+              padding: "6px 12px",
+              borderBottom:
+                activeTab === "savedPosts"
+                  ? `2px solid ${theme.colors.blue[6]}`
+                  : "none",
+              borderRadius: 0,
+              cursor: "pointer",
+              transition: "border-bottom 0.2s",
+              "&:hover": {
+                background: "transparent",
+              },
+            },
+          })}
+        >
+          Saved Posts
+        </Button>
+      </Group>
 
       {loadingPosts ? (
         <Loader size="sm" />
-      ) : posts.length === 0 ? (
-        <Text size="sm" color="dimmed">
-          You haven’t posted anything yet.
-        </Text>
+      ) : mappedPosts.length === 0 ? (
+        <Text className="text-center text-gray-500">No posts yet.</Text>
       ) : (
-        <div className="flex flex-col gap-4">
-          {posts.map((post) => (
-            <Paper key={post.id} className="p-3">
-              <Text>{post.content}</Text>
-
-              <Text size="xs" color="dimmed">
-                {post.channel
-                  ? `Posted in ${post.channel.name}`
-                  : "Posted on dashboard"}{" "}
-                · {new Date(post.createdAt).toLocaleString()}
-              </Text>
-            </Paper>
-          ))}
-        </div>
+        <ShowPosts posts={mappedPosts} showChannel />
       )}
     </Container>
   );

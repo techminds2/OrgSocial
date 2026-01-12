@@ -14,13 +14,7 @@ function normalizeMediaUrl(u?: string | null) {
 
 export async function GET(req: NextRequest) {
   const userId = await getUserIdFromRequest(req);
-
-  if (!userId) {
-    return NextResponse.json(
-      { error: "Not authenticated" },
-      { status: 401 }
-    );
-  }
+  if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   try {
     const posts = await prisma.post.findMany({
@@ -29,28 +23,42 @@ export async function GET(req: NextRequest) {
       include: {
         files: true,
         channel: { select: { id: true, name: true } },
+        reactions: true,
+        comments: { 
+          orderBy: { createdAt: "asc" },
+          include: { author: { select: { id: true, username: true, profileImage: true } } },
+        },
       },
     });
 
-    const formatted = posts.map((p) => ({
-      id: p.id,
-      content: p.content,
-      createdAt: p.createdAt,
-      channel: p.channel
-        ? { id: p.channel.id, name: p.channel.name }
-        : null,
-      files: p.files.map((f) => ({
-        url: normalizeMediaUrl(f.url),
-        type: f.type,
-      })),
-    }));
+    const formatted = posts.map((p) => {
+      const likeCount = p.reactions.reduce((acc, r) => (r.type === "LIKE" ? acc + 1 : acc), 0);
+      const likedByMe = p.reactions.some((r) => r.userId === userId && r.type === "LIKE");
+
+      return {
+        id: p.id,
+        content: p.content,
+        createdAt: p.createdAt,
+        channel: p.channel
+          ? { id: p.channel.id, name: p.channel.name } // show channel name if exists
+          : null, // null means posted on dashboard
+        author: { id: userId, username: "me", profileImage: null },
+        files: p.files.map((f) => ({ url: normalizeMediaUrl(f.url)!, type: f.type || "document" })),
+        likeCount,
+        likedByMe,
+        isMine: true,
+        comments: p.comments.map((c) => ({
+          id: c.id,
+          content: c.content,
+          createdAt: c.createdAt,
+          author: { ...c.author, profileImage: normalizeMediaUrl(c.author.profileImage) },
+        })),
+      };
+    });
 
     return NextResponse.json({ posts: formatted });
   } catch (err) {
-    console.error("MY POSTS ERROR:", err);
-    return NextResponse.json(
-      { error: "Failed to fetch posts" },
-      { status: 500 }
-    );
+    console.error("PROFILE POSTS ERROR:", err);
+    return NextResponse.json({ error: "Failed to fetch posts" }, { status: 500 });
   }
 }

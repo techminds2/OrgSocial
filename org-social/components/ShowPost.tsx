@@ -22,6 +22,7 @@ import { StarIcon as StarSolid } from "@heroicons/react/24/solid";
 type ShowPostsProps = {
   channelId?: number;
   posts?: Post[];
+  showChannel?: boolean;
 };
 
 type FileType = {
@@ -46,25 +47,34 @@ type Post = {
   createdAt: string;
   updatedAt?: string;
   isEdited?: boolean;
+
+  channel?: {
+    id: number;
+    name: string;
+  } | null;
+
   files: FileType[];
   likedByMe: boolean;
   likeCount: number;
   saved?: boolean;
   savedAt?: string;
   isMine: boolean;
+
   author: {
     id: number;
     username: string;
     profileImage?: string | null;
   };
+
   comments: Comment[];
 };
 
 export default function ShowPosts({
   channelId,
   posts: propPosts,
+  showChannel = false,
 }: ShowPostsProps) {
-  const isControlled = Array.isArray(propPosts); // ✅ Saved posts page will control
+  const isControlled = Array.isArray(propPosts);
   const [posts, setPosts] = useState<Post[]>(propPosts ?? []);
 
   const [loading, setLoading] = useState(true);
@@ -356,12 +366,22 @@ export default function ShowPosts({
                 <div>
                   <p className="font-semibold">{post.author.username}</p>
                   <p className="text-xs text-gray-500">
+                    {showChannel && (
+                      <>
+                        {post.channel
+                          ? `Posted in #${post.channel.name}`
+                          : "Posted on dashboard"}
+                        {" · "}
+                      </>
+                    )}
+
                     {post.savedAt
-                      ? `Saved on ${new Date(post.savedAt).toLocaleString()}`
+                      ? new Date(post.savedAt).toLocaleString()
                       : new Date(post.createdAt).toLocaleString()}
-                    {post.isEdited ? (
+
+                    {post.isEdited && (
                       <span className="ml-2 text-gray-400">(edited)</span>
-                    ) : null}
+                    )}
                   </p>
                 </div>
               </div>
