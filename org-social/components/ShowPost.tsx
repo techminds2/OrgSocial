@@ -382,7 +382,7 @@ export default function ShowPosts({
                     {post.isEdited && (
                       <span className="ml-2 text-gray-400">(edited)</span>
                     )}
-                  </p>
+                  </p> 
                 </div>
               </div>
 

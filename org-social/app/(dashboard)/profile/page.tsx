@@ -12,6 +12,7 @@ import {
   Group,
 } from "@mantine/core";
 import ShowPosts from "@/components/ShowPost";
+import MyChannels from "@/components/MyChannels";
 
 type User = {
   id: number;
@@ -40,9 +41,10 @@ export default function ProfilePage() {
   const [user, setUser] = useState<User | null>(null);
   const [loadingUser, setLoadingUser] = useState(true);
 
-  const [activeTab, setActiveTab] = useState<"myPosts" | "savedPosts">(
-    "myPosts"
-  );
+  const [activeTab, setActiveTab] = useState<
+    "myPosts" | "savedPosts" | "myChannels"
+  >("myPosts");
+
   const [posts, setPosts] = useState<Post[]>([]);
   const [loadingPosts, setLoadingPosts] = useState(true);
 
@@ -196,7 +198,6 @@ export default function ProfilePage() {
         >
           My Posts
         </Button>
-
         <Button
           variant="subtle"
           onClick={() => setActiveTab("savedPosts")}
@@ -221,15 +222,49 @@ export default function ProfilePage() {
         >
           Saved Posts
         </Button>
+        <Button
+          variant="subtle"
+          onClick={() => setActiveTab("myChannels")}
+          styles={(theme) => ({
+            root: {
+              background: "transparent",
+              color: theme.colors.dark[9],
+              border: "none",
+              padding: "6px 12px",
+              borderBottom:
+                activeTab === "myChannels"
+                  ? `2px solid ${theme.colors.blue[6]}`
+                  : "none",
+              borderRadius: 0,
+              cursor: "pointer",
+              transition: "border-bottom 0.2s",
+              "&:hover": { background: "transparent" },
+            },
+          })}
+        >
+          My Channels
+        </Button>{" "}
       </Group>
 
-      {loadingPosts ? (
-        <Loader size="sm" />
-      ) : mappedPosts.length === 0 ? (
-        <Text className="text-center text-gray-500">No posts yet.</Text>
-      ) : (
-        <ShowPosts posts={mappedPosts} showChannel />
-      )}
+      {activeTab === "myPosts" &&
+        (loadingPosts ? (
+          <Loader size="sm" />
+        ) : mappedPosts.length === 0 ? (
+          <Text className="text-center text-gray-500">No posts yet.</Text>
+        ) : (
+          <ShowPosts posts={mappedPosts} showChannel />
+        ))}
+
+      {activeTab === "savedPosts" &&
+        (loadingPosts ? (
+          <Loader size="sm" />
+        ) : mappedPosts.length === 0 ? (
+          <Text className="text-center text-gray-500">No saved posts yet.</Text>
+        ) : (
+          <ShowPosts posts={mappedPosts} showChannel />
+        ))}
+
+      {activeTab === "myChannels" && <MyChannels />}
     </Container>
   );
 }
