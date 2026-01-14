@@ -296,6 +296,10 @@ export default function ChannelsPanel() {
       console.error("Cancel join request error:", e);
     }
   }
+  const getBannerUrl = (bannerKey?: string | null): string | undefined => {
+    if (!bannerKey) return undefined;
+    return `/api/files/${bannerKey}`;
+  };
 
   return (
     <div className="w-64 bg-gray-50 p-3 flex flex-col h-screen">
@@ -325,17 +329,32 @@ export default function ChannelsPanel() {
         <div className="flex flex-col gap-2">
           {channels.map((ch) => (
             <Link key={ch.id} href={`/channels/${ch.id}`}>
-              <div className="px-2 py-1 rounded hover:bg-gray-200 cursor-pointer flex justify-between items-center">
-                <span>
-                  # {ch.name}
-                  {ch.visibility === "public" && (
-                    <span className="ml-2 text-[10px] px-1 py-[1px] rounded bg-green-100 text-green-700">
-                      public
-                    </span>
+              <div className="px-2 py-1 rounded hover:bg-gray-200 cursor-pointer flex justify-between items-center gap-2">
+                <div className="flex items-center gap-2 min-w-0">
+                  {ch.bannerKey ? (
+                    <img
+                      src={getBannerUrl(ch.bannerKey)}
+                      alt={ch.name}
+                      className="w-6 h-6 rounded object-cover flex-shrink-0"
+                    />
+                  ) : (
+                    <div className="w-6 h-6 rounded bg-gray-300 flex items-center justify-center text-xs text-gray-600">
+                      #
+                    </div>
                   )}
-                </span>
+
+                  <div className="truncate">
+                    <span className="truncate">#{ch.name}</span>
+                    {ch.visibility === "public" && (
+                      <span className="ml-2 text-[10px] px-1 py-[1px] rounded bg-green-100 text-green-700">
+                        public
+                      </span>
+                    )}
+                  </div>
+                </div>
+
                 {typeof ch.memberCount === "number" && (
-                  <span className="text-xs text-gray-500">
+                  <span className="text-xs text-gray-500 flex-shrink-0">
                     {ch.memberCount}
                   </span>
                 )}
@@ -343,7 +362,6 @@ export default function ChannelsPanel() {
             </Link>
           ))}
 
-          {/* ✅ Public channels browse */}
           <div className="mt-4 pt-3 border-t">
             <Text size="sm" fw={600} className="mb-2">
               Public channels
@@ -409,7 +427,6 @@ export default function ChannelsPanel() {
           mb="sm"
         />
 
-        {/* ✅ NEW: visibility selector */}
         <div className="mb-3">
           <label className="text-sm font-medium block mb-1">Visibility</label>
           <select
