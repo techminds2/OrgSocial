@@ -91,10 +91,6 @@ export async function POST(
 
   if (!channel) return noStoreJson({ error: "Channel not found" }, 404);
 
-  // If channel is public, you may want to join directly (optional behavior).
-  // We'll keep consistent with your system: allow join-request for private, too.
-  // But prevent duplicate requests/membership.
-
   const alreadyMember = await prisma.channelMember.findUnique({
     where: { channelId_userId: { channelId, userId } },
     select: { id: true },

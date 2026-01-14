@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { Button, Loader, Avatar, Badge } from "@mantine/core";
 
 type Notif = {
@@ -20,6 +20,7 @@ export default function RequestsInboxClient() {
   const [actingId, setActingId] = useState<number | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [items, setItems] = useState<Notif[]>([]);
+  const [roles, setRoles] = useState<Record<number, string>>({});
 
   async function load() {
     setLoading(true);
@@ -51,11 +52,10 @@ export default function RequestsInboxClient() {
     load();
   }, []);
 
-  const count = items.length;
-
   const act = async (n: Notif, action: "approve" | "reject") => {
     setActingId(n.id);
     setError(null);
+
     try {
       const res = await fetch(
         `/api/channels/${n.channelId}/join-request/${n.id}`,
@@ -64,7 +64,12 @@ export default function RequestsInboxClient() {
           credentials: "include",
           headers: { "Content-Type": "application/json" },
           cache: "no-store",
-          body: JSON.stringify({ action }),
+          body: JSON.stringify({
+            action,
+            ...(action === "approve" && {
+              role: roles[n.id] || "viewer",
+            }),
+          }),
         }
       );
 
@@ -74,7 +79,6 @@ export default function RequestsInboxClient() {
         return;
       }
 
-      // remove from UI immediately
       setItems((prev) => prev.filter((x) => x.id !== n.id));
     } catch (e: any) {
       setError(e?.message || "Action failed");
@@ -91,6 +95,8 @@ export default function RequestsInboxClient() {
       </div>
     );
   }
+
+  const count = items.length;
 
   return (
     <div className="bg-white border rounded-xl p-4">
@@ -122,7 +128,9 @@ export default function RequestsInboxClient() {
                 <div className="flex items-center justify-between gap-3">
                   <div className="flex items-center gap-3 min-w-0">
                     <Avatar radius="xl">
-                      {String(n.username || "?").slice(0, 1).toUpperCase()}
+                      {String(n.username || "?")
+                        .slice(0, 1)
+                        .toUpperCase()}
                     </Avatar>
 
                     <div className="min-w-0">
@@ -156,7 +164,25 @@ export default function RequestsInboxClient() {
                   </div>
                 </div>
 
-                
+                {/* Role selector */}
+                <div className="flex items-center gap-2">
+                  <span className="text-xs text-gray-600">Assign role:</span>
+                  <select
+                    className="border rounded px-2 py-1 text-sm"
+                    value={roles[n.id] || "viewer"}
+                    onChange={(e) =>
+                      setRoles((prev) => ({
+                        ...prev,
+                        [n.id]: e.target.value,
+                      }))
+                    }
+                    disabled={busy}
+                  >
+                    <option value="viewer">Viewer</option>
+                    <option value="editor">Editor</option>
+                    <option value="admin">Admin</option>
+                  </select>
+                </div>
               </div>
             );
           })}

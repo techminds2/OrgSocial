@@ -17,58 +17,52 @@ const VALID_ROLES: ChannelRole[] = ["viewer", "editor", "admin"];
 /* =========================
    GET – list members
    ========================= */
-export async function GET(req: NextRequest, ctx: Ctx) {
-  try {
-    const userId = await getUserIdFromRequest(req);
-    if (!userId) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+export async function GET(
+  req: NextRequest,
+  ctx: { params: Promise<{ id: string }> }
+) {
+  const userId = await getUserIdFromRequest(req);
+  if (!userId) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
 
-    const { id } = await ctx.params;
-    const channelId = parseChannelId(id);
-    if (!channelId) {
-      return NextResponse.json({ error: "Bad channel id" }, { status: 400 });
-    }
+  const { id } = await ctx.params;
+  const channelId = Number(id);
+  if (!Number.isFinite(channelId)) {
+    return NextResponse.json({ error: "Bad channel id" }, { status: 400 });
+  }
 
-    // Any member can view
-    const isMember = await prisma.channelMember.findUnique({
-      where: { channelId_userId: { channelId, userId } },
-      select: { id: true },
-    });
+  // 🔐 Only admins can edit members
+  const me = await prisma.channelMember.findUnique({
+    where: { channelId_userId: { channelId, userId } },
+    select: { role: true },
+  });
 
-    if (!isMember) {
-      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
-    }
+  if (!me || me.role !== "admin") {
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  }
 
-    const members = await prisma.channelMember.findMany({
-      where: { channelId },
-      orderBy: [{ role: "asc" }, { id: "asc" }],
-      include: {
-        user: {
-          select: {
-            id: true,
-            username: true,
-            email: true,
-            profileImage: true,
-          },
+  const members = await prisma.channelMember.findMany({
+    where: { channelId },
+    orderBy: [{ role: "desc" }, { userId: "asc" }],
+    select: {
+      userId: true,
+      role: true,
+      user: {
+        select: {
+          username: true,
         },
       },
-    });
+    },
+  });
 
-    return NextResponse.json({
-      members: members.map((m) => ({
-        userId: m.userId,
-        role: m.role,
-        user: m.user,
-      })),
-    });
-  } catch (err) {
-    console.error("GET MEMBERS ERROR:", err);
-    return NextResponse.json(
-      { error: "Failed to load members" },
-      { status: 500 }
-    );
-  }
+  return NextResponse.json({
+    members: members.map((m) => ({
+      userId: m.userId,
+      username: m.user.username,
+      role: m.role,
+    })),
+  });
 }
 
 /* =========================

@@ -19,7 +19,8 @@ export async function PATCH(
 ) {
   try {
     const userIdRaw = await getUserIdFromRequest(req);
-    const userId = typeof userIdRaw === "string" ? Number(userIdRaw) : userIdRaw;
+    const userId =
+      typeof userIdRaw === "string" ? Number(userIdRaw) : userIdRaw;
 
     if (!userId || !Number.isFinite(userId)) {
       return noStoreJson({ error: "Unauthorized" }, 401);
@@ -29,8 +30,16 @@ export async function PATCH(
     const channelId = Number(id);
     const jrId = Number(requestId);
 
-    if (!Number.isFinite(channelId) || channelId <= 0 || !Number.isFinite(jrId) || jrId <= 0) {
-      return noStoreJson({ error: "Bad params", got: { id, requestId } }, 400);
+    if (
+      !Number.isFinite(channelId) ||
+      channelId <= 0 ||
+      !Number.isFinite(jrId) ||
+      jrId <= 0
+    ) {
+      return noStoreJson(
+        { error: "Bad params", got: { id, requestId } },
+        400
+      );
     }
 
     // admin check
@@ -45,15 +54,24 @@ export async function PATCH(
 
     const body = await req.json().catch(() => ({}));
     const action = body?.action as "approve" | "reject";
+    const role = body?.role as "viewer" | "editor" | "admin";
 
     if (action !== "approve" && action !== "reject") {
-      return noStoreJson({ error: "Invalid action", got: body?.action }, 400);
+      return noStoreJson(
+        { error: "Invalid action", got: body?.action },
+        400
+      );
     }
 
-    // IMPORTANT: ensure it belongs to this channel AND is still pending
+    if (action === "approve") {
+      if (!role || !["viewer", "editor", "admin"].includes(role)) {
+        return noStoreJson({ error: "Invalid role" }, 400);
+      }
+    }
+
     const jr = await prisma.joinRequest.findFirst({
       where: { id: jrId, channelId },
-      select: { id: true, userId: true, status: true, channelId: true },
+      select: { id: true, userId: true, status: true },
     });
 
     if (!jr) {
@@ -71,8 +89,12 @@ export async function PATCH(
       await prisma.$transaction([
         prisma.channelMember.upsert({
           where: { channelId_userId: { channelId, userId: jr.userId } },
-          update: {}, // keep existing role if already member
-          create: { channelId, userId: jr.userId, role: "viewer" },
+          update: { role },
+          create: {
+            channelId,
+            userId: jr.userId,
+            role,
+          },
         }),
         prisma.joinRequest.update({
           where: { id: jrId },

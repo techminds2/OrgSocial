@@ -20,7 +20,7 @@ export async function GET(req: NextRequest) {
         },
       },
     },
-    orderBy: { createdAt: "desc" }, // ✅ saved date order
+    orderBy: { createdAt: "desc" }, 
   });
 
   type SavedPostWithPost = (typeof saved)[number];
