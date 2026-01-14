@@ -12,6 +12,7 @@ import Link from "next/link";
 import { useEffect, useState, useCallback } from "react";
 import Cropper from "react-easy-crop";
 import { useSearchParams, useRouter } from "next/navigation";
+import  getCroppedImg  from "@/lib/getCroppedImg";
 
 type Channel = {
   id: number;
@@ -31,6 +32,7 @@ type PublicChannel = {
   isMember: boolean;
   hasPendingRequest: boolean;
   pendingRequestId: number | null;
+  bannerKey?: string | null;
 };
 
 type UserPick = {
@@ -44,43 +46,6 @@ type MemberPick = {
   username: string;
   role: "viewer" | "editor" | "admin";
 };
-
-// helper to get cropped image as File
-async function getCroppedImg(imageSrc: string, crop: any) {
-  const createImage = (url: string) =>
-    new Promise<HTMLImageElement>((resolve, reject) => {
-      const img = new Image();
-      img.src = url;
-      img.onload = () => resolve(img);
-      img.onerror = (e) => reject(e);
-    });
-
-  const image = await createImage(imageSrc);
-  const canvas = document.createElement("canvas");
-  canvas.width = crop.width;
-  canvas.height = crop.height;
-  const ctx = canvas.getContext("2d");
-  if (!ctx) throw new Error("Canvas context failed");
-
-  ctx.drawImage(
-    image,
-    crop.x,
-    crop.y,
-    crop.width,
-    crop.height,
-    0,
-    0,
-    crop.width,
-    crop.height
-  );
-
-  return new Promise<File>((resolve, reject) => {
-    canvas.toBlob((blob) => {
-      if (!blob) return reject("Canvas is empty");
-      resolve(new File([blob], "banner.png", { type: "image/png" }));
-    }, "image/png");
-  });
-}
 
 export default function ChannelsPanel() {
   const searchParams = useSearchParams();
@@ -96,12 +61,10 @@ export default function ChannelsPanel() {
   const [modalOpen, setModalOpen] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  // member picker state
   const [userQuery, setUserQuery] = useState("");
   const [userResults, setUserResults] = useState<UserPick[]>([]);
   const [pickedMembers, setPickedMembers] = useState<MemberPick[]>([]);
 
-  // cropper state
   const [cropModalOpen, setCropModalOpen] = useState(false);
   const [cropImage, setCropImage] = useState<string | null>(null);
   const [crop, setCrop] = useState({ x: 0, y: 0 });
@@ -131,6 +94,34 @@ export default function ChannelsPanel() {
       console.error("Load public channels failed:", e);
     }
   }
+
+  const moveChannelToJoined = useCallback(
+    (channelId: number, payload?: Partial<PublicChannel>) => {
+      setPublicChannels((prev) => prev.filter((c) => c.id !== channelId));
+
+      const fromPrev =
+        publicChannels.find((c) => c.id === channelId) ||
+        (payload as PublicChannel | undefined);
+
+      if (!fromPrev) return;
+
+      setChannels((prev) => {
+        if (prev.some((x) => x.id === channelId)) return prev;
+        return [
+          ...prev,
+          {
+            id: fromPrev.id,
+            name: fromPrev.name,
+            createdAt: fromPrev.createdAt,
+            bannerKey: fromPrev.bannerKey ?? null,
+            memberCount: fromPrev.memberCount,
+            visibility: fromPrev.visibility,
+          },
+        ];
+      });
+    },
+    [publicChannels]
+  );
 
   useEffect(() => {
     loadChannels();
@@ -166,6 +157,7 @@ export default function ChannelsPanel() {
       console.error("User search failed:", e);
     }
   }
+
   useEffect(() => {
     const t = setTimeout(() => searchUsers(userQuery), 300);
     return () => clearTimeout(t);
@@ -183,6 +175,29 @@ export default function ChannelsPanel() {
     window.addEventListener("channel-deleted", handler as any);
     return () => window.removeEventListener("channel-deleted", handler as any);
   }, []);
+
+  useEffect(() => {
+    const onJoinAccepted = (e: any) => {
+      const id = Number(e?.detail?.channelId ?? e?.detail?.id);
+      if (!Number.isFinite(id)) return;
+
+      const payload = (e?.detail?.channel || e?.detail) as
+        | Partial<PublicChannel>
+        | undefined;
+
+      moveChannelToJoined(id, payload);
+
+      setPublicChannels((prev) =>
+        prev.map((c) =>
+          c.id === id ? { ...c, isMember: true, hasPendingRequest: false } : c
+        )
+      );
+    };
+
+    window.addEventListener("channel-join-accepted", onJoinAccepted as any);
+    return () =>
+      window.removeEventListener("channel-join-accepted", onJoinAccepted as any);
+  }, [moveChannelToJoined]);
 
   const addChannel = async () => {
     const trimmed = newChannel.trim();
@@ -236,7 +251,6 @@ export default function ChannelsPanel() {
 
       setModalOpen(false);
 
-      // refresh public list (in case channel is public)
       loadPublicChannels();
     } catch (e) {
       console.error("Create channel error:", e);
@@ -245,7 +259,6 @@ export default function ChannelsPanel() {
     }
   };
 
-  // handle file input
   const onBannerChange = (file: File | null) => {
     if (!file) return;
     const reader = new FileReader();
@@ -278,7 +291,12 @@ export default function ChannelsPanel() {
         console.error("REQUEST JOIN FAILED:", res.status, t);
         return;
       }
-      await loadPublicChannels();
+
+      setPublicChannels((prev) =>
+        prev.map((c) =>
+          c.id === channelId ? { ...c, hasPendingRequest: true } : c
+        )
+      );
     } catch (e) {
       console.error("Request join error:", e);
     }
@@ -291,11 +309,17 @@ export default function ChannelsPanel() {
         credentials: "include",
       });
       if (!res.ok) return;
-      await loadPublicChannels();
+
+      setPublicChannels((prev) =>
+        prev.map((c) =>
+          c.id === channelId ? { ...c, hasPendingRequest: false } : c
+        )
+      );
     } catch (e) {
       console.error("Cancel join request error:", e);
     }
   }
+
   const getBannerUrl = (bannerKey?: string | null): string | undefined => {
     if (!bannerKey) return undefined;
     return `/api/files/${bannerKey}`;
@@ -576,7 +600,6 @@ export default function ChannelsPanel() {
         </Text>
       </Modal>
 
-      {/* Crop modal */}
       <Modal
         opened={cropModalOpen}
         onClose={() => setCropModalOpen(false)}
