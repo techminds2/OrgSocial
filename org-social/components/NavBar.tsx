@@ -106,7 +106,7 @@ export default function NavBar({ profileImage }: NavBarProps) {
   };
 
   return (
-    <nav className="bg-white shadow-md">
+    <nav className="bg-white shadow-md fixed top-0 left-64 right-0 z-30 h-14">
       <div className="py-1 lg:px-8 flex justify-end items-center gap-4">
         {/* Notifications Menu */}
         <Menu shadow="md" width={320} position="bottom-end" withArrow>
@@ -145,7 +145,9 @@ export default function NavBar({ profileImage }: NavBarProps) {
 
                         const postId = Number(match[1]);
                         window.dispatchEvent(
-                          new CustomEvent("open-post-modal", { detail: { postId } })
+                          new CustomEvent("open-post-modal", {
+                            detail: { postId },
+                          })
                         );
                       }}
                     >
@@ -171,7 +173,9 @@ export default function NavBar({ profileImage }: NavBarProps) {
           <Menu.Target>
             <div className="flex items-center cursor-pointer gap-2">
               <Avatar src={profileImage || "/temp.png"} radius="xl" size={40} />
-              <span className="font-medium text-gray-700">{username || "User"}</span>
+              <span className="font-medium text-gray-700">
+                {username || "User"}
+              </span>
             </div>
           </Menu.Target>
 
