@@ -72,43 +72,55 @@ export async function POST(req: Request) {
     }
   );
 
-  if (!response.ok) {
-    return NextResponse.json({ error: "Invalid credentials" }, { status: 401 });
+  // parse response safely
+  let data: any = {};
+  try {
+    const text = await response.text(); // read as text first
+    data = text ? JSON.parse(text) : {};
+  } catch (err) {
+    console.error("Invalid JSON from token API:", err);
+    return NextResponse.json({ error: "Login failed" }, { status: 500 });
   }
 
-  const data = await response.json();
+  if (!response.ok) {
+    return NextResponse.json({ error: data.detail || "Invalid credentials" }, { status: 401 });
+  }
+
   const accessToken = data.access;
   const userId = data.user_id;
 
+  // Safe fetch for user view
   const userViewRes = await fetch(
     `https://callminds.techminds.com.np/auth/api/user-view/${userId}/`,
-    {
-      headers: { Authorization: `Bearer ${accessToken}` },
-    }
+    { headers: { Authorization: `Bearer ${accessToken}` } }
   );
 
-  const userView = await userViewRes.json();
-
-  console.log("userview: ",userView.data.profile_photo);
+  let userView: any = {};
+  try {
+    const text = await userViewRes.text();
+    userView = text ? JSON.parse(text) : {};
+  } catch {
+    return NextResponse.json({ error: "Failed to fetch user info" }, { status: 500 });
+  }
 
   const user = await prisma.user.upsert({
-  where: { id: data.user_id }, 
-  update: {
-    username: data.username,
-    email: userView.data.email || null,
-    role: userView.data.role || "user",
-    isStaff: true,
-    profileImage: userView.data.profile_photo || null,
-  },
-  create: {
-    id: data.user_id, 
-    username: data.username,
-    email: userView.data.email || null,
-    role: userView.data.role || "user",
-    isStaff: true,
-    profileImage: userView.data.profile_photo || null,
-  },
-});
+    where: { id: data.user_id },
+    update: {
+      username: data.username,
+      email: userView.data?.email || null,
+      role: userView.data?.role || "user",
+      isStaff: true,
+      profileImage: userView.data?.profile_photo || null,
+    },
+    create: {
+      id: data.user_id,
+      username: data.username,
+      email: userView.data?.email || null,
+      role: userView.data?.role || "user",
+      isStaff: true,
+      profileImage: userView.data?.profile_photo || null,
+    },
+  });
 
   const res = NextResponse.json({ user });
   res.headers.set(
