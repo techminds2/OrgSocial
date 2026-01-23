@@ -24,7 +24,7 @@ export async function GET(req: NextRequest) {
     const { searchParams } = new URL(req.url);
     const limit = Math.max(
       1,
-      Math.min(Number(searchParams.get("limit") || 10), 50),
+      Math.min(Number(searchParams.get("limit") || 10), 50)
     );
     const cursorId = searchParams.get("cursor")
       ? Number(searchParams.get("cursor"))
@@ -39,6 +39,10 @@ export async function GET(req: NextRequest) {
         author: { select: { id: true, username: true, profileImage: true } },
         files: true,
         reactions: true,
+        savedBy: {
+          where: { userId },
+          select: { createdAt: true },
+        },
         comments: {
           orderBy: { createdAt: "asc" },
           include: {
@@ -53,12 +57,15 @@ export async function GET(req: NextRequest) {
     const formatted = posts.map((p) => {
       const likeCount = p.reactions.reduce(
         (acc, r) => (r.type === "LIKE" ? acc + 1 : acc),
-        0,
+        0
       );
       const likedByMe = p.reactions.some(
-        (r) => r.userId === userId && r.type === "LIKE",
+        (r) => r.userId === userId && r.type === "LIKE"
       );
       const isMine = p.author.id === userId;
+
+      const saved = p.savedBy.length > 0;
+      const savedAt = p.savedBy[0]?.createdAt ?? null;
 
       return {
         id: p.id,
@@ -75,6 +82,8 @@ export async function GET(req: NextRequest) {
         likeCount,
         likedByMe,
         isMine,
+        saved,
+        savedAt,
         comments: p.comments.map((c) => ({
           id: c.id,
           content: c.content,
@@ -89,12 +98,13 @@ export async function GET(req: NextRequest) {
 
     const nextCursor =
       posts.length === limit ? posts[posts.length - 1].id : null;
+
     return NextResponse.json({ posts: formatted, nextCursor });
   } catch (err: any) {
     console.error("GET DASHBOARD POSTS ERROR:", err);
     return NextResponse.json(
       { error: "Failed to fetch posts" },
-      { status: 500 },
+      { status: 500 }
     );
   }
 }
@@ -124,7 +134,7 @@ export async function POST(req: NextRequest) {
           Key: key,
           Body: buffer,
           ContentType: file.type || "application/octet-stream",
-        }),
+        })
       );
 
       uploadedFiles.push({ url: key, type: types[i] });
@@ -137,7 +147,7 @@ export async function POST(req: NextRequest) {
         authorId: userId,
         files: {
           create: uploadedFiles.map((f) =>
-            f.type ? { url: f.url, type: f.type } : { url: f.url },
+            f.type ? { url: f.url, type: f.type } : { url: f.url }
           ),
         },
       },
@@ -150,7 +160,7 @@ export async function POST(req: NextRequest) {
     const message = error instanceof Error ? error.message : String(error);
     return NextResponse.json(
       { error: "Post failed", detail: message },
-      { status: 500 },
+      { status: 500 }
     );
   }
 }
