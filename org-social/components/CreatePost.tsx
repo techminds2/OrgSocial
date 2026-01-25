@@ -23,6 +23,14 @@ type SelectedFile = {
   type: "image" | "video" | "document";
 };
 
+type Me = {
+  user_id: number;
+  username: string;
+  email?: string;
+  role?: string;
+  profileImage?: string | null;
+};
+
 const stripHtml = (html: string) =>
   html
     .replace(/<style[^>]*>[\s\S]*?<\/style>/gi, "")
@@ -35,7 +43,6 @@ const stripHtml = (html: string) =>
 const isEmptyTipTap = (html: string) => {
   const v = (html || "").trim();
   if (!v) return true;
-
   if (v === "<p></p>" || v === "<p><br></p>") return true;
 
   const text = stripHtml(v);
@@ -45,7 +52,17 @@ const isEmptyTipTap = (html: string) => {
   return text.length === 0 && !hasMedia;
 };
 
+function normalizeMediaUrl(u?: string | null) {
+  if (!u) return "/temp.png";
+  const s = String(u).trim();
+  if (!s) return "/temp.png";
+  if (s.startsWith("http://") || s.startsWith("https://")) return s;
+  return `/api/files/${s.replace(/^\/+/, "")}`;
+}
+
 export default function CreatePost({ channelId }: CreatePostProps) {
+  const [me, setMe] = useState<Me | null>(null);
+
   const [content, setContent] = useState("");
   const [files, setFiles] = useState<SelectedFile[]>([]);
   const [loading, setLoading] = useState(false);
@@ -61,6 +78,23 @@ export default function CreatePost({ channelId }: CreatePostProps) {
   const videoRef = useRef<HTMLInputElement>(null);
   const docRef = useRef<HTMLInputElement>(null);
   const editorHostRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    let alive = true;
+
+    (async () => {
+      try {
+        const res = await fetch("/api/auth/me", { credentials: "include" });
+        if (!res.ok) return;
+        const data = (await res.json()) as Me;
+        if (alive) setMe(data);
+      } catch {}
+    })();
+
+    return () => {
+      alive = false;
+    };
+  }, []);
 
   useEffect(() => {
     if (!isEditorOpen) return;
@@ -84,12 +118,11 @@ export default function CreatePost({ channelId }: CreatePostProps) {
   };
 
   const previews = useMemo(() => {
-    const list = files.map((f) => ({
+    return files.map((f) => ({
       ...f,
       previewUrl: f.type === "document" ? "" : URL.createObjectURL(f.file),
       name: f.file.name,
     }));
-    return list;
   }, [files]);
 
   useEffect(() => {
@@ -141,13 +174,16 @@ export default function CreatePost({ channelId }: CreatePostProps) {
     }
   };
 
+  const avatarSrc = normalizeMediaUrl(me?.profileImage);
+
   return (
     <div className="bg-white rounded-2xl shadow p-4 w-full max-w-2xl relative">
       <div className="flex gap-4">
         <img
-          src="/temp.png"
-          alt="User"
+          src={avatarSrc}
+          alt={me?.username || "User"}
           className="w-12 h-12 rounded-full object-cover border"
+          onError={(e) => (e.currentTarget.src = "/temp.png")}
         />
 
         <div
