@@ -118,7 +118,7 @@ export default function ProfilePage() {
     createdAt: p.createdAt,
 
     files: (p.files ?? []).map((f: any) => ({
-      url: f.url ?? "/temp.png",
+      url: f.url ?? "/temp.jpg",
       type: f.type || "document",
     })),
 
@@ -146,7 +146,7 @@ export default function ProfilePage() {
           <Avatar
             size={100}
             radius="xl"
-            src={user.profile_photo || "/temp.png"}
+            src={user.profile_photo || "/temp.jpg"}
           />
           <Text className="text-lg font-semibold">
             {user.first_name} {user.last_name} ({user.username})

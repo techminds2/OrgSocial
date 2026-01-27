@@ -53,9 +53,9 @@ const isEmptyTipTap = (html: string) => {
 };
 
 function normalizeMediaUrl(u?: string | null) {
-  if (!u) return "/temp.png";
+  if (!u) return "/temp.jpg";
   const s = String(u).trim();
-  if (!s) return "/temp.png";
+  if (!s) return "/temp.jpg";
   if (s.startsWith("http://") || s.startsWith("https://")) return s;
   return `/api/files/${s.replace(/^\/+/, "")}`;
 }
@@ -183,7 +183,7 @@ export default function CreatePost({ channelId }: CreatePostProps) {
           src={avatarSrc}
           alt={me?.username || "User"}
           className="w-12 h-12 rounded-full object-cover border"
-          onError={(e) => (e.currentTarget.src = "/temp.png")}
+          onError={(e) => (e.currentTarget.src = "/temp.jpg")}
         />
 
         <div

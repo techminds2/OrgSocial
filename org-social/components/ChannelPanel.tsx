@@ -386,7 +386,7 @@ export default function ChannelsPanel() {
             </Link>
           ))}
 
-          <div className="mt-4 pt-3 border-t">
+          <div className="mt-4 pt-3 ">
             <Text size="sm" fw={600} className="mb-2">
               Public channels
             </Text>

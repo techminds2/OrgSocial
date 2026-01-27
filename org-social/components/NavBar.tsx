@@ -20,9 +20,9 @@ type Notification = {
 };
 
 function normalizeMediaUrl(u?: string | null) {
-  if (!u) return "/temp.png";
+  if (!u) return "/temp.jpg";
   const s = String(u).trim();
-  if (!s) return "/temp.png";
+  if (!s) return "/temp.jpg";
   if (s.startsWith("http://") || s.startsWith("https://")) return s;
   return `/api/files/${s.replace(/^\/+/, "")}`;
 }
@@ -114,7 +114,7 @@ export default function NavBar({ profileImage }: NavBarProps) {
   };
 
   return (
-    <nav className="bg-white shadow-md fixed top-0 left-64 right-0 z-30 h-14">
+    <nav className="bg-white shadow-sm fixed top-0 left-64 right-0 z-30 h-14">
       <div className="py-1 lg:px-8 flex justify-end items-center gap-4">
         <Menu shadow="md" width={320} position="bottom-end" withArrow>
           <Menu.Target>

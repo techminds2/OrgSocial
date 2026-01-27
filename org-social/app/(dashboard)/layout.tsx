@@ -24,17 +24,8 @@ export default function DashboardLayout({
         </Suspense>
       </aside>
 
-      <main
-        className="
-          ml-64
-          mr-64
-          pt-14
-          h-[calc(100vh-3.5rem)]
-          overflow-y-auto`
-          bg-gray-50
-        "
-      >
-        <div className="max-w-6xl mx-auto px-6 py-6">{children}</div>
+      <main className="ml-74 mr-64 pt-14 h-[calc(100vh-3.5rem)]  bg-gray-50 flex justify-center">
+        <div className="w-full max-w-3xl px-6 py-6">{children}</div>
       </main>
     </div>
   );
