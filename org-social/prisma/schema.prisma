@@ -24,8 +24,8 @@ model User {
   createdChannels Channel[] @relation("ChannelCreator")
   notifications Notification[]
   joinRequests JoinRequest[]
-    savedPosts SavedPost[]
-
+  savedPosts SavedPost[]
+  todos Todo[]  
 }
 
 model Post {
@@ -151,3 +151,18 @@ model SavedPost {
   @@index([userId])
   @@index([postId])
 }
+
+model Todo {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  title     String
+  priority  String   @default("Medium") 
+  completed Boolean  @default(false)    
+  deletedAt DateTime?                     
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id])
+}
+
+

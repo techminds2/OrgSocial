@@ -52,15 +52,30 @@ export async function GET(req: NextRequest, ctx: Ctx) {
       },
     });
 
+    const postIds = posts.map((p) => p.id);
+
+    const savedRows = postIds.length
+      ? await prisma.savedPost.findMany({
+          where: { userId, postId: { in: postIds } },
+          select: { postId: true, createdAt: true },
+        })
+      : [];
+
+    const savedMap = new Map<number, Date>(savedRows.map((s) => [s.postId, s.createdAt]));
+
     const formatted = posts.map((p) => {
       const likeCount = p.reactions.reduce((acc, r) => (r.type === "LIKE" ? acc + 1 : acc), 0);
       const likedByMe = p.reactions.some((r) => r.userId === userId && r.type === "LIKE");
       const isMine = p.author.id === userId;
 
+      const savedAt = savedMap.get(p.id) ?? null;
+
       return {
         id: p.id,
         content: p.content,
         createdAt: p.createdAt,
+        saved: !!savedAt,
+        savedAt,
         author: { ...p.author, profileImage: normalizeMediaUrl(p.author.profileImage) },
         files: p.files.map((f) => ({
           url: `/api/files/${f.url}`,
@@ -97,7 +112,6 @@ export async function POST(req: NextRequest, ctx: Ctx) {
       return NextResponse.json({ error: "Bad channel id" }, { status: 400 });
     }
 
-    // ✅ only editor/admin can create posts
     const ok = await requireChannelRole(channelId, userId, ["editor", "admin"]);
     if (!ok) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
 

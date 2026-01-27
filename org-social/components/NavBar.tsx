@@ -1,16 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useRouter } from "next/navigation";
-import {
-  Menu,
-  Avatar,
-  Indicator,
-  ScrollArea,
-  Text,
-  Loader,
-} from "@mantine/core";
+import { Menu, Avatar, Indicator, ScrollArea, Text, Loader } from "@mantine/core";
 import { BellIcon } from "@heroicons/react/24/outline";
 
 interface NavBarProps {
@@ -26,13 +19,22 @@ type Notification = {
   type?: "post" | "join-request";
 };
 
+function normalizeMediaUrl(u?: string | null) {
+  if (!u) return "/temp.jpg";
+  const s = String(u).trim();
+  if (!s) return "/temp.jpg";
+  if (s.startsWith("http://") || s.startsWith("https://")) return s;
+  return `/api/files/${s.replace(/^\/+/, "")}`;
+}
+
 export default function NavBar({ profileImage }: NavBarProps) {
   const router = useRouter();
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [loadingNotifications, setLoadingNotifications] = useState(true);
-  const [username, setUsername] = useState<string>("");
 
-  // Fetch notifications including join-requests
+  const [username, setUsername] = useState<string>("");
+  const [meProfileImage, setMeProfileImage] = useState<string | null>(null);
+
   useEffect(() => {
     let mounted = true;
 
@@ -65,19 +67,19 @@ export default function NavBar({ profileImage }: NavBarProps) {
     };
   }, []);
 
-  // Fetch logged-in user info (kept unchanged)
   useEffect(() => {
     let mounted = true;
 
     async function fetchUser() {
       try {
-        const res = await fetch("/api/auth/me", {
-          credentials: "include",
-        });
+        const res = await fetch("/api/auth/me", { credentials: "include" });
         if (!res.ok) throw new Error("Not authenticated");
 
         const data = await res.json();
-        if (mounted && data.username) setUsername(data.username);
+        if (!mounted) return;
+
+        if (data.username) setUsername(data.username);
+        setMeProfileImage(data.profileImage ?? null);
       } catch (err) {
         console.error("Failed to fetch user:", err);
       }
@@ -88,6 +90,12 @@ export default function NavBar({ profileImage }: NavBarProps) {
       mounted = false;
     };
   }, []);
+
+  const avatarSrc = useMemo(() => {
+    const fromProps = normalizeMediaUrl(profileImage);
+    const fromMe = normalizeMediaUrl(meProfileImage);
+    return meProfileImage ? fromMe : fromProps;
+  }, [profileImage, meProfileImage]);
 
   const visibleNotifications = notifications.slice(0, 10);
 
@@ -106,9 +114,8 @@ export default function NavBar({ profileImage }: NavBarProps) {
   };
 
   return (
-    <nav className="bg-white shadow-md fixed top-0 left-64 right-0 z-30 h-14">
+    <nav className="bg-white shadow-sm fixed top-0 left-64 right-0 z-30 h-14">
       <div className="py-1 lg:px-8 flex justify-end items-center gap-4">
-        {/* Notifications Menu */}
         <Menu shadow="md" width={320} position="bottom-end" withArrow>
           <Menu.Target>
             <div className="cursor-pointer">
@@ -168,11 +175,15 @@ export default function NavBar({ profileImage }: NavBarProps) {
           </Menu.Dropdown>
         </Menu>
 
-        {/* Profile Menu */}
         <Menu shadow="md" width={180} position="bottom-end" withArrow>
           <Menu.Target>
             <div className="flex items-center cursor-pointer gap-2">
-              <Avatar src={profileImage || "/temp.png"} radius="xl" size={40} />
+              <Avatar
+                src={avatarSrc}
+                radius="xl"
+                size={40}
+                onError={() => setMeProfileImage(null)}
+              />
               <span className="font-medium text-gray-700">
                 {username || "User"}
               </span>

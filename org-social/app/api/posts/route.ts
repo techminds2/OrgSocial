@@ -18,14 +18,20 @@ function normalizeMediaUrl(u?: string | null) {
 export async function GET(req: NextRequest) {
   try {
     const userId = await getUserIdFromRequest(req);
-    if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    if (!userId)
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
     const { searchParams } = new URL(req.url);
-    const limit = Math.max(1, Math.min(Number(searchParams.get("limit") || 10), 50));
-    const cursorId = searchParams.get("cursor") ? Number(searchParams.get("cursor")) : null;
+    const limit = Math.max(
+      1,
+      Math.min(Number(searchParams.get("limit") || 10), 50)
+    );
+    const cursorId = searchParams.get("cursor")
+      ? Number(searchParams.get("cursor"))
+      : null;
 
     const posts = await prisma.post.findMany({
-      where: { channelId: null }, 
+      where: { channelId: null },
       take: limit,
       ...(cursorId ? { cursor: { id: cursorId }, skip: 1 } : {}),
       orderBy: [{ createdAt: "desc" }, { id: "desc" }],
@@ -33,23 +39,42 @@ export async function GET(req: NextRequest) {
         author: { select: { id: true, username: true, profileImage: true } },
         files: true,
         reactions: true,
+        savedBy: {
+          where: { userId },
+          select: { createdAt: true },
+        },
         comments: {
           orderBy: { createdAt: "asc" },
-          include: { author: { select: { id: true, username: true, profileImage: true } } },
+          include: {
+            author: {
+              select: { id: true, username: true, profileImage: true },
+            },
+          },
         },
       },
     });
 
     const formatted = posts.map((p) => {
-      const likeCount = p.reactions.reduce((acc, r) => (r.type === "LIKE" ? acc + 1 : acc), 0);
-      const likedByMe = p.reactions.some((r) => r.userId === userId && r.type === "LIKE");
+      const likeCount = p.reactions.reduce(
+        (acc, r) => (r.type === "LIKE" ? acc + 1 : acc),
+        0
+      );
+      const likedByMe = p.reactions.some(
+        (r) => r.userId === userId && r.type === "LIKE"
+      );
       const isMine = p.author.id === userId;
+
+      const saved = p.savedBy.length > 0;
+      const savedAt = p.savedBy[0]?.createdAt ?? null;
 
       return {
         id: p.id,
         content: p.content,
         createdAt: p.createdAt,
-        author: { ...p.author, profileImage: normalizeMediaUrl(p.author.profileImage) },
+        author: {
+          ...p.author,
+          profileImage: normalizeMediaUrl(p.author.profileImage),
+        },
         files: p.files.map((f) => ({
           url: `/api/files/${f.url}`,
           type: (f.type as any) || "document",
@@ -57,27 +82,38 @@ export async function GET(req: NextRequest) {
         likeCount,
         likedByMe,
         isMine,
+        saved,
+        savedAt,
         comments: p.comments.map((c) => ({
           id: c.id,
           content: c.content,
           createdAt: c.createdAt,
-          author: { ...c.author, profileImage: normalizeMediaUrl(c.author.profileImage) },
+          author: {
+            ...c.author,
+            profileImage: normalizeMediaUrl(c.author.profileImage),
+          },
         })),
       };
     });
 
-    const nextCursor = posts.length === limit ? posts[posts.length - 1].id : null;
+    const nextCursor =
+      posts.length === limit ? posts[posts.length - 1].id : null;
+
     return NextResponse.json({ posts: formatted, nextCursor });
   } catch (err: any) {
     console.error("GET DASHBOARD POSTS ERROR:", err);
-    return NextResponse.json({ error: "Failed to fetch posts" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Failed to fetch posts" },
+      { status: 500 }
+    );
   }
 }
 
 export async function POST(req: NextRequest) {
   try {
     const userId = await getUserIdFromRequest(req);
-    if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    if (!userId)
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
     const formData = await req.formData();
     const content = String(formData.get("content") || "");
@@ -107,18 +143,24 @@ export async function POST(req: NextRequest) {
     const post = await prisma.post.create({
       data: {
         content,
-        channelId: null, 
+        channelId: null,
         authorId: userId,
         files: {
-          create: uploadedFiles.map((f) => (f.type ? { url: f.url, type: f.type } : { url: f.url })),
+          create: uploadedFiles.map((f) =>
+            f.type ? { url: f.url, type: f.type } : { url: f.url }
+          ),
         },
       },
       include: { files: true },
     });
 
     return NextResponse.json({ success: true, post });
-  } catch (err: any) {
-    console.error("CREATE DASHBOARD POST ERROR:", err);
-    return NextResponse.json({ error: "Post failed" }, { status: 500 });
+  } catch (error: unknown) {
+    console.error("UPLOAD ERROR:", error);
+    const message = error instanceof Error ? error.message : String(error);
+    return NextResponse.json(
+      { error: "Post failed", detail: message },
+      { status: 500 }
+    );
   }
 }

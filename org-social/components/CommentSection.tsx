@@ -52,7 +52,7 @@ export default function CommentSection({
       {comments.map((c) => (
         <div key={c.id} className="flex gap-2">
           <Avatar
-            src={c.author.profileImage || "/temp.png"}
+            src={c.author.profileImage || "/temp.jpg"}
             radius="xl"
             size="sm"
           />

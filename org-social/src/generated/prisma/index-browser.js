@@ -203,6 +203,17 @@ exports.Prisma.SavedPostScalarFieldEnum = {
   createdAt: 'createdAt'
 };
 
+exports.Prisma.TodoScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  title: 'title',
+  priority: 'priority',
+  completed: 'completed',
+  deletedAt: 'deletedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -229,7 +240,8 @@ exports.Prisma.ModelName = {
   ChannelMember: 'ChannelMember',
   JoinRequest: 'JoinRequest',
   Notification: 'Notification',
-  SavedPost: 'SavedPost'
+  SavedPost: 'SavedPost',
+  Todo: 'Todo'
 };
 
 /**

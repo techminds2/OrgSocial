@@ -112,26 +112,31 @@ export default function ProfilePage() {
     );
 
   // Map posts exactly like your original code
-  const mappedPosts = posts.map((p) => ({
+  const mappedPosts = posts.map((p: any) => ({
     id: p.id,
     content: p.content,
     createdAt: p.createdAt,
-    files: (p.files ?? []).map((f) => ({
-      url: f.url ?? "/temp.png",
-      type: (f.type as any) || "document",
+
+    files: (p.files ?? []).map((f: any) => ({
+      url: f.url ?? "/temp.jpg",
+      type: f.type || "document",
     })),
-    likedByMe: false,
-    likeCount: 0,
-    isMine: true,
+
+    likedByMe: p.likedByMe ?? false,
+    likeCount: p.likeCount ?? 0,
+    saved: p.saved ?? activeTab === "savedPosts",
+    savedAt: p.savedAt,
+
+    isMine: p.isMine ?? p.author?.id === user.id,
+
     author: {
-      id: user.id,
-      username: user.username || "Unknown",
-      profileImage: user.profile_photo,
+      id: p.author?.id ?? user.id,
+      username: p.author?.username ?? user.username ?? "Unknown",
+      profileImage: p.author?.profileImage ?? user.profile_photo,
     },
-    comments: [], // default empty
-    saved: false,
-    savedAt: undefined,
-    channel: p.channel ?? null, // <-- keeps channel info
+
+    comments: p.comments ?? [],
+    channel: p.channel ?? null,
   }));
 
   return (
@@ -141,7 +146,7 @@ export default function ProfilePage() {
           <Avatar
             size={100}
             radius="xl"
-            src={user.profile_photo || "/temp.png"}
+            src={user.profile_photo || "/temp.jpg"}
           />
           <Text className="text-lg font-semibold">
             {user.first_name} {user.last_name} ({user.username})

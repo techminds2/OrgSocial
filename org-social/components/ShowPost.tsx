@@ -358,10 +358,10 @@ export default function ShowPosts({
             <div className="flex items-center justify-between mb-2">
               <div className="flex items-center gap-3">
                 <img
-                  src={post.author.profileImage || "/temp.png"}
+                  src={post.author.profileImage || "/temp.jpg"}
                   alt={post.author.username}
                   className="w-10 h-10 rounded-full object-cover border"
-                  onError={(e) => (e.currentTarget.src = "/temp.png")}
+                  onError={(e) => (e.currentTarget.src = "/temp.jpg")}
                 />
                 <div>
                   <p className="font-semibold">{post.author.username}</p>
@@ -635,10 +635,10 @@ export default function ShowPosts({
                     commentsPost.comments.map((c) => (
                       <div key={c.id} className="flex items-start gap-2">
                         <img
-                          src={c.author.profileImage || "/temp.png"}
+                          src={c.author.profileImage || "/temp.jpg"}
                           alt={c.author.username}
                           className="w-7 h-7 rounded-full object-cover border"
-                          onError={(e) => (e.currentTarget.src = "/temp.png")}
+                          onError={(e) => (e.currentTarget.src = "/temp.jpg")}
                         />
                         <div className="bg-gray-50 rounded-lg px-3 py-2 w-full">
                           <div className="flex items-center justify-between gap-2">

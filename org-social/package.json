@@ -31,7 +31,8 @@
     "swagger-jsdoc": "^6.2.8",
     "swagger-ui-dist": "^5.31.0",
     "swagger-ui-react": "^5.31.0",
-    "swr": "^2.3.7"
+    "swr": "^2.3.7",
+    "tabler-icons-react": "^1.56.0"
   },
   "devDependencies": {
     "@prisma/client": "^6.19.1",

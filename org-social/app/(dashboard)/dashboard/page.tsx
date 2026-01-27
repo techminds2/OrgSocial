@@ -3,7 +3,7 @@ import CreatePost from "@/components/CreatePost";
 // import LogoutButton from "@/components/LogoutButton";
 import ShowPosts from "@/components/ShowPost";
 import { useRouter } from "next/navigation";
-import React from "react";
+import React, { Suspense } from "react";
 
 const Dashboard = () => {
   const router = useRouter();
@@ -13,10 +13,11 @@ const Dashboard = () => {
   };
 
   return (
-    <div className="">
-      {/* <h1>Dashboard</h1> */}
-      <CreatePost></CreatePost>
-      <ShowPosts></ShowPosts>
+    <div className="flex flex-col space-y-6">
+      <Suspense fallback={null}>
+        <CreatePost></CreatePost>
+        <ShowPosts></ShowPosts>
+      </Suspense>
     </div>
   );
 };
