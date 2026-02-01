@@ -43,7 +43,6 @@ export async function POST(
       { status: 400 }
     );
 
-  // 1️⃣ Create comment
   const comment = await prisma.comment.create({
     data: {
       content,
@@ -56,9 +55,8 @@ export async function POST(
     },
   });
 
-  // 2️⃣ Create notification for post author
   if (comment.post.authorId !== userId) {
-    await prisma.notification.create({
+    const notification = await prisma.notification.create({
       data: {
         userId: comment.post.authorId,
         type: "comment",
@@ -66,6 +64,17 @@ export async function POST(
         href: `/posts/${postId}`,
       },
     });
+
+    const io = (globalThis as any).io;
+    if (io) {
+      io.to(`user_${comment.post.authorId}`).emit("notification", {
+        id: notification.id,
+        type: "comment",
+        message: `${comment.author.username} commented on your post`,
+        href: `/posts/${postId}`,
+        createdAt: new Date(),
+      });
+    }
   }
 
   return NextResponse.json({ comment });

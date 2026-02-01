@@ -69,9 +69,13 @@ export async function PATCH(
       }
     }
 
+    // Fetch join request + channel info
     const jr = await prisma.joinRequest.findFirst({
       where: { id: jrId, channelId },
-      select: { id: true, userId: true, status: true },
+      include: {
+        channel: { select: { id: true, name: true } },
+        user: { select: { id: true, username: true } },
+      },
     });
 
     if (!jr) {
@@ -85,6 +89,7 @@ export async function PATCH(
       );
     }
 
+    // --- Apply action ---
     if (action === "approve") {
       await prisma.$transaction([
         prisma.channelMember.upsert({
@@ -105,6 +110,34 @@ export async function PATCH(
       await prisma.joinRequest.update({
         where: { id: jrId },
         data: { status: "rejected" },
+      });
+    }
+
+    
+    const message =
+      action === "approve"
+        ? `Your request to join #${jr.channel.name} was approved`
+        : `Your request to join #${jr.channel.name} was rejected`;
+
+    const notification = await prisma.notification.create({
+      data: {
+        userId: jr.userId,
+        type: "join-request",
+        message,
+        href: `/channels/${jr.channel.id}`,
+      },
+    });
+
+    const io = (globalThis as any).io;
+    if (io) {
+      io.to(`user_${jr.userId}`).emit("notification", {
+        id: notification.id,
+        type: "join-request",
+        channelId: jr.channel.id,
+        channelName: jr.channel.name,
+        message,
+        href: `/channels/${jr.channel.id}`,
+        createdAt: new Date(),
       });
     }
 

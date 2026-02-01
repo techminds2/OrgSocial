@@ -147,7 +147,7 @@ function SidebarContent({
 }
 
 export default function Sidebar() {
-  const pathname = usePathname();
+  const pathname = usePathname() ?? "";
   const [opened, setOpened] = useState(false);
   const [todoModal, setTodoModal] = useState(false);
   const [todos, setTodos] = useState<Todo[]>([]);

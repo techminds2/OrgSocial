@@ -5,6 +5,7 @@ import { useState, useEffect, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { Menu, Avatar, Indicator, ScrollArea, Text, Loader } from "@mantine/core";
 import { BellIcon } from "@heroicons/react/24/outline";
+import useNotifications from "@/hooks/useNotifications";
 
 interface NavBarProps {
   profileImage?: string | null;
@@ -16,7 +17,9 @@ type Notification = {
   createdAt: string | Date;
   channelId?: number;
   href: string;
-  type?: "post" | "join-request";
+  type?: "post" | "join-request" | "comment" | "JOIN_REQUEST";
+  channelName?: string;
+  username?: string;
 };
 
 function normalizeMediaUrl(u?: string | null) {
@@ -27,6 +30,31 @@ function normalizeMediaUrl(u?: string | null) {
   return `/api/files/${s.replace(/^\/+/, "")}`;
 }
 
+function normalizeType(n: any): Notification["type"] {
+  if (n?.type === "comment") return "post";
+  if (n?.type === "JOIN_REQUEST") return "join-request";
+  return n?.type;
+}
+
+function notifKey(n: Notification) {
+  const t = normalizeType(n) || "unknown";
+  const cid = n.channelId ? `:${n.channelId}` : "";
+  return `${t}:${n.id}${cid}`;
+}
+
+function mergeDedupe(prev: Notification[], incoming: Notification[]) {
+  const map = new Map<string, Notification>();
+  [...incoming, ...prev].forEach((raw) => {
+    const n: Notification = { ...raw, type: normalizeType(raw) };
+    map.set(notifKey(n), n);
+  });
+
+  return Array.from(map.values()).sort(
+    (a, b) =>
+      new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+  );
+}
+
 export default function NavBar({ profileImage }: NavBarProps) {
   const router = useRouter();
   const [notifications, setNotifications] = useState<Notification[]>([]);
@@ -34,6 +62,12 @@ export default function NavBar({ profileImage }: NavBarProps) {
 
   const [username, setUsername] = useState<string>("");
   const [meProfileImage, setMeProfileImage] = useState<string | null>(null);
+  const [meId, setMeId] = useState<number | null>(null);
+
+  useNotifications(meId, (updater: any) => {
+    const incoming = typeof updater === "function" ? updater([]) : [updater];
+    setNotifications((prev) => mergeDedupe(prev, incoming as any));
+  });
 
   useEffect(() => {
     let mounted = true;
@@ -48,11 +82,10 @@ export default function NavBar({ profileImage }: NavBarProps) {
         });
 
         const data = await res.json();
+        const incoming = Array.isArray(data.notifications) ? data.notifications : [];
 
         if (mounted) {
-          setNotifications(
-            Array.isArray(data.notifications) ? data.notifications : []
-          );
+          setNotifications((prev) => mergeDedupe(prev, incoming as any));
         }
       } catch (err) {
         console.error("Failed to fetch notifications:", err);
@@ -80,6 +113,9 @@ export default function NavBar({ profileImage }: NavBarProps) {
 
         if (data.username) setUsername(data.username);
         setMeProfileImage(data.profileImage ?? null);
+
+        const uid = Number(data.id ?? data.userId ?? data.user_id ?? NaN);
+        setMeId(Number.isFinite(uid) ? uid : null);
       } catch (err) {
         console.error("Failed to fetch user:", err);
       }
@@ -142,10 +178,13 @@ export default function NavBar({ profileImage }: NavBarProps) {
                   No notifications
                 </Text>
               ) : (
-                visibleNotifications.map((n) =>
-                  n.type === "post" ? (
+                visibleNotifications.map((raw) => {
+                  const n: Notification = { ...raw, type: normalizeType(raw) };
+                  const key = notifKey(n);
+
+                  return n.type === "post" ? (
                     <Menu.Item
-                      key={n.id}
+                      key={key}
                       onClick={() => {
                         const match = n.href?.match(/\/posts\/(\d+)/);
                         if (!match) return;
@@ -161,11 +200,11 @@ export default function NavBar({ profileImage }: NavBarProps) {
                       {n.message}
                     </Menu.Item>
                   ) : (
-                    <Menu.Item key={n.id} component={Link} href={n.href}>
+                    <Menu.Item key={key} component={Link} href={n.href}>
                       {n.message}
                     </Menu.Item>
-                  )
-                )
+                  );
+                })
               )}
             </ScrollArea.Autosize>
             <Menu.Divider />
