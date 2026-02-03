@@ -68,6 +68,11 @@ export type SavedPost = $Result.DefaultSelection<Prisma.$SavedPostPayload>
  * 
  */
 export type Todo = $Result.DefaultSelection<Prisma.$TodoPayload>
+/**
+ * Model PostSeen
+ * 
+ */
+export type PostSeen = $Result.DefaultSelection<Prisma.$PostSeenPayload>
 
 /**
  * ##  Prisma Client ʲˢ
@@ -296,6 +301,16 @@ export class PrismaClient<
     * ```
     */
   get todo(): Prisma.TodoDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.postSeen`: Exposes CRUD operations for the **PostSeen** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more PostSeens
+    * const postSeens = await prisma.postSeen.findMany()
+    * ```
+    */
+  get postSeen(): Prisma.PostSeenDelegate<ExtArgs, ClientOptions>;
 }
 
 export namespace Prisma {
@@ -747,7 +762,8 @@ export namespace Prisma {
     JoinRequest: 'JoinRequest',
     Notification: 'Notification',
     SavedPost: 'SavedPost',
-    Todo: 'Todo'
+    Todo: 'Todo',
+    PostSeen: 'PostSeen'
   };
 
   export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -766,7 +782,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "user" | "post" | "comment" | "reaction" | "file" | "channel" | "channelMember" | "joinRequest" | "notification" | "savedPost" | "todo"
+      modelProps: "user" | "post" | "comment" | "reaction" | "file" | "channel" | "channelMember" | "joinRequest" | "notification" | "savedPost" | "todo" | "postSeen"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -1584,6 +1600,80 @@ export namespace Prisma {
           }
         }
       }
+      PostSeen: {
+        payload: Prisma.$PostSeenPayload<ExtArgs>
+        fields: Prisma.PostSeenFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.PostSeenFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PostSeenPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.PostSeenFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PostSeenPayload>
+          }
+          findFirst: {
+            args: Prisma.PostSeenFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PostSeenPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.PostSeenFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PostSeenPayload>
+          }
+          findMany: {
+            args: Prisma.PostSeenFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PostSeenPayload>[]
+          }
+          create: {
+            args: Prisma.PostSeenCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PostSeenPayload>
+          }
+          createMany: {
+            args: Prisma.PostSeenCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.PostSeenCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PostSeenPayload>[]
+          }
+          delete: {
+            args: Prisma.PostSeenDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PostSeenPayload>
+          }
+          update: {
+            args: Prisma.PostSeenUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PostSeenPayload>
+          }
+          deleteMany: {
+            args: Prisma.PostSeenDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.PostSeenUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.PostSeenUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PostSeenPayload>[]
+          }
+          upsert: {
+            args: Prisma.PostSeenUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PostSeenPayload>
+          }
+          aggregate: {
+            args: Prisma.PostSeenAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregatePostSeen>
+          }
+          groupBy: {
+            args: Prisma.PostSeenGroupByArgs<ExtArgs>
+            result: $Utils.Optional<PostSeenGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.PostSeenCountArgs<ExtArgs>
+            result: $Utils.Optional<PostSeenCountAggregateOutputType> | number
+          }
+        }
+      }
     }
   } & {
     other: {
@@ -1691,6 +1781,7 @@ export namespace Prisma {
     notification?: NotificationOmit
     savedPost?: SavedPostOmit
     todo?: TodoOmit
+    postSeen?: PostSeenOmit
   }
 
   /* Types for Logging */
@@ -1780,6 +1871,7 @@ export namespace Prisma {
     joinRequests: number
     savedPosts: number
     todos: number
+    postSeen: number
   }
 
   export type UserCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -1792,6 +1884,7 @@ export namespace Prisma {
     joinRequests?: boolean | UserCountOutputTypeCountJoinRequestsArgs
     savedPosts?: boolean | UserCountOutputTypeCountSavedPostsArgs
     todos?: boolean | UserCountOutputTypeCountTodosArgs
+    postSeen?: boolean | UserCountOutputTypeCountPostSeenArgs
   }
 
   // Custom InputTypes
@@ -1868,6 +1961,13 @@ export namespace Prisma {
     where?: TodoWhereInput
   }
 
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountPostSeenArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: PostSeenWhereInput
+  }
+
 
   /**
    * Count Type PostCountOutputType
@@ -1878,6 +1978,7 @@ export namespace Prisma {
     comments: number
     reactions: number
     savedBy: number
+    seenBy: number
   }
 
   export type PostCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -1885,6 +1986,7 @@ export namespace Prisma {
     comments?: boolean | PostCountOutputTypeCountCommentsArgs
     reactions?: boolean | PostCountOutputTypeCountReactionsArgs
     savedBy?: boolean | PostCountOutputTypeCountSavedByArgs
+    seenBy?: boolean | PostCountOutputTypeCountSeenByArgs
   }
 
   // Custom InputTypes
@@ -1926,18 +2028,27 @@ export namespace Prisma {
     where?: SavedPostWhereInput
   }
 
+  /**
+   * PostCountOutputType without action
+   */
+  export type PostCountOutputTypeCountSeenByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: PostSeenWhereInput
+  }
+
 
   /**
    * Count Type ChannelCountOutputType
    */
 
   export type ChannelCountOutputType = {
+    postSeen: number
     members: number
     posts: number
     joinRequests: number
   }
 
   export type ChannelCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    postSeen?: boolean | ChannelCountOutputTypeCountPostSeenArgs
     members?: boolean | ChannelCountOutputTypeCountMembersArgs
     posts?: boolean | ChannelCountOutputTypeCountPostsArgs
     joinRequests?: boolean | ChannelCountOutputTypeCountJoinRequestsArgs
@@ -1952,6 +2063,13 @@ export namespace Prisma {
      * Select specific fields to fetch from the ChannelCountOutputType
      */
     select?: ChannelCountOutputTypeSelect<ExtArgs> | null
+  }
+
+  /**
+   * ChannelCountOutputType without action
+   */
+  export type ChannelCountOutputTypeCountPostSeenArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: PostSeenWhereInput
   }
 
   /**
@@ -2195,6 +2313,7 @@ export namespace Prisma {
     joinRequests?: boolean | User$joinRequestsArgs<ExtArgs>
     savedPosts?: boolean | User$savedPostsArgs<ExtArgs>
     todos?: boolean | User$todosArgs<ExtArgs>
+    postSeen?: boolean | User$postSeenArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["user"]>
 
@@ -2236,6 +2355,7 @@ export namespace Prisma {
     joinRequests?: boolean | User$joinRequestsArgs<ExtArgs>
     savedPosts?: boolean | User$savedPostsArgs<ExtArgs>
     todos?: boolean | User$todosArgs<ExtArgs>
+    postSeen?: boolean | User$postSeenArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type UserIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
@@ -2253,6 +2373,7 @@ export namespace Prisma {
       joinRequests: Prisma.$JoinRequestPayload<ExtArgs>[]
       savedPosts: Prisma.$SavedPostPayload<ExtArgs>[]
       todos: Prisma.$TodoPayload<ExtArgs>[]
+      postSeen: Prisma.$PostSeenPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: number
@@ -2664,6 +2785,7 @@ export namespace Prisma {
     joinRequests<T extends User$joinRequestsArgs<ExtArgs> = {}>(args?: Subset<T, User$joinRequestsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$JoinRequestPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     savedPosts<T extends User$savedPostsArgs<ExtArgs> = {}>(args?: Subset<T, User$savedPostsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SavedPostPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     todos<T extends User$todosArgs<ExtArgs> = {}>(args?: Subset<T, User$todosArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TodoPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    postSeen<T extends User$postSeenArgs<ExtArgs> = {}>(args?: Subset<T, User$postSeenArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PostSeenPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -3303,6 +3425,30 @@ export namespace Prisma {
   }
 
   /**
+   * User.postSeen
+   */
+  export type User$postSeenArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PostSeen
+     */
+    select?: PostSeenSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PostSeen
+     */
+    omit?: PostSeenOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PostSeenInclude<ExtArgs> | null
+    where?: PostSeenWhereInput
+    orderBy?: PostSeenOrderByWithRelationInput | PostSeenOrderByWithRelationInput[]
+    cursor?: PostSeenWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: PostSeenScalarFieldEnum | PostSeenScalarFieldEnum[]
+  }
+
+  /**
    * User without action
    */
   export type UserDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -3541,6 +3687,7 @@ export namespace Prisma {
     comments?: boolean | Post$commentsArgs<ExtArgs>
     reactions?: boolean | Post$reactionsArgs<ExtArgs>
     savedBy?: boolean | Post$savedByArgs<ExtArgs>
+    seenBy?: boolean | Post$seenByArgs<ExtArgs>
     _count?: boolean | PostCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["post"]>
 
@@ -3583,6 +3730,7 @@ export namespace Prisma {
     comments?: boolean | Post$commentsArgs<ExtArgs>
     reactions?: boolean | Post$reactionsArgs<ExtArgs>
     savedBy?: boolean | Post$savedByArgs<ExtArgs>
+    seenBy?: boolean | Post$seenByArgs<ExtArgs>
     _count?: boolean | PostCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type PostIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -3603,6 +3751,7 @@ export namespace Prisma {
       comments: Prisma.$CommentPayload<ExtArgs>[]
       reactions: Prisma.$ReactionPayload<ExtArgs>[]
       savedBy: Prisma.$SavedPostPayload<ExtArgs>[]
+      seenBy: Prisma.$PostSeenPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: number
@@ -4011,6 +4160,7 @@ export namespace Prisma {
     comments<T extends Post$commentsArgs<ExtArgs> = {}>(args?: Subset<T, Post$commentsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CommentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     reactions<T extends Post$reactionsArgs<ExtArgs> = {}>(args?: Subset<T, Post$reactionsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ReactionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     savedBy<T extends Post$savedByArgs<ExtArgs> = {}>(args?: Subset<T, Post$savedByArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SavedPostPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    seenBy<T extends Post$seenByArgs<ExtArgs> = {}>(args?: Subset<T, Post$seenByArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PostSeenPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -4554,6 +4704,30 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: SavedPostScalarFieldEnum | SavedPostScalarFieldEnum[]
+  }
+
+  /**
+   * Post.seenBy
+   */
+  export type Post$seenByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PostSeen
+     */
+    select?: PostSeenSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PostSeen
+     */
+    omit?: PostSeenOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PostSeenInclude<ExtArgs> | null
+    where?: PostSeenWhereInput
+    orderBy?: PostSeenOrderByWithRelationInput | PostSeenOrderByWithRelationInput[]
+    cursor?: PostSeenWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: PostSeenScalarFieldEnum | PostSeenScalarFieldEnum[]
   }
 
   /**
@@ -8072,6 +8246,7 @@ export namespace Prisma {
     bannerKey?: boolean
     visibility?: boolean
     createdBy?: boolean | UserDefaultArgs<ExtArgs>
+    postSeen?: boolean | Channel$postSeenArgs<ExtArgs>
     members?: boolean | Channel$membersArgs<ExtArgs>
     posts?: boolean | Channel$postsArgs<ExtArgs>
     joinRequests?: boolean | Channel$joinRequestsArgs<ExtArgs>
@@ -8110,6 +8285,7 @@ export namespace Prisma {
   export type ChannelOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "createdAt" | "createdById" | "bannerKey" | "visibility", ExtArgs["result"]["channel"]>
   export type ChannelInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     createdBy?: boolean | UserDefaultArgs<ExtArgs>
+    postSeen?: boolean | Channel$postSeenArgs<ExtArgs>
     members?: boolean | Channel$membersArgs<ExtArgs>
     posts?: boolean | Channel$postsArgs<ExtArgs>
     joinRequests?: boolean | Channel$joinRequestsArgs<ExtArgs>
@@ -8126,6 +8302,7 @@ export namespace Prisma {
     name: "Channel"
     objects: {
       createdBy: Prisma.$UserPayload<ExtArgs>
+      postSeen: Prisma.$PostSeenPayload<ExtArgs>[]
       members: Prisma.$ChannelMemberPayload<ExtArgs>[]
       posts: Prisma.$PostPayload<ExtArgs>[]
       joinRequests: Prisma.$JoinRequestPayload<ExtArgs>[]
@@ -8532,6 +8709,7 @@ export namespace Prisma {
   export interface Prisma__ChannelClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     createdBy<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    postSeen<T extends Channel$postSeenArgs<ExtArgs> = {}>(args?: Subset<T, Channel$postSeenArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PostSeenPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     members<T extends Channel$membersArgs<ExtArgs> = {}>(args?: Subset<T, Channel$membersArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ChannelMemberPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     posts<T extends Channel$postsArgs<ExtArgs> = {}>(args?: Subset<T, Channel$postsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PostPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     joinRequests<T extends Channel$joinRequestsArgs<ExtArgs> = {}>(args?: Subset<T, Channel$joinRequestsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$JoinRequestPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
@@ -8963,6 +9141,30 @@ export namespace Prisma {
      * Limit how many Channels to delete.
      */
     limit?: number
+  }
+
+  /**
+   * Channel.postSeen
+   */
+  export type Channel$postSeenArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PostSeen
+     */
+    select?: PostSeenSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PostSeen
+     */
+    omit?: PostSeenOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PostSeenInclude<ExtArgs> | null
+    where?: PostSeenWhereInput
+    orderBy?: PostSeenOrderByWithRelationInput | PostSeenOrderByWithRelationInput[]
+    cursor?: PostSeenWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: PostSeenScalarFieldEnum | PostSeenScalarFieldEnum[]
   }
 
   /**
@@ -14625,6 +14827,1126 @@ export namespace Prisma {
 
 
   /**
+   * Model PostSeen
+   */
+
+  export type AggregatePostSeen = {
+    _count: PostSeenCountAggregateOutputType | null
+    _avg: PostSeenAvgAggregateOutputType | null
+    _sum: PostSeenSumAggregateOutputType | null
+    _min: PostSeenMinAggregateOutputType | null
+    _max: PostSeenMaxAggregateOutputType | null
+  }
+
+  export type PostSeenAvgAggregateOutputType = {
+    id: number | null
+    userId: number | null
+    postId: number | null
+    channelId: number | null
+  }
+
+  export type PostSeenSumAggregateOutputType = {
+    id: number | null
+    userId: number | null
+    postId: number | null
+    channelId: number | null
+  }
+
+  export type PostSeenMinAggregateOutputType = {
+    id: number | null
+    userId: number | null
+    postId: number | null
+    channelId: number | null
+    seenAt: Date | null
+  }
+
+  export type PostSeenMaxAggregateOutputType = {
+    id: number | null
+    userId: number | null
+    postId: number | null
+    channelId: number | null
+    seenAt: Date | null
+  }
+
+  export type PostSeenCountAggregateOutputType = {
+    id: number
+    userId: number
+    postId: number
+    channelId: number
+    seenAt: number
+    _all: number
+  }
+
+
+  export type PostSeenAvgAggregateInputType = {
+    id?: true
+    userId?: true
+    postId?: true
+    channelId?: true
+  }
+
+  export type PostSeenSumAggregateInputType = {
+    id?: true
+    userId?: true
+    postId?: true
+    channelId?: true
+  }
+
+  export type PostSeenMinAggregateInputType = {
+    id?: true
+    userId?: true
+    postId?: true
+    channelId?: true
+    seenAt?: true
+  }
+
+  export type PostSeenMaxAggregateInputType = {
+    id?: true
+    userId?: true
+    postId?: true
+    channelId?: true
+    seenAt?: true
+  }
+
+  export type PostSeenCountAggregateInputType = {
+    id?: true
+    userId?: true
+    postId?: true
+    channelId?: true
+    seenAt?: true
+    _all?: true
+  }
+
+  export type PostSeenAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which PostSeen to aggregate.
+     */
+    where?: PostSeenWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of PostSeens to fetch.
+     */
+    orderBy?: PostSeenOrderByWithRelationInput | PostSeenOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: PostSeenWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` PostSeens from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` PostSeens.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned PostSeens
+    **/
+    _count?: true | PostSeenCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: PostSeenAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: PostSeenSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: PostSeenMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: PostSeenMaxAggregateInputType
+  }
+
+  export type GetPostSeenAggregateType<T extends PostSeenAggregateArgs> = {
+        [P in keyof T & keyof AggregatePostSeen]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregatePostSeen[P]>
+      : GetScalarType<T[P], AggregatePostSeen[P]>
+  }
+
+
+
+
+  export type PostSeenGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: PostSeenWhereInput
+    orderBy?: PostSeenOrderByWithAggregationInput | PostSeenOrderByWithAggregationInput[]
+    by: PostSeenScalarFieldEnum[] | PostSeenScalarFieldEnum
+    having?: PostSeenScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: PostSeenCountAggregateInputType | true
+    _avg?: PostSeenAvgAggregateInputType
+    _sum?: PostSeenSumAggregateInputType
+    _min?: PostSeenMinAggregateInputType
+    _max?: PostSeenMaxAggregateInputType
+  }
+
+  export type PostSeenGroupByOutputType = {
+    id: number
+    userId: number
+    postId: number
+    channelId: number
+    seenAt: Date
+    _count: PostSeenCountAggregateOutputType | null
+    _avg: PostSeenAvgAggregateOutputType | null
+    _sum: PostSeenSumAggregateOutputType | null
+    _min: PostSeenMinAggregateOutputType | null
+    _max: PostSeenMaxAggregateOutputType | null
+  }
+
+  type GetPostSeenGroupByPayload<T extends PostSeenGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<PostSeenGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof PostSeenGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], PostSeenGroupByOutputType[P]>
+            : GetScalarType<T[P], PostSeenGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type PostSeenSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    userId?: boolean
+    postId?: boolean
+    channelId?: boolean
+    seenAt?: boolean
+    user?: boolean | UserDefaultArgs<ExtArgs>
+    post?: boolean | PostDefaultArgs<ExtArgs>
+    channel?: boolean | ChannelDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["postSeen"]>
+
+  export type PostSeenSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    userId?: boolean
+    postId?: boolean
+    channelId?: boolean
+    seenAt?: boolean
+    user?: boolean | UserDefaultArgs<ExtArgs>
+    post?: boolean | PostDefaultArgs<ExtArgs>
+    channel?: boolean | ChannelDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["postSeen"]>
+
+  export type PostSeenSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    userId?: boolean
+    postId?: boolean
+    channelId?: boolean
+    seenAt?: boolean
+    user?: boolean | UserDefaultArgs<ExtArgs>
+    post?: boolean | PostDefaultArgs<ExtArgs>
+    channel?: boolean | ChannelDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["postSeen"]>
+
+  export type PostSeenSelectScalar = {
+    id?: boolean
+    userId?: boolean
+    postId?: boolean
+    channelId?: boolean
+    seenAt?: boolean
+  }
+
+  export type PostSeenOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "userId" | "postId" | "channelId" | "seenAt", ExtArgs["result"]["postSeen"]>
+  export type PostSeenInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | UserDefaultArgs<ExtArgs>
+    post?: boolean | PostDefaultArgs<ExtArgs>
+    channel?: boolean | ChannelDefaultArgs<ExtArgs>
+  }
+  export type PostSeenIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | UserDefaultArgs<ExtArgs>
+    post?: boolean | PostDefaultArgs<ExtArgs>
+    channel?: boolean | ChannelDefaultArgs<ExtArgs>
+  }
+  export type PostSeenIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | UserDefaultArgs<ExtArgs>
+    post?: boolean | PostDefaultArgs<ExtArgs>
+    channel?: boolean | ChannelDefaultArgs<ExtArgs>
+  }
+
+  export type $PostSeenPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "PostSeen"
+    objects: {
+      user: Prisma.$UserPayload<ExtArgs>
+      post: Prisma.$PostPayload<ExtArgs>
+      channel: Prisma.$ChannelPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: number
+      userId: number
+      postId: number
+      channelId: number
+      seenAt: Date
+    }, ExtArgs["result"]["postSeen"]>
+    composites: {}
+  }
+
+  type PostSeenGetPayload<S extends boolean | null | undefined | PostSeenDefaultArgs> = $Result.GetResult<Prisma.$PostSeenPayload, S>
+
+  type PostSeenCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<PostSeenFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: PostSeenCountAggregateInputType | true
+    }
+
+  export interface PostSeenDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['PostSeen'], meta: { name: 'PostSeen' } }
+    /**
+     * Find zero or one PostSeen that matches the filter.
+     * @param {PostSeenFindUniqueArgs} args - Arguments to find a PostSeen
+     * @example
+     * // Get one PostSeen
+     * const postSeen = await prisma.postSeen.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends PostSeenFindUniqueArgs>(args: SelectSubset<T, PostSeenFindUniqueArgs<ExtArgs>>): Prisma__PostSeenClient<$Result.GetResult<Prisma.$PostSeenPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one PostSeen that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {PostSeenFindUniqueOrThrowArgs} args - Arguments to find a PostSeen
+     * @example
+     * // Get one PostSeen
+     * const postSeen = await prisma.postSeen.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends PostSeenFindUniqueOrThrowArgs>(args: SelectSubset<T, PostSeenFindUniqueOrThrowArgs<ExtArgs>>): Prisma__PostSeenClient<$Result.GetResult<Prisma.$PostSeenPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first PostSeen that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PostSeenFindFirstArgs} args - Arguments to find a PostSeen
+     * @example
+     * // Get one PostSeen
+     * const postSeen = await prisma.postSeen.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends PostSeenFindFirstArgs>(args?: SelectSubset<T, PostSeenFindFirstArgs<ExtArgs>>): Prisma__PostSeenClient<$Result.GetResult<Prisma.$PostSeenPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first PostSeen that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PostSeenFindFirstOrThrowArgs} args - Arguments to find a PostSeen
+     * @example
+     * // Get one PostSeen
+     * const postSeen = await prisma.postSeen.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends PostSeenFindFirstOrThrowArgs>(args?: SelectSubset<T, PostSeenFindFirstOrThrowArgs<ExtArgs>>): Prisma__PostSeenClient<$Result.GetResult<Prisma.$PostSeenPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more PostSeens that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PostSeenFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all PostSeens
+     * const postSeens = await prisma.postSeen.findMany()
+     * 
+     * // Get first 10 PostSeens
+     * const postSeens = await prisma.postSeen.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const postSeenWithIdOnly = await prisma.postSeen.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends PostSeenFindManyArgs>(args?: SelectSubset<T, PostSeenFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PostSeenPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a PostSeen.
+     * @param {PostSeenCreateArgs} args - Arguments to create a PostSeen.
+     * @example
+     * // Create one PostSeen
+     * const PostSeen = await prisma.postSeen.create({
+     *   data: {
+     *     // ... data to create a PostSeen
+     *   }
+     * })
+     * 
+     */
+    create<T extends PostSeenCreateArgs>(args: SelectSubset<T, PostSeenCreateArgs<ExtArgs>>): Prisma__PostSeenClient<$Result.GetResult<Prisma.$PostSeenPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many PostSeens.
+     * @param {PostSeenCreateManyArgs} args - Arguments to create many PostSeens.
+     * @example
+     * // Create many PostSeens
+     * const postSeen = await prisma.postSeen.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends PostSeenCreateManyArgs>(args?: SelectSubset<T, PostSeenCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many PostSeens and returns the data saved in the database.
+     * @param {PostSeenCreateManyAndReturnArgs} args - Arguments to create many PostSeens.
+     * @example
+     * // Create many PostSeens
+     * const postSeen = await prisma.postSeen.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many PostSeens and only return the `id`
+     * const postSeenWithIdOnly = await prisma.postSeen.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends PostSeenCreateManyAndReturnArgs>(args?: SelectSubset<T, PostSeenCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PostSeenPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a PostSeen.
+     * @param {PostSeenDeleteArgs} args - Arguments to delete one PostSeen.
+     * @example
+     * // Delete one PostSeen
+     * const PostSeen = await prisma.postSeen.delete({
+     *   where: {
+     *     // ... filter to delete one PostSeen
+     *   }
+     * })
+     * 
+     */
+    delete<T extends PostSeenDeleteArgs>(args: SelectSubset<T, PostSeenDeleteArgs<ExtArgs>>): Prisma__PostSeenClient<$Result.GetResult<Prisma.$PostSeenPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one PostSeen.
+     * @param {PostSeenUpdateArgs} args - Arguments to update one PostSeen.
+     * @example
+     * // Update one PostSeen
+     * const postSeen = await prisma.postSeen.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends PostSeenUpdateArgs>(args: SelectSubset<T, PostSeenUpdateArgs<ExtArgs>>): Prisma__PostSeenClient<$Result.GetResult<Prisma.$PostSeenPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more PostSeens.
+     * @param {PostSeenDeleteManyArgs} args - Arguments to filter PostSeens to delete.
+     * @example
+     * // Delete a few PostSeens
+     * const { count } = await prisma.postSeen.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends PostSeenDeleteManyArgs>(args?: SelectSubset<T, PostSeenDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more PostSeens.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PostSeenUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many PostSeens
+     * const postSeen = await prisma.postSeen.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends PostSeenUpdateManyArgs>(args: SelectSubset<T, PostSeenUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more PostSeens and returns the data updated in the database.
+     * @param {PostSeenUpdateManyAndReturnArgs} args - Arguments to update many PostSeens.
+     * @example
+     * // Update many PostSeens
+     * const postSeen = await prisma.postSeen.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more PostSeens and only return the `id`
+     * const postSeenWithIdOnly = await prisma.postSeen.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends PostSeenUpdateManyAndReturnArgs>(args: SelectSubset<T, PostSeenUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PostSeenPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one PostSeen.
+     * @param {PostSeenUpsertArgs} args - Arguments to update or create a PostSeen.
+     * @example
+     * // Update or create a PostSeen
+     * const postSeen = await prisma.postSeen.upsert({
+     *   create: {
+     *     // ... data to create a PostSeen
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the PostSeen we want to update
+     *   }
+     * })
+     */
+    upsert<T extends PostSeenUpsertArgs>(args: SelectSubset<T, PostSeenUpsertArgs<ExtArgs>>): Prisma__PostSeenClient<$Result.GetResult<Prisma.$PostSeenPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of PostSeens.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PostSeenCountArgs} args - Arguments to filter PostSeens to count.
+     * @example
+     * // Count the number of PostSeens
+     * const count = await prisma.postSeen.count({
+     *   where: {
+     *     // ... the filter for the PostSeens we want to count
+     *   }
+     * })
+    **/
+    count<T extends PostSeenCountArgs>(
+      args?: Subset<T, PostSeenCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], PostSeenCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a PostSeen.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PostSeenAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends PostSeenAggregateArgs>(args: Subset<T, PostSeenAggregateArgs>): Prisma.PrismaPromise<GetPostSeenAggregateType<T>>
+
+    /**
+     * Group by PostSeen.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PostSeenGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends PostSeenGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: PostSeenGroupByArgs['orderBy'] }
+        : { orderBy?: PostSeenGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, PostSeenGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetPostSeenGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the PostSeen model
+   */
+  readonly fields: PostSeenFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for PostSeen.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__PostSeenClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    post<T extends PostDefaultArgs<ExtArgs> = {}>(args?: Subset<T, PostDefaultArgs<ExtArgs>>): Prisma__PostClient<$Result.GetResult<Prisma.$PostPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    channel<T extends ChannelDefaultArgs<ExtArgs> = {}>(args?: Subset<T, ChannelDefaultArgs<ExtArgs>>): Prisma__ChannelClient<$Result.GetResult<Prisma.$ChannelPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the PostSeen model
+   */
+  interface PostSeenFieldRefs {
+    readonly id: FieldRef<"PostSeen", 'Int'>
+    readonly userId: FieldRef<"PostSeen", 'Int'>
+    readonly postId: FieldRef<"PostSeen", 'Int'>
+    readonly channelId: FieldRef<"PostSeen", 'Int'>
+    readonly seenAt: FieldRef<"PostSeen", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * PostSeen findUnique
+   */
+  export type PostSeenFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PostSeen
+     */
+    select?: PostSeenSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PostSeen
+     */
+    omit?: PostSeenOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PostSeenInclude<ExtArgs> | null
+    /**
+     * Filter, which PostSeen to fetch.
+     */
+    where: PostSeenWhereUniqueInput
+  }
+
+  /**
+   * PostSeen findUniqueOrThrow
+   */
+  export type PostSeenFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PostSeen
+     */
+    select?: PostSeenSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PostSeen
+     */
+    omit?: PostSeenOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PostSeenInclude<ExtArgs> | null
+    /**
+     * Filter, which PostSeen to fetch.
+     */
+    where: PostSeenWhereUniqueInput
+  }
+
+  /**
+   * PostSeen findFirst
+   */
+  export type PostSeenFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PostSeen
+     */
+    select?: PostSeenSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PostSeen
+     */
+    omit?: PostSeenOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PostSeenInclude<ExtArgs> | null
+    /**
+     * Filter, which PostSeen to fetch.
+     */
+    where?: PostSeenWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of PostSeens to fetch.
+     */
+    orderBy?: PostSeenOrderByWithRelationInput | PostSeenOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for PostSeens.
+     */
+    cursor?: PostSeenWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` PostSeens from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` PostSeens.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of PostSeens.
+     */
+    distinct?: PostSeenScalarFieldEnum | PostSeenScalarFieldEnum[]
+  }
+
+  /**
+   * PostSeen findFirstOrThrow
+   */
+  export type PostSeenFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PostSeen
+     */
+    select?: PostSeenSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PostSeen
+     */
+    omit?: PostSeenOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PostSeenInclude<ExtArgs> | null
+    /**
+     * Filter, which PostSeen to fetch.
+     */
+    where?: PostSeenWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of PostSeens to fetch.
+     */
+    orderBy?: PostSeenOrderByWithRelationInput | PostSeenOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for PostSeens.
+     */
+    cursor?: PostSeenWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` PostSeens from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` PostSeens.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of PostSeens.
+     */
+    distinct?: PostSeenScalarFieldEnum | PostSeenScalarFieldEnum[]
+  }
+
+  /**
+   * PostSeen findMany
+   */
+  export type PostSeenFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PostSeen
+     */
+    select?: PostSeenSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PostSeen
+     */
+    omit?: PostSeenOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PostSeenInclude<ExtArgs> | null
+    /**
+     * Filter, which PostSeens to fetch.
+     */
+    where?: PostSeenWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of PostSeens to fetch.
+     */
+    orderBy?: PostSeenOrderByWithRelationInput | PostSeenOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing PostSeens.
+     */
+    cursor?: PostSeenWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` PostSeens from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` PostSeens.
+     */
+    skip?: number
+    distinct?: PostSeenScalarFieldEnum | PostSeenScalarFieldEnum[]
+  }
+
+  /**
+   * PostSeen create
+   */
+  export type PostSeenCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PostSeen
+     */
+    select?: PostSeenSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PostSeen
+     */
+    omit?: PostSeenOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PostSeenInclude<ExtArgs> | null
+    /**
+     * The data needed to create a PostSeen.
+     */
+    data: XOR<PostSeenCreateInput, PostSeenUncheckedCreateInput>
+  }
+
+  /**
+   * PostSeen createMany
+   */
+  export type PostSeenCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many PostSeens.
+     */
+    data: PostSeenCreateManyInput | PostSeenCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * PostSeen createManyAndReturn
+   */
+  export type PostSeenCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PostSeen
+     */
+    select?: PostSeenSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the PostSeen
+     */
+    omit?: PostSeenOmit<ExtArgs> | null
+    /**
+     * The data used to create many PostSeens.
+     */
+    data: PostSeenCreateManyInput | PostSeenCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PostSeenIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * PostSeen update
+   */
+  export type PostSeenUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PostSeen
+     */
+    select?: PostSeenSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PostSeen
+     */
+    omit?: PostSeenOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PostSeenInclude<ExtArgs> | null
+    /**
+     * The data needed to update a PostSeen.
+     */
+    data: XOR<PostSeenUpdateInput, PostSeenUncheckedUpdateInput>
+    /**
+     * Choose, which PostSeen to update.
+     */
+    where: PostSeenWhereUniqueInput
+  }
+
+  /**
+   * PostSeen updateMany
+   */
+  export type PostSeenUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update PostSeens.
+     */
+    data: XOR<PostSeenUpdateManyMutationInput, PostSeenUncheckedUpdateManyInput>
+    /**
+     * Filter which PostSeens to update
+     */
+    where?: PostSeenWhereInput
+    /**
+     * Limit how many PostSeens to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * PostSeen updateManyAndReturn
+   */
+  export type PostSeenUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PostSeen
+     */
+    select?: PostSeenSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the PostSeen
+     */
+    omit?: PostSeenOmit<ExtArgs> | null
+    /**
+     * The data used to update PostSeens.
+     */
+    data: XOR<PostSeenUpdateManyMutationInput, PostSeenUncheckedUpdateManyInput>
+    /**
+     * Filter which PostSeens to update
+     */
+    where?: PostSeenWhereInput
+    /**
+     * Limit how many PostSeens to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PostSeenIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * PostSeen upsert
+   */
+  export type PostSeenUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PostSeen
+     */
+    select?: PostSeenSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PostSeen
+     */
+    omit?: PostSeenOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PostSeenInclude<ExtArgs> | null
+    /**
+     * The filter to search for the PostSeen to update in case it exists.
+     */
+    where: PostSeenWhereUniqueInput
+    /**
+     * In case the PostSeen found by the `where` argument doesn't exist, create a new PostSeen with this data.
+     */
+    create: XOR<PostSeenCreateInput, PostSeenUncheckedCreateInput>
+    /**
+     * In case the PostSeen was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<PostSeenUpdateInput, PostSeenUncheckedUpdateInput>
+  }
+
+  /**
+   * PostSeen delete
+   */
+  export type PostSeenDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PostSeen
+     */
+    select?: PostSeenSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PostSeen
+     */
+    omit?: PostSeenOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PostSeenInclude<ExtArgs> | null
+    /**
+     * Filter which PostSeen to delete.
+     */
+    where: PostSeenWhereUniqueInput
+  }
+
+  /**
+   * PostSeen deleteMany
+   */
+  export type PostSeenDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which PostSeens to delete
+     */
+    where?: PostSeenWhereInput
+    /**
+     * Limit how many PostSeens to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * PostSeen without action
+   */
+  export type PostSeenDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PostSeen
+     */
+    select?: PostSeenSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PostSeen
+     */
+    omit?: PostSeenOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PostSeenInclude<ExtArgs> | null
+  }
+
+
+  /**
    * Enums
    */
 
@@ -14764,6 +16086,17 @@ export namespace Prisma {
   export type TodoScalarFieldEnum = (typeof TodoScalarFieldEnum)[keyof typeof TodoScalarFieldEnum]
 
 
+  export const PostSeenScalarFieldEnum: {
+    id: 'id',
+    userId: 'userId',
+    postId: 'postId',
+    channelId: 'channelId',
+    seenAt: 'seenAt'
+  };
+
+  export type PostSeenScalarFieldEnum = (typeof PostSeenScalarFieldEnum)[keyof typeof PostSeenScalarFieldEnum]
+
+
   export const SortOrder: {
     asc: 'asc',
     desc: 'desc'
@@ -14878,6 +16211,7 @@ export namespace Prisma {
     joinRequests?: JoinRequestListRelationFilter
     savedPosts?: SavedPostListRelationFilter
     todos?: TodoListRelationFilter
+    postSeen?: PostSeenListRelationFilter
   }
 
   export type UserOrderByWithRelationInput = {
@@ -14896,6 +16230,7 @@ export namespace Prisma {
     joinRequests?: JoinRequestOrderByRelationAggregateInput
     savedPosts?: SavedPostOrderByRelationAggregateInput
     todos?: TodoOrderByRelationAggregateInput
+    postSeen?: PostSeenOrderByRelationAggregateInput
   }
 
   export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -14917,6 +16252,7 @@ export namespace Prisma {
     joinRequests?: JoinRequestListRelationFilter
     savedPosts?: SavedPostListRelationFilter
     todos?: TodoListRelationFilter
+    postSeen?: PostSeenListRelationFilter
   }, "id" | "username" | "email">
 
   export type UserOrderByWithAggregationInput = {
@@ -14961,6 +16297,7 @@ export namespace Prisma {
     comments?: CommentListRelationFilter
     reactions?: ReactionListRelationFilter
     savedBy?: SavedPostListRelationFilter
+    seenBy?: PostSeenListRelationFilter
   }
 
   export type PostOrderByWithRelationInput = {
@@ -14976,6 +16313,7 @@ export namespace Prisma {
     comments?: CommentOrderByRelationAggregateInput
     reactions?: ReactionOrderByRelationAggregateInput
     savedBy?: SavedPostOrderByRelationAggregateInput
+    seenBy?: PostSeenOrderByRelationAggregateInput
   }
 
   export type PostWhereUniqueInput = Prisma.AtLeast<{
@@ -14994,6 +16332,7 @@ export namespace Prisma {
     comments?: CommentListRelationFilter
     reactions?: ReactionListRelationFilter
     savedBy?: SavedPostListRelationFilter
+    seenBy?: PostSeenListRelationFilter
   }, "id">
 
   export type PostOrderByWithAggregationInput = {
@@ -15201,6 +16540,7 @@ export namespace Prisma {
     bannerKey?: StringNullableFilter<"Channel"> | string | null
     visibility?: StringFilter<"Channel"> | string
     createdBy?: XOR<UserScalarRelationFilter, UserWhereInput>
+    postSeen?: PostSeenListRelationFilter
     members?: ChannelMemberListRelationFilter
     posts?: PostListRelationFilter
     joinRequests?: JoinRequestListRelationFilter
@@ -15214,6 +16554,7 @@ export namespace Prisma {
     bannerKey?: SortOrderInput | SortOrder
     visibility?: SortOrder
     createdBy?: UserOrderByWithRelationInput
+    postSeen?: PostSeenOrderByRelationAggregateInput
     members?: ChannelMemberOrderByRelationAggregateInput
     posts?: PostOrderByRelationAggregateInput
     joinRequests?: JoinRequestOrderByRelationAggregateInput
@@ -15230,6 +16571,7 @@ export namespace Prisma {
     bannerKey?: StringNullableFilter<"Channel"> | string | null
     visibility?: StringFilter<"Channel"> | string
     createdBy?: XOR<UserScalarRelationFilter, UserWhereInput>
+    postSeen?: PostSeenListRelationFilter
     members?: ChannelMemberListRelationFilter
     posts?: PostListRelationFilter
     joinRequests?: JoinRequestListRelationFilter
@@ -15578,6 +16920,70 @@ export namespace Prisma {
     updatedAt?: DateTimeWithAggregatesFilter<"Todo"> | Date | string
   }
 
+  export type PostSeenWhereInput = {
+    AND?: PostSeenWhereInput | PostSeenWhereInput[]
+    OR?: PostSeenWhereInput[]
+    NOT?: PostSeenWhereInput | PostSeenWhereInput[]
+    id?: IntFilter<"PostSeen"> | number
+    userId?: IntFilter<"PostSeen"> | number
+    postId?: IntFilter<"PostSeen"> | number
+    channelId?: IntFilter<"PostSeen"> | number
+    seenAt?: DateTimeFilter<"PostSeen"> | Date | string
+    user?: XOR<UserScalarRelationFilter, UserWhereInput>
+    post?: XOR<PostScalarRelationFilter, PostWhereInput>
+    channel?: XOR<ChannelScalarRelationFilter, ChannelWhereInput>
+  }
+
+  export type PostSeenOrderByWithRelationInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    postId?: SortOrder
+    channelId?: SortOrder
+    seenAt?: SortOrder
+    user?: UserOrderByWithRelationInput
+    post?: PostOrderByWithRelationInput
+    channel?: ChannelOrderByWithRelationInput
+  }
+
+  export type PostSeenWhereUniqueInput = Prisma.AtLeast<{
+    id?: number
+    userId_postId?: PostSeenUserIdPostIdCompoundUniqueInput
+    AND?: PostSeenWhereInput | PostSeenWhereInput[]
+    OR?: PostSeenWhereInput[]
+    NOT?: PostSeenWhereInput | PostSeenWhereInput[]
+    userId?: IntFilter<"PostSeen"> | number
+    postId?: IntFilter<"PostSeen"> | number
+    channelId?: IntFilter<"PostSeen"> | number
+    seenAt?: DateTimeFilter<"PostSeen"> | Date | string
+    user?: XOR<UserScalarRelationFilter, UserWhereInput>
+    post?: XOR<PostScalarRelationFilter, PostWhereInput>
+    channel?: XOR<ChannelScalarRelationFilter, ChannelWhereInput>
+  }, "id" | "userId_postId">
+
+  export type PostSeenOrderByWithAggregationInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    postId?: SortOrder
+    channelId?: SortOrder
+    seenAt?: SortOrder
+    _count?: PostSeenCountOrderByAggregateInput
+    _avg?: PostSeenAvgOrderByAggregateInput
+    _max?: PostSeenMaxOrderByAggregateInput
+    _min?: PostSeenMinOrderByAggregateInput
+    _sum?: PostSeenSumOrderByAggregateInput
+  }
+
+  export type PostSeenScalarWhereWithAggregatesInput = {
+    AND?: PostSeenScalarWhereWithAggregatesInput | PostSeenScalarWhereWithAggregatesInput[]
+    OR?: PostSeenScalarWhereWithAggregatesInput[]
+    NOT?: PostSeenScalarWhereWithAggregatesInput | PostSeenScalarWhereWithAggregatesInput[]
+    id?: IntWithAggregatesFilter<"PostSeen"> | number
+    userId?: IntWithAggregatesFilter<"PostSeen"> | number
+    postId?: IntWithAggregatesFilter<"PostSeen"> | number
+    channelId?: IntWithAggregatesFilter<"PostSeen"> | number
+    seenAt?: DateTimeWithAggregatesFilter<"PostSeen"> | Date | string
+  }
+
   export type UserCreateInput = {
     username: string
     email?: string | null
@@ -15593,6 +16999,7 @@ export namespace Prisma {
     joinRequests?: JoinRequestCreateNestedManyWithoutUserInput
     savedPosts?: SavedPostCreateNestedManyWithoutUserInput
     todos?: TodoCreateNestedManyWithoutUserInput
+    postSeen?: PostSeenCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateInput = {
@@ -15611,6 +17018,7 @@ export namespace Prisma {
     joinRequests?: JoinRequestUncheckedCreateNestedManyWithoutUserInput
     savedPosts?: SavedPostUncheckedCreateNestedManyWithoutUserInput
     todos?: TodoUncheckedCreateNestedManyWithoutUserInput
+    postSeen?: PostSeenUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserUpdateInput = {
@@ -15628,6 +17036,7 @@ export namespace Prisma {
     joinRequests?: JoinRequestUpdateManyWithoutUserNestedInput
     savedPosts?: SavedPostUpdateManyWithoutUserNestedInput
     todos?: TodoUpdateManyWithoutUserNestedInput
+    postSeen?: PostSeenUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateInput = {
@@ -15646,6 +17055,7 @@ export namespace Prisma {
     joinRequests?: JoinRequestUncheckedUpdateManyWithoutUserNestedInput
     savedPosts?: SavedPostUncheckedUpdateManyWithoutUserNestedInput
     todos?: TodoUncheckedUpdateManyWithoutUserNestedInput
+    postSeen?: PostSeenUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UserCreateManyInput = {
@@ -15684,6 +17094,7 @@ export namespace Prisma {
     comments?: CommentCreateNestedManyWithoutPostInput
     reactions?: ReactionCreateNestedManyWithoutPostInput
     savedBy?: SavedPostCreateNestedManyWithoutPostInput
+    seenBy?: PostSeenCreateNestedManyWithoutPostInput
   }
 
   export type PostUncheckedCreateInput = {
@@ -15697,6 +17108,7 @@ export namespace Prisma {
     comments?: CommentUncheckedCreateNestedManyWithoutPostInput
     reactions?: ReactionUncheckedCreateNestedManyWithoutPostInput
     savedBy?: SavedPostUncheckedCreateNestedManyWithoutPostInput
+    seenBy?: PostSeenUncheckedCreateNestedManyWithoutPostInput
   }
 
   export type PostUpdateInput = {
@@ -15709,6 +17121,7 @@ export namespace Prisma {
     comments?: CommentUpdateManyWithoutPostNestedInput
     reactions?: ReactionUpdateManyWithoutPostNestedInput
     savedBy?: SavedPostUpdateManyWithoutPostNestedInput
+    seenBy?: PostSeenUpdateManyWithoutPostNestedInput
   }
 
   export type PostUncheckedUpdateInput = {
@@ -15722,6 +17135,7 @@ export namespace Prisma {
     comments?: CommentUncheckedUpdateManyWithoutPostNestedInput
     reactions?: ReactionUncheckedUpdateManyWithoutPostNestedInput
     savedBy?: SavedPostUncheckedUpdateManyWithoutPostNestedInput
+    seenBy?: PostSeenUncheckedUpdateManyWithoutPostNestedInput
   }
 
   export type PostCreateManyInput = {
@@ -15894,6 +17308,7 @@ export namespace Prisma {
     bannerKey?: string | null
     visibility?: string
     createdBy: UserCreateNestedOneWithoutCreatedChannelsInput
+    postSeen?: PostSeenCreateNestedManyWithoutChannelInput
     members?: ChannelMemberCreateNestedManyWithoutChannelInput
     posts?: PostCreateNestedManyWithoutChannelInput
     joinRequests?: JoinRequestCreateNestedManyWithoutChannelInput
@@ -15906,6 +17321,7 @@ export namespace Prisma {
     createdById: number
     bannerKey?: string | null
     visibility?: string
+    postSeen?: PostSeenUncheckedCreateNestedManyWithoutChannelInput
     members?: ChannelMemberUncheckedCreateNestedManyWithoutChannelInput
     posts?: PostUncheckedCreateNestedManyWithoutChannelInput
     joinRequests?: JoinRequestUncheckedCreateNestedManyWithoutChannelInput
@@ -15917,6 +17333,7 @@ export namespace Prisma {
     bannerKey?: NullableStringFieldUpdateOperationsInput | string | null
     visibility?: StringFieldUpdateOperationsInput | string
     createdBy?: UserUpdateOneRequiredWithoutCreatedChannelsNestedInput
+    postSeen?: PostSeenUpdateManyWithoutChannelNestedInput
     members?: ChannelMemberUpdateManyWithoutChannelNestedInput
     posts?: PostUpdateManyWithoutChannelNestedInput
     joinRequests?: JoinRequestUpdateManyWithoutChannelNestedInput
@@ -15929,6 +17346,7 @@ export namespace Prisma {
     createdById?: IntFieldUpdateOperationsInput | number
     bannerKey?: NullableStringFieldUpdateOperationsInput | string | null
     visibility?: StringFieldUpdateOperationsInput | string
+    postSeen?: PostSeenUncheckedUpdateManyWithoutChannelNestedInput
     members?: ChannelMemberUncheckedUpdateManyWithoutChannelNestedInput
     posts?: PostUncheckedUpdateManyWithoutChannelNestedInput
     joinRequests?: JoinRequestUncheckedUpdateManyWithoutChannelNestedInput
@@ -16244,6 +17662,56 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type PostSeenCreateInput = {
+    seenAt?: Date | string
+    user: UserCreateNestedOneWithoutPostSeenInput
+    post: PostCreateNestedOneWithoutSeenByInput
+    channel: ChannelCreateNestedOneWithoutPostSeenInput
+  }
+
+  export type PostSeenUncheckedCreateInput = {
+    id?: number
+    userId: number
+    postId: number
+    channelId: number
+    seenAt?: Date | string
+  }
+
+  export type PostSeenUpdateInput = {
+    seenAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    user?: UserUpdateOneRequiredWithoutPostSeenNestedInput
+    post?: PostUpdateOneRequiredWithoutSeenByNestedInput
+    channel?: ChannelUpdateOneRequiredWithoutPostSeenNestedInput
+  }
+
+  export type PostSeenUncheckedUpdateInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    userId?: IntFieldUpdateOperationsInput | number
+    postId?: IntFieldUpdateOperationsInput | number
+    channelId?: IntFieldUpdateOperationsInput | number
+    seenAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type PostSeenCreateManyInput = {
+    id?: number
+    userId: number
+    postId: number
+    channelId: number
+    seenAt?: Date | string
+  }
+
+  export type PostSeenUpdateManyMutationInput = {
+    seenAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type PostSeenUncheckedUpdateManyInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    userId?: IntFieldUpdateOperationsInput | number
+    postId?: IntFieldUpdateOperationsInput | number
+    channelId?: IntFieldUpdateOperationsInput | number
+    seenAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type IntFilter<$PrismaModel = never> = {
     equals?: number | IntFieldRefInput<$PrismaModel>
     in?: number[] | ListIntFieldRefInput<$PrismaModel>
@@ -16344,6 +17812,12 @@ export namespace Prisma {
     none?: TodoWhereInput
   }
 
+  export type PostSeenListRelationFilter = {
+    every?: PostSeenWhereInput
+    some?: PostSeenWhereInput
+    none?: PostSeenWhereInput
+  }
+
   export type SortOrderInput = {
     sort: SortOrder
     nulls?: NullsOrder
@@ -16382,6 +17856,10 @@ export namespace Prisma {
   }
 
   export type TodoOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type PostSeenOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -16972,6 +18450,49 @@ export namespace Prisma {
     _max?: NestedDateTimeNullableFilter<$PrismaModel>
   }
 
+  export type PostSeenUserIdPostIdCompoundUniqueInput = {
+    userId: number
+    postId: number
+  }
+
+  export type PostSeenCountOrderByAggregateInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    postId?: SortOrder
+    channelId?: SortOrder
+    seenAt?: SortOrder
+  }
+
+  export type PostSeenAvgOrderByAggregateInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    postId?: SortOrder
+    channelId?: SortOrder
+  }
+
+  export type PostSeenMaxOrderByAggregateInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    postId?: SortOrder
+    channelId?: SortOrder
+    seenAt?: SortOrder
+  }
+
+  export type PostSeenMinOrderByAggregateInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    postId?: SortOrder
+    channelId?: SortOrder
+    seenAt?: SortOrder
+  }
+
+  export type PostSeenSumOrderByAggregateInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    postId?: SortOrder
+    channelId?: SortOrder
+  }
+
   export type PostCreateNestedManyWithoutAuthorInput = {
     create?: XOR<PostCreateWithoutAuthorInput, PostUncheckedCreateWithoutAuthorInput> | PostCreateWithoutAuthorInput[] | PostUncheckedCreateWithoutAuthorInput[]
     connectOrCreate?: PostCreateOrConnectWithoutAuthorInput | PostCreateOrConnectWithoutAuthorInput[]
@@ -17035,6 +18556,13 @@ export namespace Prisma {
     connect?: TodoWhereUniqueInput | TodoWhereUniqueInput[]
   }
 
+  export type PostSeenCreateNestedManyWithoutUserInput = {
+    create?: XOR<PostSeenCreateWithoutUserInput, PostSeenUncheckedCreateWithoutUserInput> | PostSeenCreateWithoutUserInput[] | PostSeenUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: PostSeenCreateOrConnectWithoutUserInput | PostSeenCreateOrConnectWithoutUserInput[]
+    createMany?: PostSeenCreateManyUserInputEnvelope
+    connect?: PostSeenWhereUniqueInput | PostSeenWhereUniqueInput[]
+  }
+
   export type PostUncheckedCreateNestedManyWithoutAuthorInput = {
     create?: XOR<PostCreateWithoutAuthorInput, PostUncheckedCreateWithoutAuthorInput> | PostCreateWithoutAuthorInput[] | PostUncheckedCreateWithoutAuthorInput[]
     connectOrCreate?: PostCreateOrConnectWithoutAuthorInput | PostCreateOrConnectWithoutAuthorInput[]
@@ -17096,6 +18624,13 @@ export namespace Prisma {
     connectOrCreate?: TodoCreateOrConnectWithoutUserInput | TodoCreateOrConnectWithoutUserInput[]
     createMany?: TodoCreateManyUserInputEnvelope
     connect?: TodoWhereUniqueInput | TodoWhereUniqueInput[]
+  }
+
+  export type PostSeenUncheckedCreateNestedManyWithoutUserInput = {
+    create?: XOR<PostSeenCreateWithoutUserInput, PostSeenUncheckedCreateWithoutUserInput> | PostSeenCreateWithoutUserInput[] | PostSeenUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: PostSeenCreateOrConnectWithoutUserInput | PostSeenCreateOrConnectWithoutUserInput[]
+    createMany?: PostSeenCreateManyUserInputEnvelope
+    connect?: PostSeenWhereUniqueInput | PostSeenWhereUniqueInput[]
   }
 
   export type StringFieldUpdateOperationsInput = {
@@ -17236,6 +18771,20 @@ export namespace Prisma {
     deleteMany?: TodoScalarWhereInput | TodoScalarWhereInput[]
   }
 
+  export type PostSeenUpdateManyWithoutUserNestedInput = {
+    create?: XOR<PostSeenCreateWithoutUserInput, PostSeenUncheckedCreateWithoutUserInput> | PostSeenCreateWithoutUserInput[] | PostSeenUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: PostSeenCreateOrConnectWithoutUserInput | PostSeenCreateOrConnectWithoutUserInput[]
+    upsert?: PostSeenUpsertWithWhereUniqueWithoutUserInput | PostSeenUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: PostSeenCreateManyUserInputEnvelope
+    set?: PostSeenWhereUniqueInput | PostSeenWhereUniqueInput[]
+    disconnect?: PostSeenWhereUniqueInput | PostSeenWhereUniqueInput[]
+    delete?: PostSeenWhereUniqueInput | PostSeenWhereUniqueInput[]
+    connect?: PostSeenWhereUniqueInput | PostSeenWhereUniqueInput[]
+    update?: PostSeenUpdateWithWhereUniqueWithoutUserInput | PostSeenUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: PostSeenUpdateManyWithWhereWithoutUserInput | PostSeenUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: PostSeenScalarWhereInput | PostSeenScalarWhereInput[]
+  }
+
   export type IntFieldUpdateOperationsInput = {
     set?: number
     increment?: number
@@ -17370,6 +18919,20 @@ export namespace Prisma {
     deleteMany?: TodoScalarWhereInput | TodoScalarWhereInput[]
   }
 
+  export type PostSeenUncheckedUpdateManyWithoutUserNestedInput = {
+    create?: XOR<PostSeenCreateWithoutUserInput, PostSeenUncheckedCreateWithoutUserInput> | PostSeenCreateWithoutUserInput[] | PostSeenUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: PostSeenCreateOrConnectWithoutUserInput | PostSeenCreateOrConnectWithoutUserInput[]
+    upsert?: PostSeenUpsertWithWhereUniqueWithoutUserInput | PostSeenUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: PostSeenCreateManyUserInputEnvelope
+    set?: PostSeenWhereUniqueInput | PostSeenWhereUniqueInput[]
+    disconnect?: PostSeenWhereUniqueInput | PostSeenWhereUniqueInput[]
+    delete?: PostSeenWhereUniqueInput | PostSeenWhereUniqueInput[]
+    connect?: PostSeenWhereUniqueInput | PostSeenWhereUniqueInput[]
+    update?: PostSeenUpdateWithWhereUniqueWithoutUserInput | PostSeenUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: PostSeenUpdateManyWithWhereWithoutUserInput | PostSeenUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: PostSeenScalarWhereInput | PostSeenScalarWhereInput[]
+  }
+
   export type UserCreateNestedOneWithoutPostsInput = {
     create?: XOR<UserCreateWithoutPostsInput, UserUncheckedCreateWithoutPostsInput>
     connectOrCreate?: UserCreateOrConnectWithoutPostsInput
@@ -17410,6 +18973,13 @@ export namespace Prisma {
     connect?: SavedPostWhereUniqueInput | SavedPostWhereUniqueInput[]
   }
 
+  export type PostSeenCreateNestedManyWithoutPostInput = {
+    create?: XOR<PostSeenCreateWithoutPostInput, PostSeenUncheckedCreateWithoutPostInput> | PostSeenCreateWithoutPostInput[] | PostSeenUncheckedCreateWithoutPostInput[]
+    connectOrCreate?: PostSeenCreateOrConnectWithoutPostInput | PostSeenCreateOrConnectWithoutPostInput[]
+    createMany?: PostSeenCreateManyPostInputEnvelope
+    connect?: PostSeenWhereUniqueInput | PostSeenWhereUniqueInput[]
+  }
+
   export type FileUncheckedCreateNestedManyWithoutPostInput = {
     create?: XOR<FileCreateWithoutPostInput, FileUncheckedCreateWithoutPostInput> | FileCreateWithoutPostInput[] | FileUncheckedCreateWithoutPostInput[]
     connectOrCreate?: FileCreateOrConnectWithoutPostInput | FileCreateOrConnectWithoutPostInput[]
@@ -17436,6 +19006,13 @@ export namespace Prisma {
     connectOrCreate?: SavedPostCreateOrConnectWithoutPostInput | SavedPostCreateOrConnectWithoutPostInput[]
     createMany?: SavedPostCreateManyPostInputEnvelope
     connect?: SavedPostWhereUniqueInput | SavedPostWhereUniqueInput[]
+  }
+
+  export type PostSeenUncheckedCreateNestedManyWithoutPostInput = {
+    create?: XOR<PostSeenCreateWithoutPostInput, PostSeenUncheckedCreateWithoutPostInput> | PostSeenCreateWithoutPostInput[] | PostSeenUncheckedCreateWithoutPostInput[]
+    connectOrCreate?: PostSeenCreateOrConnectWithoutPostInput | PostSeenCreateOrConnectWithoutPostInput[]
+    createMany?: PostSeenCreateManyPostInputEnvelope
+    connect?: PostSeenWhereUniqueInput | PostSeenWhereUniqueInput[]
   }
 
   export type DateTimeFieldUpdateOperationsInput = {
@@ -17516,6 +19093,20 @@ export namespace Prisma {
     deleteMany?: SavedPostScalarWhereInput | SavedPostScalarWhereInput[]
   }
 
+  export type PostSeenUpdateManyWithoutPostNestedInput = {
+    create?: XOR<PostSeenCreateWithoutPostInput, PostSeenUncheckedCreateWithoutPostInput> | PostSeenCreateWithoutPostInput[] | PostSeenUncheckedCreateWithoutPostInput[]
+    connectOrCreate?: PostSeenCreateOrConnectWithoutPostInput | PostSeenCreateOrConnectWithoutPostInput[]
+    upsert?: PostSeenUpsertWithWhereUniqueWithoutPostInput | PostSeenUpsertWithWhereUniqueWithoutPostInput[]
+    createMany?: PostSeenCreateManyPostInputEnvelope
+    set?: PostSeenWhereUniqueInput | PostSeenWhereUniqueInput[]
+    disconnect?: PostSeenWhereUniqueInput | PostSeenWhereUniqueInput[]
+    delete?: PostSeenWhereUniqueInput | PostSeenWhereUniqueInput[]
+    connect?: PostSeenWhereUniqueInput | PostSeenWhereUniqueInput[]
+    update?: PostSeenUpdateWithWhereUniqueWithoutPostInput | PostSeenUpdateWithWhereUniqueWithoutPostInput[]
+    updateMany?: PostSeenUpdateManyWithWhereWithoutPostInput | PostSeenUpdateManyWithWhereWithoutPostInput[]
+    deleteMany?: PostSeenScalarWhereInput | PostSeenScalarWhereInput[]
+  }
+
   export type NullableIntFieldUpdateOperationsInput = {
     set?: number | null
     increment?: number
@@ -17578,6 +19169,20 @@ export namespace Prisma {
     update?: SavedPostUpdateWithWhereUniqueWithoutPostInput | SavedPostUpdateWithWhereUniqueWithoutPostInput[]
     updateMany?: SavedPostUpdateManyWithWhereWithoutPostInput | SavedPostUpdateManyWithWhereWithoutPostInput[]
     deleteMany?: SavedPostScalarWhereInput | SavedPostScalarWhereInput[]
+  }
+
+  export type PostSeenUncheckedUpdateManyWithoutPostNestedInput = {
+    create?: XOR<PostSeenCreateWithoutPostInput, PostSeenUncheckedCreateWithoutPostInput> | PostSeenCreateWithoutPostInput[] | PostSeenUncheckedCreateWithoutPostInput[]
+    connectOrCreate?: PostSeenCreateOrConnectWithoutPostInput | PostSeenCreateOrConnectWithoutPostInput[]
+    upsert?: PostSeenUpsertWithWhereUniqueWithoutPostInput | PostSeenUpsertWithWhereUniqueWithoutPostInput[]
+    createMany?: PostSeenCreateManyPostInputEnvelope
+    set?: PostSeenWhereUniqueInput | PostSeenWhereUniqueInput[]
+    disconnect?: PostSeenWhereUniqueInput | PostSeenWhereUniqueInput[]
+    delete?: PostSeenWhereUniqueInput | PostSeenWhereUniqueInput[]
+    connect?: PostSeenWhereUniqueInput | PostSeenWhereUniqueInput[]
+    update?: PostSeenUpdateWithWhereUniqueWithoutPostInput | PostSeenUpdateWithWhereUniqueWithoutPostInput[]
+    updateMany?: PostSeenUpdateManyWithWhereWithoutPostInput | PostSeenUpdateManyWithWhereWithoutPostInput[]
+    deleteMany?: PostSeenScalarWhereInput | PostSeenScalarWhereInput[]
   }
 
   export type PostCreateNestedOneWithoutCommentsInput = {
@@ -17656,6 +19261,13 @@ export namespace Prisma {
     connect?: UserWhereUniqueInput
   }
 
+  export type PostSeenCreateNestedManyWithoutChannelInput = {
+    create?: XOR<PostSeenCreateWithoutChannelInput, PostSeenUncheckedCreateWithoutChannelInput> | PostSeenCreateWithoutChannelInput[] | PostSeenUncheckedCreateWithoutChannelInput[]
+    connectOrCreate?: PostSeenCreateOrConnectWithoutChannelInput | PostSeenCreateOrConnectWithoutChannelInput[]
+    createMany?: PostSeenCreateManyChannelInputEnvelope
+    connect?: PostSeenWhereUniqueInput | PostSeenWhereUniqueInput[]
+  }
+
   export type ChannelMemberCreateNestedManyWithoutChannelInput = {
     create?: XOR<ChannelMemberCreateWithoutChannelInput, ChannelMemberUncheckedCreateWithoutChannelInput> | ChannelMemberCreateWithoutChannelInput[] | ChannelMemberUncheckedCreateWithoutChannelInput[]
     connectOrCreate?: ChannelMemberCreateOrConnectWithoutChannelInput | ChannelMemberCreateOrConnectWithoutChannelInput[]
@@ -17675,6 +19287,13 @@ export namespace Prisma {
     connectOrCreate?: JoinRequestCreateOrConnectWithoutChannelInput | JoinRequestCreateOrConnectWithoutChannelInput[]
     createMany?: JoinRequestCreateManyChannelInputEnvelope
     connect?: JoinRequestWhereUniqueInput | JoinRequestWhereUniqueInput[]
+  }
+
+  export type PostSeenUncheckedCreateNestedManyWithoutChannelInput = {
+    create?: XOR<PostSeenCreateWithoutChannelInput, PostSeenUncheckedCreateWithoutChannelInput> | PostSeenCreateWithoutChannelInput[] | PostSeenUncheckedCreateWithoutChannelInput[]
+    connectOrCreate?: PostSeenCreateOrConnectWithoutChannelInput | PostSeenCreateOrConnectWithoutChannelInput[]
+    createMany?: PostSeenCreateManyChannelInputEnvelope
+    connect?: PostSeenWhereUniqueInput | PostSeenWhereUniqueInput[]
   }
 
   export type ChannelMemberUncheckedCreateNestedManyWithoutChannelInput = {
@@ -17704,6 +19323,20 @@ export namespace Prisma {
     upsert?: UserUpsertWithoutCreatedChannelsInput
     connect?: UserWhereUniqueInput
     update?: XOR<XOR<UserUpdateToOneWithWhereWithoutCreatedChannelsInput, UserUpdateWithoutCreatedChannelsInput>, UserUncheckedUpdateWithoutCreatedChannelsInput>
+  }
+
+  export type PostSeenUpdateManyWithoutChannelNestedInput = {
+    create?: XOR<PostSeenCreateWithoutChannelInput, PostSeenUncheckedCreateWithoutChannelInput> | PostSeenCreateWithoutChannelInput[] | PostSeenUncheckedCreateWithoutChannelInput[]
+    connectOrCreate?: PostSeenCreateOrConnectWithoutChannelInput | PostSeenCreateOrConnectWithoutChannelInput[]
+    upsert?: PostSeenUpsertWithWhereUniqueWithoutChannelInput | PostSeenUpsertWithWhereUniqueWithoutChannelInput[]
+    createMany?: PostSeenCreateManyChannelInputEnvelope
+    set?: PostSeenWhereUniqueInput | PostSeenWhereUniqueInput[]
+    disconnect?: PostSeenWhereUniqueInput | PostSeenWhereUniqueInput[]
+    delete?: PostSeenWhereUniqueInput | PostSeenWhereUniqueInput[]
+    connect?: PostSeenWhereUniqueInput | PostSeenWhereUniqueInput[]
+    update?: PostSeenUpdateWithWhereUniqueWithoutChannelInput | PostSeenUpdateWithWhereUniqueWithoutChannelInput[]
+    updateMany?: PostSeenUpdateManyWithWhereWithoutChannelInput | PostSeenUpdateManyWithWhereWithoutChannelInput[]
+    deleteMany?: PostSeenScalarWhereInput | PostSeenScalarWhereInput[]
   }
 
   export type ChannelMemberUpdateManyWithoutChannelNestedInput = {
@@ -17746,6 +19379,20 @@ export namespace Prisma {
     update?: JoinRequestUpdateWithWhereUniqueWithoutChannelInput | JoinRequestUpdateWithWhereUniqueWithoutChannelInput[]
     updateMany?: JoinRequestUpdateManyWithWhereWithoutChannelInput | JoinRequestUpdateManyWithWhereWithoutChannelInput[]
     deleteMany?: JoinRequestScalarWhereInput | JoinRequestScalarWhereInput[]
+  }
+
+  export type PostSeenUncheckedUpdateManyWithoutChannelNestedInput = {
+    create?: XOR<PostSeenCreateWithoutChannelInput, PostSeenUncheckedCreateWithoutChannelInput> | PostSeenCreateWithoutChannelInput[] | PostSeenUncheckedCreateWithoutChannelInput[]
+    connectOrCreate?: PostSeenCreateOrConnectWithoutChannelInput | PostSeenCreateOrConnectWithoutChannelInput[]
+    upsert?: PostSeenUpsertWithWhereUniqueWithoutChannelInput | PostSeenUpsertWithWhereUniqueWithoutChannelInput[]
+    createMany?: PostSeenCreateManyChannelInputEnvelope
+    set?: PostSeenWhereUniqueInput | PostSeenWhereUniqueInput[]
+    disconnect?: PostSeenWhereUniqueInput | PostSeenWhereUniqueInput[]
+    delete?: PostSeenWhereUniqueInput | PostSeenWhereUniqueInput[]
+    connect?: PostSeenWhereUniqueInput | PostSeenWhereUniqueInput[]
+    update?: PostSeenUpdateWithWhereUniqueWithoutChannelInput | PostSeenUpdateWithWhereUniqueWithoutChannelInput[]
+    updateMany?: PostSeenUpdateManyWithWhereWithoutChannelInput | PostSeenUpdateManyWithWhereWithoutChannelInput[]
+    deleteMany?: PostSeenScalarWhereInput | PostSeenScalarWhereInput[]
   }
 
   export type ChannelMemberUncheckedUpdateManyWithoutChannelNestedInput = {
@@ -17904,6 +19551,48 @@ export namespace Prisma {
     upsert?: UserUpsertWithoutTodosInput
     connect?: UserWhereUniqueInput
     update?: XOR<XOR<UserUpdateToOneWithWhereWithoutTodosInput, UserUpdateWithoutTodosInput>, UserUncheckedUpdateWithoutTodosInput>
+  }
+
+  export type UserCreateNestedOneWithoutPostSeenInput = {
+    create?: XOR<UserCreateWithoutPostSeenInput, UserUncheckedCreateWithoutPostSeenInput>
+    connectOrCreate?: UserCreateOrConnectWithoutPostSeenInput
+    connect?: UserWhereUniqueInput
+  }
+
+  export type PostCreateNestedOneWithoutSeenByInput = {
+    create?: XOR<PostCreateWithoutSeenByInput, PostUncheckedCreateWithoutSeenByInput>
+    connectOrCreate?: PostCreateOrConnectWithoutSeenByInput
+    connect?: PostWhereUniqueInput
+  }
+
+  export type ChannelCreateNestedOneWithoutPostSeenInput = {
+    create?: XOR<ChannelCreateWithoutPostSeenInput, ChannelUncheckedCreateWithoutPostSeenInput>
+    connectOrCreate?: ChannelCreateOrConnectWithoutPostSeenInput
+    connect?: ChannelWhereUniqueInput
+  }
+
+  export type UserUpdateOneRequiredWithoutPostSeenNestedInput = {
+    create?: XOR<UserCreateWithoutPostSeenInput, UserUncheckedCreateWithoutPostSeenInput>
+    connectOrCreate?: UserCreateOrConnectWithoutPostSeenInput
+    upsert?: UserUpsertWithoutPostSeenInput
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutPostSeenInput, UserUpdateWithoutPostSeenInput>, UserUncheckedUpdateWithoutPostSeenInput>
+  }
+
+  export type PostUpdateOneRequiredWithoutSeenByNestedInput = {
+    create?: XOR<PostCreateWithoutSeenByInput, PostUncheckedCreateWithoutSeenByInput>
+    connectOrCreate?: PostCreateOrConnectWithoutSeenByInput
+    upsert?: PostUpsertWithoutSeenByInput
+    connect?: PostWhereUniqueInput
+    update?: XOR<XOR<PostUpdateToOneWithWhereWithoutSeenByInput, PostUpdateWithoutSeenByInput>, PostUncheckedUpdateWithoutSeenByInput>
+  }
+
+  export type ChannelUpdateOneRequiredWithoutPostSeenNestedInput = {
+    create?: XOR<ChannelCreateWithoutPostSeenInput, ChannelUncheckedCreateWithoutPostSeenInput>
+    connectOrCreate?: ChannelCreateOrConnectWithoutPostSeenInput
+    upsert?: ChannelUpsertWithoutPostSeenInput
+    connect?: ChannelWhereUniqueInput
+    update?: XOR<XOR<ChannelUpdateToOneWithWhereWithoutPostSeenInput, ChannelUpdateWithoutPostSeenInput>, ChannelUncheckedUpdateWithoutPostSeenInput>
   }
 
   export type NestedIntFilter<$PrismaModel = never> = {
@@ -18116,6 +19805,7 @@ export namespace Prisma {
     comments?: CommentCreateNestedManyWithoutPostInput
     reactions?: ReactionCreateNestedManyWithoutPostInput
     savedBy?: SavedPostCreateNestedManyWithoutPostInput
+    seenBy?: PostSeenCreateNestedManyWithoutPostInput
   }
 
   export type PostUncheckedCreateWithoutAuthorInput = {
@@ -18128,6 +19818,7 @@ export namespace Prisma {
     comments?: CommentUncheckedCreateNestedManyWithoutPostInput
     reactions?: ReactionUncheckedCreateNestedManyWithoutPostInput
     savedBy?: SavedPostUncheckedCreateNestedManyWithoutPostInput
+    seenBy?: PostSeenUncheckedCreateNestedManyWithoutPostInput
   }
 
   export type PostCreateOrConnectWithoutAuthorInput = {
@@ -18210,6 +19901,7 @@ export namespace Prisma {
     createdAt?: Date | string
     bannerKey?: string | null
     visibility?: string
+    postSeen?: PostSeenCreateNestedManyWithoutChannelInput
     members?: ChannelMemberCreateNestedManyWithoutChannelInput
     posts?: PostCreateNestedManyWithoutChannelInput
     joinRequests?: JoinRequestCreateNestedManyWithoutChannelInput
@@ -18221,6 +19913,7 @@ export namespace Prisma {
     createdAt?: Date | string
     bannerKey?: string | null
     visibility?: string
+    postSeen?: PostSeenUncheckedCreateNestedManyWithoutChannelInput
     members?: ChannelMemberUncheckedCreateNestedManyWithoutChannelInput
     posts?: PostUncheckedCreateNestedManyWithoutChannelInput
     joinRequests?: JoinRequestUncheckedCreateNestedManyWithoutChannelInput
@@ -18335,6 +20028,29 @@ export namespace Prisma {
 
   export type TodoCreateManyUserInputEnvelope = {
     data: TodoCreateManyUserInput | TodoCreateManyUserInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type PostSeenCreateWithoutUserInput = {
+    seenAt?: Date | string
+    post: PostCreateNestedOneWithoutSeenByInput
+    channel: ChannelCreateNestedOneWithoutPostSeenInput
+  }
+
+  export type PostSeenUncheckedCreateWithoutUserInput = {
+    id?: number
+    postId: number
+    channelId: number
+    seenAt?: Date | string
+  }
+
+  export type PostSeenCreateOrConnectWithoutUserInput = {
+    where: PostSeenWhereUniqueInput
+    create: XOR<PostSeenCreateWithoutUserInput, PostSeenUncheckedCreateWithoutUserInput>
+  }
+
+  export type PostSeenCreateManyUserInputEnvelope = {
+    data: PostSeenCreateManyUserInput | PostSeenCreateManyUserInput[]
     skipDuplicates?: boolean
   }
 
@@ -18586,6 +20302,33 @@ export namespace Prisma {
     updatedAt?: DateTimeFilter<"Todo"> | Date | string
   }
 
+  export type PostSeenUpsertWithWhereUniqueWithoutUserInput = {
+    where: PostSeenWhereUniqueInput
+    update: XOR<PostSeenUpdateWithoutUserInput, PostSeenUncheckedUpdateWithoutUserInput>
+    create: XOR<PostSeenCreateWithoutUserInput, PostSeenUncheckedCreateWithoutUserInput>
+  }
+
+  export type PostSeenUpdateWithWhereUniqueWithoutUserInput = {
+    where: PostSeenWhereUniqueInput
+    data: XOR<PostSeenUpdateWithoutUserInput, PostSeenUncheckedUpdateWithoutUserInput>
+  }
+
+  export type PostSeenUpdateManyWithWhereWithoutUserInput = {
+    where: PostSeenScalarWhereInput
+    data: XOR<PostSeenUpdateManyMutationInput, PostSeenUncheckedUpdateManyWithoutUserInput>
+  }
+
+  export type PostSeenScalarWhereInput = {
+    AND?: PostSeenScalarWhereInput | PostSeenScalarWhereInput[]
+    OR?: PostSeenScalarWhereInput[]
+    NOT?: PostSeenScalarWhereInput | PostSeenScalarWhereInput[]
+    id?: IntFilter<"PostSeen"> | number
+    userId?: IntFilter<"PostSeen"> | number
+    postId?: IntFilter<"PostSeen"> | number
+    channelId?: IntFilter<"PostSeen"> | number
+    seenAt?: DateTimeFilter<"PostSeen"> | Date | string
+  }
+
   export type UserCreateWithoutPostsInput = {
     username: string
     email?: string | null
@@ -18600,6 +20343,7 @@ export namespace Prisma {
     joinRequests?: JoinRequestCreateNestedManyWithoutUserInput
     savedPosts?: SavedPostCreateNestedManyWithoutUserInput
     todos?: TodoCreateNestedManyWithoutUserInput
+    postSeen?: PostSeenCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutPostsInput = {
@@ -18617,6 +20361,7 @@ export namespace Prisma {
     joinRequests?: JoinRequestUncheckedCreateNestedManyWithoutUserInput
     savedPosts?: SavedPostUncheckedCreateNestedManyWithoutUserInput
     todos?: TodoUncheckedCreateNestedManyWithoutUserInput
+    postSeen?: PostSeenUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutPostsInput = {
@@ -18630,6 +20375,7 @@ export namespace Prisma {
     bannerKey?: string | null
     visibility?: string
     createdBy: UserCreateNestedOneWithoutCreatedChannelsInput
+    postSeen?: PostSeenCreateNestedManyWithoutChannelInput
     members?: ChannelMemberCreateNestedManyWithoutChannelInput
     joinRequests?: JoinRequestCreateNestedManyWithoutChannelInput
   }
@@ -18641,6 +20387,7 @@ export namespace Prisma {
     createdById: number
     bannerKey?: string | null
     visibility?: string
+    postSeen?: PostSeenUncheckedCreateNestedManyWithoutChannelInput
     members?: ChannelMemberUncheckedCreateNestedManyWithoutChannelInput
     joinRequests?: JoinRequestUncheckedCreateNestedManyWithoutChannelInput
   }
@@ -18736,6 +20483,29 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type PostSeenCreateWithoutPostInput = {
+    seenAt?: Date | string
+    user: UserCreateNestedOneWithoutPostSeenInput
+    channel: ChannelCreateNestedOneWithoutPostSeenInput
+  }
+
+  export type PostSeenUncheckedCreateWithoutPostInput = {
+    id?: number
+    userId: number
+    channelId: number
+    seenAt?: Date | string
+  }
+
+  export type PostSeenCreateOrConnectWithoutPostInput = {
+    where: PostSeenWhereUniqueInput
+    create: XOR<PostSeenCreateWithoutPostInput, PostSeenUncheckedCreateWithoutPostInput>
+  }
+
+  export type PostSeenCreateManyPostInputEnvelope = {
+    data: PostSeenCreateManyPostInput | PostSeenCreateManyPostInput[]
+    skipDuplicates?: boolean
+  }
+
   export type UserUpsertWithoutPostsInput = {
     update: XOR<UserUpdateWithoutPostsInput, UserUncheckedUpdateWithoutPostsInput>
     create: XOR<UserCreateWithoutPostsInput, UserUncheckedCreateWithoutPostsInput>
@@ -18761,6 +20531,7 @@ export namespace Prisma {
     joinRequests?: JoinRequestUpdateManyWithoutUserNestedInput
     savedPosts?: SavedPostUpdateManyWithoutUserNestedInput
     todos?: TodoUpdateManyWithoutUserNestedInput
+    postSeen?: PostSeenUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutPostsInput = {
@@ -18778,6 +20549,7 @@ export namespace Prisma {
     joinRequests?: JoinRequestUncheckedUpdateManyWithoutUserNestedInput
     savedPosts?: SavedPostUncheckedUpdateManyWithoutUserNestedInput
     todos?: TodoUncheckedUpdateManyWithoutUserNestedInput
+    postSeen?: PostSeenUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type ChannelUpsertWithoutPostsInput = {
@@ -18797,6 +20569,7 @@ export namespace Prisma {
     bannerKey?: NullableStringFieldUpdateOperationsInput | string | null
     visibility?: StringFieldUpdateOperationsInput | string
     createdBy?: UserUpdateOneRequiredWithoutCreatedChannelsNestedInput
+    postSeen?: PostSeenUpdateManyWithoutChannelNestedInput
     members?: ChannelMemberUpdateManyWithoutChannelNestedInput
     joinRequests?: JoinRequestUpdateManyWithoutChannelNestedInput
   }
@@ -18808,6 +20581,7 @@ export namespace Prisma {
     createdById?: IntFieldUpdateOperationsInput | number
     bannerKey?: NullableStringFieldUpdateOperationsInput | string | null
     visibility?: StringFieldUpdateOperationsInput | string
+    postSeen?: PostSeenUncheckedUpdateManyWithoutChannelNestedInput
     members?: ChannelMemberUncheckedUpdateManyWithoutChannelNestedInput
     joinRequests?: JoinRequestUncheckedUpdateManyWithoutChannelNestedInput
   }
@@ -18886,6 +20660,22 @@ export namespace Prisma {
     data: XOR<SavedPostUpdateManyMutationInput, SavedPostUncheckedUpdateManyWithoutPostInput>
   }
 
+  export type PostSeenUpsertWithWhereUniqueWithoutPostInput = {
+    where: PostSeenWhereUniqueInput
+    update: XOR<PostSeenUpdateWithoutPostInput, PostSeenUncheckedUpdateWithoutPostInput>
+    create: XOR<PostSeenCreateWithoutPostInput, PostSeenUncheckedCreateWithoutPostInput>
+  }
+
+  export type PostSeenUpdateWithWhereUniqueWithoutPostInput = {
+    where: PostSeenWhereUniqueInput
+    data: XOR<PostSeenUpdateWithoutPostInput, PostSeenUncheckedUpdateWithoutPostInput>
+  }
+
+  export type PostSeenUpdateManyWithWhereWithoutPostInput = {
+    where: PostSeenScalarWhereInput
+    data: XOR<PostSeenUpdateManyMutationInput, PostSeenUncheckedUpdateManyWithoutPostInput>
+  }
+
   export type PostCreateWithoutCommentsInput = {
     content: string
     createdAt?: Date | string
@@ -18895,6 +20685,7 @@ export namespace Prisma {
     files?: FileCreateNestedManyWithoutPostInput
     reactions?: ReactionCreateNestedManyWithoutPostInput
     savedBy?: SavedPostCreateNestedManyWithoutPostInput
+    seenBy?: PostSeenCreateNestedManyWithoutPostInput
   }
 
   export type PostUncheckedCreateWithoutCommentsInput = {
@@ -18907,6 +20698,7 @@ export namespace Prisma {
     files?: FileUncheckedCreateNestedManyWithoutPostInput
     reactions?: ReactionUncheckedCreateNestedManyWithoutPostInput
     savedBy?: SavedPostUncheckedCreateNestedManyWithoutPostInput
+    seenBy?: PostSeenUncheckedCreateNestedManyWithoutPostInput
   }
 
   export type PostCreateOrConnectWithoutCommentsInput = {
@@ -18928,6 +20720,7 @@ export namespace Prisma {
     joinRequests?: JoinRequestCreateNestedManyWithoutUserInput
     savedPosts?: SavedPostCreateNestedManyWithoutUserInput
     todos?: TodoCreateNestedManyWithoutUserInput
+    postSeen?: PostSeenCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutCommentsInput = {
@@ -18945,6 +20738,7 @@ export namespace Prisma {
     joinRequests?: JoinRequestUncheckedCreateNestedManyWithoutUserInput
     savedPosts?: SavedPostUncheckedCreateNestedManyWithoutUserInput
     todos?: TodoUncheckedCreateNestedManyWithoutUserInput
+    postSeen?: PostSeenUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutCommentsInput = {
@@ -18972,6 +20766,7 @@ export namespace Prisma {
     files?: FileUpdateManyWithoutPostNestedInput
     reactions?: ReactionUpdateManyWithoutPostNestedInput
     savedBy?: SavedPostUpdateManyWithoutPostNestedInput
+    seenBy?: PostSeenUpdateManyWithoutPostNestedInput
   }
 
   export type PostUncheckedUpdateWithoutCommentsInput = {
@@ -18984,6 +20779,7 @@ export namespace Prisma {
     files?: FileUncheckedUpdateManyWithoutPostNestedInput
     reactions?: ReactionUncheckedUpdateManyWithoutPostNestedInput
     savedBy?: SavedPostUncheckedUpdateManyWithoutPostNestedInput
+    seenBy?: PostSeenUncheckedUpdateManyWithoutPostNestedInput
   }
 
   export type UserUpsertWithoutCommentsInput = {
@@ -19011,6 +20807,7 @@ export namespace Prisma {
     joinRequests?: JoinRequestUpdateManyWithoutUserNestedInput
     savedPosts?: SavedPostUpdateManyWithoutUserNestedInput
     todos?: TodoUpdateManyWithoutUserNestedInput
+    postSeen?: PostSeenUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutCommentsInput = {
@@ -19028,6 +20825,7 @@ export namespace Prisma {
     joinRequests?: JoinRequestUncheckedUpdateManyWithoutUserNestedInput
     savedPosts?: SavedPostUncheckedUpdateManyWithoutUserNestedInput
     todos?: TodoUncheckedUpdateManyWithoutUserNestedInput
+    postSeen?: PostSeenUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type PostCreateWithoutReactionsInput = {
@@ -19039,6 +20837,7 @@ export namespace Prisma {
     files?: FileCreateNestedManyWithoutPostInput
     comments?: CommentCreateNestedManyWithoutPostInput
     savedBy?: SavedPostCreateNestedManyWithoutPostInput
+    seenBy?: PostSeenCreateNestedManyWithoutPostInput
   }
 
   export type PostUncheckedCreateWithoutReactionsInput = {
@@ -19051,6 +20850,7 @@ export namespace Prisma {
     files?: FileUncheckedCreateNestedManyWithoutPostInput
     comments?: CommentUncheckedCreateNestedManyWithoutPostInput
     savedBy?: SavedPostUncheckedCreateNestedManyWithoutPostInput
+    seenBy?: PostSeenUncheckedCreateNestedManyWithoutPostInput
   }
 
   export type PostCreateOrConnectWithoutReactionsInput = {
@@ -19072,6 +20872,7 @@ export namespace Prisma {
     joinRequests?: JoinRequestCreateNestedManyWithoutUserInput
     savedPosts?: SavedPostCreateNestedManyWithoutUserInput
     todos?: TodoCreateNestedManyWithoutUserInput
+    postSeen?: PostSeenCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutReactionsInput = {
@@ -19089,6 +20890,7 @@ export namespace Prisma {
     joinRequests?: JoinRequestUncheckedCreateNestedManyWithoutUserInput
     savedPosts?: SavedPostUncheckedCreateNestedManyWithoutUserInput
     todos?: TodoUncheckedCreateNestedManyWithoutUserInput
+    postSeen?: PostSeenUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutReactionsInput = {
@@ -19116,6 +20918,7 @@ export namespace Prisma {
     files?: FileUpdateManyWithoutPostNestedInput
     comments?: CommentUpdateManyWithoutPostNestedInput
     savedBy?: SavedPostUpdateManyWithoutPostNestedInput
+    seenBy?: PostSeenUpdateManyWithoutPostNestedInput
   }
 
   export type PostUncheckedUpdateWithoutReactionsInput = {
@@ -19128,6 +20931,7 @@ export namespace Prisma {
     files?: FileUncheckedUpdateManyWithoutPostNestedInput
     comments?: CommentUncheckedUpdateManyWithoutPostNestedInput
     savedBy?: SavedPostUncheckedUpdateManyWithoutPostNestedInput
+    seenBy?: PostSeenUncheckedUpdateManyWithoutPostNestedInput
   }
 
   export type UserUpsertWithoutReactionsInput = {
@@ -19155,6 +20959,7 @@ export namespace Prisma {
     joinRequests?: JoinRequestUpdateManyWithoutUserNestedInput
     savedPosts?: SavedPostUpdateManyWithoutUserNestedInput
     todos?: TodoUpdateManyWithoutUserNestedInput
+    postSeen?: PostSeenUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutReactionsInput = {
@@ -19172,6 +20977,7 @@ export namespace Prisma {
     joinRequests?: JoinRequestUncheckedUpdateManyWithoutUserNestedInput
     savedPosts?: SavedPostUncheckedUpdateManyWithoutUserNestedInput
     todos?: TodoUncheckedUpdateManyWithoutUserNestedInput
+    postSeen?: PostSeenUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type PostCreateWithoutFilesInput = {
@@ -19183,6 +20989,7 @@ export namespace Prisma {
     comments?: CommentCreateNestedManyWithoutPostInput
     reactions?: ReactionCreateNestedManyWithoutPostInput
     savedBy?: SavedPostCreateNestedManyWithoutPostInput
+    seenBy?: PostSeenCreateNestedManyWithoutPostInput
   }
 
   export type PostUncheckedCreateWithoutFilesInput = {
@@ -19195,6 +21002,7 @@ export namespace Prisma {
     comments?: CommentUncheckedCreateNestedManyWithoutPostInput
     reactions?: ReactionUncheckedCreateNestedManyWithoutPostInput
     savedBy?: SavedPostUncheckedCreateNestedManyWithoutPostInput
+    seenBy?: PostSeenUncheckedCreateNestedManyWithoutPostInput
   }
 
   export type PostCreateOrConnectWithoutFilesInput = {
@@ -19222,6 +21030,7 @@ export namespace Prisma {
     comments?: CommentUpdateManyWithoutPostNestedInput
     reactions?: ReactionUpdateManyWithoutPostNestedInput
     savedBy?: SavedPostUpdateManyWithoutPostNestedInput
+    seenBy?: PostSeenUpdateManyWithoutPostNestedInput
   }
 
   export type PostUncheckedUpdateWithoutFilesInput = {
@@ -19234,6 +21043,7 @@ export namespace Prisma {
     comments?: CommentUncheckedUpdateManyWithoutPostNestedInput
     reactions?: ReactionUncheckedUpdateManyWithoutPostNestedInput
     savedBy?: SavedPostUncheckedUpdateManyWithoutPostNestedInput
+    seenBy?: PostSeenUncheckedUpdateManyWithoutPostNestedInput
   }
 
   export type UserCreateWithoutCreatedChannelsInput = {
@@ -19250,6 +21060,7 @@ export namespace Prisma {
     joinRequests?: JoinRequestCreateNestedManyWithoutUserInput
     savedPosts?: SavedPostCreateNestedManyWithoutUserInput
     todos?: TodoCreateNestedManyWithoutUserInput
+    postSeen?: PostSeenCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutCreatedChannelsInput = {
@@ -19267,11 +21078,35 @@ export namespace Prisma {
     joinRequests?: JoinRequestUncheckedCreateNestedManyWithoutUserInput
     savedPosts?: SavedPostUncheckedCreateNestedManyWithoutUserInput
     todos?: TodoUncheckedCreateNestedManyWithoutUserInput
+    postSeen?: PostSeenUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutCreatedChannelsInput = {
     where: UserWhereUniqueInput
     create: XOR<UserCreateWithoutCreatedChannelsInput, UserUncheckedCreateWithoutCreatedChannelsInput>
+  }
+
+  export type PostSeenCreateWithoutChannelInput = {
+    seenAt?: Date | string
+    user: UserCreateNestedOneWithoutPostSeenInput
+    post: PostCreateNestedOneWithoutSeenByInput
+  }
+
+  export type PostSeenUncheckedCreateWithoutChannelInput = {
+    id?: number
+    userId: number
+    postId: number
+    seenAt?: Date | string
+  }
+
+  export type PostSeenCreateOrConnectWithoutChannelInput = {
+    where: PostSeenWhereUniqueInput
+    create: XOR<PostSeenCreateWithoutChannelInput, PostSeenUncheckedCreateWithoutChannelInput>
+  }
+
+  export type PostSeenCreateManyChannelInputEnvelope = {
+    data: PostSeenCreateManyChannelInput | PostSeenCreateManyChannelInput[]
+    skipDuplicates?: boolean
   }
 
   export type ChannelMemberCreateWithoutChannelInput = {
@@ -19304,6 +21139,7 @@ export namespace Prisma {
     comments?: CommentCreateNestedManyWithoutPostInput
     reactions?: ReactionCreateNestedManyWithoutPostInput
     savedBy?: SavedPostCreateNestedManyWithoutPostInput
+    seenBy?: PostSeenCreateNestedManyWithoutPostInput
   }
 
   export type PostUncheckedCreateWithoutChannelInput = {
@@ -19316,6 +21152,7 @@ export namespace Prisma {
     comments?: CommentUncheckedCreateNestedManyWithoutPostInput
     reactions?: ReactionUncheckedCreateNestedManyWithoutPostInput
     savedBy?: SavedPostUncheckedCreateNestedManyWithoutPostInput
+    seenBy?: PostSeenUncheckedCreateNestedManyWithoutPostInput
   }
 
   export type PostCreateOrConnectWithoutChannelInput = {
@@ -19378,6 +21215,7 @@ export namespace Prisma {
     joinRequests?: JoinRequestUpdateManyWithoutUserNestedInput
     savedPosts?: SavedPostUpdateManyWithoutUserNestedInput
     todos?: TodoUpdateManyWithoutUserNestedInput
+    postSeen?: PostSeenUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutCreatedChannelsInput = {
@@ -19395,6 +21233,23 @@ export namespace Prisma {
     joinRequests?: JoinRequestUncheckedUpdateManyWithoutUserNestedInput
     savedPosts?: SavedPostUncheckedUpdateManyWithoutUserNestedInput
     todos?: TodoUncheckedUpdateManyWithoutUserNestedInput
+    postSeen?: PostSeenUncheckedUpdateManyWithoutUserNestedInput
+  }
+
+  export type PostSeenUpsertWithWhereUniqueWithoutChannelInput = {
+    where: PostSeenWhereUniqueInput
+    update: XOR<PostSeenUpdateWithoutChannelInput, PostSeenUncheckedUpdateWithoutChannelInput>
+    create: XOR<PostSeenCreateWithoutChannelInput, PostSeenUncheckedCreateWithoutChannelInput>
+  }
+
+  export type PostSeenUpdateWithWhereUniqueWithoutChannelInput = {
+    where: PostSeenWhereUniqueInput
+    data: XOR<PostSeenUpdateWithoutChannelInput, PostSeenUncheckedUpdateWithoutChannelInput>
+  }
+
+  export type PostSeenUpdateManyWithWhereWithoutChannelInput = {
+    where: PostSeenScalarWhereInput
+    data: XOR<PostSeenUpdateManyMutationInput, PostSeenUncheckedUpdateManyWithoutChannelInput>
   }
 
   export type ChannelMemberUpsertWithWhereUniqueWithoutChannelInput = {
@@ -19451,6 +21306,7 @@ export namespace Prisma {
     bannerKey?: string | null
     visibility?: string
     createdBy: UserCreateNestedOneWithoutCreatedChannelsInput
+    postSeen?: PostSeenCreateNestedManyWithoutChannelInput
     posts?: PostCreateNestedManyWithoutChannelInput
     joinRequests?: JoinRequestCreateNestedManyWithoutChannelInput
   }
@@ -19462,6 +21318,7 @@ export namespace Prisma {
     createdById: number
     bannerKey?: string | null
     visibility?: string
+    postSeen?: PostSeenUncheckedCreateNestedManyWithoutChannelInput
     posts?: PostUncheckedCreateNestedManyWithoutChannelInput
     joinRequests?: JoinRequestUncheckedCreateNestedManyWithoutChannelInput
   }
@@ -19485,6 +21342,7 @@ export namespace Prisma {
     joinRequests?: JoinRequestCreateNestedManyWithoutUserInput
     savedPosts?: SavedPostCreateNestedManyWithoutUserInput
     todos?: TodoCreateNestedManyWithoutUserInput
+    postSeen?: PostSeenCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutChannelMemberInput = {
@@ -19502,6 +21360,7 @@ export namespace Prisma {
     joinRequests?: JoinRequestUncheckedCreateNestedManyWithoutUserInput
     savedPosts?: SavedPostUncheckedCreateNestedManyWithoutUserInput
     todos?: TodoUncheckedCreateNestedManyWithoutUserInput
+    postSeen?: PostSeenUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutChannelMemberInput = {
@@ -19526,6 +21385,7 @@ export namespace Prisma {
     bannerKey?: NullableStringFieldUpdateOperationsInput | string | null
     visibility?: StringFieldUpdateOperationsInput | string
     createdBy?: UserUpdateOneRequiredWithoutCreatedChannelsNestedInput
+    postSeen?: PostSeenUpdateManyWithoutChannelNestedInput
     posts?: PostUpdateManyWithoutChannelNestedInput
     joinRequests?: JoinRequestUpdateManyWithoutChannelNestedInput
   }
@@ -19537,6 +21397,7 @@ export namespace Prisma {
     createdById?: IntFieldUpdateOperationsInput | number
     bannerKey?: NullableStringFieldUpdateOperationsInput | string | null
     visibility?: StringFieldUpdateOperationsInput | string
+    postSeen?: PostSeenUncheckedUpdateManyWithoutChannelNestedInput
     posts?: PostUncheckedUpdateManyWithoutChannelNestedInput
     joinRequests?: JoinRequestUncheckedUpdateManyWithoutChannelNestedInput
   }
@@ -19566,6 +21427,7 @@ export namespace Prisma {
     joinRequests?: JoinRequestUpdateManyWithoutUserNestedInput
     savedPosts?: SavedPostUpdateManyWithoutUserNestedInput
     todos?: TodoUpdateManyWithoutUserNestedInput
+    postSeen?: PostSeenUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutChannelMemberInput = {
@@ -19583,6 +21445,7 @@ export namespace Prisma {
     joinRequests?: JoinRequestUncheckedUpdateManyWithoutUserNestedInput
     savedPosts?: SavedPostUncheckedUpdateManyWithoutUserNestedInput
     todos?: TodoUncheckedUpdateManyWithoutUserNestedInput
+    postSeen?: PostSeenUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type ChannelCreateWithoutJoinRequestsInput = {
@@ -19591,6 +21454,7 @@ export namespace Prisma {
     bannerKey?: string | null
     visibility?: string
     createdBy: UserCreateNestedOneWithoutCreatedChannelsInput
+    postSeen?: PostSeenCreateNestedManyWithoutChannelInput
     members?: ChannelMemberCreateNestedManyWithoutChannelInput
     posts?: PostCreateNestedManyWithoutChannelInput
   }
@@ -19602,6 +21466,7 @@ export namespace Prisma {
     createdById: number
     bannerKey?: string | null
     visibility?: string
+    postSeen?: PostSeenUncheckedCreateNestedManyWithoutChannelInput
     members?: ChannelMemberUncheckedCreateNestedManyWithoutChannelInput
     posts?: PostUncheckedCreateNestedManyWithoutChannelInput
   }
@@ -19625,6 +21490,7 @@ export namespace Prisma {
     notifications?: NotificationCreateNestedManyWithoutUserInput
     savedPosts?: SavedPostCreateNestedManyWithoutUserInput
     todos?: TodoCreateNestedManyWithoutUserInput
+    postSeen?: PostSeenCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutJoinRequestsInput = {
@@ -19642,6 +21508,7 @@ export namespace Prisma {
     notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
     savedPosts?: SavedPostUncheckedCreateNestedManyWithoutUserInput
     todos?: TodoUncheckedCreateNestedManyWithoutUserInput
+    postSeen?: PostSeenUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutJoinRequestsInput = {
@@ -19666,6 +21533,7 @@ export namespace Prisma {
     bannerKey?: NullableStringFieldUpdateOperationsInput | string | null
     visibility?: StringFieldUpdateOperationsInput | string
     createdBy?: UserUpdateOneRequiredWithoutCreatedChannelsNestedInput
+    postSeen?: PostSeenUpdateManyWithoutChannelNestedInput
     members?: ChannelMemberUpdateManyWithoutChannelNestedInput
     posts?: PostUpdateManyWithoutChannelNestedInput
   }
@@ -19677,6 +21545,7 @@ export namespace Prisma {
     createdById?: IntFieldUpdateOperationsInput | number
     bannerKey?: NullableStringFieldUpdateOperationsInput | string | null
     visibility?: StringFieldUpdateOperationsInput | string
+    postSeen?: PostSeenUncheckedUpdateManyWithoutChannelNestedInput
     members?: ChannelMemberUncheckedUpdateManyWithoutChannelNestedInput
     posts?: PostUncheckedUpdateManyWithoutChannelNestedInput
   }
@@ -19706,6 +21575,7 @@ export namespace Prisma {
     notifications?: NotificationUpdateManyWithoutUserNestedInput
     savedPosts?: SavedPostUpdateManyWithoutUserNestedInput
     todos?: TodoUpdateManyWithoutUserNestedInput
+    postSeen?: PostSeenUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutJoinRequestsInput = {
@@ -19723,6 +21593,7 @@ export namespace Prisma {
     notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
     savedPosts?: SavedPostUncheckedUpdateManyWithoutUserNestedInput
     todos?: TodoUncheckedUpdateManyWithoutUserNestedInput
+    postSeen?: PostSeenUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UserCreateWithoutNotificationsInput = {
@@ -19739,6 +21610,7 @@ export namespace Prisma {
     joinRequests?: JoinRequestCreateNestedManyWithoutUserInput
     savedPosts?: SavedPostCreateNestedManyWithoutUserInput
     todos?: TodoCreateNestedManyWithoutUserInput
+    postSeen?: PostSeenCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutNotificationsInput = {
@@ -19756,6 +21628,7 @@ export namespace Prisma {
     joinRequests?: JoinRequestUncheckedCreateNestedManyWithoutUserInput
     savedPosts?: SavedPostUncheckedCreateNestedManyWithoutUserInput
     todos?: TodoUncheckedCreateNestedManyWithoutUserInput
+    postSeen?: PostSeenUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutNotificationsInput = {
@@ -19788,6 +21661,7 @@ export namespace Prisma {
     joinRequests?: JoinRequestUpdateManyWithoutUserNestedInput
     savedPosts?: SavedPostUpdateManyWithoutUserNestedInput
     todos?: TodoUpdateManyWithoutUserNestedInput
+    postSeen?: PostSeenUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutNotificationsInput = {
@@ -19805,6 +21679,7 @@ export namespace Prisma {
     joinRequests?: JoinRequestUncheckedUpdateManyWithoutUserNestedInput
     savedPosts?: SavedPostUncheckedUpdateManyWithoutUserNestedInput
     todos?: TodoUncheckedUpdateManyWithoutUserNestedInput
+    postSeen?: PostSeenUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UserCreateWithoutSavedPostsInput = {
@@ -19821,6 +21696,7 @@ export namespace Prisma {
     notifications?: NotificationCreateNestedManyWithoutUserInput
     joinRequests?: JoinRequestCreateNestedManyWithoutUserInput
     todos?: TodoCreateNestedManyWithoutUserInput
+    postSeen?: PostSeenCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutSavedPostsInput = {
@@ -19838,6 +21714,7 @@ export namespace Prisma {
     notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
     joinRequests?: JoinRequestUncheckedCreateNestedManyWithoutUserInput
     todos?: TodoUncheckedCreateNestedManyWithoutUserInput
+    postSeen?: PostSeenUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutSavedPostsInput = {
@@ -19854,6 +21731,7 @@ export namespace Prisma {
     files?: FileCreateNestedManyWithoutPostInput
     comments?: CommentCreateNestedManyWithoutPostInput
     reactions?: ReactionCreateNestedManyWithoutPostInput
+    seenBy?: PostSeenCreateNestedManyWithoutPostInput
   }
 
   export type PostUncheckedCreateWithoutSavedByInput = {
@@ -19866,6 +21744,7 @@ export namespace Prisma {
     files?: FileUncheckedCreateNestedManyWithoutPostInput
     comments?: CommentUncheckedCreateNestedManyWithoutPostInput
     reactions?: ReactionUncheckedCreateNestedManyWithoutPostInput
+    seenBy?: PostSeenUncheckedCreateNestedManyWithoutPostInput
   }
 
   export type PostCreateOrConnectWithoutSavedByInput = {
@@ -19898,6 +21777,7 @@ export namespace Prisma {
     notifications?: NotificationUpdateManyWithoutUserNestedInput
     joinRequests?: JoinRequestUpdateManyWithoutUserNestedInput
     todos?: TodoUpdateManyWithoutUserNestedInput
+    postSeen?: PostSeenUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutSavedPostsInput = {
@@ -19915,6 +21795,7 @@ export namespace Prisma {
     notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
     joinRequests?: JoinRequestUncheckedUpdateManyWithoutUserNestedInput
     todos?: TodoUncheckedUpdateManyWithoutUserNestedInput
+    postSeen?: PostSeenUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type PostUpsertWithoutSavedByInput = {
@@ -19937,6 +21818,7 @@ export namespace Prisma {
     files?: FileUpdateManyWithoutPostNestedInput
     comments?: CommentUpdateManyWithoutPostNestedInput
     reactions?: ReactionUpdateManyWithoutPostNestedInput
+    seenBy?: PostSeenUpdateManyWithoutPostNestedInput
   }
 
   export type PostUncheckedUpdateWithoutSavedByInput = {
@@ -19949,6 +21831,7 @@ export namespace Prisma {
     files?: FileUncheckedUpdateManyWithoutPostNestedInput
     comments?: CommentUncheckedUpdateManyWithoutPostNestedInput
     reactions?: ReactionUncheckedUpdateManyWithoutPostNestedInput
+    seenBy?: PostSeenUncheckedUpdateManyWithoutPostNestedInput
   }
 
   export type UserCreateWithoutTodosInput = {
@@ -19965,6 +21848,7 @@ export namespace Prisma {
     notifications?: NotificationCreateNestedManyWithoutUserInput
     joinRequests?: JoinRequestCreateNestedManyWithoutUserInput
     savedPosts?: SavedPostCreateNestedManyWithoutUserInput
+    postSeen?: PostSeenCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutTodosInput = {
@@ -19982,6 +21866,7 @@ export namespace Prisma {
     notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
     joinRequests?: JoinRequestUncheckedCreateNestedManyWithoutUserInput
     savedPosts?: SavedPostUncheckedCreateNestedManyWithoutUserInput
+    postSeen?: PostSeenUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutTodosInput = {
@@ -20014,6 +21899,7 @@ export namespace Prisma {
     notifications?: NotificationUpdateManyWithoutUserNestedInput
     joinRequests?: JoinRequestUpdateManyWithoutUserNestedInput
     savedPosts?: SavedPostUpdateManyWithoutUserNestedInput
+    postSeen?: PostSeenUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutTodosInput = {
@@ -20031,6 +21917,221 @@ export namespace Prisma {
     notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
     joinRequests?: JoinRequestUncheckedUpdateManyWithoutUserNestedInput
     savedPosts?: SavedPostUncheckedUpdateManyWithoutUserNestedInput
+    postSeen?: PostSeenUncheckedUpdateManyWithoutUserNestedInput
+  }
+
+  export type UserCreateWithoutPostSeenInput = {
+    username: string
+    email?: string | null
+    role: string
+    isStaff?: boolean
+    profileImage?: string | null
+    posts?: PostCreateNestedManyWithoutAuthorInput
+    comments?: CommentCreateNestedManyWithoutAuthorInput
+    reactions?: ReactionCreateNestedManyWithoutUserInput
+    channelMember?: ChannelMemberCreateNestedManyWithoutUserInput
+    createdChannels?: ChannelCreateNestedManyWithoutCreatedByInput
+    notifications?: NotificationCreateNestedManyWithoutUserInput
+    joinRequests?: JoinRequestCreateNestedManyWithoutUserInput
+    savedPosts?: SavedPostCreateNestedManyWithoutUserInput
+    todos?: TodoCreateNestedManyWithoutUserInput
+  }
+
+  export type UserUncheckedCreateWithoutPostSeenInput = {
+    id?: number
+    username: string
+    email?: string | null
+    role: string
+    isStaff?: boolean
+    profileImage?: string | null
+    posts?: PostUncheckedCreateNestedManyWithoutAuthorInput
+    comments?: CommentUncheckedCreateNestedManyWithoutAuthorInput
+    reactions?: ReactionUncheckedCreateNestedManyWithoutUserInput
+    channelMember?: ChannelMemberUncheckedCreateNestedManyWithoutUserInput
+    createdChannels?: ChannelUncheckedCreateNestedManyWithoutCreatedByInput
+    notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
+    joinRequests?: JoinRequestUncheckedCreateNestedManyWithoutUserInput
+    savedPosts?: SavedPostUncheckedCreateNestedManyWithoutUserInput
+    todos?: TodoUncheckedCreateNestedManyWithoutUserInput
+  }
+
+  export type UserCreateOrConnectWithoutPostSeenInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutPostSeenInput, UserUncheckedCreateWithoutPostSeenInput>
+  }
+
+  export type PostCreateWithoutSeenByInput = {
+    content: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    author: UserCreateNestedOneWithoutPostsInput
+    channel?: ChannelCreateNestedOneWithoutPostsInput
+    files?: FileCreateNestedManyWithoutPostInput
+    comments?: CommentCreateNestedManyWithoutPostInput
+    reactions?: ReactionCreateNestedManyWithoutPostInput
+    savedBy?: SavedPostCreateNestedManyWithoutPostInput
+  }
+
+  export type PostUncheckedCreateWithoutSeenByInput = {
+    id?: number
+    content: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    authorId: number
+    channelId?: number | null
+    files?: FileUncheckedCreateNestedManyWithoutPostInput
+    comments?: CommentUncheckedCreateNestedManyWithoutPostInput
+    reactions?: ReactionUncheckedCreateNestedManyWithoutPostInput
+    savedBy?: SavedPostUncheckedCreateNestedManyWithoutPostInput
+  }
+
+  export type PostCreateOrConnectWithoutSeenByInput = {
+    where: PostWhereUniqueInput
+    create: XOR<PostCreateWithoutSeenByInput, PostUncheckedCreateWithoutSeenByInput>
+  }
+
+  export type ChannelCreateWithoutPostSeenInput = {
+    name: string
+    createdAt?: Date | string
+    bannerKey?: string | null
+    visibility?: string
+    createdBy: UserCreateNestedOneWithoutCreatedChannelsInput
+    members?: ChannelMemberCreateNestedManyWithoutChannelInput
+    posts?: PostCreateNestedManyWithoutChannelInput
+    joinRequests?: JoinRequestCreateNestedManyWithoutChannelInput
+  }
+
+  export type ChannelUncheckedCreateWithoutPostSeenInput = {
+    id?: number
+    name: string
+    createdAt?: Date | string
+    createdById: number
+    bannerKey?: string | null
+    visibility?: string
+    members?: ChannelMemberUncheckedCreateNestedManyWithoutChannelInput
+    posts?: PostUncheckedCreateNestedManyWithoutChannelInput
+    joinRequests?: JoinRequestUncheckedCreateNestedManyWithoutChannelInput
+  }
+
+  export type ChannelCreateOrConnectWithoutPostSeenInput = {
+    where: ChannelWhereUniqueInput
+    create: XOR<ChannelCreateWithoutPostSeenInput, ChannelUncheckedCreateWithoutPostSeenInput>
+  }
+
+  export type UserUpsertWithoutPostSeenInput = {
+    update: XOR<UserUpdateWithoutPostSeenInput, UserUncheckedUpdateWithoutPostSeenInput>
+    create: XOR<UserCreateWithoutPostSeenInput, UserUncheckedCreateWithoutPostSeenInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutPostSeenInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutPostSeenInput, UserUncheckedUpdateWithoutPostSeenInput>
+  }
+
+  export type UserUpdateWithoutPostSeenInput = {
+    username?: StringFieldUpdateOperationsInput | string
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: StringFieldUpdateOperationsInput | string
+    isStaff?: BoolFieldUpdateOperationsInput | boolean
+    profileImage?: NullableStringFieldUpdateOperationsInput | string | null
+    posts?: PostUpdateManyWithoutAuthorNestedInput
+    comments?: CommentUpdateManyWithoutAuthorNestedInput
+    reactions?: ReactionUpdateManyWithoutUserNestedInput
+    channelMember?: ChannelMemberUpdateManyWithoutUserNestedInput
+    createdChannels?: ChannelUpdateManyWithoutCreatedByNestedInput
+    notifications?: NotificationUpdateManyWithoutUserNestedInput
+    joinRequests?: JoinRequestUpdateManyWithoutUserNestedInput
+    savedPosts?: SavedPostUpdateManyWithoutUserNestedInput
+    todos?: TodoUpdateManyWithoutUserNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutPostSeenInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    username?: StringFieldUpdateOperationsInput | string
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: StringFieldUpdateOperationsInput | string
+    isStaff?: BoolFieldUpdateOperationsInput | boolean
+    profileImage?: NullableStringFieldUpdateOperationsInput | string | null
+    posts?: PostUncheckedUpdateManyWithoutAuthorNestedInput
+    comments?: CommentUncheckedUpdateManyWithoutAuthorNestedInput
+    reactions?: ReactionUncheckedUpdateManyWithoutUserNestedInput
+    channelMember?: ChannelMemberUncheckedUpdateManyWithoutUserNestedInput
+    createdChannels?: ChannelUncheckedUpdateManyWithoutCreatedByNestedInput
+    notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
+    joinRequests?: JoinRequestUncheckedUpdateManyWithoutUserNestedInput
+    savedPosts?: SavedPostUncheckedUpdateManyWithoutUserNestedInput
+    todos?: TodoUncheckedUpdateManyWithoutUserNestedInput
+  }
+
+  export type PostUpsertWithoutSeenByInput = {
+    update: XOR<PostUpdateWithoutSeenByInput, PostUncheckedUpdateWithoutSeenByInput>
+    create: XOR<PostCreateWithoutSeenByInput, PostUncheckedCreateWithoutSeenByInput>
+    where?: PostWhereInput
+  }
+
+  export type PostUpdateToOneWithWhereWithoutSeenByInput = {
+    where?: PostWhereInput
+    data: XOR<PostUpdateWithoutSeenByInput, PostUncheckedUpdateWithoutSeenByInput>
+  }
+
+  export type PostUpdateWithoutSeenByInput = {
+    content?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    author?: UserUpdateOneRequiredWithoutPostsNestedInput
+    channel?: ChannelUpdateOneWithoutPostsNestedInput
+    files?: FileUpdateManyWithoutPostNestedInput
+    comments?: CommentUpdateManyWithoutPostNestedInput
+    reactions?: ReactionUpdateManyWithoutPostNestedInput
+    savedBy?: SavedPostUpdateManyWithoutPostNestedInput
+  }
+
+  export type PostUncheckedUpdateWithoutSeenByInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    content?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    authorId?: IntFieldUpdateOperationsInput | number
+    channelId?: NullableIntFieldUpdateOperationsInput | number | null
+    files?: FileUncheckedUpdateManyWithoutPostNestedInput
+    comments?: CommentUncheckedUpdateManyWithoutPostNestedInput
+    reactions?: ReactionUncheckedUpdateManyWithoutPostNestedInput
+    savedBy?: SavedPostUncheckedUpdateManyWithoutPostNestedInput
+  }
+
+  export type ChannelUpsertWithoutPostSeenInput = {
+    update: XOR<ChannelUpdateWithoutPostSeenInput, ChannelUncheckedUpdateWithoutPostSeenInput>
+    create: XOR<ChannelCreateWithoutPostSeenInput, ChannelUncheckedCreateWithoutPostSeenInput>
+    where?: ChannelWhereInput
+  }
+
+  export type ChannelUpdateToOneWithWhereWithoutPostSeenInput = {
+    where?: ChannelWhereInput
+    data: XOR<ChannelUpdateWithoutPostSeenInput, ChannelUncheckedUpdateWithoutPostSeenInput>
+  }
+
+  export type ChannelUpdateWithoutPostSeenInput = {
+    name?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    bannerKey?: NullableStringFieldUpdateOperationsInput | string | null
+    visibility?: StringFieldUpdateOperationsInput | string
+    createdBy?: UserUpdateOneRequiredWithoutCreatedChannelsNestedInput
+    members?: ChannelMemberUpdateManyWithoutChannelNestedInput
+    posts?: PostUpdateManyWithoutChannelNestedInput
+    joinRequests?: JoinRequestUpdateManyWithoutChannelNestedInput
+  }
+
+  export type ChannelUncheckedUpdateWithoutPostSeenInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    name?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdById?: IntFieldUpdateOperationsInput | number
+    bannerKey?: NullableStringFieldUpdateOperationsInput | string | null
+    visibility?: StringFieldUpdateOperationsInput | string
+    members?: ChannelMemberUncheckedUpdateManyWithoutChannelNestedInput
+    posts?: PostUncheckedUpdateManyWithoutChannelNestedInput
+    joinRequests?: JoinRequestUncheckedUpdateManyWithoutChannelNestedInput
   }
 
   export type PostCreateManyAuthorInput = {
@@ -20101,6 +22202,13 @@ export namespace Prisma {
     updatedAt?: Date | string
   }
 
+  export type PostSeenCreateManyUserInput = {
+    id?: number
+    postId: number
+    channelId: number
+    seenAt?: Date | string
+  }
+
   export type PostUpdateWithoutAuthorInput = {
     content?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -20110,6 +22218,7 @@ export namespace Prisma {
     comments?: CommentUpdateManyWithoutPostNestedInput
     reactions?: ReactionUpdateManyWithoutPostNestedInput
     savedBy?: SavedPostUpdateManyWithoutPostNestedInput
+    seenBy?: PostSeenUpdateManyWithoutPostNestedInput
   }
 
   export type PostUncheckedUpdateWithoutAuthorInput = {
@@ -20122,6 +22231,7 @@ export namespace Prisma {
     comments?: CommentUncheckedUpdateManyWithoutPostNestedInput
     reactions?: ReactionUncheckedUpdateManyWithoutPostNestedInput
     savedBy?: SavedPostUncheckedUpdateManyWithoutPostNestedInput
+    seenBy?: PostSeenUncheckedUpdateManyWithoutPostNestedInput
   }
 
   export type PostUncheckedUpdateManyWithoutAuthorInput = {
@@ -20191,6 +22301,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     bannerKey?: NullableStringFieldUpdateOperationsInput | string | null
     visibility?: StringFieldUpdateOperationsInput | string
+    postSeen?: PostSeenUpdateManyWithoutChannelNestedInput
     members?: ChannelMemberUpdateManyWithoutChannelNestedInput
     posts?: PostUpdateManyWithoutChannelNestedInput
     joinRequests?: JoinRequestUpdateManyWithoutChannelNestedInput
@@ -20202,6 +22313,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     bannerKey?: NullableStringFieldUpdateOperationsInput | string | null
     visibility?: StringFieldUpdateOperationsInput | string
+    postSeen?: PostSeenUncheckedUpdateManyWithoutChannelNestedInput
     members?: ChannelMemberUncheckedUpdateManyWithoutChannelNestedInput
     posts?: PostUncheckedUpdateManyWithoutChannelNestedInput
     joinRequests?: JoinRequestUncheckedUpdateManyWithoutChannelNestedInput
@@ -20310,6 +22422,26 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type PostSeenUpdateWithoutUserInput = {
+    seenAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    post?: PostUpdateOneRequiredWithoutSeenByNestedInput
+    channel?: ChannelUpdateOneRequiredWithoutPostSeenNestedInput
+  }
+
+  export type PostSeenUncheckedUpdateWithoutUserInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    postId?: IntFieldUpdateOperationsInput | number
+    channelId?: IntFieldUpdateOperationsInput | number
+    seenAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type PostSeenUncheckedUpdateManyWithoutUserInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    postId?: IntFieldUpdateOperationsInput | number
+    channelId?: IntFieldUpdateOperationsInput | number
+    seenAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type FileCreateManyPostInput = {
     id?: number
     url: string
@@ -20333,6 +22465,13 @@ export namespace Prisma {
     id?: number
     userId: number
     createdAt?: Date | string
+  }
+
+  export type PostSeenCreateManyPostInput = {
+    id?: number
+    userId: number
+    channelId: number
+    seenAt?: Date | string
   }
 
   export type FileUpdateWithoutPostInput = {
@@ -20406,6 +22545,33 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type PostSeenUpdateWithoutPostInput = {
+    seenAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    user?: UserUpdateOneRequiredWithoutPostSeenNestedInput
+    channel?: ChannelUpdateOneRequiredWithoutPostSeenNestedInput
+  }
+
+  export type PostSeenUncheckedUpdateWithoutPostInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    userId?: IntFieldUpdateOperationsInput | number
+    channelId?: IntFieldUpdateOperationsInput | number
+    seenAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type PostSeenUncheckedUpdateManyWithoutPostInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    userId?: IntFieldUpdateOperationsInput | number
+    channelId?: IntFieldUpdateOperationsInput | number
+    seenAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type PostSeenCreateManyChannelInput = {
+    id?: number
+    userId: number
+    postId: number
+    seenAt?: Date | string
+  }
+
   export type ChannelMemberCreateManyChannelInput = {
     id?: number
     userId: number
@@ -20426,6 +22592,26 @@ export namespace Prisma {
     updatedAt?: Date | string
     userId: number
     status?: string
+  }
+
+  export type PostSeenUpdateWithoutChannelInput = {
+    seenAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    user?: UserUpdateOneRequiredWithoutPostSeenNestedInput
+    post?: PostUpdateOneRequiredWithoutSeenByNestedInput
+  }
+
+  export type PostSeenUncheckedUpdateWithoutChannelInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    userId?: IntFieldUpdateOperationsInput | number
+    postId?: IntFieldUpdateOperationsInput | number
+    seenAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type PostSeenUncheckedUpdateManyWithoutChannelInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    userId?: IntFieldUpdateOperationsInput | number
+    postId?: IntFieldUpdateOperationsInput | number
+    seenAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type ChannelMemberUpdateWithoutChannelInput = {
@@ -20454,6 +22640,7 @@ export namespace Prisma {
     comments?: CommentUpdateManyWithoutPostNestedInput
     reactions?: ReactionUpdateManyWithoutPostNestedInput
     savedBy?: SavedPostUpdateManyWithoutPostNestedInput
+    seenBy?: PostSeenUpdateManyWithoutPostNestedInput
   }
 
   export type PostUncheckedUpdateWithoutChannelInput = {
@@ -20466,6 +22653,7 @@ export namespace Prisma {
     comments?: CommentUncheckedUpdateManyWithoutPostNestedInput
     reactions?: ReactionUncheckedUpdateManyWithoutPostNestedInput
     savedBy?: SavedPostUncheckedUpdateManyWithoutPostNestedInput
+    seenBy?: PostSeenUncheckedUpdateManyWithoutPostNestedInput
   }
 
   export type PostUncheckedUpdateManyWithoutChannelInput = {
