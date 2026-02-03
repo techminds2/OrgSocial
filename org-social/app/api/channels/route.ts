@@ -6,6 +6,8 @@ import crypto from "crypto";
 import { PutObjectCommand } from "@aws-sdk/client-s3";
 import { s3 } from "@/lib/s3";
 import { getUserIdFromRequest } from "@/lib/auth";
+import { Prisma } from "@/src/generated/prisma";
+
 
 function normalizeKeyToFileApi(key?: string | null) {
   if (!key) return null;
@@ -33,13 +35,41 @@ export async function GET(req: NextRequest) {
       include: { members: true },
     });
 
+    const channelIds = channels.map((c) => c.id);
+
+    // channelId -> unseenCount
+    let unseenMap: Record<number, number> = {};
+
+    if (channelIds.length > 0) {
+      const rows = await prisma.$queryRaw<
+        Array<{ channelId: number; unseen: bigint }>
+      >`
+        SELECT p."channelId" as "channelId", COUNT(*) as "unseen"
+        FROM "Post" p
+        LEFT JOIN "PostSeen" s
+          ON s."postId" = p."id" AND s."userId" = ${userId}
+        WHERE p."channelId" IN (${Prisma.join(channelIds)})
+          AND s."id" IS NULL
+        GROUP BY p."channelId"
+      `;
+
+      unseenMap = Object.fromEntries(
+        rows.map((r) => [r.channelId, Number(r.unseen)]),
+      );
+    }
+
     const formatted = channels.map((c) => ({
       id: c.id,
       name: c.name,
       createdAt: c.createdAt,
       bannerKey: c.bannerKey,
       bannerUrl: normalizeKeyToFileApi(c.bannerKey),
+
+      // keep your old count if you want, but sidebar will use unseenCount
       memberCount: c.members.length,
+
+      unseenCount: unseenMap[c.id] ?? 0,
+
       visibility: (c.visibility as Visibility) || "private",
     }));
 
@@ -48,7 +78,7 @@ export async function GET(req: NextRequest) {
     console.error("GET CHANNELS ERROR:", err);
     return NextResponse.json(
       { error: "Failed to load channels" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -68,7 +98,7 @@ export async function POST(req: NextRequest) {
       .trim()
       .toLowerCase();
     const visibility: Visibility = VALID_VISIBILITY.includes(
-      visibilityRaw as Visibility
+      visibilityRaw as Visibility,
     )
       ? (visibilityRaw as Visibility)
       : "private";
@@ -86,7 +116,7 @@ export async function POST(req: NextRequest) {
               role: String(x?.role || "viewer") as Role,
             }))
             .filter(
-              (m) => Number.isFinite(m.userId) && VALID_ROLES.includes(m.role)
+              (m) => Number.isFinite(m.userId) && VALID_ROLES.includes(m.role),
             );
         }
       } catch {}
@@ -105,7 +135,10 @@ export async function POST(req: NextRequest) {
           }
         } catch {}
       }
-      members = memberIds.map((uid) => ({ userId: uid, role: "viewer" as Role }));
+      members = memberIds.map((uid) => ({
+        userId: uid,
+        role: "viewer" as Role,
+      }));
     }
 
     members = members.filter((m) => m.userId !== userId);
@@ -127,7 +160,7 @@ export async function POST(req: NextRequest) {
           Key: bannerKey,
           Body: buffer,
           ContentType: file.type || "application/octet-stream",
-        })
+        }),
       );
     }
 
@@ -164,12 +197,12 @@ export async function POST(req: NextRequest) {
     if (err?.code === "P2002") {
       return NextResponse.json(
         { error: "Channel name already exists" },
-        { status: 409 }
+        { status: 409 },
       );
     }
     return NextResponse.json(
       { error: "Failed to create channel" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

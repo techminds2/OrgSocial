@@ -26,6 +26,8 @@ model User {
   joinRequests JoinRequest[]
   savedPosts SavedPost[]
   todos Todo[]  
+  postSeen PostSeen[]
+
 }
 
 model Post {
@@ -43,8 +45,8 @@ model Post {
   files     File[]
   comments  Comment[]
   reactions Reaction[]
-    savedBy SavedPost[]
-
+  savedBy SavedPost[]
+  seenBy PostSeen[]
 }
 
 model Comment {
@@ -90,10 +92,9 @@ model Channel {
 
   bannerKey   String?
   visibility  String   @default("private")
-
+  postSeen PostSeen[]
   members     ChannelMember[]
   posts       Post[]
-
   joinRequests JoinRequest[]
 }
 
@@ -165,4 +166,19 @@ model Todo {
   user User @relation(fields: [userId], references: [id])
 }
 
+model PostSeen {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  postId    Int
+  channelId Int
+  seenAt    DateTime @default(now())
+
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  post    Post    @relation(fields: [postId], references: [id], onDelete: Cascade)
+  channel Channel @relation(fields: [channelId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, postId])
+  @@index([userId, channelId])
+  @@index([channelId, seenAt])
+}
 

@@ -12,12 +12,12 @@ import {
   Loader,
 } from "@mantine/core";
 import TipTapEditor from "./TipTapEditor";
-// Import from Heroicons
 import { HeartIcon as HeartOutline } from "@heroicons/react/24/outline";
 import { HeartIcon as HeartSolid } from "@heroicons/react/24/solid";
 import { ChatBubbleLeftIcon } from "@heroicons/react/24/outline";
 import { StarIcon as StarOutline } from "@heroicons/react/24/outline";
 import { StarIcon as StarSolid } from "@heroicons/react/24/solid";
+import { useSeenTracker } from "@/lib/useSeenTracker";
 
 type ShowPostsProps = {
   channelId?: number;
@@ -100,6 +100,9 @@ export default function ShowPosts({
   const [hasMore, setHasMore] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
   const loadMoreRef = useRef<HTMLDivElement | null>(null);
+
+  
+const { observeEl } = useSeenTracker(channelId ?? 0);
 
   useEffect(() => {
     if (isControlled) {
@@ -277,9 +280,7 @@ export default function ShowPosts({
       fd.append("content", editContent);
 
       const keepKeys = (editKeepFiles || []).map((f) =>
-        f.url.startsWith("/api/files/")
-          ? f.url.replace("/api/files/", "")
-          : f.url
+        f.url.startsWith("/api/files/") ? f.url.replace("/api/files/", "") : f.url
       );
       fd.append("keepKeys", JSON.stringify(keepKeys));
 
@@ -354,7 +355,12 @@ export default function ShowPosts({
     <>
       <div className="w-full max-w-2xl ml-0 mr-auto flex flex-col gap-4">
         {posts.map((post) => (
-          <div key={post.id} className="bg-white shadow rounded-xl p-4">
+          <div
+            key={post.id}
+            data-postid={post.id}
+            ref={observeEl}
+            className="bg-white shadow rounded-xl p-4"
+          >
             <div className="flex items-center justify-between mb-2">
               <div className="flex items-center gap-3">
                 <img
@@ -382,7 +388,7 @@ export default function ShowPosts({
                     {post.isEdited && (
                       <span className="ml-2 text-gray-400">(edited)</span>
                     )}
-                  </p> 
+                  </p>
                 </div>
               </div>
 
@@ -446,7 +452,6 @@ export default function ShowPosts({
             )}
 
             <div className="flex items-center gap-3 mb-2">
-              {/* Like / Heart */}
               <ActionIcon
                 variant={post.likedByMe ? "filled" : "subtle"}
                 color={post.likedByMe ? "red" : "gray"}
@@ -462,7 +467,6 @@ export default function ShowPosts({
               </ActionIcon>
               <Text size="sm">{post.likeCount}</Text>
 
-              {/* Comments */}
               <Button
                 size="xs"
                 variant="subtle"
@@ -473,7 +477,7 @@ export default function ShowPosts({
                 <ChatBubbleLeftIcon className="w-4 h-4 text-black" />
                 <span className="ml-2">Comments ({post.comments.length})</span>
               </Button>
-              {/* Save / Favorite */}
+
               <Button
                 size="xs"
                 variant="subtle"
@@ -496,15 +500,9 @@ export default function ShowPosts({
                 }}
               >
                 {post.saved ? (
-                  <>
-                    <StarSolid className="h-4 w-4 text-yellow-500" />
-                    {/* <span>Saved</span> */}
-                  </>
+                  <StarSolid className="h-4 w-4 text-yellow-500" />
                 ) : (
-                  <>
-                    <StarOutline className="h-4 w-4" />
-                    {/* <span>Save</span> */}
-                  </>
+                  <StarOutline className="h-4 w-4" />
                 )}
               </Button>
             </div>
@@ -520,8 +518,7 @@ export default function ShowPosts({
         )}
       </div>
 
-      {/* Edit Modal + Comments Modal remain exactly as your original (unchanged) */}
-      {/* If you want, I can paste the bottom part too, but it’s identical to what you already have */}
+      {/* Edit Modal */}
       <Modal
         opened={!!editingPost}
         onClose={() => setEditingPost(null)}
@@ -596,12 +593,11 @@ export default function ShowPosts({
         </div>
       </Modal>
 
+      {/* Comments Modal */}
       <Modal
         opened={!!commentsPost}
         onClose={() => setCommentsPost(null)}
-        title={
-          commentsPost ? `Comments · Post #${commentsPost.id}` : "Comments"
-        }
+        title={commentsPost ? `Comments · Post #${commentsPost.id}` : "Comments"}
         size="xl"
         centered
         withinPortal
@@ -611,10 +607,7 @@ export default function ShowPosts({
           <div className="flex gap-4 h-[70vh]">
             <div className="w-1/2 bg-gray-50 rounded-xl flex items-center justify-center overflow-hidden">
               {media?.img ? (
-                <img
-                  src={media.img.url}
-                  className="w-full h-full object-contain"
-                />
+                <img src={media.img.url} className="w-full h-full object-contain" />
               ) : media?.vid ? (
                 <video controls className="w-full h-full">
                   <source src={media.vid.url} />
@@ -642,9 +635,7 @@ export default function ShowPosts({
                         />
                         <div className="bg-gray-50 rounded-lg px-3 py-2 w-full">
                           <div className="flex items-center justify-between gap-2">
-                            <p className="text-sm font-semibold">
-                              {c.author.username}
-                            </p>
+                            <p className="text-sm font-semibold">{c.author.username}</p>
                             <p className="text-xs text-gray-400">
                               {new Date(c.createdAt).toLocaleString()}
                             </p>
@@ -672,10 +663,7 @@ export default function ShowPosts({
                   }
                   className="flex-1"
                 />
-                <Button
-                  type="submit"
-                  loading={commentingId === commentsPost.id}
-                >
+                <Button type="submit" loading={commentingId === commentsPost.id}>
                   Post
                 </Button>
               </form>
