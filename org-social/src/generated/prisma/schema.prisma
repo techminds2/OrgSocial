@@ -27,6 +27,8 @@ model User {
   savedPosts      SavedPost[]
   todos           Todo[]
   postSeen        PostSeen[]
+  pinnedChannelId Int?
+  pinnedChannel   Channel?       @relation(fields: [pinnedChannelId], references: [id], onDelete: SetNull)
 }
 
 model Post {
@@ -89,12 +91,13 @@ model Channel {
   createdById Int
   createdBy   User @relation("ChannelCreator", fields: [createdById], references: [id])
 
-  bannerKey    String?
-  visibility   String          @default("private")
-  postSeen     PostSeen[]
-  members      ChannelMember[]
-  posts        Post[]
-  joinRequests JoinRequest[]
+  bannerKey     String?
+  visibility    String          @default("private")
+  postSeen      PostSeen[]
+  members       ChannelMember[]
+  posts         Post[]
+  joinRequests  JoinRequest[]
+  pinnedByUsers User[]
 }
 
 model ChannelMember {

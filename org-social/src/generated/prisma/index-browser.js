@@ -127,7 +127,8 @@ exports.Prisma.UserScalarFieldEnum = {
   email: 'email',
   role: 'role',
   isStaff: 'isStaff',
-  profileImage: 'profileImage'
+  profileImage: 'profileImage',
+  pinnedChannelId: 'pinnedChannelId'
 };
 
 exports.Prisma.PostScalarFieldEnum = {

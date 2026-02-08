@@ -1,9 +1,16 @@
 "use client";
 
 import Link from "next/link";
-import { useState, useEffect, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Menu, Avatar, Indicator, ScrollArea, Text, Loader } from "@mantine/core";
+import {
+  Menu,
+  Avatar,
+  Indicator,
+  ScrollArea,
+  Text,
+  Loader,
+} from "@mantine/core";
 import { BellIcon } from "@heroicons/react/24/outline";
 import useNotifications from "@/hooks/useNotifications";
 
@@ -21,6 +28,12 @@ type Notification = {
   channelName?: string;
   username?: string;
 };
+
+function useMounted() {
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+  return mounted;
+}
 
 function normalizeMediaUrl(u?: string | null) {
   if (!u) return "/temp.jpg";
@@ -50,13 +63,14 @@ function mergeDedupe(prev: Notification[], incoming: Notification[]) {
   });
 
   return Array.from(map.values()).sort(
-    (a, b) =>
-      new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+    (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
   );
 }
 
 export default function NavBar({ profileImage }: NavBarProps) {
   const router = useRouter();
+  const mounted = useMounted();
+
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [loadingNotifications, setLoadingNotifications] = useState(true);
 
@@ -64,13 +78,15 @@ export default function NavBar({ profileImage }: NavBarProps) {
   const [meProfileImage, setMeProfileImage] = useState<string | null>(null);
   const [meId, setMeId] = useState<number | null>(null);
 
+  // Hook stays safe: it only becomes "active" when meId exists
   useNotifications(meId, (updater: any) => {
     const incoming = typeof updater === "function" ? updater([]) : [updater];
     setNotifications((prev) => mergeDedupe(prev, incoming as any));
   });
 
+  // Fetch notifications
   useEffect(() => {
-    let mounted = true;
+    let alive = true;
 
     async function fetchNotifications() {
       try {
@@ -81,27 +97,32 @@ export default function NavBar({ profileImage }: NavBarProps) {
           cache: "no-store",
         });
 
-        const data = await res.json();
-        const incoming = Array.isArray(data.notifications) ? data.notifications : [];
+        if (!res.ok) return;
 
-        if (mounted) {
+        const data = await res.json();
+        const incoming = Array.isArray(data.notifications)
+          ? data.notifications
+          : [];
+
+        if (alive) {
           setNotifications((prev) => mergeDedupe(prev, incoming as any));
         }
       } catch (err) {
         console.error("Failed to fetch notifications:", err);
       } finally {
-        if (mounted) setLoadingNotifications(false);
+        if (alive) setLoadingNotifications(false);
       }
     }
 
     fetchNotifications();
     return () => {
-      mounted = false;
+      alive = false;
     };
   }, []);
 
+  // Fetch current user
   useEffect(() => {
-    let mounted = true;
+    let alive = true;
 
     async function fetchUser() {
       try {
@@ -109,7 +130,7 @@ export default function NavBar({ profileImage }: NavBarProps) {
         if (!res.ok) throw new Error("Not authenticated");
 
         const data = await res.json();
-        if (!mounted) return;
+        if (!alive) return;
 
         if (data.username) setUsername(data.username);
         setMeProfileImage(data.profileImage ?? null);
@@ -123,7 +144,7 @@ export default function NavBar({ profileImage }: NavBarProps) {
 
     fetchUser();
     return () => {
-      mounted = false;
+      alive = false;
     };
   }, []);
 
@@ -133,7 +154,10 @@ export default function NavBar({ profileImage }: NavBarProps) {
     return meProfileImage ? fromMe : fromProps;
   }, [profileImage, meProfileImage]);
 
-  const visibleNotifications = notifications.slice(0, 10);
+  const visibleNotifications = useMemo(
+    () => notifications.slice(0, 10),
+    [notifications],
+  );
 
   const handleLogout = async () => {
     try {
@@ -145,13 +169,38 @@ export default function NavBar({ profileImage }: NavBarProps) {
       console.error("Logout failed:", err);
     } finally {
       router.push("/");
-      router.refresh?.();
+      router.refresh();
     }
   };
+
+  // ✅ SSR-safe placeholders: same markup on server & initial client render
+  if (!mounted) {
+    return (
+      <nav className="bg-white shadow-sm fixed top-0 left-64 right-0 z-30 h-14">
+        <div className="py-1 lg:px-8 flex justify-end items-center gap-4">
+          <div className="cursor-pointer">
+            <Indicator disabled>
+              <BellIcon className="h-6 w-6 text-gray-700" />
+            </Indicator>
+          </div>
+
+          <div className="flex items-center cursor-pointer gap-2">
+            <Avatar
+              src={normalizeMediaUrl(profileImage)}
+              radius="xl"
+              size={40}
+            />
+            <span className="font-medium text-gray-700">User</span>
+          </div>
+        </div>
+      </nav>
+    );
+  }
 
   return (
     <nav className="bg-white shadow-sm fixed top-0 left-64 right-0 z-30 h-14">
       <div className="py-1 lg:px-8 flex justify-end items-center gap-4">
+        {/* Notifications Menu */}
         <Menu shadow="md" width={320} position="bottom-end" withArrow>
           <Menu.Target>
             <div className="cursor-pointer">
@@ -168,6 +217,7 @@ export default function NavBar({ profileImage }: NavBarProps) {
 
           <Menu.Dropdown>
             <Menu.Label>Notifications</Menu.Label>
+
             <ScrollArea.Autosize mah={300}>
               {loadingNotifications ? (
                 <div className="flex justify-center py-4">
@@ -182,24 +232,28 @@ export default function NavBar({ profileImage }: NavBarProps) {
                   const n: Notification = { ...raw, type: normalizeType(raw) };
                   const key = notifKey(n);
 
-                  return n.type === "post" ? (
-                    <Menu.Item
-                      key={key}
-                      onClick={() => {
-                        const match = n.href?.match(/\/posts\/(\d+)/);
-                        if (!match) return;
+                  if (n.type === "post") {
+                    return (
+                      <Menu.Item
+                        key={key}
+                        onClick={() => {
+                          const match = n.href?.match(/\/posts\/(\d+)/);
+                          if (!match) return;
 
-                        const postId = Number(match[1]);
-                        window.dispatchEvent(
-                          new CustomEvent("open-post-modal", {
-                            detail: { postId },
-                          })
-                        );
-                      }}
-                    >
-                      {n.message}
-                    </Menu.Item>
-                  ) : (
+                          const postId = Number(match[1]);
+                          window.dispatchEvent(
+                            new CustomEvent("open-post-modal", {
+                              detail: { postId },
+                            }),
+                          );
+                        }}
+                      >
+                        {n.message}
+                      </Menu.Item>
+                    );
+                  }
+
+                  return (
                     <Menu.Item key={key} component={Link} href={n.href}>
                       {n.message}
                     </Menu.Item>
@@ -207,13 +261,16 @@ export default function NavBar({ profileImage }: NavBarProps) {
                 })
               )}
             </ScrollArea.Autosize>
+
             <Menu.Divider />
+
             <Menu.Item component={Link} href="/notifications">
               View all notifications
             </Menu.Item>
           </Menu.Dropdown>
         </Menu>
 
+        {/* Profile Menu */}
         <Menu shadow="md" width={180} position="bottom-end" withArrow>
           <Menu.Target>
             <div className="flex items-center cursor-pointer gap-2">
@@ -233,7 +290,9 @@ export default function NavBar({ profileImage }: NavBarProps) {
             <Menu.Item component={Link} href="/profile">
               Profile
             </Menu.Item>
+
             <Menu.Divider />
+
             <Menu.Item color="red" onClick={handleLogout}>
               Logout
             </Menu.Item>

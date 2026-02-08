@@ -2,9 +2,9 @@
 
 import CreatePost from "@/components/CreatePost";
 import ShowPosts from "@/components/ShowPost";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Button, Modal, Text, TextInput, FileInput, Menu } from "@mantine/core";
+import { Button, Modal, Text, TextInput, FileInput, Menu, Group } from "@mantine/core";
 
 type MemberPick = {
   userId: number;
@@ -38,10 +38,24 @@ export default function ChannelFeed({
   const [editOpen, setEditOpen] = useState(false);
   const [loading, setLoading] = useState(false);
 
+  // edit state
   const [name, setName] = useState(channelName);
   const [banner, setBanner] = useState<File | null>(null);
   const [members, setMembers] = useState<MemberPick[]>([]);
   const [originalMembers, setOriginalMembers] = useState<MemberPick[]>([]);
+
+  // 📌 PIN STATE (localStorage + server sync)
+  const [pinLoading, setPinLoading] = useState(false);
+  const [pinnedChannelId, setPinnedChannelId] = useState<number | null>(() => {
+    if (typeof window === "undefined") return null;
+    const saved = localStorage.getItem("pinnedChannelId");
+    return saved ? Number(saved) : null;
+  });
+
+  const isPinned = useMemo(
+    () => pinnedChannelId === channelId,
+    [pinnedChannelId, channelId]
+  );
 
   const bannerUrl = bannerKey
     ? bannerKey.startsWith("http")
@@ -49,10 +63,50 @@ export default function ChannelFeed({
       : `/api/files/${bannerKey}`
     : null;
 
+  // keep name synced if props change
   useEffect(() => {
     setName(channelName);
   }, [channelName]);
 
+  // 🔁 Sync pin from SERVER on mount (authoritative)
+  useEffect(() => {
+    let cancelled = false;
+
+    (async () => {
+      try {
+        const res = await fetch("/api/users/me/pinned-channel", {
+          credentials: "include",
+          cache: "no-store",
+        });
+
+        if (!res.ok) return;
+
+        const data = await res.json();
+        const id =
+          data?.pinnedChannelId !== null
+            ? Number(data.pinnedChannelId)
+            : null;
+
+        if (cancelled) return;
+
+        setPinnedChannelId(id);
+
+        if (id) {
+          localStorage.setItem("pinnedChannelId", String(id));
+        } else {
+          localStorage.removeItem("pinnedChannelId");
+        }
+      } catch {
+        // fallback to localStorage
+      }
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  /* 🔹 Load members when opening edit */
   useEffect(() => {
     if (!editOpen) return;
 
@@ -61,12 +115,16 @@ export default function ChannelFeed({
       .then((d) => {
         setMembers(d.members || []);
         setOriginalMembers(d.members || []);
+      })
+      .catch(() => {
+        setMembers([]);
+        setOriginalMembers([]);
       });
   }, [editOpen, channelId]);
 
+  /* 🔹 Save edits */
   const saveEdits = async () => {
     setLoading(true);
-
     try {
       const formData = new FormData();
 
@@ -98,9 +156,9 @@ export default function ChannelFeed({
     }
   };
 
+  /* 🔹 Delete channel */
   const deleteChannel = async () => {
     setLoading(true);
-
     try {
       await fetch(`/api/channels/${channelId}`, {
         method: "DELETE",
@@ -118,6 +176,48 @@ export default function ChannelFeed({
     }
   };
 
+  // 📌 Pin
+  const pinThisChannel = async () => {
+    setPinLoading(true);
+    try {
+      const res = await fetch(`/api/channels/${channelId}/pin`, {
+        method: "POST",
+        credentials: "include",
+      });
+
+      if (!res.ok) {
+        alert("Failed to pin channel");
+        return;
+      }
+
+      setPinnedChannelId(channelId);
+      localStorage.setItem("pinnedChannelId", String(channelId));
+    } finally {
+      setPinLoading(false);
+    }
+  };
+
+  // 📌 Unpin
+  const unpinChannel = async () => {
+    setPinLoading(true);
+    try {
+      const res = await fetch(`/api/channels/${channelId}/pin`, {
+        method: "DELETE",
+        credentials: "include",
+      });
+
+      if (!res.ok) {
+        alert("Failed to unpin channel");
+        return;
+      }
+
+      setPinnedChannelId(null);
+      localStorage.removeItem("pinnedChannelId");
+    } finally {
+      setPinLoading(false);
+    }
+  };
+
   return (
     <div>
       {bannerUrl && (
@@ -131,49 +231,42 @@ export default function ChannelFeed({
       <div className="flex justify-between items-center mb-4">
         <h1 className="text-xl font-semibold">#{channelName}</h1>
 
-        {/* ✅ Fix hydration mismatch: only render Mantine Menu after mount */}
-        {mounted && role === "admin" && (
-          <Menu shadow="sm" width={120}>
-            <Menu.Target>
-              <Button
-                variant="subtle"
-                size="xs"
-                px={6}
-                py={2}
-                styles={(theme) => ({
-                  root: {
-                    backgroundColor: "transparent",
-                    "&:hover": {
-                      backgroundColor: theme.colors.gray[1],
-                    },
-                  },
-                })}
-              >
-                ⋮
-              </Button>
-            </Menu.Target>
+        <Group gap="xs">
+          {mounted && (
+            <Button
+              size="xs"
+              variant={isPinned ? "light" : "outline"}
+              loading={pinLoading}
+              onClick={isPinned ? unpinChannel : pinThisChannel}
+            >
+              {isPinned ? "Main Feed ✓" : "Pin as Main Feed"}
+            </Button>
+          )}
 
-            <Menu.Dropdown>
-              <Menu.Item onClick={() => setEditOpen(true)}>Edit</Menu.Item>
-              {canDelete && (
-                <Menu.Item color="red" onClick={() => setDeleteOpen(true)}>
-                  Delete
-                </Menu.Item>
-              )}
-            </Menu.Dropdown>
-          </Menu>
-        )}
+          {mounted && role === "admin" && (
+            <Menu shadow="sm" width={120}>
+              <Menu.Target>
+                <Button variant="subtle" size="xs" px={6} py={2}>
+                  ⋮
+                </Button>
+              </Menu.Target>
+
+              <Menu.Dropdown>
+                <Menu.Item onClick={() => setEditOpen(true)}>Edit</Menu.Item>
+                {canDelete && (
+                  <Menu.Item color="red" onClick={() => setDeleteOpen(true)}>
+                    Delete
+                  </Menu.Item>
+                )}
+              </Menu.Dropdown>
+            </Menu>
+          )}
+        </Group>
       </div>
 
-      {/* ✅ Also mount-gate Modals (portals/ids) to avoid similar SSR mismatches */}
       {mounted && (
         <>
-          <Modal
-            opened={editOpen}
-            onClose={() => setEditOpen(false)}
-            title="Edit channel"
-            centered
-          >
+          <Modal opened={editOpen} onClose={() => setEditOpen(false)} title="Edit channel" centered>
             <TextInput
               label="Channel name"
               value={name}
@@ -181,70 +274,10 @@ export default function ChannelFeed({
               mb="sm"
             />
 
-            <FileInput
-              label="Replace banner"
-              accept="image/*"
-              onChange={setBanner}
-              mb="sm"
-            />
-
-            <Text fw={600} size="sm" mb={6}>
-              Members
-            </Text>
-
-            {members.map((m) => (
-              <div key={m.userId} className="flex justify-between items-center mb-2">
-                <div className="text-sm font-medium">{m.username}</div>
-
-                <div className="flex gap-2">
-                  <select
-                    value={m.role}
-                    onChange={(e) =>
-                      setMembers((prev) =>
-                        prev.map((x) =>
-                          x.userId === m.userId
-                            ? { ...x, role: e.target.value as MemberPick["role"] }
-                            : x
-                        )
-                      )
-                    }
-                    className="border rounded px-2 py-1 text-sm"
-                  >
-                    <option value="viewer">viewer</option>
-                    <option value="editor">editor</option>
-                    <option value="admin">admin</option>
-                  </select>
-
-                  <Button
-                    size="xs"
-                    color="red"
-                    variant="light"
-                    onClick={() =>
-                      setMembers((prev) => prev.filter((x) => x.userId !== m.userId))
-                    }
-                  >
-                    Remove
-                  </Button>
-                </div>
-              </div>
-            ))}
-
-            <div className="mt-4 flex justify-end gap-2">
-              <Button variant="default" onClick={() => setEditOpen(false)}>
-                Cancel
-              </Button>
-              <Button loading={loading} onClick={saveEdits}>
-                Save
-              </Button>
-            </div>
+            <FileInput label="Replace banner" accept="image/*" onChange={setBanner} mb="sm" />
           </Modal>
 
-          <Modal
-            opened={deleteOpen}
-            onClose={() => setDeleteOpen(false)}
-            title="Delete channel"
-            centered
-          >
+          <Modal opened={deleteOpen} onClose={() => setDeleteOpen(false)} title="Delete channel" centered>
             <Text size="sm" c="dimmed">
               This will permanently delete this channel.
             </Text>
