@@ -137,7 +137,7 @@ export default function RequestsInboxClient() {
                       <div className="font-medium truncate">
                         {n.username} wants to join{" "}
                         <span className="text-gray-700">
-                          #{n.channelName}
+                          {n.channelName}
                         </span>
                       </div>
                       <div className="text-xs text-gray-600">

@@ -229,7 +229,7 @@ export default function ChannelFeed({
       )}
 
       <div className="flex justify-between items-center mb-4">
-        <h1 className="text-xl font-semibold">#{channelName}</h1>
+        <h1 className="text-xl font-semibold">{channelName}</h1>
 
         <Group gap="xs">
           {mounted && (

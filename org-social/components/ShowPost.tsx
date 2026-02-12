@@ -375,7 +375,7 @@ const { observeEl } = useSeenTracker(channelId ?? 0);
                     {showChannel && (
                       <>
                         {post.channel
-                          ? `Posted in #${post.channel.name}`
+                          ? `Posted in ${post.channel.name}`
                           : "Posted on dashboard"}
                         {" · "}
                       </>
@@ -597,7 +597,7 @@ const { observeEl } = useSeenTracker(channelId ?? 0);
       <Modal
         opened={!!commentsPost}
         onClose={() => setCommentsPost(null)}
-        title={commentsPost ? `Comments · Post #${commentsPost.id}` : "Comments"}
+        title={commentsPost ? `Comments · Post ${commentsPost.id}` : "Comments"}
         size="xl"
         centered
         withinPortal

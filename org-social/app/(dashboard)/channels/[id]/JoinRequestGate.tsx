@@ -78,7 +78,7 @@ export default function JoinRequestGate({
       )}
 
       <div className="max-w-xl bg-white border rounded-xl p-5 mx-auto">
-        <h2 className="text-lg font-semibold">#{channelName}</h2>
+        <h2 className="text-lg font-semibold">{channelName}</h2>
         <p className="text-sm text-gray-600 mt-1">
           This is a public channel. You need admin approval to join.
         </p>
