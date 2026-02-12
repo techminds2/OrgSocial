@@ -12,19 +12,41 @@ import {
   TextInput,
   Button,
   ActionIcon,
-  CheckIcon,
 } from "@mantine/core";
-import { CheckCircleIcon } from "@heroicons/react/24/outline";
+import {
+  Squares2X2Icon,
+  UsersIcon,
+  ClipboardDocumentListIcon,
+  CheckBadgeIcon,
+  ExclamationTriangleIcon,
+  FireIcon,
+  CheckCircleIcon,
+} from "@heroicons/react/24/outline";
 
 type MenuItem =
-  | { type: "link"; label: string; href: string }
+  | { type: "link"; label: string; href: string; icon: React.ElementType }
   | { type: "heading"; label: string };
 
 const MENU_ITEMS: MenuItem[] = [
   { type: "heading", label: "My Team" },
-  { type: "link", label: "My Team Apps", href: "/dashboard/team-apps" },
-  { type: "link", label: "Team Directory", href: "/team-directory" },
-  { type: "link", label: "To-do List", href: "/todo" }, // open modal
+  {
+    type: "link",
+    label: "My Team Apps",
+    href: "/dashboard/team-apps",
+    icon: Squares2X2Icon,
+  },
+  {
+    type: "link",
+    label: "Team Directory",
+    href: "/team-directory",
+    icon: UsersIcon,
+  },
+  {
+    type: "link",
+    label: "To-do List",
+    href: "/todo",
+    icon: ClipboardDocumentListIcon,
+  },
 ];
 
 interface Todo {
@@ -48,10 +70,25 @@ function SidebarContent({
   openTodoModal?: () => void;
   completeTodo?: (id: number) => void;
 }) {
-  const getPriorityColor = (priority: string) => {
-    if (priority === "Low") return "yellow";
-    if (priority === "Medium") return "orange";
-    return "red";
+  // ✅ High → Medium → Low, incomplete only
+  const sidebarTodos =
+    todos
+      ?.filter((t) => !t.completed)
+      .sort((a, b) => {
+        const rank = { High: 3, Medium: 2, Low: 1 };
+        return rank[b.priority] - rank[a.priority];
+      }) || [];
+
+  const getPriorityIcon = (priority: Todo["priority"]) => {
+    if (priority === "Low") return CheckBadgeIcon;
+    if (priority === "Medium") return ExclamationTriangleIcon;
+    return FireIcon;
+  };
+
+  const getPriorityIconColor = (priority: Todo["priority"]) => {
+    if (priority === "Low") return "text-yellow-500";
+    if (priority === "Medium") return "text-orange-500";
+    return "text-red-500";
   };
 
   return (
@@ -79,12 +116,7 @@ function SidebarContent({
         }
 
         const isActive = pathname === item.href;
-
-        const baseClass =
-          "block w-full text-left px-4 py-2 text-sm rounded transition";
-        const activeClass = isActive
-          ? "bg-blue-100 text-blue-700 font-semibold"
-          : "text-gray-700 hover:bg-blue-100";
+        const Icon = item.icon;
 
         if (item.href === "/todo") {
           return (
@@ -95,13 +127,10 @@ function SidebarContent({
                 openTodoModal?.();
                 onNavigate?.();
               }}
-              className="block w-full text-left px-4 py-1.5 text-gray-700 rounded hover:bg-blue-100"
+              className="flex items-center gap-3 w-full text-left px-4 py-2 text-gray-700 rounded hover:bg-blue-100"
             >
-              <span
-                style={{ fontSize: 14, lineHeight: "16px", fontWeight: 400 }}
-              >
-                {item.label}
-              </span>
+              <Icon className="h-5 w-5 text-gray-500" />
+              <span className="text-sm">{item.label}</span>
             </button>
           );
         }
@@ -111,36 +140,48 @@ function SidebarContent({
             key={item.href}
             href={item.href}
             onClick={onNavigate}
-            className={`${baseClass} ${activeClass}`}
+            className={`flex items-center gap-3 px-4 py-2 text-sm rounded transition ${
+              isActive
+                ? "bg-blue-100 text-blue-700 font-semibold"
+                : "text-gray-700 hover:bg-blue-100"
+            }`}
           >
+            <Icon className="h-5 w-5 text-gray-500" />
             {item.label}
           </Link>
         );
       })}
 
-      {/* Sidebar todo list (top 5, not completed) */}
-      {todos && todos.length > 0 && (
-        <ol className="mt-2 list-decimal list-inside space-y-1">
-          {todos
-            .filter((t) => !t.completed)
-            .slice(0, 5)
-            .map((todo) => (
-              <li
-                key={todo.id}
-                className="flex items-center justify-between text-sm"
-              >
-                <span className="flex items-center gap-2 cursor-pointer">
-                  <span
-                    className="w-3 h-3 rounded-full inline-block"
-                    style={{ backgroundColor: getPriorityColor(todo.priority) }}
-                    onClick={() => completeTodo?.(todo.id)}
-                    title="Click to mark completed"
-                  ></span>
-                  {todo.title}
-                </span>
-              </li>
-            ))}
-        </ol>
+      {sidebarTodos.length > 0 && (
+        <div className="mt-3">
+          <div className="mb-2 text-gray-500 uppercase font-semibold text-xs tracking-wider px-4">
+            Tasks
+          </div>
+
+          <ScrollArea h={260} offsetScrollbars>
+            <ol className="list-decimal list-inside space-y-1 pr-2">
+              {sidebarTodos.map((todo) => {
+                const PriorityIcon = getPriorityIcon(todo.priority);
+
+                return (
+                  <li
+                    key={todo.id}
+                    className="flex items-center justify-between text-sm pl-4 pr-2"
+                  >
+                    <span className="flex items-center gap-2 cursor-pointer">
+                      <PriorityIcon
+                        className={`h-4 w-4 ${getPriorityIconColor(todo.priority)}`}
+                        onClick={() => completeTodo?.(todo.id)}
+                        title="Click to mark completed"
+                      />
+                      {todo.title}
+                    </span>
+                  </li>
+                );
+              })}
+            </ol>
+          </ScrollArea>
+        </div>
       )}
     </nav>
   );
@@ -153,20 +194,11 @@ export default function Sidebar() {
   const [todos, setTodos] = useState<Todo[]>([]);
   const [newTodo, setNewTodo] = useState("");
   const [priority, setPriority] = useState<"Low" | "Medium" | "High">("Medium");
-  const [modalOpen, setModalOpen] = useState(false);
 
   const fetchTodos = async () => {
     const res = await fetch("/api/todos");
     const data = await res.json();
-    if (data.todos) {
-      // Sort by oldest first
-      setTodos(
-        data.todos.sort(
-          (a: Todo, b: Todo) =>
-            new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime(),
-        ),
-      );
-    }
+    if (data.todos) setTodos(data.todos);
   };
 
   const addTodo = async () => {
@@ -197,6 +229,11 @@ export default function Sidebar() {
     fetchTodos();
   }, []);
 
+  const modalTodos = [
+    ...todos.filter((t) => !t.completed),
+    ...todos.filter((t) => t.completed),
+  ];
+
   return (
     <>
       {/* Desktop sidebar */}
@@ -220,6 +257,7 @@ export default function Sidebar() {
           title="Menu"
           padding="md"
           size="xs"
+          removeScrollProps={{ enabled: false }}
         >
           <ScrollArea h="calc(100vh - 120px)" offsetScrollbars>
             <SidebarContent
@@ -254,33 +292,17 @@ export default function Sidebar() {
               setPriority(e.currentTarget.value as "Low" | "Medium" | "High")
             }
           >
-            <option value="Low">Low</option>
-            <option value="Medium">Medium</option>
             <option value="High">High</option>
+            <option value="Medium">Medium</option>
+            <option value="Low">Low</option>
           </select>
-          <Button
-            size="xs"
-            variant="filled"
-            onClick={() => setModalOpen(true)}
-            style={{
-              backgroundColor: "var(--color-primary)",
-              color: "white",
-              transition: "background-color 0.2s",
-            }}
-            onMouseEnter={(e) =>
-              (e.currentTarget.style.backgroundColor = "var(--color-secondary)")
-            }
-            onMouseLeave={(e) =>
-              (e.currentTarget.style.backgroundColor = "var(--color-primary)")
-            }
-          >
+          <Button size="xs" variant="filled" onClick={addTodo}>
             Add
           </Button>
         </div>
 
-        {/* All todos in modal */}
         <ul className="space-y-1">
-          {todos.map((todo) => (
+          {modalTodos.map((todo) => (
             <li
               key={todo.id}
               className={`flex items-center justify-between ${

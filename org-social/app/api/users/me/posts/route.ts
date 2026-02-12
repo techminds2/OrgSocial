@@ -18,9 +18,24 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   try {
+    const { searchParams } = new URL(req.url);
+
+    const limitRaw = Number(searchParams.get("limit") || "10");
+    const limit = Number.isFinite(limitRaw) ? Math.min(Math.max(limitRaw, 1), 50) : 10;
+
+    const cursorRaw = searchParams.get("cursor");
+    const cursor = cursorRaw ? Number(cursorRaw) : null;
+
     const posts = await prisma.post.findMany({
       where: { authorId: userId },
-      orderBy: { createdAt: "desc" },
+      orderBy: [{ createdAt: "desc" }, { id: "desc" }],
+      take: limit,
+      ...(cursor
+        ? {
+            cursor: { id: cursor },
+            skip: 1,
+          }
+        : {}),
       include: {
         author: { select: { id: true, username: true, profileImage: true } },
         files: true,
@@ -45,17 +60,17 @@ export async function GET(req: NextRequest) {
       : [];
 
     const savedMap = new Map<number, Date>(
-      savedRows.map((s) => [s.postId, s.createdAt]),
+      savedRows.map((s) => [s.postId, s.createdAt])
     );
 
     const formatted = posts.map((p) => {
       const likeCount = p.reactions.reduce(
         (acc, r) => (r.type === "LIKE" ? acc + 1 : acc),
-        0,
+        0
       );
 
       const likedByMe = p.reactions.some(
-        (r) => r.userId === userId && r.type === "LIKE",
+        (r) => r.userId === userId && r.type === "LIKE"
       );
 
       const savedAt = savedMap.get(p.id) ?? null;
@@ -92,12 +107,11 @@ export async function GET(req: NextRequest) {
       };
     });
 
-    return NextResponse.json({ posts: formatted });
+    const nextCursor = posts.length === limit ? posts[posts.length - 1].id : null;
+
+    return NextResponse.json({ posts: formatted, nextCursor });
   } catch (err) {
     console.error("PROFILE POSTS ERROR:", err);
-    return NextResponse.json(
-      { error: "Failed to fetch posts" },
-      { status: 500 },
-    );
+    return NextResponse.json({ error: "Failed to fetch posts" }, { status: 500 });
   }
 }

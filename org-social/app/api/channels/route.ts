@@ -6,6 +6,9 @@ import crypto from "crypto";
 import { PutObjectCommand } from "@aws-sdk/client-s3";
 import { s3 } from "@/lib/s3";
 import { getUserIdFromRequest } from "@/lib/auth";
+import { Prisma } from "@/src/generated/prisma";
+import { jwtVerify } from "jose";
+import { DJANGO_JWT_SECRET as SECRET } from "@/lib/jwtSecret";
 
 function normalizeKeyToFileApi(key?: string | null) {
   if (!key) return null;
@@ -21,36 +24,59 @@ const VALID_ROLES: Role[] = ["viewer", "editor", "admin"];
 type Visibility = "public" | "private";
 const VALID_VISIBILITY: Visibility[] = ["public", "private"];
 
-export async function GET(req: NextRequest) {
+function cleanToken(t: string) {
+  return t.trim().replace(/^Bearer\s+/i, "").replace(/^"+|"+$/g, "");
+}
+async function getUserId(req: NextRequest): Promise<number | null> {
   try {
-    const userId = await getUserIdFromRequest(req);
-    if (!userId)
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    const raw = req.cookies.get("accessToken")?.value; // ✅ works in route handlers
+    if (!raw) return null;
 
-    const channels = await prisma.channel.findMany({
-      where: { members: { some: { userId } } },
-      orderBy: [{ createdAt: "desc" }, { id: "desc" }],
-      include: { members: true },
+    const { payload } = await jwtVerify(cleanToken(raw), SECRET, {
+      algorithms: ["HS256"],
     });
 
-    const formatted = channels.map((c) => ({
-      id: c.id,
-      name: c.name,
-      createdAt: c.createdAt,
-      bannerKey: c.bannerKey,
-      bannerUrl: normalizeKeyToFileApi(c.bannerKey),
-      memberCount: c.members.length,
-      visibility: (c.visibility as Visibility) || "private",
-    }));
-
-    return NextResponse.json({ channels: formatted });
-  } catch (err) {
-    console.error("GET CHANNELS ERROR:", err);
-    return NextResponse.json(
-      { error: "Failed to load channels" },
-      { status: 500 }
-    );
+    const uid = Number((payload as any).user_id);
+    return Number.isFinite(uid) ? uid : null;
+  } catch {
+    return null;
   }
+}
+export async function GET(req: NextRequest) {
+  const userId = await getUserId(req);
+  if (!userId) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  // Adjust table names to your schema:
+  // Example assumes ChannelMember table: channelMember { userId, channelId, role }
+  const memberships = await prisma.channelMember.findMany({
+    where: { userId },
+    select: {
+      channel: {
+        select: {
+          id: true,
+          name: true,
+          createdAt: true,
+          bannerKey: true,
+          visibility: true,
+          _count: { select: { members: true } },
+        },
+      },
+    },
+    orderBy: { channelId: "desc" },
+  });
+
+  const channels = memberships.map((m) => ({
+    id: m.channel.id,
+    name: m.channel.name,
+    createdAt: m.channel.createdAt,
+    bannerKey: m.channel.bannerKey,
+    visibility: m.channel.visibility,
+    memberCount: m.channel._count.members,
+  }));
+
+  return NextResponse.json({ channels });
 }
 
 export async function POST(req: NextRequest) {
@@ -68,7 +94,7 @@ export async function POST(req: NextRequest) {
       .trim()
       .toLowerCase();
     const visibility: Visibility = VALID_VISIBILITY.includes(
-      visibilityRaw as Visibility
+      visibilityRaw as Visibility,
     )
       ? (visibilityRaw as Visibility)
       : "private";
@@ -86,7 +112,7 @@ export async function POST(req: NextRequest) {
               role: String(x?.role || "viewer") as Role,
             }))
             .filter(
-              (m) => Number.isFinite(m.userId) && VALID_ROLES.includes(m.role)
+              (m) => Number.isFinite(m.userId) && VALID_ROLES.includes(m.role),
             );
         }
       } catch {}
@@ -105,7 +131,10 @@ export async function POST(req: NextRequest) {
           }
         } catch {}
       }
-      members = memberIds.map((uid) => ({ userId: uid, role: "viewer" as Role }));
+      members = memberIds.map((uid) => ({
+        userId: uid,
+        role: "viewer" as Role,
+      }));
     }
 
     members = members.filter((m) => m.userId !== userId);
@@ -127,7 +156,7 @@ export async function POST(req: NextRequest) {
           Key: bannerKey,
           Body: buffer,
           ContentType: file.type || "application/octet-stream",
-        })
+        }),
       );
     }
 
@@ -164,12 +193,12 @@ export async function POST(req: NextRequest) {
     if (err?.code === "P2002") {
       return NextResponse.json(
         { error: "Channel name already exists" },
-        { status: 409 }
+        { status: 409 },
       );
     }
     return NextResponse.json(
       { error: "Failed to create channel" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

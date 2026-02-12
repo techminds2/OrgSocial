@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
   Loader,
   Avatar,
@@ -38,6 +38,8 @@ type Post = {
 };
 
 export default function ProfilePage() {
+  const LIMIT = 10;
+
   const [user, setUser] = useState<User | null>(null);
   const [loadingUser, setLoadingUser] = useState(true);
 
@@ -48,12 +50,21 @@ export default function ProfilePage() {
   const [posts, setPosts] = useState<Post[]>([]);
   const [loadingPosts, setLoadingPosts] = useState(true);
 
-  // Fetch user info
+  const [nextCursor, setNextCursor] = useState<number | null>(null);
+  const [hasMore, setHasMore] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
+
+  const loadMoreRef = useRef<HTMLDivElement | null>(null);
+
+  // user
   useEffect(() => {
     let mounted = true;
-    async function fetchUser() {
+    (async () => {
       try {
-        const res = await fetch("/api/auth/me", { credentials: "include" });
+        const res = await fetch("/api/auth/me", {
+          credentials: "include",
+          cache: "no-store",
+        });
         if (!res.ok) throw new Error("Not authenticated");
         const data: User = await res.json();
         if (mounted) setUser(data);
@@ -62,40 +73,145 @@ export default function ProfilePage() {
       } finally {
         if (mounted) setLoadingUser(false);
       }
-    }
-    fetchUser();
+    })();
     return () => {
       mounted = false;
     };
   }, []);
 
-  // Fetch posts based on active tab
+  // fetch page
+  const fetchPostsPage = async (opts?: {
+    cursor?: number | null;
+    append?: boolean;
+  }) => {
+    const cursor = opts?.cursor ?? null;
+    const append = !!opts?.append;
+
+    const endpoint =
+      activeTab === "myPosts" ? "/api/users/me/posts" : "/api/save-posts";
+
+    const qs = new URLSearchParams();
+    qs.set("limit", String(LIMIT));
+    if (cursor) qs.set("cursor", String(cursor));
+
+    const url = `${endpoint}?${qs.toString()}`;
+
+    const res = await fetch(url, {
+      credentials: "include",
+      cache: "no-store",
+    });
+
+    if (!res.ok) {
+      const text = await res.text().catch(() => "");
+      throw new Error(text || `HTTP ${res.status}`);
+    }
+
+    const data = await res.json();
+
+    const newPosts: Post[] = data.posts || [];
+    const newCursor: number | null = data.nextCursor ?? null;
+
+    setPosts((prev) => {
+      if (!append) return newPosts;
+      const existing = new Set(prev.map((p) => p.id));
+      return [...prev, ...newPosts.filter((p) => !existing.has(p.id))];
+    });
+
+    setNextCursor(newCursor);
+    setHasMore(!!newCursor && newPosts.length > 0);
+  };
+
+  // first page on tab
   useEffect(() => {
     let mounted = true;
-    async function fetchPosts() {
+
+    (async () => {
+      if (activeTab === "myChannels") return;
+
       setLoadingPosts(true);
+      setLoadingMore(false);
+      setPosts([]);
+      setNextCursor(null);
+      setHasMore(true);
+
       try {
-        const endpoint =
-          activeTab === "myPosts" ? "/api/users/me/posts" : "/api/save-posts";
-        const res = await fetch(endpoint, { credentials: "include" });
-        if (!res.ok) {
-          const text = await res.text();
-          throw new Error(text);
-        }
-        const data = await res.json();
-        if (mounted) setPosts(data.posts || []);
+        await fetchPostsPage({ cursor: null, append: false });
       } catch (err) {
         console.error(err);
-        if (mounted) setPosts([]);
+        if (mounted) {
+          setPosts([]);
+          setNextCursor(null);
+          setHasMore(false);
+        }
       } finally {
         if (mounted) setLoadingPosts(false);
       }
-    }
-    fetchPosts();
+    })();
+
     return () => {
       mounted = false;
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeTab]);
+
+  // ✅ infinite scroll (window)
+  useEffect(() => {
+    if (activeTab === "myChannels") return;
+
+    const el = loadMoreRef.current;
+    if (!el) return;
+
+    const obs = new IntersectionObserver(
+      (entries) => {
+        const first = entries[0];
+        if (!first?.isIntersecting) return;
+        if (loadingPosts || loadingMore) return;
+        if (!hasMore || !nextCursor) return;
+
+        // fire-and-forget pattern (avoid async function inside observer)
+        setLoadingMore(true);
+        fetchPostsPage({ cursor: nextCursor, append: true })
+          .catch(console.error)
+          .finally(() => setLoadingMore(false));
+      },
+      { root: null, rootMargin: "600px", threshold: 0 }
+    );
+
+    obs.observe(el);
+    return () => obs.disconnect();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeTab, loadingPosts, loadingMore, hasMore, nextCursor]);
+
+  // hooks above returns
+  const userId = user?.id ?? 0;
+  const username = user?.username ?? "Unknown";
+  const profilePhoto = user?.profile_photo ?? null;
+
+  const mappedPosts = useMemo(
+    () =>
+      posts.map((p: any) => ({
+        id: p.id,
+        content: p.content,
+        createdAt: p.createdAt,
+        files: (p.files ?? []).map((f: any) => ({
+          url: f.url ?? "/temp.jpg",
+          type: f.type || "document",
+        })),
+        likedByMe: p.likedByMe ?? false,
+        likeCount: p.likeCount ?? 0,
+        saved: p.saved ?? activeTab === "savedPosts",
+        savedAt: p.savedAt,
+        isMine: p.isMine ?? p.author?.id === userId,
+        author: {
+          id: p.author?.id ?? userId,
+          username: p.author?.username ?? username,
+          profileImage: p.author?.profileImage ?? profilePhoto,
+        },
+        comments: p.comments ?? [],
+        channel: p.channel ?? null,
+      })),
+    [posts, activeTab, userId, username, profilePhoto]
+  );
 
   if (loadingUser)
     return (
@@ -107,37 +223,9 @@ export default function ProfilePage() {
   if (!user)
     return (
       <div className="flex justify-center py-20">
-        <Text color="red">You are not logged in.</Text>
+        <Text c="red">You are not logged in.</Text>
       </div>
     );
-
-  // Map posts exactly like your original code
-  const mappedPosts = posts.map((p: any) => ({
-    id: p.id,
-    content: p.content,
-    createdAt: p.createdAt,
-
-    files: (p.files ?? []).map((f: any) => ({
-      url: f.url ?? "/temp.jpg",
-      type: f.type || "document",
-    })),
-
-    likedByMe: p.likedByMe ?? false,
-    likeCount: p.likeCount ?? 0,
-    saved: p.saved ?? activeTab === "savedPosts",
-    savedAt: p.savedAt,
-
-    isMine: p.isMine ?? p.author?.id === user.id,
-
-    author: {
-      id: p.author?.id ?? user.id,
-      username: p.author?.username ?? user.username ?? "Unknown",
-      profileImage: p.author?.profileImage ?? user.profile_photo,
-    },
-
-    comments: p.comments ?? [],
-    channel: p.channel ?? null,
-  }));
 
   return (
     <Container size="sm" className="py-10">
@@ -177,99 +265,60 @@ export default function ProfilePage() {
 
       <Divider className="mb-4" />
 
-      {/* Tabs for My Posts / Saved Posts */}
       <Group justify="left" mb="md">
-        <Button
-          variant="subtle"
-          onClick={() => setActiveTab("myPosts")}
-          styles={(theme) => ({
-            root: {
-              background: "transparent",
-              color: theme.colors.dark[9],
-              border: "none",
-              padding: "6px 12px",
-              borderBottom:
-                activeTab === "myPosts"
-                  ? `2px solid ${theme.colors.blue[6]}`
-                  : "none",
-              borderRadius: 0,
-              cursor: "pointer",
-              transition: "border-bottom 0.2s",
-              "&:hover": {
-                background: "transparent",
-              },
-            },
-          })}
-        >
+        <Button variant="subtle" onClick={() => setActiveTab("myPosts")}>
           My Posts
         </Button>
-        <Button
-          variant="subtle"
-          onClick={() => setActiveTab("savedPosts")}
-          styles={(theme) => ({
-            root: {
-              background: "transparent",
-              color: theme.colors.dark[9],
-              border: "none",
-              padding: "6px 12px",
-              borderBottom:
-                activeTab === "savedPosts"
-                  ? `2px solid ${theme.colors.blue[6]}`
-                  : "none",
-              borderRadius: 0,
-              cursor: "pointer",
-              transition: "border-bottom 0.2s",
-              "&:hover": {
-                background: "transparent",
-              },
-            },
-          })}
-        >
+        <Button variant="subtle" onClick={() => setActiveTab("savedPosts")}>
           Saved Posts
         </Button>
-        <Button
-          variant="subtle"
-          onClick={() => setActiveTab("myChannels")}
-          styles={(theme) => ({
-            root: {
-              background: "transparent",
-              color: theme.colors.dark[9],
-              border: "none",
-              padding: "6px 12px",
-              borderBottom:
-                activeTab === "myChannels"
-                  ? `2px solid ${theme.colors.blue[6]}`
-                  : "none",
-              borderRadius: 0,
-              cursor: "pointer",
-              transition: "border-bottom 0.2s",
-              "&:hover": { background: "transparent" },
-            },
-          })}
-        >
+        <Button variant="subtle" onClick={() => setActiveTab("myChannels")}>
           My Channels
-        </Button>{" "}
+        </Button>
       </Group>
 
-      {activeTab === "myPosts" &&
-        (loadingPosts ? (
-          <Loader size="sm" />
-        ) : mappedPosts.length === 0 ? (
-          <Text className="text-center text-gray-500">No posts yet.</Text>
-        ) : (
-          <ShowPosts posts={mappedPosts} showChannel />
-        ))}
-
-      {activeTab === "savedPosts" &&
-        (loadingPosts ? (
-          <Loader size="sm" />
-        ) : mappedPosts.length === 0 ? (
-          <Text className="text-center text-gray-500">No saved posts yet.</Text>
-        ) : (
-          <ShowPosts posts={mappedPosts} showChannel />
-        ))}
-
       {activeTab === "myChannels" && <MyChannels />}
+
+      {activeTab !== "myChannels" &&
+        (loadingPosts ? (
+          <Loader size="sm" />
+        ) : mappedPosts.length === 0 ? (
+          <Text className="text-center text-gray-500">
+            {activeTab === "myPosts" ? "No posts yet." : "No saved posts yet."}
+          </Text>
+        ) : (
+          <>
+            <ShowPosts posts={mappedPosts} showChannel />
+
+            {/* ✅ IMPORTANT: sentinel must have height */}
+            <div ref={loadMoreRef} style={{ height: 24 }} />
+
+            {loadingMore && (
+              <div className="flex justify-center mt-2">
+                <Loader size="sm" variant="dots" />
+              </div>
+            )}
+
+            {/* ✅ fallback button so you can test without scroll */}
+            {hasMore && nextCursor && !loadingMore && (
+              <div className="flex justify-center mt-3">
+                <Button
+                  variant="light"
+                  onClick={() => {
+                    setLoadingMore(true);
+                    fetchPostsPage({ cursor: nextCursor, append: true })
+                      .catch(console.error)
+                      .finally(() => setLoadingMore(false));
+                  }}
+                >
+                  Load more
+                </Button>
+              </div>
+            )}
+
+        
+          </>
+        ))}
     </Container>
   );
 }

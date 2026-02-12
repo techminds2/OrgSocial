@@ -127,7 +127,8 @@ exports.Prisma.UserScalarFieldEnum = {
   email: 'email',
   role: 'role',
   isStaff: 'isStaff',
-  profileImage: 'profileImage'
+  profileImage: 'profileImage',
+  pinnedChannelId: 'pinnedChannelId'
 };
 
 exports.Prisma.PostScalarFieldEnum = {
@@ -214,6 +215,14 @@ exports.Prisma.TodoScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
+exports.Prisma.PostSeenScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  postId: 'postId',
+  channelId: 'channelId',
+  seenAt: 'seenAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -241,7 +250,8 @@ exports.Prisma.ModelName = {
   JoinRequest: 'JoinRequest',
   Notification: 'Notification',
   SavedPost: 'SavedPost',
-  Todo: 'Todo'
+  Todo: 'Todo',
+  PostSeen: 'PostSeen'
 };
 
 /**

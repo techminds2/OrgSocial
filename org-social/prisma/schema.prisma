@@ -26,6 +26,10 @@ model User {
   joinRequests JoinRequest[]
   savedPosts SavedPost[]
   todos Todo[]  
+  postSeen PostSeen[]
+  pinnedChannelId  Int?
+  pinnedChannel    Channel? @relation(fields: [pinnedChannelId], references: [id], onDelete: SetNull)
+
 }
 
 model Post {
@@ -43,8 +47,8 @@ model Post {
   files     File[]
   comments  Comment[]
   reactions Reaction[]
-    savedBy SavedPost[]
-
+  savedBy SavedPost[]
+  seenBy PostSeen[]
 }
 
 model Comment {
@@ -90,11 +94,11 @@ model Channel {
 
   bannerKey   String?
   visibility  String   @default("private")
-
+  postSeen PostSeen[]
   members     ChannelMember[]
   posts       Post[]
-
   joinRequests JoinRequest[]
+  pinnedByUsers User[]
 }
 
 model ChannelMember {
@@ -152,17 +156,41 @@ model SavedPost {
   @@index([postId])
 }
 
-model Todo {
-  id        Int      @id @default(autoincrement())
-  userId    Int
-  title     String
-  priority  String   @default("Medium") 
-  completed Boolean  @default(false)    
-  deletedAt DateTime?                     
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  user User @relation(fields: [userId], references: [id])
+enum Priority {
+  Low
+  Medium
+  High
 }
 
+model Todo {
+  id          Int       @id @default(autoincrement())
+  userId      Int
+  title       String
+  priority    Priority
+  completed   Boolean   @default(false)
+  completedAt DateTime?
+  deletedAt   DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@index([userId, completed, completedAt])
+}
+
+model PostSeen {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  postId    Int
+  channelId Int
+  seenAt    DateTime @default(now())
+
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  post    Post    @relation(fields: [postId], references: [id], onDelete: Cascade)
+  channel Channel @relation(fields: [channelId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, postId])
+  @@index([userId, channelId])
+  @@index([channelId, seenAt])
+}
 

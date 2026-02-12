@@ -12,7 +12,7 @@ import Link from "next/link";
 import { useEffect, useState, useCallback } from "react";
 import Cropper from "react-easy-crop";
 import { useSearchParams, useRouter } from "next/navigation";
-import  getCroppedImg  from "@/lib/getCroppedImg";
+import getCroppedImg from "@/lib/getCroppedImg";
 
 type Channel = {
   id: number;
@@ -21,6 +21,7 @@ type Channel = {
   bannerKey?: string | null;
   memberCount?: number;
   visibility?: "public" | "private";
+  unseenCount?: number;
 };
 
 type PublicChannel = {
@@ -120,7 +121,7 @@ export default function ChannelsPanel() {
         ];
       });
     },
-    [publicChannels]
+    [publicChannels],
   );
 
   useEffect(() => {
@@ -128,7 +129,7 @@ export default function ChannelsPanel() {
     loadPublicChannels();
 
     const raw = new URLSearchParams(window.location.search).get(
-      "deletedChannelId"
+      "deletedChannelId",
     );
     if (!raw) return;
 
@@ -189,14 +190,17 @@ export default function ChannelsPanel() {
 
       setPublicChannels((prev) =>
         prev.map((c) =>
-          c.id === id ? { ...c, isMember: true, hasPendingRequest: false } : c
-        )
+          c.id === id ? { ...c, isMember: true, hasPendingRequest: false } : c,
+        ),
       );
     };
 
     window.addEventListener("channel-join-accepted", onJoinAccepted as any);
     return () =>
-      window.removeEventListener("channel-join-accepted", onJoinAccepted as any);
+      window.removeEventListener(
+        "channel-join-accepted",
+        onJoinAccepted as any,
+      );
   }, [moveChannelToJoined]);
 
   const addChannel = async () => {
@@ -214,8 +218,8 @@ export default function ChannelsPanel() {
       formData.append(
         "members",
         JSON.stringify(
-          pickedMembers.map((m) => ({ userId: m.userId, role: m.role }))
-        )
+          pickedMembers.map((m) => ({ userId: m.userId, role: m.role })),
+        ),
       );
 
       const res = await fetch("/api/channels", {
@@ -294,8 +298,8 @@ export default function ChannelsPanel() {
 
       setPublicChannels((prev) =>
         prev.map((c) =>
-          c.id === channelId ? { ...c, hasPendingRequest: true } : c
-        )
+          c.id === channelId ? { ...c, hasPendingRequest: true } : c,
+        ),
       );
     } catch (e) {
       console.error("Request join error:", e);
@@ -312,8 +316,8 @@ export default function ChannelsPanel() {
 
       setPublicChannels((prev) =>
         prev.map((c) =>
-          c.id === channelId ? { ...c, hasPendingRequest: false } : c
-        )
+          c.id === channelId ? { ...c, hasPendingRequest: false } : c,
+        ),
       );
     } catch (e) {
       console.error("Cancel join request error:", e);
@@ -363,12 +367,12 @@ export default function ChannelsPanel() {
                     />
                   ) : (
                     <div className="w-6 h-6 rounded bg-gray-300 flex items-center justify-center text-xs text-gray-600">
-                      #
+                      
                     </div>
                   )}
 
                   <div className="truncate">
-                    <span className="truncate">#{ch.name}</span>
+                    <span className="truncate">{ch.name}</span>
                     {ch.visibility === "public" && (
                       <span className="ml-2 text-[10px] px-1 py-[1px] rounded bg-green-100 text-green-700">
                         public
@@ -377,9 +381,9 @@ export default function ChannelsPanel() {
                   </div>
                 </div>
 
-                {typeof ch.memberCount === "number" && (
-                  <span className="text-xs text-gray-500 flex-shrink-0">
-                    {ch.memberCount}
+                {(ch.unseenCount ?? 0) > 0 && (
+                  <span className="text-[11px] px-2 py-[2px] rounded-full bg-blue-600 text-white flex-shrink-0">
+                    {ch.unseenCount}
                   </span>
                 )}
               </div>
@@ -400,7 +404,7 @@ export default function ChannelsPanel() {
                   className="px-2 py-2 rounded hover:bg-gray-100 flex justify-between items-center"
                 >
                   <div className="text-sm">
-                    <div className="font-medium"># {c.name}</div>
+                    <div className="font-medium"> {c.name}</div>
                     <div className="text-xs text-gray-500">
                       {c.memberCount} members
                     </div>
@@ -548,8 +552,8 @@ export default function ChannelsPanel() {
                       const role = e.currentTarget.value as MemberPick["role"];
                       setPickedMembers((prev) =>
                         prev.map((x) =>
-                          x.userId === m.userId ? { ...x, role } : x
-                        )
+                          x.userId === m.userId ? { ...x, role } : x,
+                        ),
                       );
                     }}
                   >
@@ -564,7 +568,7 @@ export default function ChannelsPanel() {
                     variant="light"
                     onClick={() =>
                       setPickedMembers((prev) =>
-                        prev.filter((x) => x.userId !== m.userId)
+                        prev.filter((x) => x.userId !== m.userId),
                       )
                     }
                   >

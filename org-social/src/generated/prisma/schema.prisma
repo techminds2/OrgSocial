@@ -26,6 +26,9 @@ model User {
   joinRequests    JoinRequest[]
   savedPosts      SavedPost[]
   todos           Todo[]
+  postSeen        PostSeen[]
+  pinnedChannelId Int?
+  pinnedChannel   Channel?       @relation(fields: [pinnedChannelId], references: [id], onDelete: SetNull)
 }
 
 model Post {
@@ -44,6 +47,7 @@ model Post {
   comments  Comment[]
   reactions Reaction[]
   savedBy   SavedPost[]
+  seenBy    PostSeen[]
 }
 
 model Comment {
@@ -87,13 +91,13 @@ model Channel {
   createdById Int
   createdBy   User @relation("ChannelCreator", fields: [createdById], references: [id])
 
-  bannerKey  String?
-  visibility String  @default("private")
-
-  members ChannelMember[]
-  posts   Post[]
-
-  joinRequests JoinRequest[]
+  bannerKey     String?
+  visibility    String          @default("private")
+  postSeen      PostSeen[]
+  members       ChannelMember[]
+  posts         Post[]
+  joinRequests  JoinRequest[]
+  pinnedByUsers User[]
 }
 
 model ChannelMember {
@@ -162,4 +166,20 @@ model Todo {
   updatedAt DateTime  @updatedAt
 
   user User @relation(fields: [userId], references: [id])
+}
+
+model PostSeen {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  postId    Int
+  channelId Int
+  seenAt    DateTime @default(now())
+
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  post    Post    @relation(fields: [postId], references: [id], onDelete: Cascade)
+  channel Channel @relation(fields: [channelId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, postId])
+  @@index([userId, channelId])
+  @@index([channelId, seenAt])
 }
