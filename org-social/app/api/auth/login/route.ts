@@ -123,26 +123,32 @@ export async function POST(req: Request) {
   });
 
   const res = NextResponse.json({ user });
-  res.headers.set(
-    "Set-Cookie",
-    cookie.serialize("accessToken", accessToken, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      maxAge: 60 * 60,
-      path: "/",
-      sameSite: "lax",
-    })
-  );
-  res.headers.append(
-    "Set-Cookie",
-    cookie.serialize("refreshToken", data.refresh, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      maxAge: 60 * 60 * 24 * 30,
-      path: "/",
-      sameSite: "lax",
-    })
-  );
 
-  return res;
+const proto = req.headers.get("x-forwarded-proto");
+const isHttps = proto === "https"; // true when your proxy terminates TLS
+
+res.headers.set(
+  "Set-Cookie",
+  cookie.serialize("accessToken", accessToken, {
+    httpOnly: true,
+    secure: isHttps,              // <-- key fix
+    maxAge: 60 * 60,
+    path: "/",
+    sameSite: "lax",
+  })
+);
+
+res.headers.append(
+  "Set-Cookie",
+  cookie.serialize("refreshToken", data.refresh, {
+    httpOnly: true,
+    secure: isHttps,              // <-- key fix
+    maxAge: 60 * 60 * 24 * 30,
+    path: "/",
+    sameSite: "lax",
+  })
+);
+
+return res;
+
 }

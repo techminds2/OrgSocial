@@ -17,32 +17,26 @@
  *         description: Created
  */
 import { NextResponse } from "next/server";
-import cookie from "cookie";
 
 export async function POST() {
   const res = NextResponse.json({ message: "Logged out successfully" });
 
-  res.headers.set(
-    "Set-Cookie",
-    cookie.serialize("accessToken", "", {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      maxAge: 0,
-      path: "/",
-      sameSite: "lax",
-    })
-  );
+  // Delete must match how you originally set cookies (path/domain/sameSite/secure).
+  res.cookies.set("accessToken", "", {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "lax",
+    path: "/",
+    maxAge: 0,
+  });
 
-  res.headers.append(
-    "Set-Cookie",
-    cookie.serialize("refreshToken", "", {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      maxAge: 0,
-      path: "/",
-      sameSite: "lax",
-    })
-  );
+  res.cookies.set("refreshToken", "", {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "lax",
+    path: "/",
+    maxAge: 0,
+  });
 
   return res;
 }
