@@ -29,6 +29,10 @@ model User {
   postSeen        PostSeen[]
   pinnedChannelId Int?
   pinnedChannel   Channel?       @relation(fields: [pinnedChannelId], references: [id], onDelete: SetNull)
+
+  notificationsActed Notification[] @relation("NotificationActor")
+
+  dailyReports DailyReport[]
 }
 
 model Post {
@@ -98,6 +102,7 @@ model Channel {
   posts         Post[]
   joinRequests  JoinRequest[]
   pinnedByUsers User[]
+  notifications Notification[]
 }
 
 model ChannelMember {
@@ -115,14 +120,15 @@ model ChannelMember {
 }
 
 model JoinRequest {
-  id        Int      @id @default(autoincrement())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  channelId Int
-  userId    Int
-  status    String   @default("pending")
-  channel   Channel  @relation(fields: [channelId], references: [id], onDelete: Cascade)
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id            Int            @id @default(autoincrement())
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  channelId     Int
+  userId        Int
+  status        String         @default("pending")
+  channel       Channel        @relation(fields: [channelId], references: [id], onDelete: Cascade)
+  user          User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  notifications Notification[]
 
   @@unique([channelId, userId])
   @@index([channelId, status])
@@ -138,7 +144,20 @@ model Notification {
   isRead    Boolean  @default(false)
   createdAt DateTime @default(now())
 
-  user User @relation(fields: [userId], references: [id])
+  actorId       Int?
+  channelId     Int?
+  joinRequestId Int?
+
+  user        User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  actor       User?        @relation("NotificationActor", fields: [actorId], references: [id], onDelete: SetNull)
+  channel     Channel?     @relation(fields: [channelId], references: [id], onDelete: SetNull)
+  joinRequest JoinRequest? @relation(fields: [joinRequestId], references: [id], onDelete: SetNull)
+
+  @@index([userId, createdAt])
+  @@index([userId, isRead])
+  @@index([actorId])
+  @@index([channelId])
+  @@index([joinRequestId])
 }
 
 model SavedPost {
@@ -155,17 +174,26 @@ model SavedPost {
   @@index([postId])
 }
 
+enum Priority {
+  Low
+  Medium
+  High
+}
+
 model Todo {
-  id        Int       @id @default(autoincrement())
-  userId    Int
-  title     String
-  priority  String    @default("Medium")
-  completed Boolean   @default(false)
-  deletedAt DateTime?
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
+  id          Int       @id @default(autoincrement())
+  userId      Int
+  title       String
+  priority    Priority
+  completed   Boolean   @default(false)
+  completedAt DateTime?
+  deletedAt   DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
 
   user User @relation(fields: [userId], references: [id])
+
+  @@index([userId, completed, completedAt])
 }
 
 model PostSeen {
@@ -182,4 +210,39 @@ model PostSeen {
   @@unique([userId, postId])
   @@index([userId, channelId])
   @@index([channelId, seenAt])
+}
+
+model DailyReport {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  authorId Int
+  author   User @relation(fields: [authorId], references: [id], onDelete: Cascade)
+
+  // Nepal-local date key for calendar navigation
+  reportYmd String // "YYYY-MM-DD"
+
+  // ✅ Required fields
+  branchName String
+
+  newConnectionRequest    Int     @default(0)
+  pendingConnection       Int     @default(0)
+  completedConnection     Int     @default(0)
+  reasonPendingConnection String? // textarea
+
+  internetTkt      Int     @default(0)
+  pendingTkt       Int     @default(0)
+  completedTkt     Int     @default(0)
+  reasonPendingTkt String? // textarea
+
+  expireCustomerDay   Int @default(0)
+  renewDay            Int @default(0)
+  activeCustomer      Int @default(0)
+  totalExpireCustomer Int @default(0)
+  outgoingCalls       Int @default(0)
+
+  @@unique([authorId, reportYmd])
+  @@index([authorId, reportYmd])
+  @@index([reportYmd])
 }

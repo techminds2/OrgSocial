@@ -1,2 +1,1 @@
--- AlterTable
-ALTER TABLE "File" ADD COLUMN     "type" TEXT;
+ALTER TABLE "File" ALTER COLUMN "type" DROP NOT NULL;

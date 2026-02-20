@@ -73,6 +73,29 @@ export type Todo = $Result.DefaultSelection<Prisma.$TodoPayload>
  * 
  */
 export type PostSeen = $Result.DefaultSelection<Prisma.$PostSeenPayload>
+/**
+ * Model DailyReport
+ * 
+ */
+export type DailyReport = $Result.DefaultSelection<Prisma.$DailyReportPayload>
+
+/**
+ * Enums
+ */
+export namespace $Enums {
+  export const Priority: {
+  Low: 'Low',
+  Medium: 'Medium',
+  High: 'High'
+};
+
+export type Priority = (typeof Priority)[keyof typeof Priority]
+
+}
+
+export type Priority = $Enums.Priority
+
+export const Priority: typeof $Enums.Priority
 
 /**
  * ##  Prisma Client ʲˢ
@@ -311,6 +334,16 @@ export class PrismaClient<
     * ```
     */
   get postSeen(): Prisma.PostSeenDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.dailyReport`: Exposes CRUD operations for the **DailyReport** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more DailyReports
+    * const dailyReports = await prisma.dailyReport.findMany()
+    * ```
+    */
+  get dailyReport(): Prisma.DailyReportDelegate<ExtArgs, ClientOptions>;
 }
 
 export namespace Prisma {
@@ -763,7 +796,8 @@ export namespace Prisma {
     Notification: 'Notification',
     SavedPost: 'SavedPost',
     Todo: 'Todo',
-    PostSeen: 'PostSeen'
+    PostSeen: 'PostSeen',
+    DailyReport: 'DailyReport'
   };
 
   export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -782,7 +816,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "user" | "post" | "comment" | "reaction" | "file" | "channel" | "channelMember" | "joinRequest" | "notification" | "savedPost" | "todo" | "postSeen"
+      modelProps: "user" | "post" | "comment" | "reaction" | "file" | "channel" | "channelMember" | "joinRequest" | "notification" | "savedPost" | "todo" | "postSeen" | "dailyReport"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -1674,6 +1708,80 @@ export namespace Prisma {
           }
         }
       }
+      DailyReport: {
+        payload: Prisma.$DailyReportPayload<ExtArgs>
+        fields: Prisma.DailyReportFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.DailyReportFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DailyReportPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.DailyReportFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DailyReportPayload>
+          }
+          findFirst: {
+            args: Prisma.DailyReportFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DailyReportPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.DailyReportFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DailyReportPayload>
+          }
+          findMany: {
+            args: Prisma.DailyReportFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DailyReportPayload>[]
+          }
+          create: {
+            args: Prisma.DailyReportCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DailyReportPayload>
+          }
+          createMany: {
+            args: Prisma.DailyReportCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.DailyReportCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DailyReportPayload>[]
+          }
+          delete: {
+            args: Prisma.DailyReportDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DailyReportPayload>
+          }
+          update: {
+            args: Prisma.DailyReportUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DailyReportPayload>
+          }
+          deleteMany: {
+            args: Prisma.DailyReportDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.DailyReportUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.DailyReportUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DailyReportPayload>[]
+          }
+          upsert: {
+            args: Prisma.DailyReportUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DailyReportPayload>
+          }
+          aggregate: {
+            args: Prisma.DailyReportAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateDailyReport>
+          }
+          groupBy: {
+            args: Prisma.DailyReportGroupByArgs<ExtArgs>
+            result: $Utils.Optional<DailyReportGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.DailyReportCountArgs<ExtArgs>
+            result: $Utils.Optional<DailyReportCountAggregateOutputType> | number
+          }
+        }
+      }
     }
   } & {
     other: {
@@ -1782,6 +1890,7 @@ export namespace Prisma {
     savedPost?: SavedPostOmit
     todo?: TodoOmit
     postSeen?: PostSeenOmit
+    dailyReport?: DailyReportOmit
   }
 
   /* Types for Logging */
@@ -1872,6 +1981,8 @@ export namespace Prisma {
     savedPosts: number
     todos: number
     postSeen: number
+    notificationsActed: number
+    dailyReports: number
   }
 
   export type UserCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -1885,6 +1996,8 @@ export namespace Prisma {
     savedPosts?: boolean | UserCountOutputTypeCountSavedPostsArgs
     todos?: boolean | UserCountOutputTypeCountTodosArgs
     postSeen?: boolean | UserCountOutputTypeCountPostSeenArgs
+    notificationsActed?: boolean | UserCountOutputTypeCountNotificationsActedArgs
+    dailyReports?: boolean | UserCountOutputTypeCountDailyReportsArgs
   }
 
   // Custom InputTypes
@@ -1968,6 +2081,20 @@ export namespace Prisma {
     where?: PostSeenWhereInput
   }
 
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountNotificationsActedArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: NotificationWhereInput
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountDailyReportsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: DailyReportWhereInput
+  }
+
 
   /**
    * Count Type PostCountOutputType
@@ -2046,6 +2173,7 @@ export namespace Prisma {
     posts: number
     joinRequests: number
     pinnedByUsers: number
+    notifications: number
   }
 
   export type ChannelCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -2054,6 +2182,7 @@ export namespace Prisma {
     posts?: boolean | ChannelCountOutputTypeCountPostsArgs
     joinRequests?: boolean | ChannelCountOutputTypeCountJoinRequestsArgs
     pinnedByUsers?: boolean | ChannelCountOutputTypeCountPinnedByUsersArgs
+    notifications?: boolean | ChannelCountOutputTypeCountNotificationsArgs
   }
 
   // Custom InputTypes
@@ -2100,6 +2229,44 @@ export namespace Prisma {
    */
   export type ChannelCountOutputTypeCountPinnedByUsersArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: UserWhereInput
+  }
+
+  /**
+   * ChannelCountOutputType without action
+   */
+  export type ChannelCountOutputTypeCountNotificationsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: NotificationWhereInput
+  }
+
+
+  /**
+   * Count Type JoinRequestCountOutputType
+   */
+
+  export type JoinRequestCountOutputType = {
+    notifications: number
+  }
+
+  export type JoinRequestCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    notifications?: boolean | JoinRequestCountOutputTypeCountNotificationsArgs
+  }
+
+  // Custom InputTypes
+  /**
+   * JoinRequestCountOutputType without action
+   */
+  export type JoinRequestCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the JoinRequestCountOutputType
+     */
+    select?: JoinRequestCountOutputTypeSelect<ExtArgs> | null
+  }
+
+  /**
+   * JoinRequestCountOutputType without action
+   */
+  export type JoinRequestCountOutputTypeCountNotificationsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: NotificationWhereInput
   }
 
 
@@ -2336,6 +2503,8 @@ export namespace Prisma {
     todos?: boolean | User$todosArgs<ExtArgs>
     postSeen?: boolean | User$postSeenArgs<ExtArgs>
     pinnedChannel?: boolean | User$pinnedChannelArgs<ExtArgs>
+    notificationsActed?: boolean | User$notificationsActedArgs<ExtArgs>
+    dailyReports?: boolean | User$dailyReportsArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["user"]>
 
@@ -2384,6 +2553,8 @@ export namespace Prisma {
     todos?: boolean | User$todosArgs<ExtArgs>
     postSeen?: boolean | User$postSeenArgs<ExtArgs>
     pinnedChannel?: boolean | User$pinnedChannelArgs<ExtArgs>
+    notificationsActed?: boolean | User$notificationsActedArgs<ExtArgs>
+    dailyReports?: boolean | User$dailyReportsArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type UserIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -2407,6 +2578,8 @@ export namespace Prisma {
       todos: Prisma.$TodoPayload<ExtArgs>[]
       postSeen: Prisma.$PostSeenPayload<ExtArgs>[]
       pinnedChannel: Prisma.$ChannelPayload<ExtArgs> | null
+      notificationsActed: Prisma.$NotificationPayload<ExtArgs>[]
+      dailyReports: Prisma.$DailyReportPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: number
@@ -2821,6 +2994,8 @@ export namespace Prisma {
     todos<T extends User$todosArgs<ExtArgs> = {}>(args?: Subset<T, User$todosArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TodoPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     postSeen<T extends User$postSeenArgs<ExtArgs> = {}>(args?: Subset<T, User$postSeenArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PostSeenPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     pinnedChannel<T extends User$pinnedChannelArgs<ExtArgs> = {}>(args?: Subset<T, User$pinnedChannelArgs<ExtArgs>>): Prisma__ChannelClient<$Result.GetResult<Prisma.$ChannelPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    notificationsActed<T extends User$notificationsActedArgs<ExtArgs> = {}>(args?: Subset<T, User$notificationsActedArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$NotificationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    dailyReports<T extends User$dailyReportsArgs<ExtArgs> = {}>(args?: Subset<T, User$dailyReportsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$DailyReportPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -3509,6 +3684,54 @@ export namespace Prisma {
      */
     include?: ChannelInclude<ExtArgs> | null
     where?: ChannelWhereInput
+  }
+
+  /**
+   * User.notificationsActed
+   */
+  export type User$notificationsActedArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Notification
+     */
+    select?: NotificationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Notification
+     */
+    omit?: NotificationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: NotificationInclude<ExtArgs> | null
+    where?: NotificationWhereInput
+    orderBy?: NotificationOrderByWithRelationInput | NotificationOrderByWithRelationInput[]
+    cursor?: NotificationWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: NotificationScalarFieldEnum | NotificationScalarFieldEnum[]
+  }
+
+  /**
+   * User.dailyReports
+   */
+  export type User$dailyReportsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DailyReport
+     */
+    select?: DailyReportSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the DailyReport
+     */
+    omit?: DailyReportOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DailyReportInclude<ExtArgs> | null
+    where?: DailyReportWhereInput
+    orderBy?: DailyReportOrderByWithRelationInput | DailyReportOrderByWithRelationInput[]
+    cursor?: DailyReportWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: DailyReportScalarFieldEnum | DailyReportScalarFieldEnum[]
   }
 
   /**
@@ -8314,6 +8537,7 @@ export namespace Prisma {
     posts?: boolean | Channel$postsArgs<ExtArgs>
     joinRequests?: boolean | Channel$joinRequestsArgs<ExtArgs>
     pinnedByUsers?: boolean | Channel$pinnedByUsersArgs<ExtArgs>
+    notifications?: boolean | Channel$notificationsArgs<ExtArgs>
     _count?: boolean | ChannelCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["channel"]>
 
@@ -8354,6 +8578,7 @@ export namespace Prisma {
     posts?: boolean | Channel$postsArgs<ExtArgs>
     joinRequests?: boolean | Channel$joinRequestsArgs<ExtArgs>
     pinnedByUsers?: boolean | Channel$pinnedByUsersArgs<ExtArgs>
+    notifications?: boolean | Channel$notificationsArgs<ExtArgs>
     _count?: boolean | ChannelCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type ChannelIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -8372,6 +8597,7 @@ export namespace Prisma {
       posts: Prisma.$PostPayload<ExtArgs>[]
       joinRequests: Prisma.$JoinRequestPayload<ExtArgs>[]
       pinnedByUsers: Prisma.$UserPayload<ExtArgs>[]
+      notifications: Prisma.$NotificationPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: number
@@ -8780,6 +9006,7 @@ export namespace Prisma {
     posts<T extends Channel$postsArgs<ExtArgs> = {}>(args?: Subset<T, Channel$postsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PostPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     joinRequests<T extends Channel$joinRequestsArgs<ExtArgs> = {}>(args?: Subset<T, Channel$joinRequestsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$JoinRequestPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     pinnedByUsers<T extends Channel$pinnedByUsersArgs<ExtArgs> = {}>(args?: Subset<T, Channel$pinnedByUsersArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    notifications<T extends Channel$notificationsArgs<ExtArgs> = {}>(args?: Subset<T, Channel$notificationsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$NotificationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -9328,6 +9555,30 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: UserScalarFieldEnum | UserScalarFieldEnum[]
+  }
+
+  /**
+   * Channel.notifications
+   */
+  export type Channel$notificationsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Notification
+     */
+    select?: NotificationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Notification
+     */
+    omit?: NotificationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: NotificationInclude<ExtArgs> | null
+    where?: NotificationWhereInput
+    orderBy?: NotificationOrderByWithRelationInput | NotificationOrderByWithRelationInput[]
+    cursor?: NotificationWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: NotificationScalarFieldEnum | NotificationScalarFieldEnum[]
   }
 
   /**
@@ -10660,6 +10911,8 @@ export namespace Prisma {
     status?: boolean
     channel?: boolean | ChannelDefaultArgs<ExtArgs>
     user?: boolean | UserDefaultArgs<ExtArgs>
+    notifications?: boolean | JoinRequest$notificationsArgs<ExtArgs>
+    _count?: boolean | JoinRequestCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["joinRequest"]>
 
   export type JoinRequestSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -10697,6 +10950,8 @@ export namespace Prisma {
   export type JoinRequestInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     channel?: boolean | ChannelDefaultArgs<ExtArgs>
     user?: boolean | UserDefaultArgs<ExtArgs>
+    notifications?: boolean | JoinRequest$notificationsArgs<ExtArgs>
+    _count?: boolean | JoinRequestCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type JoinRequestIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     channel?: boolean | ChannelDefaultArgs<ExtArgs>
@@ -10712,6 +10967,7 @@ export namespace Prisma {
     objects: {
       channel: Prisma.$ChannelPayload<ExtArgs>
       user: Prisma.$UserPayload<ExtArgs>
+      notifications: Prisma.$NotificationPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: number
@@ -11116,6 +11372,7 @@ export namespace Prisma {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     channel<T extends ChannelDefaultArgs<ExtArgs> = {}>(args?: Subset<T, ChannelDefaultArgs<ExtArgs>>): Prisma__ChannelClient<$Result.GetResult<Prisma.$ChannelPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    notifications<T extends JoinRequest$notificationsArgs<ExtArgs> = {}>(args?: Subset<T, JoinRequest$notificationsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$NotificationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -11547,6 +11804,30 @@ export namespace Prisma {
   }
 
   /**
+   * JoinRequest.notifications
+   */
+  export type JoinRequest$notificationsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Notification
+     */
+    select?: NotificationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Notification
+     */
+    omit?: NotificationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: NotificationInclude<ExtArgs> | null
+    where?: NotificationWhereInput
+    orderBy?: NotificationOrderByWithRelationInput | NotificationOrderByWithRelationInput[]
+    cursor?: NotificationWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: NotificationScalarFieldEnum | NotificationScalarFieldEnum[]
+  }
+
+  /**
    * JoinRequest without action
    */
   export type JoinRequestDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -11580,11 +11861,17 @@ export namespace Prisma {
   export type NotificationAvgAggregateOutputType = {
     id: number | null
     userId: number | null
+    actorId: number | null
+    channelId: number | null
+    joinRequestId: number | null
   }
 
   export type NotificationSumAggregateOutputType = {
     id: number | null
     userId: number | null
+    actorId: number | null
+    channelId: number | null
+    joinRequestId: number | null
   }
 
   export type NotificationMinAggregateOutputType = {
@@ -11595,6 +11882,9 @@ export namespace Prisma {
     href: string | null
     isRead: boolean | null
     createdAt: Date | null
+    actorId: number | null
+    channelId: number | null
+    joinRequestId: number | null
   }
 
   export type NotificationMaxAggregateOutputType = {
@@ -11605,6 +11895,9 @@ export namespace Prisma {
     href: string | null
     isRead: boolean | null
     createdAt: Date | null
+    actorId: number | null
+    channelId: number | null
+    joinRequestId: number | null
   }
 
   export type NotificationCountAggregateOutputType = {
@@ -11615,6 +11908,9 @@ export namespace Prisma {
     href: number
     isRead: number
     createdAt: number
+    actorId: number
+    channelId: number
+    joinRequestId: number
     _all: number
   }
 
@@ -11622,11 +11918,17 @@ export namespace Prisma {
   export type NotificationAvgAggregateInputType = {
     id?: true
     userId?: true
+    actorId?: true
+    channelId?: true
+    joinRequestId?: true
   }
 
   export type NotificationSumAggregateInputType = {
     id?: true
     userId?: true
+    actorId?: true
+    channelId?: true
+    joinRequestId?: true
   }
 
   export type NotificationMinAggregateInputType = {
@@ -11637,6 +11939,9 @@ export namespace Prisma {
     href?: true
     isRead?: true
     createdAt?: true
+    actorId?: true
+    channelId?: true
+    joinRequestId?: true
   }
 
   export type NotificationMaxAggregateInputType = {
@@ -11647,6 +11952,9 @@ export namespace Prisma {
     href?: true
     isRead?: true
     createdAt?: true
+    actorId?: true
+    channelId?: true
+    joinRequestId?: true
   }
 
   export type NotificationCountAggregateInputType = {
@@ -11657,6 +11965,9 @@ export namespace Prisma {
     href?: true
     isRead?: true
     createdAt?: true
+    actorId?: true
+    channelId?: true
+    joinRequestId?: true
     _all?: true
   }
 
@@ -11754,6 +12065,9 @@ export namespace Prisma {
     href: string | null
     isRead: boolean
     createdAt: Date
+    actorId: number | null
+    channelId: number | null
+    joinRequestId: number | null
     _count: NotificationCountAggregateOutputType | null
     _avg: NotificationAvgAggregateOutputType | null
     _sum: NotificationSumAggregateOutputType | null
@@ -11783,7 +12097,13 @@ export namespace Prisma {
     href?: boolean
     isRead?: boolean
     createdAt?: boolean
+    actorId?: boolean
+    channelId?: boolean
+    joinRequestId?: boolean
     user?: boolean | UserDefaultArgs<ExtArgs>
+    actor?: boolean | Notification$actorArgs<ExtArgs>
+    channel?: boolean | Notification$channelArgs<ExtArgs>
+    joinRequest?: boolean | Notification$joinRequestArgs<ExtArgs>
   }, ExtArgs["result"]["notification"]>
 
   export type NotificationSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -11794,7 +12114,13 @@ export namespace Prisma {
     href?: boolean
     isRead?: boolean
     createdAt?: boolean
+    actorId?: boolean
+    channelId?: boolean
+    joinRequestId?: boolean
     user?: boolean | UserDefaultArgs<ExtArgs>
+    actor?: boolean | Notification$actorArgs<ExtArgs>
+    channel?: boolean | Notification$channelArgs<ExtArgs>
+    joinRequest?: boolean | Notification$joinRequestArgs<ExtArgs>
   }, ExtArgs["result"]["notification"]>
 
   export type NotificationSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -11805,7 +12131,13 @@ export namespace Prisma {
     href?: boolean
     isRead?: boolean
     createdAt?: boolean
+    actorId?: boolean
+    channelId?: boolean
+    joinRequestId?: boolean
     user?: boolean | UserDefaultArgs<ExtArgs>
+    actor?: boolean | Notification$actorArgs<ExtArgs>
+    channel?: boolean | Notification$channelArgs<ExtArgs>
+    joinRequest?: boolean | Notification$joinRequestArgs<ExtArgs>
   }, ExtArgs["result"]["notification"]>
 
   export type NotificationSelectScalar = {
@@ -11816,23 +12148,38 @@ export namespace Prisma {
     href?: boolean
     isRead?: boolean
     createdAt?: boolean
+    actorId?: boolean
+    channelId?: boolean
+    joinRequestId?: boolean
   }
 
-  export type NotificationOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "userId" | "type" | "message" | "href" | "isRead" | "createdAt", ExtArgs["result"]["notification"]>
+  export type NotificationOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "userId" | "type" | "message" | "href" | "isRead" | "createdAt" | "actorId" | "channelId" | "joinRequestId", ExtArgs["result"]["notification"]>
   export type NotificationInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     user?: boolean | UserDefaultArgs<ExtArgs>
+    actor?: boolean | Notification$actorArgs<ExtArgs>
+    channel?: boolean | Notification$channelArgs<ExtArgs>
+    joinRequest?: boolean | Notification$joinRequestArgs<ExtArgs>
   }
   export type NotificationIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     user?: boolean | UserDefaultArgs<ExtArgs>
+    actor?: boolean | Notification$actorArgs<ExtArgs>
+    channel?: boolean | Notification$channelArgs<ExtArgs>
+    joinRequest?: boolean | Notification$joinRequestArgs<ExtArgs>
   }
   export type NotificationIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     user?: boolean | UserDefaultArgs<ExtArgs>
+    actor?: boolean | Notification$actorArgs<ExtArgs>
+    channel?: boolean | Notification$channelArgs<ExtArgs>
+    joinRequest?: boolean | Notification$joinRequestArgs<ExtArgs>
   }
 
   export type $NotificationPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "Notification"
     objects: {
       user: Prisma.$UserPayload<ExtArgs>
+      actor: Prisma.$UserPayload<ExtArgs> | null
+      channel: Prisma.$ChannelPayload<ExtArgs> | null
+      joinRequest: Prisma.$JoinRequestPayload<ExtArgs> | null
     }
     scalars: $Extensions.GetPayloadResult<{
       id: number
@@ -11842,6 +12189,9 @@ export namespace Prisma {
       href: string | null
       isRead: boolean
       createdAt: Date
+      actorId: number | null
+      channelId: number | null
+      joinRequestId: number | null
     }, ExtArgs["result"]["notification"]>
     composites: {}
   }
@@ -12237,6 +12587,9 @@ export namespace Prisma {
   export interface Prisma__NotificationClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    actor<T extends Notification$actorArgs<ExtArgs> = {}>(args?: Subset<T, Notification$actorArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    channel<T extends Notification$channelArgs<ExtArgs> = {}>(args?: Subset<T, Notification$channelArgs<ExtArgs>>): Prisma__ChannelClient<$Result.GetResult<Prisma.$ChannelPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    joinRequest<T extends Notification$joinRequestArgs<ExtArgs> = {}>(args?: Subset<T, Notification$joinRequestArgs<ExtArgs>>): Prisma__JoinRequestClient<$Result.GetResult<Prisma.$JoinRequestPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -12273,6 +12626,9 @@ export namespace Prisma {
     readonly href: FieldRef<"Notification", 'String'>
     readonly isRead: FieldRef<"Notification", 'Boolean'>
     readonly createdAt: FieldRef<"Notification", 'DateTime'>
+    readonly actorId: FieldRef<"Notification", 'Int'>
+    readonly channelId: FieldRef<"Notification", 'Int'>
+    readonly joinRequestId: FieldRef<"Notification", 'Int'>
   }
     
 
@@ -12666,6 +13022,63 @@ export namespace Prisma {
      * Limit how many Notifications to delete.
      */
     limit?: number
+  }
+
+  /**
+   * Notification.actor
+   */
+  export type Notification$actorArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the User
+     */
+    select?: UserSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the User
+     */
+    omit?: UserOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserInclude<ExtArgs> | null
+    where?: UserWhereInput
+  }
+
+  /**
+   * Notification.channel
+   */
+  export type Notification$channelArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Channel
+     */
+    select?: ChannelSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Channel
+     */
+    omit?: ChannelOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ChannelInclude<ExtArgs> | null
+    where?: ChannelWhereInput
+  }
+
+  /**
+   * Notification.joinRequest
+   */
+  export type Notification$joinRequestArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the JoinRequest
+     */
+    select?: JoinRequestSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the JoinRequest
+     */
+    omit?: JoinRequestOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: JoinRequestInclude<ExtArgs> | null
+    where?: JoinRequestWhereInput
   }
 
   /**
@@ -13808,8 +14221,9 @@ export namespace Prisma {
     id: number | null
     userId: number | null
     title: string | null
-    priority: string | null
+    priority: $Enums.Priority | null
     completed: boolean | null
+    completedAt: Date | null
     deletedAt: Date | null
     createdAt: Date | null
     updatedAt: Date | null
@@ -13819,8 +14233,9 @@ export namespace Prisma {
     id: number | null
     userId: number | null
     title: string | null
-    priority: string | null
+    priority: $Enums.Priority | null
     completed: boolean | null
+    completedAt: Date | null
     deletedAt: Date | null
     createdAt: Date | null
     updatedAt: Date | null
@@ -13832,6 +14247,7 @@ export namespace Prisma {
     title: number
     priority: number
     completed: number
+    completedAt: number
     deletedAt: number
     createdAt: number
     updatedAt: number
@@ -13855,6 +14271,7 @@ export namespace Prisma {
     title?: true
     priority?: true
     completed?: true
+    completedAt?: true
     deletedAt?: true
     createdAt?: true
     updatedAt?: true
@@ -13866,6 +14283,7 @@ export namespace Prisma {
     title?: true
     priority?: true
     completed?: true
+    completedAt?: true
     deletedAt?: true
     createdAt?: true
     updatedAt?: true
@@ -13877,6 +14295,7 @@ export namespace Prisma {
     title?: true
     priority?: true
     completed?: true
+    completedAt?: true
     deletedAt?: true
     createdAt?: true
     updatedAt?: true
@@ -13973,8 +14392,9 @@ export namespace Prisma {
     id: number
     userId: number
     title: string
-    priority: string
+    priority: $Enums.Priority
     completed: boolean
+    completedAt: Date | null
     deletedAt: Date | null
     createdAt: Date
     updatedAt: Date
@@ -14005,6 +14425,7 @@ export namespace Prisma {
     title?: boolean
     priority?: boolean
     completed?: boolean
+    completedAt?: boolean
     deletedAt?: boolean
     createdAt?: boolean
     updatedAt?: boolean
@@ -14017,6 +14438,7 @@ export namespace Prisma {
     title?: boolean
     priority?: boolean
     completed?: boolean
+    completedAt?: boolean
     deletedAt?: boolean
     createdAt?: boolean
     updatedAt?: boolean
@@ -14029,6 +14451,7 @@ export namespace Prisma {
     title?: boolean
     priority?: boolean
     completed?: boolean
+    completedAt?: boolean
     deletedAt?: boolean
     createdAt?: boolean
     updatedAt?: boolean
@@ -14041,12 +14464,13 @@ export namespace Prisma {
     title?: boolean
     priority?: boolean
     completed?: boolean
+    completedAt?: boolean
     deletedAt?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }
 
-  export type TodoOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "userId" | "title" | "priority" | "completed" | "deletedAt" | "createdAt" | "updatedAt", ExtArgs["result"]["todo"]>
+  export type TodoOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "userId" | "title" | "priority" | "completed" | "completedAt" | "deletedAt" | "createdAt" | "updatedAt", ExtArgs["result"]["todo"]>
   export type TodoInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     user?: boolean | UserDefaultArgs<ExtArgs>
   }
@@ -14066,8 +14490,9 @@ export namespace Prisma {
       id: number
       userId: number
       title: string
-      priority: string
+      priority: $Enums.Priority
       completed: boolean
+      completedAt: Date | null
       deletedAt: Date | null
       createdAt: Date
       updatedAt: Date
@@ -14498,8 +14923,9 @@ export namespace Prisma {
     readonly id: FieldRef<"Todo", 'Int'>
     readonly userId: FieldRef<"Todo", 'Int'>
     readonly title: FieldRef<"Todo", 'String'>
-    readonly priority: FieldRef<"Todo", 'String'>
+    readonly priority: FieldRef<"Todo", 'Priority'>
     readonly completed: FieldRef<"Todo", 'Boolean'>
+    readonly completedAt: FieldRef<"Todo", 'DateTime'>
     readonly deletedAt: FieldRef<"Todo", 'DateTime'>
     readonly createdAt: FieldRef<"Todo", 'DateTime'>
     readonly updatedAt: FieldRef<"Todo", 'DateTime'>
@@ -16038,6 +16464,1328 @@ export namespace Prisma {
 
 
   /**
+   * Model DailyReport
+   */
+
+  export type AggregateDailyReport = {
+    _count: DailyReportCountAggregateOutputType | null
+    _avg: DailyReportAvgAggregateOutputType | null
+    _sum: DailyReportSumAggregateOutputType | null
+    _min: DailyReportMinAggregateOutputType | null
+    _max: DailyReportMaxAggregateOutputType | null
+  }
+
+  export type DailyReportAvgAggregateOutputType = {
+    id: number | null
+    authorId: number | null
+    newConnectionRequest: number | null
+    pendingConnection: number | null
+    completedConnection: number | null
+    internetTkt: number | null
+    pendingTkt: number | null
+    completedTkt: number | null
+    expireCustomerDay: number | null
+    renewDay: number | null
+    activeCustomer: number | null
+    totalExpireCustomer: number | null
+    outgoingCalls: number | null
+  }
+
+  export type DailyReportSumAggregateOutputType = {
+    id: number | null
+    authorId: number | null
+    newConnectionRequest: number | null
+    pendingConnection: number | null
+    completedConnection: number | null
+    internetTkt: number | null
+    pendingTkt: number | null
+    completedTkt: number | null
+    expireCustomerDay: number | null
+    renewDay: number | null
+    activeCustomer: number | null
+    totalExpireCustomer: number | null
+    outgoingCalls: number | null
+  }
+
+  export type DailyReportMinAggregateOutputType = {
+    id: number | null
+    createdAt: Date | null
+    updatedAt: Date | null
+    authorId: number | null
+    reportYmd: string | null
+    branchName: string | null
+    newConnectionRequest: number | null
+    pendingConnection: number | null
+    completedConnection: number | null
+    reasonPendingConnection: string | null
+    internetTkt: number | null
+    pendingTkt: number | null
+    completedTkt: number | null
+    reasonPendingTkt: string | null
+    expireCustomerDay: number | null
+    renewDay: number | null
+    activeCustomer: number | null
+    totalExpireCustomer: number | null
+    outgoingCalls: number | null
+  }
+
+  export type DailyReportMaxAggregateOutputType = {
+    id: number | null
+    createdAt: Date | null
+    updatedAt: Date | null
+    authorId: number | null
+    reportYmd: string | null
+    branchName: string | null
+    newConnectionRequest: number | null
+    pendingConnection: number | null
+    completedConnection: number | null
+    reasonPendingConnection: string | null
+    internetTkt: number | null
+    pendingTkt: number | null
+    completedTkt: number | null
+    reasonPendingTkt: string | null
+    expireCustomerDay: number | null
+    renewDay: number | null
+    activeCustomer: number | null
+    totalExpireCustomer: number | null
+    outgoingCalls: number | null
+  }
+
+  export type DailyReportCountAggregateOutputType = {
+    id: number
+    createdAt: number
+    updatedAt: number
+    authorId: number
+    reportYmd: number
+    branchName: number
+    newConnectionRequest: number
+    pendingConnection: number
+    completedConnection: number
+    reasonPendingConnection: number
+    internetTkt: number
+    pendingTkt: number
+    completedTkt: number
+    reasonPendingTkt: number
+    expireCustomerDay: number
+    renewDay: number
+    activeCustomer: number
+    totalExpireCustomer: number
+    outgoingCalls: number
+    _all: number
+  }
+
+
+  export type DailyReportAvgAggregateInputType = {
+    id?: true
+    authorId?: true
+    newConnectionRequest?: true
+    pendingConnection?: true
+    completedConnection?: true
+    internetTkt?: true
+    pendingTkt?: true
+    completedTkt?: true
+    expireCustomerDay?: true
+    renewDay?: true
+    activeCustomer?: true
+    totalExpireCustomer?: true
+    outgoingCalls?: true
+  }
+
+  export type DailyReportSumAggregateInputType = {
+    id?: true
+    authorId?: true
+    newConnectionRequest?: true
+    pendingConnection?: true
+    completedConnection?: true
+    internetTkt?: true
+    pendingTkt?: true
+    completedTkt?: true
+    expireCustomerDay?: true
+    renewDay?: true
+    activeCustomer?: true
+    totalExpireCustomer?: true
+    outgoingCalls?: true
+  }
+
+  export type DailyReportMinAggregateInputType = {
+    id?: true
+    createdAt?: true
+    updatedAt?: true
+    authorId?: true
+    reportYmd?: true
+    branchName?: true
+    newConnectionRequest?: true
+    pendingConnection?: true
+    completedConnection?: true
+    reasonPendingConnection?: true
+    internetTkt?: true
+    pendingTkt?: true
+    completedTkt?: true
+    reasonPendingTkt?: true
+    expireCustomerDay?: true
+    renewDay?: true
+    activeCustomer?: true
+    totalExpireCustomer?: true
+    outgoingCalls?: true
+  }
+
+  export type DailyReportMaxAggregateInputType = {
+    id?: true
+    createdAt?: true
+    updatedAt?: true
+    authorId?: true
+    reportYmd?: true
+    branchName?: true
+    newConnectionRequest?: true
+    pendingConnection?: true
+    completedConnection?: true
+    reasonPendingConnection?: true
+    internetTkt?: true
+    pendingTkt?: true
+    completedTkt?: true
+    reasonPendingTkt?: true
+    expireCustomerDay?: true
+    renewDay?: true
+    activeCustomer?: true
+    totalExpireCustomer?: true
+    outgoingCalls?: true
+  }
+
+  export type DailyReportCountAggregateInputType = {
+    id?: true
+    createdAt?: true
+    updatedAt?: true
+    authorId?: true
+    reportYmd?: true
+    branchName?: true
+    newConnectionRequest?: true
+    pendingConnection?: true
+    completedConnection?: true
+    reasonPendingConnection?: true
+    internetTkt?: true
+    pendingTkt?: true
+    completedTkt?: true
+    reasonPendingTkt?: true
+    expireCustomerDay?: true
+    renewDay?: true
+    activeCustomer?: true
+    totalExpireCustomer?: true
+    outgoingCalls?: true
+    _all?: true
+  }
+
+  export type DailyReportAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which DailyReport to aggregate.
+     */
+    where?: DailyReportWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of DailyReports to fetch.
+     */
+    orderBy?: DailyReportOrderByWithRelationInput | DailyReportOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: DailyReportWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` DailyReports from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` DailyReports.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned DailyReports
+    **/
+    _count?: true | DailyReportCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: DailyReportAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: DailyReportSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: DailyReportMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: DailyReportMaxAggregateInputType
+  }
+
+  export type GetDailyReportAggregateType<T extends DailyReportAggregateArgs> = {
+        [P in keyof T & keyof AggregateDailyReport]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateDailyReport[P]>
+      : GetScalarType<T[P], AggregateDailyReport[P]>
+  }
+
+
+
+
+  export type DailyReportGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: DailyReportWhereInput
+    orderBy?: DailyReportOrderByWithAggregationInput | DailyReportOrderByWithAggregationInput[]
+    by: DailyReportScalarFieldEnum[] | DailyReportScalarFieldEnum
+    having?: DailyReportScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: DailyReportCountAggregateInputType | true
+    _avg?: DailyReportAvgAggregateInputType
+    _sum?: DailyReportSumAggregateInputType
+    _min?: DailyReportMinAggregateInputType
+    _max?: DailyReportMaxAggregateInputType
+  }
+
+  export type DailyReportGroupByOutputType = {
+    id: number
+    createdAt: Date
+    updatedAt: Date
+    authorId: number
+    reportYmd: string
+    branchName: string
+    newConnectionRequest: number
+    pendingConnection: number
+    completedConnection: number
+    reasonPendingConnection: string | null
+    internetTkt: number
+    pendingTkt: number
+    completedTkt: number
+    reasonPendingTkt: string | null
+    expireCustomerDay: number
+    renewDay: number
+    activeCustomer: number
+    totalExpireCustomer: number
+    outgoingCalls: number
+    _count: DailyReportCountAggregateOutputType | null
+    _avg: DailyReportAvgAggregateOutputType | null
+    _sum: DailyReportSumAggregateOutputType | null
+    _min: DailyReportMinAggregateOutputType | null
+    _max: DailyReportMaxAggregateOutputType | null
+  }
+
+  type GetDailyReportGroupByPayload<T extends DailyReportGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<DailyReportGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof DailyReportGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], DailyReportGroupByOutputType[P]>
+            : GetScalarType<T[P], DailyReportGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type DailyReportSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    authorId?: boolean
+    reportYmd?: boolean
+    branchName?: boolean
+    newConnectionRequest?: boolean
+    pendingConnection?: boolean
+    completedConnection?: boolean
+    reasonPendingConnection?: boolean
+    internetTkt?: boolean
+    pendingTkt?: boolean
+    completedTkt?: boolean
+    reasonPendingTkt?: boolean
+    expireCustomerDay?: boolean
+    renewDay?: boolean
+    activeCustomer?: boolean
+    totalExpireCustomer?: boolean
+    outgoingCalls?: boolean
+    author?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["dailyReport"]>
+
+  export type DailyReportSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    authorId?: boolean
+    reportYmd?: boolean
+    branchName?: boolean
+    newConnectionRequest?: boolean
+    pendingConnection?: boolean
+    completedConnection?: boolean
+    reasonPendingConnection?: boolean
+    internetTkt?: boolean
+    pendingTkt?: boolean
+    completedTkt?: boolean
+    reasonPendingTkt?: boolean
+    expireCustomerDay?: boolean
+    renewDay?: boolean
+    activeCustomer?: boolean
+    totalExpireCustomer?: boolean
+    outgoingCalls?: boolean
+    author?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["dailyReport"]>
+
+  export type DailyReportSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    authorId?: boolean
+    reportYmd?: boolean
+    branchName?: boolean
+    newConnectionRequest?: boolean
+    pendingConnection?: boolean
+    completedConnection?: boolean
+    reasonPendingConnection?: boolean
+    internetTkt?: boolean
+    pendingTkt?: boolean
+    completedTkt?: boolean
+    reasonPendingTkt?: boolean
+    expireCustomerDay?: boolean
+    renewDay?: boolean
+    activeCustomer?: boolean
+    totalExpireCustomer?: boolean
+    outgoingCalls?: boolean
+    author?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["dailyReport"]>
+
+  export type DailyReportSelectScalar = {
+    id?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    authorId?: boolean
+    reportYmd?: boolean
+    branchName?: boolean
+    newConnectionRequest?: boolean
+    pendingConnection?: boolean
+    completedConnection?: boolean
+    reasonPendingConnection?: boolean
+    internetTkt?: boolean
+    pendingTkt?: boolean
+    completedTkt?: boolean
+    reasonPendingTkt?: boolean
+    expireCustomerDay?: boolean
+    renewDay?: boolean
+    activeCustomer?: boolean
+    totalExpireCustomer?: boolean
+    outgoingCalls?: boolean
+  }
+
+  export type DailyReportOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "createdAt" | "updatedAt" | "authorId" | "reportYmd" | "branchName" | "newConnectionRequest" | "pendingConnection" | "completedConnection" | "reasonPendingConnection" | "internetTkt" | "pendingTkt" | "completedTkt" | "reasonPendingTkt" | "expireCustomerDay" | "renewDay" | "activeCustomer" | "totalExpireCustomer" | "outgoingCalls", ExtArgs["result"]["dailyReport"]>
+  export type DailyReportInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    author?: boolean | UserDefaultArgs<ExtArgs>
+  }
+  export type DailyReportIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    author?: boolean | UserDefaultArgs<ExtArgs>
+  }
+  export type DailyReportIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    author?: boolean | UserDefaultArgs<ExtArgs>
+  }
+
+  export type $DailyReportPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "DailyReport"
+    objects: {
+      author: Prisma.$UserPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: number
+      createdAt: Date
+      updatedAt: Date
+      authorId: number
+      reportYmd: string
+      branchName: string
+      newConnectionRequest: number
+      pendingConnection: number
+      completedConnection: number
+      reasonPendingConnection: string | null
+      internetTkt: number
+      pendingTkt: number
+      completedTkt: number
+      reasonPendingTkt: string | null
+      expireCustomerDay: number
+      renewDay: number
+      activeCustomer: number
+      totalExpireCustomer: number
+      outgoingCalls: number
+    }, ExtArgs["result"]["dailyReport"]>
+    composites: {}
+  }
+
+  type DailyReportGetPayload<S extends boolean | null | undefined | DailyReportDefaultArgs> = $Result.GetResult<Prisma.$DailyReportPayload, S>
+
+  type DailyReportCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<DailyReportFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: DailyReportCountAggregateInputType | true
+    }
+
+  export interface DailyReportDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['DailyReport'], meta: { name: 'DailyReport' } }
+    /**
+     * Find zero or one DailyReport that matches the filter.
+     * @param {DailyReportFindUniqueArgs} args - Arguments to find a DailyReport
+     * @example
+     * // Get one DailyReport
+     * const dailyReport = await prisma.dailyReport.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends DailyReportFindUniqueArgs>(args: SelectSubset<T, DailyReportFindUniqueArgs<ExtArgs>>): Prisma__DailyReportClient<$Result.GetResult<Prisma.$DailyReportPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one DailyReport that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {DailyReportFindUniqueOrThrowArgs} args - Arguments to find a DailyReport
+     * @example
+     * // Get one DailyReport
+     * const dailyReport = await prisma.dailyReport.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends DailyReportFindUniqueOrThrowArgs>(args: SelectSubset<T, DailyReportFindUniqueOrThrowArgs<ExtArgs>>): Prisma__DailyReportClient<$Result.GetResult<Prisma.$DailyReportPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first DailyReport that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {DailyReportFindFirstArgs} args - Arguments to find a DailyReport
+     * @example
+     * // Get one DailyReport
+     * const dailyReport = await prisma.dailyReport.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends DailyReportFindFirstArgs>(args?: SelectSubset<T, DailyReportFindFirstArgs<ExtArgs>>): Prisma__DailyReportClient<$Result.GetResult<Prisma.$DailyReportPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first DailyReport that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {DailyReportFindFirstOrThrowArgs} args - Arguments to find a DailyReport
+     * @example
+     * // Get one DailyReport
+     * const dailyReport = await prisma.dailyReport.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends DailyReportFindFirstOrThrowArgs>(args?: SelectSubset<T, DailyReportFindFirstOrThrowArgs<ExtArgs>>): Prisma__DailyReportClient<$Result.GetResult<Prisma.$DailyReportPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more DailyReports that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {DailyReportFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all DailyReports
+     * const dailyReports = await prisma.dailyReport.findMany()
+     * 
+     * // Get first 10 DailyReports
+     * const dailyReports = await prisma.dailyReport.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const dailyReportWithIdOnly = await prisma.dailyReport.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends DailyReportFindManyArgs>(args?: SelectSubset<T, DailyReportFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$DailyReportPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a DailyReport.
+     * @param {DailyReportCreateArgs} args - Arguments to create a DailyReport.
+     * @example
+     * // Create one DailyReport
+     * const DailyReport = await prisma.dailyReport.create({
+     *   data: {
+     *     // ... data to create a DailyReport
+     *   }
+     * })
+     * 
+     */
+    create<T extends DailyReportCreateArgs>(args: SelectSubset<T, DailyReportCreateArgs<ExtArgs>>): Prisma__DailyReportClient<$Result.GetResult<Prisma.$DailyReportPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many DailyReports.
+     * @param {DailyReportCreateManyArgs} args - Arguments to create many DailyReports.
+     * @example
+     * // Create many DailyReports
+     * const dailyReport = await prisma.dailyReport.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends DailyReportCreateManyArgs>(args?: SelectSubset<T, DailyReportCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many DailyReports and returns the data saved in the database.
+     * @param {DailyReportCreateManyAndReturnArgs} args - Arguments to create many DailyReports.
+     * @example
+     * // Create many DailyReports
+     * const dailyReport = await prisma.dailyReport.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many DailyReports and only return the `id`
+     * const dailyReportWithIdOnly = await prisma.dailyReport.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends DailyReportCreateManyAndReturnArgs>(args?: SelectSubset<T, DailyReportCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$DailyReportPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a DailyReport.
+     * @param {DailyReportDeleteArgs} args - Arguments to delete one DailyReport.
+     * @example
+     * // Delete one DailyReport
+     * const DailyReport = await prisma.dailyReport.delete({
+     *   where: {
+     *     // ... filter to delete one DailyReport
+     *   }
+     * })
+     * 
+     */
+    delete<T extends DailyReportDeleteArgs>(args: SelectSubset<T, DailyReportDeleteArgs<ExtArgs>>): Prisma__DailyReportClient<$Result.GetResult<Prisma.$DailyReportPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one DailyReport.
+     * @param {DailyReportUpdateArgs} args - Arguments to update one DailyReport.
+     * @example
+     * // Update one DailyReport
+     * const dailyReport = await prisma.dailyReport.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends DailyReportUpdateArgs>(args: SelectSubset<T, DailyReportUpdateArgs<ExtArgs>>): Prisma__DailyReportClient<$Result.GetResult<Prisma.$DailyReportPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more DailyReports.
+     * @param {DailyReportDeleteManyArgs} args - Arguments to filter DailyReports to delete.
+     * @example
+     * // Delete a few DailyReports
+     * const { count } = await prisma.dailyReport.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends DailyReportDeleteManyArgs>(args?: SelectSubset<T, DailyReportDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more DailyReports.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {DailyReportUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many DailyReports
+     * const dailyReport = await prisma.dailyReport.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends DailyReportUpdateManyArgs>(args: SelectSubset<T, DailyReportUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more DailyReports and returns the data updated in the database.
+     * @param {DailyReportUpdateManyAndReturnArgs} args - Arguments to update many DailyReports.
+     * @example
+     * // Update many DailyReports
+     * const dailyReport = await prisma.dailyReport.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more DailyReports and only return the `id`
+     * const dailyReportWithIdOnly = await prisma.dailyReport.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends DailyReportUpdateManyAndReturnArgs>(args: SelectSubset<T, DailyReportUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$DailyReportPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one DailyReport.
+     * @param {DailyReportUpsertArgs} args - Arguments to update or create a DailyReport.
+     * @example
+     * // Update or create a DailyReport
+     * const dailyReport = await prisma.dailyReport.upsert({
+     *   create: {
+     *     // ... data to create a DailyReport
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the DailyReport we want to update
+     *   }
+     * })
+     */
+    upsert<T extends DailyReportUpsertArgs>(args: SelectSubset<T, DailyReportUpsertArgs<ExtArgs>>): Prisma__DailyReportClient<$Result.GetResult<Prisma.$DailyReportPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of DailyReports.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {DailyReportCountArgs} args - Arguments to filter DailyReports to count.
+     * @example
+     * // Count the number of DailyReports
+     * const count = await prisma.dailyReport.count({
+     *   where: {
+     *     // ... the filter for the DailyReports we want to count
+     *   }
+     * })
+    **/
+    count<T extends DailyReportCountArgs>(
+      args?: Subset<T, DailyReportCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], DailyReportCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a DailyReport.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {DailyReportAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends DailyReportAggregateArgs>(args: Subset<T, DailyReportAggregateArgs>): Prisma.PrismaPromise<GetDailyReportAggregateType<T>>
+
+    /**
+     * Group by DailyReport.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {DailyReportGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends DailyReportGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: DailyReportGroupByArgs['orderBy'] }
+        : { orderBy?: DailyReportGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, DailyReportGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetDailyReportGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the DailyReport model
+   */
+  readonly fields: DailyReportFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for DailyReport.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__DailyReportClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    author<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the DailyReport model
+   */
+  interface DailyReportFieldRefs {
+    readonly id: FieldRef<"DailyReport", 'Int'>
+    readonly createdAt: FieldRef<"DailyReport", 'DateTime'>
+    readonly updatedAt: FieldRef<"DailyReport", 'DateTime'>
+    readonly authorId: FieldRef<"DailyReport", 'Int'>
+    readonly reportYmd: FieldRef<"DailyReport", 'String'>
+    readonly branchName: FieldRef<"DailyReport", 'String'>
+    readonly newConnectionRequest: FieldRef<"DailyReport", 'Int'>
+    readonly pendingConnection: FieldRef<"DailyReport", 'Int'>
+    readonly completedConnection: FieldRef<"DailyReport", 'Int'>
+    readonly reasonPendingConnection: FieldRef<"DailyReport", 'String'>
+    readonly internetTkt: FieldRef<"DailyReport", 'Int'>
+    readonly pendingTkt: FieldRef<"DailyReport", 'Int'>
+    readonly completedTkt: FieldRef<"DailyReport", 'Int'>
+    readonly reasonPendingTkt: FieldRef<"DailyReport", 'String'>
+    readonly expireCustomerDay: FieldRef<"DailyReport", 'Int'>
+    readonly renewDay: FieldRef<"DailyReport", 'Int'>
+    readonly activeCustomer: FieldRef<"DailyReport", 'Int'>
+    readonly totalExpireCustomer: FieldRef<"DailyReport", 'Int'>
+    readonly outgoingCalls: FieldRef<"DailyReport", 'Int'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * DailyReport findUnique
+   */
+  export type DailyReportFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DailyReport
+     */
+    select?: DailyReportSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the DailyReport
+     */
+    omit?: DailyReportOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DailyReportInclude<ExtArgs> | null
+    /**
+     * Filter, which DailyReport to fetch.
+     */
+    where: DailyReportWhereUniqueInput
+  }
+
+  /**
+   * DailyReport findUniqueOrThrow
+   */
+  export type DailyReportFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DailyReport
+     */
+    select?: DailyReportSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the DailyReport
+     */
+    omit?: DailyReportOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DailyReportInclude<ExtArgs> | null
+    /**
+     * Filter, which DailyReport to fetch.
+     */
+    where: DailyReportWhereUniqueInput
+  }
+
+  /**
+   * DailyReport findFirst
+   */
+  export type DailyReportFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DailyReport
+     */
+    select?: DailyReportSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the DailyReport
+     */
+    omit?: DailyReportOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DailyReportInclude<ExtArgs> | null
+    /**
+     * Filter, which DailyReport to fetch.
+     */
+    where?: DailyReportWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of DailyReports to fetch.
+     */
+    orderBy?: DailyReportOrderByWithRelationInput | DailyReportOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for DailyReports.
+     */
+    cursor?: DailyReportWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` DailyReports from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` DailyReports.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of DailyReports.
+     */
+    distinct?: DailyReportScalarFieldEnum | DailyReportScalarFieldEnum[]
+  }
+
+  /**
+   * DailyReport findFirstOrThrow
+   */
+  export type DailyReportFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DailyReport
+     */
+    select?: DailyReportSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the DailyReport
+     */
+    omit?: DailyReportOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DailyReportInclude<ExtArgs> | null
+    /**
+     * Filter, which DailyReport to fetch.
+     */
+    where?: DailyReportWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of DailyReports to fetch.
+     */
+    orderBy?: DailyReportOrderByWithRelationInput | DailyReportOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for DailyReports.
+     */
+    cursor?: DailyReportWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` DailyReports from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` DailyReports.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of DailyReports.
+     */
+    distinct?: DailyReportScalarFieldEnum | DailyReportScalarFieldEnum[]
+  }
+
+  /**
+   * DailyReport findMany
+   */
+  export type DailyReportFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DailyReport
+     */
+    select?: DailyReportSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the DailyReport
+     */
+    omit?: DailyReportOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DailyReportInclude<ExtArgs> | null
+    /**
+     * Filter, which DailyReports to fetch.
+     */
+    where?: DailyReportWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of DailyReports to fetch.
+     */
+    orderBy?: DailyReportOrderByWithRelationInput | DailyReportOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing DailyReports.
+     */
+    cursor?: DailyReportWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` DailyReports from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` DailyReports.
+     */
+    skip?: number
+    distinct?: DailyReportScalarFieldEnum | DailyReportScalarFieldEnum[]
+  }
+
+  /**
+   * DailyReport create
+   */
+  export type DailyReportCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DailyReport
+     */
+    select?: DailyReportSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the DailyReport
+     */
+    omit?: DailyReportOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DailyReportInclude<ExtArgs> | null
+    /**
+     * The data needed to create a DailyReport.
+     */
+    data: XOR<DailyReportCreateInput, DailyReportUncheckedCreateInput>
+  }
+
+  /**
+   * DailyReport createMany
+   */
+  export type DailyReportCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many DailyReports.
+     */
+    data: DailyReportCreateManyInput | DailyReportCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * DailyReport createManyAndReturn
+   */
+  export type DailyReportCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DailyReport
+     */
+    select?: DailyReportSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the DailyReport
+     */
+    omit?: DailyReportOmit<ExtArgs> | null
+    /**
+     * The data used to create many DailyReports.
+     */
+    data: DailyReportCreateManyInput | DailyReportCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DailyReportIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * DailyReport update
+   */
+  export type DailyReportUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DailyReport
+     */
+    select?: DailyReportSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the DailyReport
+     */
+    omit?: DailyReportOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DailyReportInclude<ExtArgs> | null
+    /**
+     * The data needed to update a DailyReport.
+     */
+    data: XOR<DailyReportUpdateInput, DailyReportUncheckedUpdateInput>
+    /**
+     * Choose, which DailyReport to update.
+     */
+    where: DailyReportWhereUniqueInput
+  }
+
+  /**
+   * DailyReport updateMany
+   */
+  export type DailyReportUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update DailyReports.
+     */
+    data: XOR<DailyReportUpdateManyMutationInput, DailyReportUncheckedUpdateManyInput>
+    /**
+     * Filter which DailyReports to update
+     */
+    where?: DailyReportWhereInput
+    /**
+     * Limit how many DailyReports to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * DailyReport updateManyAndReturn
+   */
+  export type DailyReportUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DailyReport
+     */
+    select?: DailyReportSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the DailyReport
+     */
+    omit?: DailyReportOmit<ExtArgs> | null
+    /**
+     * The data used to update DailyReports.
+     */
+    data: XOR<DailyReportUpdateManyMutationInput, DailyReportUncheckedUpdateManyInput>
+    /**
+     * Filter which DailyReports to update
+     */
+    where?: DailyReportWhereInput
+    /**
+     * Limit how many DailyReports to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DailyReportIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * DailyReport upsert
+   */
+  export type DailyReportUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DailyReport
+     */
+    select?: DailyReportSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the DailyReport
+     */
+    omit?: DailyReportOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DailyReportInclude<ExtArgs> | null
+    /**
+     * The filter to search for the DailyReport to update in case it exists.
+     */
+    where: DailyReportWhereUniqueInput
+    /**
+     * In case the DailyReport found by the `where` argument doesn't exist, create a new DailyReport with this data.
+     */
+    create: XOR<DailyReportCreateInput, DailyReportUncheckedCreateInput>
+    /**
+     * In case the DailyReport was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<DailyReportUpdateInput, DailyReportUncheckedUpdateInput>
+  }
+
+  /**
+   * DailyReport delete
+   */
+  export type DailyReportDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DailyReport
+     */
+    select?: DailyReportSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the DailyReport
+     */
+    omit?: DailyReportOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DailyReportInclude<ExtArgs> | null
+    /**
+     * Filter which DailyReport to delete.
+     */
+    where: DailyReportWhereUniqueInput
+  }
+
+  /**
+   * DailyReport deleteMany
+   */
+  export type DailyReportDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which DailyReports to delete
+     */
+    where?: DailyReportWhereInput
+    /**
+     * Limit how many DailyReports to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * DailyReport without action
+   */
+  export type DailyReportDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DailyReport
+     */
+    select?: DailyReportSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the DailyReport
+     */
+    omit?: DailyReportOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DailyReportInclude<ExtArgs> | null
+  }
+
+
+  /**
    * Enums
    */
 
@@ -16148,7 +17896,10 @@ export namespace Prisma {
     message: 'message',
     href: 'href',
     isRead: 'isRead',
-    createdAt: 'createdAt'
+    createdAt: 'createdAt',
+    actorId: 'actorId',
+    channelId: 'channelId',
+    joinRequestId: 'joinRequestId'
   };
 
   export type NotificationScalarFieldEnum = (typeof NotificationScalarFieldEnum)[keyof typeof NotificationScalarFieldEnum]
@@ -16170,6 +17921,7 @@ export namespace Prisma {
     title: 'title',
     priority: 'priority',
     completed: 'completed',
+    completedAt: 'completedAt',
     deletedAt: 'deletedAt',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt'
@@ -16187,6 +17939,31 @@ export namespace Prisma {
   };
 
   export type PostSeenScalarFieldEnum = (typeof PostSeenScalarFieldEnum)[keyof typeof PostSeenScalarFieldEnum]
+
+
+  export const DailyReportScalarFieldEnum: {
+    id: 'id',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt',
+    authorId: 'authorId',
+    reportYmd: 'reportYmd',
+    branchName: 'branchName',
+    newConnectionRequest: 'newConnectionRequest',
+    pendingConnection: 'pendingConnection',
+    completedConnection: 'completedConnection',
+    reasonPendingConnection: 'reasonPendingConnection',
+    internetTkt: 'internetTkt',
+    pendingTkt: 'pendingTkt',
+    completedTkt: 'completedTkt',
+    reasonPendingTkt: 'reasonPendingTkt',
+    expireCustomerDay: 'expireCustomerDay',
+    renewDay: 'renewDay',
+    activeCustomer: 'activeCustomer',
+    totalExpireCustomer: 'totalExpireCustomer',
+    outgoingCalls: 'outgoingCalls'
+  };
+
+  export type DailyReportScalarFieldEnum = (typeof DailyReportScalarFieldEnum)[keyof typeof DailyReportScalarFieldEnum]
 
 
   export const SortOrder: {
@@ -16268,6 +18045,20 @@ export namespace Prisma {
 
 
   /**
+   * Reference to a field of type 'Priority'
+   */
+  export type EnumPriorityFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Priority'>
+    
+
+
+  /**
+   * Reference to a field of type 'Priority[]'
+   */
+  export type ListEnumPriorityFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Priority[]'>
+    
+
+
+  /**
    * Reference to a field of type 'Float'
    */
   export type FloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float'>
@@ -16306,6 +18097,8 @@ export namespace Prisma {
     todos?: TodoListRelationFilter
     postSeen?: PostSeenListRelationFilter
     pinnedChannel?: XOR<ChannelNullableScalarRelationFilter, ChannelWhereInput> | null
+    notificationsActed?: NotificationListRelationFilter
+    dailyReports?: DailyReportListRelationFilter
   }
 
   export type UserOrderByWithRelationInput = {
@@ -16327,6 +18120,8 @@ export namespace Prisma {
     todos?: TodoOrderByRelationAggregateInput
     postSeen?: PostSeenOrderByRelationAggregateInput
     pinnedChannel?: ChannelOrderByWithRelationInput
+    notificationsActed?: NotificationOrderByRelationAggregateInput
+    dailyReports?: DailyReportOrderByRelationAggregateInput
   }
 
   export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -16351,6 +18146,8 @@ export namespace Prisma {
     todos?: TodoListRelationFilter
     postSeen?: PostSeenListRelationFilter
     pinnedChannel?: XOR<ChannelNullableScalarRelationFilter, ChannelWhereInput> | null
+    notificationsActed?: NotificationListRelationFilter
+    dailyReports?: DailyReportListRelationFilter
   }, "id" | "username" | "email">
 
   export type UserOrderByWithAggregationInput = {
@@ -16645,6 +18442,7 @@ export namespace Prisma {
     posts?: PostListRelationFilter
     joinRequests?: JoinRequestListRelationFilter
     pinnedByUsers?: UserListRelationFilter
+    notifications?: NotificationListRelationFilter
   }
 
   export type ChannelOrderByWithRelationInput = {
@@ -16660,6 +18458,7 @@ export namespace Prisma {
     posts?: PostOrderByRelationAggregateInput
     joinRequests?: JoinRequestOrderByRelationAggregateInput
     pinnedByUsers?: UserOrderByRelationAggregateInput
+    notifications?: NotificationOrderByRelationAggregateInput
   }
 
   export type ChannelWhereUniqueInput = Prisma.AtLeast<{
@@ -16678,6 +18477,7 @@ export namespace Prisma {
     posts?: PostListRelationFilter
     joinRequests?: JoinRequestListRelationFilter
     pinnedByUsers?: UserListRelationFilter
+    notifications?: NotificationListRelationFilter
   }, "id" | "name">
 
   export type ChannelOrderByWithAggregationInput = {
@@ -16774,6 +18574,7 @@ export namespace Prisma {
     status?: StringFilter<"JoinRequest"> | string
     channel?: XOR<ChannelScalarRelationFilter, ChannelWhereInput>
     user?: XOR<UserScalarRelationFilter, UserWhereInput>
+    notifications?: NotificationListRelationFilter
   }
 
   export type JoinRequestOrderByWithRelationInput = {
@@ -16785,6 +18586,7 @@ export namespace Prisma {
     status?: SortOrder
     channel?: ChannelOrderByWithRelationInput
     user?: UserOrderByWithRelationInput
+    notifications?: NotificationOrderByRelationAggregateInput
   }
 
   export type JoinRequestWhereUniqueInput = Prisma.AtLeast<{
@@ -16800,6 +18602,7 @@ export namespace Prisma {
     status?: StringFilter<"JoinRequest"> | string
     channel?: XOR<ChannelScalarRelationFilter, ChannelWhereInput>
     user?: XOR<UserScalarRelationFilter, UserWhereInput>
+    notifications?: NotificationListRelationFilter
   }, "id" | "channelId_userId">
 
   export type JoinRequestOrderByWithAggregationInput = {
@@ -16839,7 +18642,13 @@ export namespace Prisma {
     href?: StringNullableFilter<"Notification"> | string | null
     isRead?: BoolFilter<"Notification"> | boolean
     createdAt?: DateTimeFilter<"Notification"> | Date | string
+    actorId?: IntNullableFilter<"Notification"> | number | null
+    channelId?: IntNullableFilter<"Notification"> | number | null
+    joinRequestId?: IntNullableFilter<"Notification"> | number | null
     user?: XOR<UserScalarRelationFilter, UserWhereInput>
+    actor?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
+    channel?: XOR<ChannelNullableScalarRelationFilter, ChannelWhereInput> | null
+    joinRequest?: XOR<JoinRequestNullableScalarRelationFilter, JoinRequestWhereInput> | null
   }
 
   export type NotificationOrderByWithRelationInput = {
@@ -16850,7 +18659,13 @@ export namespace Prisma {
     href?: SortOrderInput | SortOrder
     isRead?: SortOrder
     createdAt?: SortOrder
+    actorId?: SortOrderInput | SortOrder
+    channelId?: SortOrderInput | SortOrder
+    joinRequestId?: SortOrderInput | SortOrder
     user?: UserOrderByWithRelationInput
+    actor?: UserOrderByWithRelationInput
+    channel?: ChannelOrderByWithRelationInput
+    joinRequest?: JoinRequestOrderByWithRelationInput
   }
 
   export type NotificationWhereUniqueInput = Prisma.AtLeast<{
@@ -16864,7 +18679,13 @@ export namespace Prisma {
     href?: StringNullableFilter<"Notification"> | string | null
     isRead?: BoolFilter<"Notification"> | boolean
     createdAt?: DateTimeFilter<"Notification"> | Date | string
+    actorId?: IntNullableFilter<"Notification"> | number | null
+    channelId?: IntNullableFilter<"Notification"> | number | null
+    joinRequestId?: IntNullableFilter<"Notification"> | number | null
     user?: XOR<UserScalarRelationFilter, UserWhereInput>
+    actor?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
+    channel?: XOR<ChannelNullableScalarRelationFilter, ChannelWhereInput> | null
+    joinRequest?: XOR<JoinRequestNullableScalarRelationFilter, JoinRequestWhereInput> | null
   }, "id">
 
   export type NotificationOrderByWithAggregationInput = {
@@ -16875,6 +18696,9 @@ export namespace Prisma {
     href?: SortOrderInput | SortOrder
     isRead?: SortOrder
     createdAt?: SortOrder
+    actorId?: SortOrderInput | SortOrder
+    channelId?: SortOrderInput | SortOrder
+    joinRequestId?: SortOrderInput | SortOrder
     _count?: NotificationCountOrderByAggregateInput
     _avg?: NotificationAvgOrderByAggregateInput
     _max?: NotificationMaxOrderByAggregateInput
@@ -16893,6 +18717,9 @@ export namespace Prisma {
     href?: StringNullableWithAggregatesFilter<"Notification"> | string | null
     isRead?: BoolWithAggregatesFilter<"Notification"> | boolean
     createdAt?: DateTimeWithAggregatesFilter<"Notification"> | Date | string
+    actorId?: IntNullableWithAggregatesFilter<"Notification"> | number | null
+    channelId?: IntNullableWithAggregatesFilter<"Notification"> | number | null
+    joinRequestId?: IntNullableWithAggregatesFilter<"Notification"> | number | null
   }
 
   export type SavedPostWhereInput = {
@@ -16958,8 +18785,9 @@ export namespace Prisma {
     id?: IntFilter<"Todo"> | number
     userId?: IntFilter<"Todo"> | number
     title?: StringFilter<"Todo"> | string
-    priority?: StringFilter<"Todo"> | string
+    priority?: EnumPriorityFilter<"Todo"> | $Enums.Priority
     completed?: BoolFilter<"Todo"> | boolean
+    completedAt?: DateTimeNullableFilter<"Todo"> | Date | string | null
     deletedAt?: DateTimeNullableFilter<"Todo"> | Date | string | null
     createdAt?: DateTimeFilter<"Todo"> | Date | string
     updatedAt?: DateTimeFilter<"Todo"> | Date | string
@@ -16972,6 +18800,7 @@ export namespace Prisma {
     title?: SortOrder
     priority?: SortOrder
     completed?: SortOrder
+    completedAt?: SortOrderInput | SortOrder
     deletedAt?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -16985,8 +18814,9 @@ export namespace Prisma {
     NOT?: TodoWhereInput | TodoWhereInput[]
     userId?: IntFilter<"Todo"> | number
     title?: StringFilter<"Todo"> | string
-    priority?: StringFilter<"Todo"> | string
+    priority?: EnumPriorityFilter<"Todo"> | $Enums.Priority
     completed?: BoolFilter<"Todo"> | boolean
+    completedAt?: DateTimeNullableFilter<"Todo"> | Date | string | null
     deletedAt?: DateTimeNullableFilter<"Todo"> | Date | string | null
     createdAt?: DateTimeFilter<"Todo"> | Date | string
     updatedAt?: DateTimeFilter<"Todo"> | Date | string
@@ -16999,6 +18829,7 @@ export namespace Prisma {
     title?: SortOrder
     priority?: SortOrder
     completed?: SortOrder
+    completedAt?: SortOrderInput | SortOrder
     deletedAt?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -17016,8 +18847,9 @@ export namespace Prisma {
     id?: IntWithAggregatesFilter<"Todo"> | number
     userId?: IntWithAggregatesFilter<"Todo"> | number
     title?: StringWithAggregatesFilter<"Todo"> | string
-    priority?: StringWithAggregatesFilter<"Todo"> | string
+    priority?: EnumPriorityWithAggregatesFilter<"Todo"> | $Enums.Priority
     completed?: BoolWithAggregatesFilter<"Todo"> | boolean
+    completedAt?: DateTimeNullableWithAggregatesFilter<"Todo"> | Date | string | null
     deletedAt?: DateTimeNullableWithAggregatesFilter<"Todo"> | Date | string | null
     createdAt?: DateTimeWithAggregatesFilter<"Todo"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"Todo"> | Date | string
@@ -17087,6 +18919,134 @@ export namespace Prisma {
     seenAt?: DateTimeWithAggregatesFilter<"PostSeen"> | Date | string
   }
 
+  export type DailyReportWhereInput = {
+    AND?: DailyReportWhereInput | DailyReportWhereInput[]
+    OR?: DailyReportWhereInput[]
+    NOT?: DailyReportWhereInput | DailyReportWhereInput[]
+    id?: IntFilter<"DailyReport"> | number
+    createdAt?: DateTimeFilter<"DailyReport"> | Date | string
+    updatedAt?: DateTimeFilter<"DailyReport"> | Date | string
+    authorId?: IntFilter<"DailyReport"> | number
+    reportYmd?: StringFilter<"DailyReport"> | string
+    branchName?: StringFilter<"DailyReport"> | string
+    newConnectionRequest?: IntFilter<"DailyReport"> | number
+    pendingConnection?: IntFilter<"DailyReport"> | number
+    completedConnection?: IntFilter<"DailyReport"> | number
+    reasonPendingConnection?: StringNullableFilter<"DailyReport"> | string | null
+    internetTkt?: IntFilter<"DailyReport"> | number
+    pendingTkt?: IntFilter<"DailyReport"> | number
+    completedTkt?: IntFilter<"DailyReport"> | number
+    reasonPendingTkt?: StringNullableFilter<"DailyReport"> | string | null
+    expireCustomerDay?: IntFilter<"DailyReport"> | number
+    renewDay?: IntFilter<"DailyReport"> | number
+    activeCustomer?: IntFilter<"DailyReport"> | number
+    totalExpireCustomer?: IntFilter<"DailyReport"> | number
+    outgoingCalls?: IntFilter<"DailyReport"> | number
+    author?: XOR<UserScalarRelationFilter, UserWhereInput>
+  }
+
+  export type DailyReportOrderByWithRelationInput = {
+    id?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    authorId?: SortOrder
+    reportYmd?: SortOrder
+    branchName?: SortOrder
+    newConnectionRequest?: SortOrder
+    pendingConnection?: SortOrder
+    completedConnection?: SortOrder
+    reasonPendingConnection?: SortOrderInput | SortOrder
+    internetTkt?: SortOrder
+    pendingTkt?: SortOrder
+    completedTkt?: SortOrder
+    reasonPendingTkt?: SortOrderInput | SortOrder
+    expireCustomerDay?: SortOrder
+    renewDay?: SortOrder
+    activeCustomer?: SortOrder
+    totalExpireCustomer?: SortOrder
+    outgoingCalls?: SortOrder
+    author?: UserOrderByWithRelationInput
+  }
+
+  export type DailyReportWhereUniqueInput = Prisma.AtLeast<{
+    id?: number
+    authorId_reportYmd?: DailyReportAuthorIdReportYmdCompoundUniqueInput
+    AND?: DailyReportWhereInput | DailyReportWhereInput[]
+    OR?: DailyReportWhereInput[]
+    NOT?: DailyReportWhereInput | DailyReportWhereInput[]
+    createdAt?: DateTimeFilter<"DailyReport"> | Date | string
+    updatedAt?: DateTimeFilter<"DailyReport"> | Date | string
+    authorId?: IntFilter<"DailyReport"> | number
+    reportYmd?: StringFilter<"DailyReport"> | string
+    branchName?: StringFilter<"DailyReport"> | string
+    newConnectionRequest?: IntFilter<"DailyReport"> | number
+    pendingConnection?: IntFilter<"DailyReport"> | number
+    completedConnection?: IntFilter<"DailyReport"> | number
+    reasonPendingConnection?: StringNullableFilter<"DailyReport"> | string | null
+    internetTkt?: IntFilter<"DailyReport"> | number
+    pendingTkt?: IntFilter<"DailyReport"> | number
+    completedTkt?: IntFilter<"DailyReport"> | number
+    reasonPendingTkt?: StringNullableFilter<"DailyReport"> | string | null
+    expireCustomerDay?: IntFilter<"DailyReport"> | number
+    renewDay?: IntFilter<"DailyReport"> | number
+    activeCustomer?: IntFilter<"DailyReport"> | number
+    totalExpireCustomer?: IntFilter<"DailyReport"> | number
+    outgoingCalls?: IntFilter<"DailyReport"> | number
+    author?: XOR<UserScalarRelationFilter, UserWhereInput>
+  }, "id" | "authorId_reportYmd">
+
+  export type DailyReportOrderByWithAggregationInput = {
+    id?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    authorId?: SortOrder
+    reportYmd?: SortOrder
+    branchName?: SortOrder
+    newConnectionRequest?: SortOrder
+    pendingConnection?: SortOrder
+    completedConnection?: SortOrder
+    reasonPendingConnection?: SortOrderInput | SortOrder
+    internetTkt?: SortOrder
+    pendingTkt?: SortOrder
+    completedTkt?: SortOrder
+    reasonPendingTkt?: SortOrderInput | SortOrder
+    expireCustomerDay?: SortOrder
+    renewDay?: SortOrder
+    activeCustomer?: SortOrder
+    totalExpireCustomer?: SortOrder
+    outgoingCalls?: SortOrder
+    _count?: DailyReportCountOrderByAggregateInput
+    _avg?: DailyReportAvgOrderByAggregateInput
+    _max?: DailyReportMaxOrderByAggregateInput
+    _min?: DailyReportMinOrderByAggregateInput
+    _sum?: DailyReportSumOrderByAggregateInput
+  }
+
+  export type DailyReportScalarWhereWithAggregatesInput = {
+    AND?: DailyReportScalarWhereWithAggregatesInput | DailyReportScalarWhereWithAggregatesInput[]
+    OR?: DailyReportScalarWhereWithAggregatesInput[]
+    NOT?: DailyReportScalarWhereWithAggregatesInput | DailyReportScalarWhereWithAggregatesInput[]
+    id?: IntWithAggregatesFilter<"DailyReport"> | number
+    createdAt?: DateTimeWithAggregatesFilter<"DailyReport"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"DailyReport"> | Date | string
+    authorId?: IntWithAggregatesFilter<"DailyReport"> | number
+    reportYmd?: StringWithAggregatesFilter<"DailyReport"> | string
+    branchName?: StringWithAggregatesFilter<"DailyReport"> | string
+    newConnectionRequest?: IntWithAggregatesFilter<"DailyReport"> | number
+    pendingConnection?: IntWithAggregatesFilter<"DailyReport"> | number
+    completedConnection?: IntWithAggregatesFilter<"DailyReport"> | number
+    reasonPendingConnection?: StringNullableWithAggregatesFilter<"DailyReport"> | string | null
+    internetTkt?: IntWithAggregatesFilter<"DailyReport"> | number
+    pendingTkt?: IntWithAggregatesFilter<"DailyReport"> | number
+    completedTkt?: IntWithAggregatesFilter<"DailyReport"> | number
+    reasonPendingTkt?: StringNullableWithAggregatesFilter<"DailyReport"> | string | null
+    expireCustomerDay?: IntWithAggregatesFilter<"DailyReport"> | number
+    renewDay?: IntWithAggregatesFilter<"DailyReport"> | number
+    activeCustomer?: IntWithAggregatesFilter<"DailyReport"> | number
+    totalExpireCustomer?: IntWithAggregatesFilter<"DailyReport"> | number
+    outgoingCalls?: IntWithAggregatesFilter<"DailyReport"> | number
+  }
+
   export type UserCreateInput = {
     username: string
     email?: string | null
@@ -17104,6 +19064,8 @@ export namespace Prisma {
     todos?: TodoCreateNestedManyWithoutUserInput
     postSeen?: PostSeenCreateNestedManyWithoutUserInput
     pinnedChannel?: ChannelCreateNestedOneWithoutPinnedByUsersInput
+    notificationsActed?: NotificationCreateNestedManyWithoutActorInput
+    dailyReports?: DailyReportCreateNestedManyWithoutAuthorInput
   }
 
   export type UserUncheckedCreateInput = {
@@ -17124,6 +19086,8 @@ export namespace Prisma {
     savedPosts?: SavedPostUncheckedCreateNestedManyWithoutUserInput
     todos?: TodoUncheckedCreateNestedManyWithoutUserInput
     postSeen?: PostSeenUncheckedCreateNestedManyWithoutUserInput
+    notificationsActed?: NotificationUncheckedCreateNestedManyWithoutActorInput
+    dailyReports?: DailyReportUncheckedCreateNestedManyWithoutAuthorInput
   }
 
   export type UserUpdateInput = {
@@ -17143,6 +19107,8 @@ export namespace Prisma {
     todos?: TodoUpdateManyWithoutUserNestedInput
     postSeen?: PostSeenUpdateManyWithoutUserNestedInput
     pinnedChannel?: ChannelUpdateOneWithoutPinnedByUsersNestedInput
+    notificationsActed?: NotificationUpdateManyWithoutActorNestedInput
+    dailyReports?: DailyReportUpdateManyWithoutAuthorNestedInput
   }
 
   export type UserUncheckedUpdateInput = {
@@ -17163,6 +19129,8 @@ export namespace Prisma {
     savedPosts?: SavedPostUncheckedUpdateManyWithoutUserNestedInput
     todos?: TodoUncheckedUpdateManyWithoutUserNestedInput
     postSeen?: PostSeenUncheckedUpdateManyWithoutUserNestedInput
+    notificationsActed?: NotificationUncheckedUpdateManyWithoutActorNestedInput
+    dailyReports?: DailyReportUncheckedUpdateManyWithoutAuthorNestedInput
   }
 
   export type UserCreateManyInput = {
@@ -17422,6 +19390,7 @@ export namespace Prisma {
     posts?: PostCreateNestedManyWithoutChannelInput
     joinRequests?: JoinRequestCreateNestedManyWithoutChannelInput
     pinnedByUsers?: UserCreateNestedManyWithoutPinnedChannelInput
+    notifications?: NotificationCreateNestedManyWithoutChannelInput
   }
 
   export type ChannelUncheckedCreateInput = {
@@ -17436,6 +19405,7 @@ export namespace Prisma {
     posts?: PostUncheckedCreateNestedManyWithoutChannelInput
     joinRequests?: JoinRequestUncheckedCreateNestedManyWithoutChannelInput
     pinnedByUsers?: UserUncheckedCreateNestedManyWithoutPinnedChannelInput
+    notifications?: NotificationUncheckedCreateNestedManyWithoutChannelInput
   }
 
   export type ChannelUpdateInput = {
@@ -17449,6 +19419,7 @@ export namespace Prisma {
     posts?: PostUpdateManyWithoutChannelNestedInput
     joinRequests?: JoinRequestUpdateManyWithoutChannelNestedInput
     pinnedByUsers?: UserUpdateManyWithoutPinnedChannelNestedInput
+    notifications?: NotificationUpdateManyWithoutChannelNestedInput
   }
 
   export type ChannelUncheckedUpdateInput = {
@@ -17463,6 +19434,7 @@ export namespace Prisma {
     posts?: PostUncheckedUpdateManyWithoutChannelNestedInput
     joinRequests?: JoinRequestUncheckedUpdateManyWithoutChannelNestedInput
     pinnedByUsers?: UserUncheckedUpdateManyWithoutPinnedChannelNestedInput
+    notifications?: NotificationUncheckedUpdateManyWithoutChannelNestedInput
   }
 
   export type ChannelCreateManyInput = {
@@ -17540,6 +19512,7 @@ export namespace Prisma {
     status?: string
     channel: ChannelCreateNestedOneWithoutJoinRequestsInput
     user: UserCreateNestedOneWithoutJoinRequestsInput
+    notifications?: NotificationCreateNestedManyWithoutJoinRequestInput
   }
 
   export type JoinRequestUncheckedCreateInput = {
@@ -17549,6 +19522,7 @@ export namespace Prisma {
     channelId: number
     userId: number
     status?: string
+    notifications?: NotificationUncheckedCreateNestedManyWithoutJoinRequestInput
   }
 
   export type JoinRequestUpdateInput = {
@@ -17557,6 +19531,7 @@ export namespace Prisma {
     status?: StringFieldUpdateOperationsInput | string
     channel?: ChannelUpdateOneRequiredWithoutJoinRequestsNestedInput
     user?: UserUpdateOneRequiredWithoutJoinRequestsNestedInput
+    notifications?: NotificationUpdateManyWithoutJoinRequestNestedInput
   }
 
   export type JoinRequestUncheckedUpdateInput = {
@@ -17566,6 +19541,7 @@ export namespace Prisma {
     channelId?: IntFieldUpdateOperationsInput | number
     userId?: IntFieldUpdateOperationsInput | number
     status?: StringFieldUpdateOperationsInput | string
+    notifications?: NotificationUncheckedUpdateManyWithoutJoinRequestNestedInput
   }
 
   export type JoinRequestCreateManyInput = {
@@ -17599,6 +19575,9 @@ export namespace Prisma {
     isRead?: boolean
     createdAt?: Date | string
     user: UserCreateNestedOneWithoutNotificationsInput
+    actor?: UserCreateNestedOneWithoutNotificationsActedInput
+    channel?: ChannelCreateNestedOneWithoutNotificationsInput
+    joinRequest?: JoinRequestCreateNestedOneWithoutNotificationsInput
   }
 
   export type NotificationUncheckedCreateInput = {
@@ -17609,6 +19588,9 @@ export namespace Prisma {
     href?: string | null
     isRead?: boolean
     createdAt?: Date | string
+    actorId?: number | null
+    channelId?: number | null
+    joinRequestId?: number | null
   }
 
   export type NotificationUpdateInput = {
@@ -17618,6 +19600,9 @@ export namespace Prisma {
     isRead?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     user?: UserUpdateOneRequiredWithoutNotificationsNestedInput
+    actor?: UserUpdateOneWithoutNotificationsActedNestedInput
+    channel?: ChannelUpdateOneWithoutNotificationsNestedInput
+    joinRequest?: JoinRequestUpdateOneWithoutNotificationsNestedInput
   }
 
   export type NotificationUncheckedUpdateInput = {
@@ -17628,6 +19613,9 @@ export namespace Prisma {
     href?: NullableStringFieldUpdateOperationsInput | string | null
     isRead?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    actorId?: NullableIntFieldUpdateOperationsInput | number | null
+    channelId?: NullableIntFieldUpdateOperationsInput | number | null
+    joinRequestId?: NullableIntFieldUpdateOperationsInput | number | null
   }
 
   export type NotificationCreateManyInput = {
@@ -17638,6 +19626,9 @@ export namespace Prisma {
     href?: string | null
     isRead?: boolean
     createdAt?: Date | string
+    actorId?: number | null
+    channelId?: number | null
+    joinRequestId?: number | null
   }
 
   export type NotificationUpdateManyMutationInput = {
@@ -17656,6 +19647,9 @@ export namespace Prisma {
     href?: NullableStringFieldUpdateOperationsInput | string | null
     isRead?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    actorId?: NullableIntFieldUpdateOperationsInput | number | null
+    channelId?: NullableIntFieldUpdateOperationsInput | number | null
+    joinRequestId?: NullableIntFieldUpdateOperationsInput | number | null
   }
 
   export type SavedPostCreateInput = {
@@ -17704,8 +19698,9 @@ export namespace Prisma {
 
   export type TodoCreateInput = {
     title: string
-    priority?: string
+    priority: $Enums.Priority
     completed?: boolean
+    completedAt?: Date | string | null
     deletedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -17716,8 +19711,9 @@ export namespace Prisma {
     id?: number
     userId: number
     title: string
-    priority?: string
+    priority: $Enums.Priority
     completed?: boolean
+    completedAt?: Date | string | null
     deletedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -17725,8 +19721,9 @@ export namespace Prisma {
 
   export type TodoUpdateInput = {
     title?: StringFieldUpdateOperationsInput | string
-    priority?: StringFieldUpdateOperationsInput | string
+    priority?: EnumPriorityFieldUpdateOperationsInput | $Enums.Priority
     completed?: BoolFieldUpdateOperationsInput | boolean
+    completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -17737,8 +19734,9 @@ export namespace Prisma {
     id?: IntFieldUpdateOperationsInput | number
     userId?: IntFieldUpdateOperationsInput | number
     title?: StringFieldUpdateOperationsInput | string
-    priority?: StringFieldUpdateOperationsInput | string
+    priority?: EnumPriorityFieldUpdateOperationsInput | $Enums.Priority
     completed?: BoolFieldUpdateOperationsInput | boolean
+    completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -17748,8 +19746,9 @@ export namespace Prisma {
     id?: number
     userId: number
     title: string
-    priority?: string
+    priority: $Enums.Priority
     completed?: boolean
+    completedAt?: Date | string | null
     deletedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -17757,8 +19756,9 @@ export namespace Prisma {
 
   export type TodoUpdateManyMutationInput = {
     title?: StringFieldUpdateOperationsInput | string
-    priority?: StringFieldUpdateOperationsInput | string
+    priority?: EnumPriorityFieldUpdateOperationsInput | $Enums.Priority
     completed?: BoolFieldUpdateOperationsInput | boolean
+    completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -17768,8 +19768,9 @@ export namespace Prisma {
     id?: IntFieldUpdateOperationsInput | number
     userId?: IntFieldUpdateOperationsInput | number
     title?: StringFieldUpdateOperationsInput | string
-    priority?: StringFieldUpdateOperationsInput | string
+    priority?: EnumPriorityFieldUpdateOperationsInput | $Enums.Priority
     completed?: BoolFieldUpdateOperationsInput | boolean
+    completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -17823,6 +19824,156 @@ export namespace Prisma {
     postId?: IntFieldUpdateOperationsInput | number
     channelId?: IntFieldUpdateOperationsInput | number
     seenAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type DailyReportCreateInput = {
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    reportYmd: string
+    branchName: string
+    newConnectionRequest?: number
+    pendingConnection?: number
+    completedConnection?: number
+    reasonPendingConnection?: string | null
+    internetTkt?: number
+    pendingTkt?: number
+    completedTkt?: number
+    reasonPendingTkt?: string | null
+    expireCustomerDay?: number
+    renewDay?: number
+    activeCustomer?: number
+    totalExpireCustomer?: number
+    outgoingCalls?: number
+    author: UserCreateNestedOneWithoutDailyReportsInput
+  }
+
+  export type DailyReportUncheckedCreateInput = {
+    id?: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    authorId: number
+    reportYmd: string
+    branchName: string
+    newConnectionRequest?: number
+    pendingConnection?: number
+    completedConnection?: number
+    reasonPendingConnection?: string | null
+    internetTkt?: number
+    pendingTkt?: number
+    completedTkt?: number
+    reasonPendingTkt?: string | null
+    expireCustomerDay?: number
+    renewDay?: number
+    activeCustomer?: number
+    totalExpireCustomer?: number
+    outgoingCalls?: number
+  }
+
+  export type DailyReportUpdateInput = {
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    reportYmd?: StringFieldUpdateOperationsInput | string
+    branchName?: StringFieldUpdateOperationsInput | string
+    newConnectionRequest?: IntFieldUpdateOperationsInput | number
+    pendingConnection?: IntFieldUpdateOperationsInput | number
+    completedConnection?: IntFieldUpdateOperationsInput | number
+    reasonPendingConnection?: NullableStringFieldUpdateOperationsInput | string | null
+    internetTkt?: IntFieldUpdateOperationsInput | number
+    pendingTkt?: IntFieldUpdateOperationsInput | number
+    completedTkt?: IntFieldUpdateOperationsInput | number
+    reasonPendingTkt?: NullableStringFieldUpdateOperationsInput | string | null
+    expireCustomerDay?: IntFieldUpdateOperationsInput | number
+    renewDay?: IntFieldUpdateOperationsInput | number
+    activeCustomer?: IntFieldUpdateOperationsInput | number
+    totalExpireCustomer?: IntFieldUpdateOperationsInput | number
+    outgoingCalls?: IntFieldUpdateOperationsInput | number
+    author?: UserUpdateOneRequiredWithoutDailyReportsNestedInput
+  }
+
+  export type DailyReportUncheckedUpdateInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    authorId?: IntFieldUpdateOperationsInput | number
+    reportYmd?: StringFieldUpdateOperationsInput | string
+    branchName?: StringFieldUpdateOperationsInput | string
+    newConnectionRequest?: IntFieldUpdateOperationsInput | number
+    pendingConnection?: IntFieldUpdateOperationsInput | number
+    completedConnection?: IntFieldUpdateOperationsInput | number
+    reasonPendingConnection?: NullableStringFieldUpdateOperationsInput | string | null
+    internetTkt?: IntFieldUpdateOperationsInput | number
+    pendingTkt?: IntFieldUpdateOperationsInput | number
+    completedTkt?: IntFieldUpdateOperationsInput | number
+    reasonPendingTkt?: NullableStringFieldUpdateOperationsInput | string | null
+    expireCustomerDay?: IntFieldUpdateOperationsInput | number
+    renewDay?: IntFieldUpdateOperationsInput | number
+    activeCustomer?: IntFieldUpdateOperationsInput | number
+    totalExpireCustomer?: IntFieldUpdateOperationsInput | number
+    outgoingCalls?: IntFieldUpdateOperationsInput | number
+  }
+
+  export type DailyReportCreateManyInput = {
+    id?: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    authorId: number
+    reportYmd: string
+    branchName: string
+    newConnectionRequest?: number
+    pendingConnection?: number
+    completedConnection?: number
+    reasonPendingConnection?: string | null
+    internetTkt?: number
+    pendingTkt?: number
+    completedTkt?: number
+    reasonPendingTkt?: string | null
+    expireCustomerDay?: number
+    renewDay?: number
+    activeCustomer?: number
+    totalExpireCustomer?: number
+    outgoingCalls?: number
+  }
+
+  export type DailyReportUpdateManyMutationInput = {
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    reportYmd?: StringFieldUpdateOperationsInput | string
+    branchName?: StringFieldUpdateOperationsInput | string
+    newConnectionRequest?: IntFieldUpdateOperationsInput | number
+    pendingConnection?: IntFieldUpdateOperationsInput | number
+    completedConnection?: IntFieldUpdateOperationsInput | number
+    reasonPendingConnection?: NullableStringFieldUpdateOperationsInput | string | null
+    internetTkt?: IntFieldUpdateOperationsInput | number
+    pendingTkt?: IntFieldUpdateOperationsInput | number
+    completedTkt?: IntFieldUpdateOperationsInput | number
+    reasonPendingTkt?: NullableStringFieldUpdateOperationsInput | string | null
+    expireCustomerDay?: IntFieldUpdateOperationsInput | number
+    renewDay?: IntFieldUpdateOperationsInput | number
+    activeCustomer?: IntFieldUpdateOperationsInput | number
+    totalExpireCustomer?: IntFieldUpdateOperationsInput | number
+    outgoingCalls?: IntFieldUpdateOperationsInput | number
+  }
+
+  export type DailyReportUncheckedUpdateManyInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    authorId?: IntFieldUpdateOperationsInput | number
+    reportYmd?: StringFieldUpdateOperationsInput | string
+    branchName?: StringFieldUpdateOperationsInput | string
+    newConnectionRequest?: IntFieldUpdateOperationsInput | number
+    pendingConnection?: IntFieldUpdateOperationsInput | number
+    completedConnection?: IntFieldUpdateOperationsInput | number
+    reasonPendingConnection?: NullableStringFieldUpdateOperationsInput | string | null
+    internetTkt?: IntFieldUpdateOperationsInput | number
+    pendingTkt?: IntFieldUpdateOperationsInput | number
+    completedTkt?: IntFieldUpdateOperationsInput | number
+    reasonPendingTkt?: NullableStringFieldUpdateOperationsInput | string | null
+    expireCustomerDay?: IntFieldUpdateOperationsInput | number
+    renewDay?: IntFieldUpdateOperationsInput | number
+    activeCustomer?: IntFieldUpdateOperationsInput | number
+    totalExpireCustomer?: IntFieldUpdateOperationsInput | number
+    outgoingCalls?: IntFieldUpdateOperationsInput | number
   }
 
   export type IntFilter<$PrismaModel = never> = {
@@ -17947,6 +20098,12 @@ export namespace Prisma {
     isNot?: ChannelWhereInput | null
   }
 
+  export type DailyReportListRelationFilter = {
+    every?: DailyReportWhereInput
+    some?: DailyReportWhereInput
+    none?: DailyReportWhereInput
+  }
+
   export type SortOrderInput = {
     sort: SortOrder
     nulls?: NullsOrder
@@ -17989,6 +20146,10 @@ export namespace Prisma {
   }
 
   export type PostSeenOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type DailyReportOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -18432,6 +20593,16 @@ export namespace Prisma {
     userId?: SortOrder
   }
 
+  export type UserNullableScalarRelationFilter = {
+    is?: UserWhereInput | null
+    isNot?: UserWhereInput | null
+  }
+
+  export type JoinRequestNullableScalarRelationFilter = {
+    is?: JoinRequestWhereInput | null
+    isNot?: JoinRequestWhereInput | null
+  }
+
   export type NotificationCountOrderByAggregateInput = {
     id?: SortOrder
     userId?: SortOrder
@@ -18440,11 +20611,17 @@ export namespace Prisma {
     href?: SortOrder
     isRead?: SortOrder
     createdAt?: SortOrder
+    actorId?: SortOrder
+    channelId?: SortOrder
+    joinRequestId?: SortOrder
   }
 
   export type NotificationAvgOrderByAggregateInput = {
     id?: SortOrder
     userId?: SortOrder
+    actorId?: SortOrder
+    channelId?: SortOrder
+    joinRequestId?: SortOrder
   }
 
   export type NotificationMaxOrderByAggregateInput = {
@@ -18455,6 +20632,9 @@ export namespace Prisma {
     href?: SortOrder
     isRead?: SortOrder
     createdAt?: SortOrder
+    actorId?: SortOrder
+    channelId?: SortOrder
+    joinRequestId?: SortOrder
   }
 
   export type NotificationMinOrderByAggregateInput = {
@@ -18465,11 +20645,17 @@ export namespace Prisma {
     href?: SortOrder
     isRead?: SortOrder
     createdAt?: SortOrder
+    actorId?: SortOrder
+    channelId?: SortOrder
+    joinRequestId?: SortOrder
   }
 
   export type NotificationSumOrderByAggregateInput = {
     id?: SortOrder
     userId?: SortOrder
+    actorId?: SortOrder
+    channelId?: SortOrder
+    joinRequestId?: SortOrder
   }
 
   export type SavedPostUserIdPostIdCompoundUniqueInput = {
@@ -18510,6 +20696,13 @@ export namespace Prisma {
     postId?: SortOrder
   }
 
+  export type EnumPriorityFilter<$PrismaModel = never> = {
+    equals?: $Enums.Priority | EnumPriorityFieldRefInput<$PrismaModel>
+    in?: $Enums.Priority[] | ListEnumPriorityFieldRefInput<$PrismaModel>
+    notIn?: $Enums.Priority[] | ListEnumPriorityFieldRefInput<$PrismaModel>
+    not?: NestedEnumPriorityFilter<$PrismaModel> | $Enums.Priority
+  }
+
   export type DateTimeNullableFilter<$PrismaModel = never> = {
     equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
     in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
@@ -18527,6 +20720,7 @@ export namespace Prisma {
     title?: SortOrder
     priority?: SortOrder
     completed?: SortOrder
+    completedAt?: SortOrder
     deletedAt?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -18543,6 +20737,7 @@ export namespace Prisma {
     title?: SortOrder
     priority?: SortOrder
     completed?: SortOrder
+    completedAt?: SortOrder
     deletedAt?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -18554,6 +20749,7 @@ export namespace Prisma {
     title?: SortOrder
     priority?: SortOrder
     completed?: SortOrder
+    completedAt?: SortOrder
     deletedAt?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -18562,6 +20758,16 @@ export namespace Prisma {
   export type TodoSumOrderByAggregateInput = {
     id?: SortOrder
     userId?: SortOrder
+  }
+
+  export type EnumPriorityWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.Priority | EnumPriorityFieldRefInput<$PrismaModel>
+    in?: $Enums.Priority[] | ListEnumPriorityFieldRefInput<$PrismaModel>
+    notIn?: $Enums.Priority[] | ListEnumPriorityFieldRefInput<$PrismaModel>
+    not?: NestedEnumPriorityWithAggregatesFilter<$PrismaModel> | $Enums.Priority
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumPriorityFilter<$PrismaModel>
+    _max?: NestedEnumPriorityFilter<$PrismaModel>
   }
 
   export type DateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
@@ -18619,6 +20825,109 @@ export namespace Prisma {
     userId?: SortOrder
     postId?: SortOrder
     channelId?: SortOrder
+  }
+
+  export type DailyReportAuthorIdReportYmdCompoundUniqueInput = {
+    authorId: number
+    reportYmd: string
+  }
+
+  export type DailyReportCountOrderByAggregateInput = {
+    id?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    authorId?: SortOrder
+    reportYmd?: SortOrder
+    branchName?: SortOrder
+    newConnectionRequest?: SortOrder
+    pendingConnection?: SortOrder
+    completedConnection?: SortOrder
+    reasonPendingConnection?: SortOrder
+    internetTkt?: SortOrder
+    pendingTkt?: SortOrder
+    completedTkt?: SortOrder
+    reasonPendingTkt?: SortOrder
+    expireCustomerDay?: SortOrder
+    renewDay?: SortOrder
+    activeCustomer?: SortOrder
+    totalExpireCustomer?: SortOrder
+    outgoingCalls?: SortOrder
+  }
+
+  export type DailyReportAvgOrderByAggregateInput = {
+    id?: SortOrder
+    authorId?: SortOrder
+    newConnectionRequest?: SortOrder
+    pendingConnection?: SortOrder
+    completedConnection?: SortOrder
+    internetTkt?: SortOrder
+    pendingTkt?: SortOrder
+    completedTkt?: SortOrder
+    expireCustomerDay?: SortOrder
+    renewDay?: SortOrder
+    activeCustomer?: SortOrder
+    totalExpireCustomer?: SortOrder
+    outgoingCalls?: SortOrder
+  }
+
+  export type DailyReportMaxOrderByAggregateInput = {
+    id?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    authorId?: SortOrder
+    reportYmd?: SortOrder
+    branchName?: SortOrder
+    newConnectionRequest?: SortOrder
+    pendingConnection?: SortOrder
+    completedConnection?: SortOrder
+    reasonPendingConnection?: SortOrder
+    internetTkt?: SortOrder
+    pendingTkt?: SortOrder
+    completedTkt?: SortOrder
+    reasonPendingTkt?: SortOrder
+    expireCustomerDay?: SortOrder
+    renewDay?: SortOrder
+    activeCustomer?: SortOrder
+    totalExpireCustomer?: SortOrder
+    outgoingCalls?: SortOrder
+  }
+
+  export type DailyReportMinOrderByAggregateInput = {
+    id?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    authorId?: SortOrder
+    reportYmd?: SortOrder
+    branchName?: SortOrder
+    newConnectionRequest?: SortOrder
+    pendingConnection?: SortOrder
+    completedConnection?: SortOrder
+    reasonPendingConnection?: SortOrder
+    internetTkt?: SortOrder
+    pendingTkt?: SortOrder
+    completedTkt?: SortOrder
+    reasonPendingTkt?: SortOrder
+    expireCustomerDay?: SortOrder
+    renewDay?: SortOrder
+    activeCustomer?: SortOrder
+    totalExpireCustomer?: SortOrder
+    outgoingCalls?: SortOrder
+  }
+
+  export type DailyReportSumOrderByAggregateInput = {
+    id?: SortOrder
+    authorId?: SortOrder
+    newConnectionRequest?: SortOrder
+    pendingConnection?: SortOrder
+    completedConnection?: SortOrder
+    internetTkt?: SortOrder
+    pendingTkt?: SortOrder
+    completedTkt?: SortOrder
+    expireCustomerDay?: SortOrder
+    renewDay?: SortOrder
+    activeCustomer?: SortOrder
+    totalExpireCustomer?: SortOrder
+    outgoingCalls?: SortOrder
   }
 
   export type PostCreateNestedManyWithoutAuthorInput = {
@@ -18697,6 +21006,20 @@ export namespace Prisma {
     connect?: ChannelWhereUniqueInput
   }
 
+  export type NotificationCreateNestedManyWithoutActorInput = {
+    create?: XOR<NotificationCreateWithoutActorInput, NotificationUncheckedCreateWithoutActorInput> | NotificationCreateWithoutActorInput[] | NotificationUncheckedCreateWithoutActorInput[]
+    connectOrCreate?: NotificationCreateOrConnectWithoutActorInput | NotificationCreateOrConnectWithoutActorInput[]
+    createMany?: NotificationCreateManyActorInputEnvelope
+    connect?: NotificationWhereUniqueInput | NotificationWhereUniqueInput[]
+  }
+
+  export type DailyReportCreateNestedManyWithoutAuthorInput = {
+    create?: XOR<DailyReportCreateWithoutAuthorInput, DailyReportUncheckedCreateWithoutAuthorInput> | DailyReportCreateWithoutAuthorInput[] | DailyReportUncheckedCreateWithoutAuthorInput[]
+    connectOrCreate?: DailyReportCreateOrConnectWithoutAuthorInput | DailyReportCreateOrConnectWithoutAuthorInput[]
+    createMany?: DailyReportCreateManyAuthorInputEnvelope
+    connect?: DailyReportWhereUniqueInput | DailyReportWhereUniqueInput[]
+  }
+
   export type PostUncheckedCreateNestedManyWithoutAuthorInput = {
     create?: XOR<PostCreateWithoutAuthorInput, PostUncheckedCreateWithoutAuthorInput> | PostCreateWithoutAuthorInput[] | PostUncheckedCreateWithoutAuthorInput[]
     connectOrCreate?: PostCreateOrConnectWithoutAuthorInput | PostCreateOrConnectWithoutAuthorInput[]
@@ -18765,6 +21088,20 @@ export namespace Prisma {
     connectOrCreate?: PostSeenCreateOrConnectWithoutUserInput | PostSeenCreateOrConnectWithoutUserInput[]
     createMany?: PostSeenCreateManyUserInputEnvelope
     connect?: PostSeenWhereUniqueInput | PostSeenWhereUniqueInput[]
+  }
+
+  export type NotificationUncheckedCreateNestedManyWithoutActorInput = {
+    create?: XOR<NotificationCreateWithoutActorInput, NotificationUncheckedCreateWithoutActorInput> | NotificationCreateWithoutActorInput[] | NotificationUncheckedCreateWithoutActorInput[]
+    connectOrCreate?: NotificationCreateOrConnectWithoutActorInput | NotificationCreateOrConnectWithoutActorInput[]
+    createMany?: NotificationCreateManyActorInputEnvelope
+    connect?: NotificationWhereUniqueInput | NotificationWhereUniqueInput[]
+  }
+
+  export type DailyReportUncheckedCreateNestedManyWithoutAuthorInput = {
+    create?: XOR<DailyReportCreateWithoutAuthorInput, DailyReportUncheckedCreateWithoutAuthorInput> | DailyReportCreateWithoutAuthorInput[] | DailyReportUncheckedCreateWithoutAuthorInput[]
+    connectOrCreate?: DailyReportCreateOrConnectWithoutAuthorInput | DailyReportCreateOrConnectWithoutAuthorInput[]
+    createMany?: DailyReportCreateManyAuthorInputEnvelope
+    connect?: DailyReportWhereUniqueInput | DailyReportWhereUniqueInput[]
   }
 
   export type StringFieldUpdateOperationsInput = {
@@ -18929,6 +21266,34 @@ export namespace Prisma {
     update?: XOR<XOR<ChannelUpdateToOneWithWhereWithoutPinnedByUsersInput, ChannelUpdateWithoutPinnedByUsersInput>, ChannelUncheckedUpdateWithoutPinnedByUsersInput>
   }
 
+  export type NotificationUpdateManyWithoutActorNestedInput = {
+    create?: XOR<NotificationCreateWithoutActorInput, NotificationUncheckedCreateWithoutActorInput> | NotificationCreateWithoutActorInput[] | NotificationUncheckedCreateWithoutActorInput[]
+    connectOrCreate?: NotificationCreateOrConnectWithoutActorInput | NotificationCreateOrConnectWithoutActorInput[]
+    upsert?: NotificationUpsertWithWhereUniqueWithoutActorInput | NotificationUpsertWithWhereUniqueWithoutActorInput[]
+    createMany?: NotificationCreateManyActorInputEnvelope
+    set?: NotificationWhereUniqueInput | NotificationWhereUniqueInput[]
+    disconnect?: NotificationWhereUniqueInput | NotificationWhereUniqueInput[]
+    delete?: NotificationWhereUniqueInput | NotificationWhereUniqueInput[]
+    connect?: NotificationWhereUniqueInput | NotificationWhereUniqueInput[]
+    update?: NotificationUpdateWithWhereUniqueWithoutActorInput | NotificationUpdateWithWhereUniqueWithoutActorInput[]
+    updateMany?: NotificationUpdateManyWithWhereWithoutActorInput | NotificationUpdateManyWithWhereWithoutActorInput[]
+    deleteMany?: NotificationScalarWhereInput | NotificationScalarWhereInput[]
+  }
+
+  export type DailyReportUpdateManyWithoutAuthorNestedInput = {
+    create?: XOR<DailyReportCreateWithoutAuthorInput, DailyReportUncheckedCreateWithoutAuthorInput> | DailyReportCreateWithoutAuthorInput[] | DailyReportUncheckedCreateWithoutAuthorInput[]
+    connectOrCreate?: DailyReportCreateOrConnectWithoutAuthorInput | DailyReportCreateOrConnectWithoutAuthorInput[]
+    upsert?: DailyReportUpsertWithWhereUniqueWithoutAuthorInput | DailyReportUpsertWithWhereUniqueWithoutAuthorInput[]
+    createMany?: DailyReportCreateManyAuthorInputEnvelope
+    set?: DailyReportWhereUniqueInput | DailyReportWhereUniqueInput[]
+    disconnect?: DailyReportWhereUniqueInput | DailyReportWhereUniqueInput[]
+    delete?: DailyReportWhereUniqueInput | DailyReportWhereUniqueInput[]
+    connect?: DailyReportWhereUniqueInput | DailyReportWhereUniqueInput[]
+    update?: DailyReportUpdateWithWhereUniqueWithoutAuthorInput | DailyReportUpdateWithWhereUniqueWithoutAuthorInput[]
+    updateMany?: DailyReportUpdateManyWithWhereWithoutAuthorInput | DailyReportUpdateManyWithWhereWithoutAuthorInput[]
+    deleteMany?: DailyReportScalarWhereInput | DailyReportScalarWhereInput[]
+  }
+
   export type IntFieldUpdateOperationsInput = {
     set?: number
     increment?: number
@@ -19083,6 +21448,34 @@ export namespace Prisma {
     update?: PostSeenUpdateWithWhereUniqueWithoutUserInput | PostSeenUpdateWithWhereUniqueWithoutUserInput[]
     updateMany?: PostSeenUpdateManyWithWhereWithoutUserInput | PostSeenUpdateManyWithWhereWithoutUserInput[]
     deleteMany?: PostSeenScalarWhereInput | PostSeenScalarWhereInput[]
+  }
+
+  export type NotificationUncheckedUpdateManyWithoutActorNestedInput = {
+    create?: XOR<NotificationCreateWithoutActorInput, NotificationUncheckedCreateWithoutActorInput> | NotificationCreateWithoutActorInput[] | NotificationUncheckedCreateWithoutActorInput[]
+    connectOrCreate?: NotificationCreateOrConnectWithoutActorInput | NotificationCreateOrConnectWithoutActorInput[]
+    upsert?: NotificationUpsertWithWhereUniqueWithoutActorInput | NotificationUpsertWithWhereUniqueWithoutActorInput[]
+    createMany?: NotificationCreateManyActorInputEnvelope
+    set?: NotificationWhereUniqueInput | NotificationWhereUniqueInput[]
+    disconnect?: NotificationWhereUniqueInput | NotificationWhereUniqueInput[]
+    delete?: NotificationWhereUniqueInput | NotificationWhereUniqueInput[]
+    connect?: NotificationWhereUniqueInput | NotificationWhereUniqueInput[]
+    update?: NotificationUpdateWithWhereUniqueWithoutActorInput | NotificationUpdateWithWhereUniqueWithoutActorInput[]
+    updateMany?: NotificationUpdateManyWithWhereWithoutActorInput | NotificationUpdateManyWithWhereWithoutActorInput[]
+    deleteMany?: NotificationScalarWhereInput | NotificationScalarWhereInput[]
+  }
+
+  export type DailyReportUncheckedUpdateManyWithoutAuthorNestedInput = {
+    create?: XOR<DailyReportCreateWithoutAuthorInput, DailyReportUncheckedCreateWithoutAuthorInput> | DailyReportCreateWithoutAuthorInput[] | DailyReportUncheckedCreateWithoutAuthorInput[]
+    connectOrCreate?: DailyReportCreateOrConnectWithoutAuthorInput | DailyReportCreateOrConnectWithoutAuthorInput[]
+    upsert?: DailyReportUpsertWithWhereUniqueWithoutAuthorInput | DailyReportUpsertWithWhereUniqueWithoutAuthorInput[]
+    createMany?: DailyReportCreateManyAuthorInputEnvelope
+    set?: DailyReportWhereUniqueInput | DailyReportWhereUniqueInput[]
+    disconnect?: DailyReportWhereUniqueInput | DailyReportWhereUniqueInput[]
+    delete?: DailyReportWhereUniqueInput | DailyReportWhereUniqueInput[]
+    connect?: DailyReportWhereUniqueInput | DailyReportWhereUniqueInput[]
+    update?: DailyReportUpdateWithWhereUniqueWithoutAuthorInput | DailyReportUpdateWithWhereUniqueWithoutAuthorInput[]
+    updateMany?: DailyReportUpdateManyWithWhereWithoutAuthorInput | DailyReportUpdateManyWithWhereWithoutAuthorInput[]
+    deleteMany?: DailyReportScalarWhereInput | DailyReportScalarWhereInput[]
   }
 
   export type UserCreateNestedOneWithoutPostsInput = {
@@ -19440,6 +21833,13 @@ export namespace Prisma {
     connect?: UserWhereUniqueInput | UserWhereUniqueInput[]
   }
 
+  export type NotificationCreateNestedManyWithoutChannelInput = {
+    create?: XOR<NotificationCreateWithoutChannelInput, NotificationUncheckedCreateWithoutChannelInput> | NotificationCreateWithoutChannelInput[] | NotificationUncheckedCreateWithoutChannelInput[]
+    connectOrCreate?: NotificationCreateOrConnectWithoutChannelInput | NotificationCreateOrConnectWithoutChannelInput[]
+    createMany?: NotificationCreateManyChannelInputEnvelope
+    connect?: NotificationWhereUniqueInput | NotificationWhereUniqueInput[]
+  }
+
   export type PostSeenUncheckedCreateNestedManyWithoutChannelInput = {
     create?: XOR<PostSeenCreateWithoutChannelInput, PostSeenUncheckedCreateWithoutChannelInput> | PostSeenCreateWithoutChannelInput[] | PostSeenUncheckedCreateWithoutChannelInput[]
     connectOrCreate?: PostSeenCreateOrConnectWithoutChannelInput | PostSeenCreateOrConnectWithoutChannelInput[]
@@ -19473,6 +21873,13 @@ export namespace Prisma {
     connectOrCreate?: UserCreateOrConnectWithoutPinnedChannelInput | UserCreateOrConnectWithoutPinnedChannelInput[]
     createMany?: UserCreateManyPinnedChannelInputEnvelope
     connect?: UserWhereUniqueInput | UserWhereUniqueInput[]
+  }
+
+  export type NotificationUncheckedCreateNestedManyWithoutChannelInput = {
+    create?: XOR<NotificationCreateWithoutChannelInput, NotificationUncheckedCreateWithoutChannelInput> | NotificationCreateWithoutChannelInput[] | NotificationUncheckedCreateWithoutChannelInput[]
+    connectOrCreate?: NotificationCreateOrConnectWithoutChannelInput | NotificationCreateOrConnectWithoutChannelInput[]
+    createMany?: NotificationCreateManyChannelInputEnvelope
+    connect?: NotificationWhereUniqueInput | NotificationWhereUniqueInput[]
   }
 
   export type UserUpdateOneRequiredWithoutCreatedChannelsNestedInput = {
@@ -19553,6 +21960,20 @@ export namespace Prisma {
     deleteMany?: UserScalarWhereInput | UserScalarWhereInput[]
   }
 
+  export type NotificationUpdateManyWithoutChannelNestedInput = {
+    create?: XOR<NotificationCreateWithoutChannelInput, NotificationUncheckedCreateWithoutChannelInput> | NotificationCreateWithoutChannelInput[] | NotificationUncheckedCreateWithoutChannelInput[]
+    connectOrCreate?: NotificationCreateOrConnectWithoutChannelInput | NotificationCreateOrConnectWithoutChannelInput[]
+    upsert?: NotificationUpsertWithWhereUniqueWithoutChannelInput | NotificationUpsertWithWhereUniqueWithoutChannelInput[]
+    createMany?: NotificationCreateManyChannelInputEnvelope
+    set?: NotificationWhereUniqueInput | NotificationWhereUniqueInput[]
+    disconnect?: NotificationWhereUniqueInput | NotificationWhereUniqueInput[]
+    delete?: NotificationWhereUniqueInput | NotificationWhereUniqueInput[]
+    connect?: NotificationWhereUniqueInput | NotificationWhereUniqueInput[]
+    update?: NotificationUpdateWithWhereUniqueWithoutChannelInput | NotificationUpdateWithWhereUniqueWithoutChannelInput[]
+    updateMany?: NotificationUpdateManyWithWhereWithoutChannelInput | NotificationUpdateManyWithWhereWithoutChannelInput[]
+    deleteMany?: NotificationScalarWhereInput | NotificationScalarWhereInput[]
+  }
+
   export type PostSeenUncheckedUpdateManyWithoutChannelNestedInput = {
     create?: XOR<PostSeenCreateWithoutChannelInput, PostSeenUncheckedCreateWithoutChannelInput> | PostSeenCreateWithoutChannelInput[] | PostSeenUncheckedCreateWithoutChannelInput[]
     connectOrCreate?: PostSeenCreateOrConnectWithoutChannelInput | PostSeenCreateOrConnectWithoutChannelInput[]
@@ -19623,6 +22044,20 @@ export namespace Prisma {
     deleteMany?: UserScalarWhereInput | UserScalarWhereInput[]
   }
 
+  export type NotificationUncheckedUpdateManyWithoutChannelNestedInput = {
+    create?: XOR<NotificationCreateWithoutChannelInput, NotificationUncheckedCreateWithoutChannelInput> | NotificationCreateWithoutChannelInput[] | NotificationUncheckedCreateWithoutChannelInput[]
+    connectOrCreate?: NotificationCreateOrConnectWithoutChannelInput | NotificationCreateOrConnectWithoutChannelInput[]
+    upsert?: NotificationUpsertWithWhereUniqueWithoutChannelInput | NotificationUpsertWithWhereUniqueWithoutChannelInput[]
+    createMany?: NotificationCreateManyChannelInputEnvelope
+    set?: NotificationWhereUniqueInput | NotificationWhereUniqueInput[]
+    disconnect?: NotificationWhereUniqueInput | NotificationWhereUniqueInput[]
+    delete?: NotificationWhereUniqueInput | NotificationWhereUniqueInput[]
+    connect?: NotificationWhereUniqueInput | NotificationWhereUniqueInput[]
+    update?: NotificationUpdateWithWhereUniqueWithoutChannelInput | NotificationUpdateWithWhereUniqueWithoutChannelInput[]
+    updateMany?: NotificationUpdateManyWithWhereWithoutChannelInput | NotificationUpdateManyWithWhereWithoutChannelInput[]
+    deleteMany?: NotificationScalarWhereInput | NotificationScalarWhereInput[]
+  }
+
   export type ChannelCreateNestedOneWithoutMembersInput = {
     create?: XOR<ChannelCreateWithoutMembersInput, ChannelUncheckedCreateWithoutMembersInput>
     connectOrCreate?: ChannelCreateOrConnectWithoutMembersInput
@@ -19663,6 +22098,20 @@ export namespace Prisma {
     connect?: UserWhereUniqueInput
   }
 
+  export type NotificationCreateNestedManyWithoutJoinRequestInput = {
+    create?: XOR<NotificationCreateWithoutJoinRequestInput, NotificationUncheckedCreateWithoutJoinRequestInput> | NotificationCreateWithoutJoinRequestInput[] | NotificationUncheckedCreateWithoutJoinRequestInput[]
+    connectOrCreate?: NotificationCreateOrConnectWithoutJoinRequestInput | NotificationCreateOrConnectWithoutJoinRequestInput[]
+    createMany?: NotificationCreateManyJoinRequestInputEnvelope
+    connect?: NotificationWhereUniqueInput | NotificationWhereUniqueInput[]
+  }
+
+  export type NotificationUncheckedCreateNestedManyWithoutJoinRequestInput = {
+    create?: XOR<NotificationCreateWithoutJoinRequestInput, NotificationUncheckedCreateWithoutJoinRequestInput> | NotificationCreateWithoutJoinRequestInput[] | NotificationUncheckedCreateWithoutJoinRequestInput[]
+    connectOrCreate?: NotificationCreateOrConnectWithoutJoinRequestInput | NotificationCreateOrConnectWithoutJoinRequestInput[]
+    createMany?: NotificationCreateManyJoinRequestInputEnvelope
+    connect?: NotificationWhereUniqueInput | NotificationWhereUniqueInput[]
+  }
+
   export type ChannelUpdateOneRequiredWithoutJoinRequestsNestedInput = {
     create?: XOR<ChannelCreateWithoutJoinRequestsInput, ChannelUncheckedCreateWithoutJoinRequestsInput>
     connectOrCreate?: ChannelCreateOrConnectWithoutJoinRequestsInput
@@ -19679,10 +22128,56 @@ export namespace Prisma {
     update?: XOR<XOR<UserUpdateToOneWithWhereWithoutJoinRequestsInput, UserUpdateWithoutJoinRequestsInput>, UserUncheckedUpdateWithoutJoinRequestsInput>
   }
 
+  export type NotificationUpdateManyWithoutJoinRequestNestedInput = {
+    create?: XOR<NotificationCreateWithoutJoinRequestInput, NotificationUncheckedCreateWithoutJoinRequestInput> | NotificationCreateWithoutJoinRequestInput[] | NotificationUncheckedCreateWithoutJoinRequestInput[]
+    connectOrCreate?: NotificationCreateOrConnectWithoutJoinRequestInput | NotificationCreateOrConnectWithoutJoinRequestInput[]
+    upsert?: NotificationUpsertWithWhereUniqueWithoutJoinRequestInput | NotificationUpsertWithWhereUniqueWithoutJoinRequestInput[]
+    createMany?: NotificationCreateManyJoinRequestInputEnvelope
+    set?: NotificationWhereUniqueInput | NotificationWhereUniqueInput[]
+    disconnect?: NotificationWhereUniqueInput | NotificationWhereUniqueInput[]
+    delete?: NotificationWhereUniqueInput | NotificationWhereUniqueInput[]
+    connect?: NotificationWhereUniqueInput | NotificationWhereUniqueInput[]
+    update?: NotificationUpdateWithWhereUniqueWithoutJoinRequestInput | NotificationUpdateWithWhereUniqueWithoutJoinRequestInput[]
+    updateMany?: NotificationUpdateManyWithWhereWithoutJoinRequestInput | NotificationUpdateManyWithWhereWithoutJoinRequestInput[]
+    deleteMany?: NotificationScalarWhereInput | NotificationScalarWhereInput[]
+  }
+
+  export type NotificationUncheckedUpdateManyWithoutJoinRequestNestedInput = {
+    create?: XOR<NotificationCreateWithoutJoinRequestInput, NotificationUncheckedCreateWithoutJoinRequestInput> | NotificationCreateWithoutJoinRequestInput[] | NotificationUncheckedCreateWithoutJoinRequestInput[]
+    connectOrCreate?: NotificationCreateOrConnectWithoutJoinRequestInput | NotificationCreateOrConnectWithoutJoinRequestInput[]
+    upsert?: NotificationUpsertWithWhereUniqueWithoutJoinRequestInput | NotificationUpsertWithWhereUniqueWithoutJoinRequestInput[]
+    createMany?: NotificationCreateManyJoinRequestInputEnvelope
+    set?: NotificationWhereUniqueInput | NotificationWhereUniqueInput[]
+    disconnect?: NotificationWhereUniqueInput | NotificationWhereUniqueInput[]
+    delete?: NotificationWhereUniqueInput | NotificationWhereUniqueInput[]
+    connect?: NotificationWhereUniqueInput | NotificationWhereUniqueInput[]
+    update?: NotificationUpdateWithWhereUniqueWithoutJoinRequestInput | NotificationUpdateWithWhereUniqueWithoutJoinRequestInput[]
+    updateMany?: NotificationUpdateManyWithWhereWithoutJoinRequestInput | NotificationUpdateManyWithWhereWithoutJoinRequestInput[]
+    deleteMany?: NotificationScalarWhereInput | NotificationScalarWhereInput[]
+  }
+
   export type UserCreateNestedOneWithoutNotificationsInput = {
     create?: XOR<UserCreateWithoutNotificationsInput, UserUncheckedCreateWithoutNotificationsInput>
     connectOrCreate?: UserCreateOrConnectWithoutNotificationsInput
     connect?: UserWhereUniqueInput
+  }
+
+  export type UserCreateNestedOneWithoutNotificationsActedInput = {
+    create?: XOR<UserCreateWithoutNotificationsActedInput, UserUncheckedCreateWithoutNotificationsActedInput>
+    connectOrCreate?: UserCreateOrConnectWithoutNotificationsActedInput
+    connect?: UserWhereUniqueInput
+  }
+
+  export type ChannelCreateNestedOneWithoutNotificationsInput = {
+    create?: XOR<ChannelCreateWithoutNotificationsInput, ChannelUncheckedCreateWithoutNotificationsInput>
+    connectOrCreate?: ChannelCreateOrConnectWithoutNotificationsInput
+    connect?: ChannelWhereUniqueInput
+  }
+
+  export type JoinRequestCreateNestedOneWithoutNotificationsInput = {
+    create?: XOR<JoinRequestCreateWithoutNotificationsInput, JoinRequestUncheckedCreateWithoutNotificationsInput>
+    connectOrCreate?: JoinRequestCreateOrConnectWithoutNotificationsInput
+    connect?: JoinRequestWhereUniqueInput
   }
 
   export type UserUpdateOneRequiredWithoutNotificationsNestedInput = {
@@ -19691,6 +22186,36 @@ export namespace Prisma {
     upsert?: UserUpsertWithoutNotificationsInput
     connect?: UserWhereUniqueInput
     update?: XOR<XOR<UserUpdateToOneWithWhereWithoutNotificationsInput, UserUpdateWithoutNotificationsInput>, UserUncheckedUpdateWithoutNotificationsInput>
+  }
+
+  export type UserUpdateOneWithoutNotificationsActedNestedInput = {
+    create?: XOR<UserCreateWithoutNotificationsActedInput, UserUncheckedCreateWithoutNotificationsActedInput>
+    connectOrCreate?: UserCreateOrConnectWithoutNotificationsActedInput
+    upsert?: UserUpsertWithoutNotificationsActedInput
+    disconnect?: UserWhereInput | boolean
+    delete?: UserWhereInput | boolean
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutNotificationsActedInput, UserUpdateWithoutNotificationsActedInput>, UserUncheckedUpdateWithoutNotificationsActedInput>
+  }
+
+  export type ChannelUpdateOneWithoutNotificationsNestedInput = {
+    create?: XOR<ChannelCreateWithoutNotificationsInput, ChannelUncheckedCreateWithoutNotificationsInput>
+    connectOrCreate?: ChannelCreateOrConnectWithoutNotificationsInput
+    upsert?: ChannelUpsertWithoutNotificationsInput
+    disconnect?: ChannelWhereInput | boolean
+    delete?: ChannelWhereInput | boolean
+    connect?: ChannelWhereUniqueInput
+    update?: XOR<XOR<ChannelUpdateToOneWithWhereWithoutNotificationsInput, ChannelUpdateWithoutNotificationsInput>, ChannelUncheckedUpdateWithoutNotificationsInput>
+  }
+
+  export type JoinRequestUpdateOneWithoutNotificationsNestedInput = {
+    create?: XOR<JoinRequestCreateWithoutNotificationsInput, JoinRequestUncheckedCreateWithoutNotificationsInput>
+    connectOrCreate?: JoinRequestCreateOrConnectWithoutNotificationsInput
+    upsert?: JoinRequestUpsertWithoutNotificationsInput
+    disconnect?: JoinRequestWhereInput | boolean
+    delete?: JoinRequestWhereInput | boolean
+    connect?: JoinRequestWhereUniqueInput
+    update?: XOR<XOR<JoinRequestUpdateToOneWithWhereWithoutNotificationsInput, JoinRequestUpdateWithoutNotificationsInput>, JoinRequestUncheckedUpdateWithoutNotificationsInput>
   }
 
   export type UserCreateNestedOneWithoutSavedPostsInput = {
@@ -19725,6 +22250,10 @@ export namespace Prisma {
     create?: XOR<UserCreateWithoutTodosInput, UserUncheckedCreateWithoutTodosInput>
     connectOrCreate?: UserCreateOrConnectWithoutTodosInput
     connect?: UserWhereUniqueInput
+  }
+
+  export type EnumPriorityFieldUpdateOperationsInput = {
+    set?: $Enums.Priority
   }
 
   export type NullableDateTimeFieldUpdateOperationsInput = {
@@ -19779,6 +22308,20 @@ export namespace Prisma {
     upsert?: ChannelUpsertWithoutPostSeenInput
     connect?: ChannelWhereUniqueInput
     update?: XOR<XOR<ChannelUpdateToOneWithWhereWithoutPostSeenInput, ChannelUpdateWithoutPostSeenInput>, ChannelUncheckedUpdateWithoutPostSeenInput>
+  }
+
+  export type UserCreateNestedOneWithoutDailyReportsInput = {
+    create?: XOR<UserCreateWithoutDailyReportsInput, UserUncheckedCreateWithoutDailyReportsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutDailyReportsInput
+    connect?: UserWhereUniqueInput
+  }
+
+  export type UserUpdateOneRequiredWithoutDailyReportsNestedInput = {
+    create?: XOR<UserCreateWithoutDailyReportsInput, UserUncheckedCreateWithoutDailyReportsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutDailyReportsInput
+    upsert?: UserUpsertWithoutDailyReportsInput
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutDailyReportsInput, UserUpdateWithoutDailyReportsInput>, UserUncheckedUpdateWithoutDailyReportsInput>
   }
 
   export type NestedIntFilter<$PrismaModel = never> = {
@@ -19957,6 +22500,13 @@ export namespace Prisma {
     _max?: NestedDateTimeFilter<$PrismaModel>
   }
 
+  export type NestedEnumPriorityFilter<$PrismaModel = never> = {
+    equals?: $Enums.Priority | EnumPriorityFieldRefInput<$PrismaModel>
+    in?: $Enums.Priority[] | ListEnumPriorityFieldRefInput<$PrismaModel>
+    notIn?: $Enums.Priority[] | ListEnumPriorityFieldRefInput<$PrismaModel>
+    not?: NestedEnumPriorityFilter<$PrismaModel> | $Enums.Priority
+  }
+
   export type NestedDateTimeNullableFilter<$PrismaModel = never> = {
     equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
     in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
@@ -19966,6 +22516,16 @@ export namespace Prisma {
     gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     not?: NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null
+  }
+
+  export type NestedEnumPriorityWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.Priority | EnumPriorityFieldRefInput<$PrismaModel>
+    in?: $Enums.Priority[] | ListEnumPriorityFieldRefInput<$PrismaModel>
+    notIn?: $Enums.Priority[] | ListEnumPriorityFieldRefInput<$PrismaModel>
+    not?: NestedEnumPriorityWithAggregatesFilter<$PrismaModel> | $Enums.Priority
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumPriorityFilter<$PrismaModel>
+    _max?: NestedEnumPriorityFilter<$PrismaModel>
   }
 
   export type NestedDateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
@@ -20092,6 +22652,7 @@ export namespace Prisma {
     posts?: PostCreateNestedManyWithoutChannelInput
     joinRequests?: JoinRequestCreateNestedManyWithoutChannelInput
     pinnedByUsers?: UserCreateNestedManyWithoutPinnedChannelInput
+    notifications?: NotificationCreateNestedManyWithoutChannelInput
   }
 
   export type ChannelUncheckedCreateWithoutCreatedByInput = {
@@ -20105,6 +22666,7 @@ export namespace Prisma {
     posts?: PostUncheckedCreateNestedManyWithoutChannelInput
     joinRequests?: JoinRequestUncheckedCreateNestedManyWithoutChannelInput
     pinnedByUsers?: UserUncheckedCreateNestedManyWithoutPinnedChannelInput
+    notifications?: NotificationUncheckedCreateNestedManyWithoutChannelInput
   }
 
   export type ChannelCreateOrConnectWithoutCreatedByInput = {
@@ -20123,6 +22685,9 @@ export namespace Prisma {
     href?: string | null
     isRead?: boolean
     createdAt?: Date | string
+    actor?: UserCreateNestedOneWithoutNotificationsActedInput
+    channel?: ChannelCreateNestedOneWithoutNotificationsInput
+    joinRequest?: JoinRequestCreateNestedOneWithoutNotificationsInput
   }
 
   export type NotificationUncheckedCreateWithoutUserInput = {
@@ -20132,6 +22697,9 @@ export namespace Prisma {
     href?: string | null
     isRead?: boolean
     createdAt?: Date | string
+    actorId?: number | null
+    channelId?: number | null
+    joinRequestId?: number | null
   }
 
   export type NotificationCreateOrConnectWithoutUserInput = {
@@ -20149,6 +22717,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     status?: string
     channel: ChannelCreateNestedOneWithoutJoinRequestsInput
+    notifications?: NotificationCreateNestedManyWithoutJoinRequestInput
   }
 
   export type JoinRequestUncheckedCreateWithoutUserInput = {
@@ -20157,6 +22726,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     channelId: number
     status?: string
+    notifications?: NotificationUncheckedCreateNestedManyWithoutJoinRequestInput
   }
 
   export type JoinRequestCreateOrConnectWithoutUserInput = {
@@ -20192,8 +22762,9 @@ export namespace Prisma {
 
   export type TodoCreateWithoutUserInput = {
     title: string
-    priority?: string
+    priority: $Enums.Priority
     completed?: boolean
+    completedAt?: Date | string | null
     deletedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -20202,8 +22773,9 @@ export namespace Prisma {
   export type TodoUncheckedCreateWithoutUserInput = {
     id?: number
     title: string
-    priority?: string
+    priority: $Enums.Priority
     completed?: boolean
+    completedAt?: Date | string | null
     deletedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -20252,6 +22824,7 @@ export namespace Prisma {
     members?: ChannelMemberCreateNestedManyWithoutChannelInput
     posts?: PostCreateNestedManyWithoutChannelInput
     joinRequests?: JoinRequestCreateNestedManyWithoutChannelInput
+    notifications?: NotificationCreateNestedManyWithoutChannelInput
   }
 
   export type ChannelUncheckedCreateWithoutPinnedByUsersInput = {
@@ -20265,11 +22838,96 @@ export namespace Prisma {
     members?: ChannelMemberUncheckedCreateNestedManyWithoutChannelInput
     posts?: PostUncheckedCreateNestedManyWithoutChannelInput
     joinRequests?: JoinRequestUncheckedCreateNestedManyWithoutChannelInput
+    notifications?: NotificationUncheckedCreateNestedManyWithoutChannelInput
   }
 
   export type ChannelCreateOrConnectWithoutPinnedByUsersInput = {
     where: ChannelWhereUniqueInput
     create: XOR<ChannelCreateWithoutPinnedByUsersInput, ChannelUncheckedCreateWithoutPinnedByUsersInput>
+  }
+
+  export type NotificationCreateWithoutActorInput = {
+    type: string
+    message: string
+    href?: string | null
+    isRead?: boolean
+    createdAt?: Date | string
+    user: UserCreateNestedOneWithoutNotificationsInput
+    channel?: ChannelCreateNestedOneWithoutNotificationsInput
+    joinRequest?: JoinRequestCreateNestedOneWithoutNotificationsInput
+  }
+
+  export type NotificationUncheckedCreateWithoutActorInput = {
+    id?: number
+    userId: number
+    type: string
+    message: string
+    href?: string | null
+    isRead?: boolean
+    createdAt?: Date | string
+    channelId?: number | null
+    joinRequestId?: number | null
+  }
+
+  export type NotificationCreateOrConnectWithoutActorInput = {
+    where: NotificationWhereUniqueInput
+    create: XOR<NotificationCreateWithoutActorInput, NotificationUncheckedCreateWithoutActorInput>
+  }
+
+  export type NotificationCreateManyActorInputEnvelope = {
+    data: NotificationCreateManyActorInput | NotificationCreateManyActorInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type DailyReportCreateWithoutAuthorInput = {
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    reportYmd: string
+    branchName: string
+    newConnectionRequest?: number
+    pendingConnection?: number
+    completedConnection?: number
+    reasonPendingConnection?: string | null
+    internetTkt?: number
+    pendingTkt?: number
+    completedTkt?: number
+    reasonPendingTkt?: string | null
+    expireCustomerDay?: number
+    renewDay?: number
+    activeCustomer?: number
+    totalExpireCustomer?: number
+    outgoingCalls?: number
+  }
+
+  export type DailyReportUncheckedCreateWithoutAuthorInput = {
+    id?: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    reportYmd: string
+    branchName: string
+    newConnectionRequest?: number
+    pendingConnection?: number
+    completedConnection?: number
+    reasonPendingConnection?: string | null
+    internetTkt?: number
+    pendingTkt?: number
+    completedTkt?: number
+    reasonPendingTkt?: string | null
+    expireCustomerDay?: number
+    renewDay?: number
+    activeCustomer?: number
+    totalExpireCustomer?: number
+    outgoingCalls?: number
+  }
+
+  export type DailyReportCreateOrConnectWithoutAuthorInput = {
+    where: DailyReportWhereUniqueInput
+    create: XOR<DailyReportCreateWithoutAuthorInput, DailyReportUncheckedCreateWithoutAuthorInput>
+  }
+
+  export type DailyReportCreateManyAuthorInputEnvelope = {
+    data: DailyReportCreateManyAuthorInput | DailyReportCreateManyAuthorInput[]
+    skipDuplicates?: boolean
   }
 
   export type PostUpsertWithWhereUniqueWithoutAuthorInput = {
@@ -20434,6 +23092,9 @@ export namespace Prisma {
     href?: StringNullableFilter<"Notification"> | string | null
     isRead?: BoolFilter<"Notification"> | boolean
     createdAt?: DateTimeFilter<"Notification"> | Date | string
+    actorId?: IntNullableFilter<"Notification"> | number | null
+    channelId?: IntNullableFilter<"Notification"> | number | null
+    joinRequestId?: IntNullableFilter<"Notification"> | number | null
   }
 
   export type JoinRequestUpsertWithWhereUniqueWithoutUserInput = {
@@ -20513,8 +23174,9 @@ export namespace Prisma {
     id?: IntFilter<"Todo"> | number
     userId?: IntFilter<"Todo"> | number
     title?: StringFilter<"Todo"> | string
-    priority?: StringFilter<"Todo"> | string
+    priority?: EnumPriorityFilter<"Todo"> | $Enums.Priority
     completed?: BoolFilter<"Todo"> | boolean
+    completedAt?: DateTimeNullableFilter<"Todo"> | Date | string | null
     deletedAt?: DateTimeNullableFilter<"Todo"> | Date | string | null
     createdAt?: DateTimeFilter<"Todo"> | Date | string
     updatedAt?: DateTimeFilter<"Todo"> | Date | string
@@ -20568,6 +23230,7 @@ export namespace Prisma {
     members?: ChannelMemberUpdateManyWithoutChannelNestedInput
     posts?: PostUpdateManyWithoutChannelNestedInput
     joinRequests?: JoinRequestUpdateManyWithoutChannelNestedInput
+    notifications?: NotificationUpdateManyWithoutChannelNestedInput
   }
 
   export type ChannelUncheckedUpdateWithoutPinnedByUsersInput = {
@@ -20581,6 +23244,64 @@ export namespace Prisma {
     members?: ChannelMemberUncheckedUpdateManyWithoutChannelNestedInput
     posts?: PostUncheckedUpdateManyWithoutChannelNestedInput
     joinRequests?: JoinRequestUncheckedUpdateManyWithoutChannelNestedInput
+    notifications?: NotificationUncheckedUpdateManyWithoutChannelNestedInput
+  }
+
+  export type NotificationUpsertWithWhereUniqueWithoutActorInput = {
+    where: NotificationWhereUniqueInput
+    update: XOR<NotificationUpdateWithoutActorInput, NotificationUncheckedUpdateWithoutActorInput>
+    create: XOR<NotificationCreateWithoutActorInput, NotificationUncheckedCreateWithoutActorInput>
+  }
+
+  export type NotificationUpdateWithWhereUniqueWithoutActorInput = {
+    where: NotificationWhereUniqueInput
+    data: XOR<NotificationUpdateWithoutActorInput, NotificationUncheckedUpdateWithoutActorInput>
+  }
+
+  export type NotificationUpdateManyWithWhereWithoutActorInput = {
+    where: NotificationScalarWhereInput
+    data: XOR<NotificationUpdateManyMutationInput, NotificationUncheckedUpdateManyWithoutActorInput>
+  }
+
+  export type DailyReportUpsertWithWhereUniqueWithoutAuthorInput = {
+    where: DailyReportWhereUniqueInput
+    update: XOR<DailyReportUpdateWithoutAuthorInput, DailyReportUncheckedUpdateWithoutAuthorInput>
+    create: XOR<DailyReportCreateWithoutAuthorInput, DailyReportUncheckedCreateWithoutAuthorInput>
+  }
+
+  export type DailyReportUpdateWithWhereUniqueWithoutAuthorInput = {
+    where: DailyReportWhereUniqueInput
+    data: XOR<DailyReportUpdateWithoutAuthorInput, DailyReportUncheckedUpdateWithoutAuthorInput>
+  }
+
+  export type DailyReportUpdateManyWithWhereWithoutAuthorInput = {
+    where: DailyReportScalarWhereInput
+    data: XOR<DailyReportUpdateManyMutationInput, DailyReportUncheckedUpdateManyWithoutAuthorInput>
+  }
+
+  export type DailyReportScalarWhereInput = {
+    AND?: DailyReportScalarWhereInput | DailyReportScalarWhereInput[]
+    OR?: DailyReportScalarWhereInput[]
+    NOT?: DailyReportScalarWhereInput | DailyReportScalarWhereInput[]
+    id?: IntFilter<"DailyReport"> | number
+    createdAt?: DateTimeFilter<"DailyReport"> | Date | string
+    updatedAt?: DateTimeFilter<"DailyReport"> | Date | string
+    authorId?: IntFilter<"DailyReport"> | number
+    reportYmd?: StringFilter<"DailyReport"> | string
+    branchName?: StringFilter<"DailyReport"> | string
+    newConnectionRequest?: IntFilter<"DailyReport"> | number
+    pendingConnection?: IntFilter<"DailyReport"> | number
+    completedConnection?: IntFilter<"DailyReport"> | number
+    reasonPendingConnection?: StringNullableFilter<"DailyReport"> | string | null
+    internetTkt?: IntFilter<"DailyReport"> | number
+    pendingTkt?: IntFilter<"DailyReport"> | number
+    completedTkt?: IntFilter<"DailyReport"> | number
+    reasonPendingTkt?: StringNullableFilter<"DailyReport"> | string | null
+    expireCustomerDay?: IntFilter<"DailyReport"> | number
+    renewDay?: IntFilter<"DailyReport"> | number
+    activeCustomer?: IntFilter<"DailyReport"> | number
+    totalExpireCustomer?: IntFilter<"DailyReport"> | number
+    outgoingCalls?: IntFilter<"DailyReport"> | number
   }
 
   export type UserCreateWithoutPostsInput = {
@@ -20599,6 +23320,8 @@ export namespace Prisma {
     todos?: TodoCreateNestedManyWithoutUserInput
     postSeen?: PostSeenCreateNestedManyWithoutUserInput
     pinnedChannel?: ChannelCreateNestedOneWithoutPinnedByUsersInput
+    notificationsActed?: NotificationCreateNestedManyWithoutActorInput
+    dailyReports?: DailyReportCreateNestedManyWithoutAuthorInput
   }
 
   export type UserUncheckedCreateWithoutPostsInput = {
@@ -20618,6 +23341,8 @@ export namespace Prisma {
     savedPosts?: SavedPostUncheckedCreateNestedManyWithoutUserInput
     todos?: TodoUncheckedCreateNestedManyWithoutUserInput
     postSeen?: PostSeenUncheckedCreateNestedManyWithoutUserInput
+    notificationsActed?: NotificationUncheckedCreateNestedManyWithoutActorInput
+    dailyReports?: DailyReportUncheckedCreateNestedManyWithoutAuthorInput
   }
 
   export type UserCreateOrConnectWithoutPostsInput = {
@@ -20635,6 +23360,7 @@ export namespace Prisma {
     members?: ChannelMemberCreateNestedManyWithoutChannelInput
     joinRequests?: JoinRequestCreateNestedManyWithoutChannelInput
     pinnedByUsers?: UserCreateNestedManyWithoutPinnedChannelInput
+    notifications?: NotificationCreateNestedManyWithoutChannelInput
   }
 
   export type ChannelUncheckedCreateWithoutPostsInput = {
@@ -20648,6 +23374,7 @@ export namespace Prisma {
     members?: ChannelMemberUncheckedCreateNestedManyWithoutChannelInput
     joinRequests?: JoinRequestUncheckedCreateNestedManyWithoutChannelInput
     pinnedByUsers?: UserUncheckedCreateNestedManyWithoutPinnedChannelInput
+    notifications?: NotificationUncheckedCreateNestedManyWithoutChannelInput
   }
 
   export type ChannelCreateOrConnectWithoutPostsInput = {
@@ -20791,6 +23518,8 @@ export namespace Prisma {
     todos?: TodoUpdateManyWithoutUserNestedInput
     postSeen?: PostSeenUpdateManyWithoutUserNestedInput
     pinnedChannel?: ChannelUpdateOneWithoutPinnedByUsersNestedInput
+    notificationsActed?: NotificationUpdateManyWithoutActorNestedInput
+    dailyReports?: DailyReportUpdateManyWithoutAuthorNestedInput
   }
 
   export type UserUncheckedUpdateWithoutPostsInput = {
@@ -20810,6 +23539,8 @@ export namespace Prisma {
     savedPosts?: SavedPostUncheckedUpdateManyWithoutUserNestedInput
     todos?: TodoUncheckedUpdateManyWithoutUserNestedInput
     postSeen?: PostSeenUncheckedUpdateManyWithoutUserNestedInput
+    notificationsActed?: NotificationUncheckedUpdateManyWithoutActorNestedInput
+    dailyReports?: DailyReportUncheckedUpdateManyWithoutAuthorNestedInput
   }
 
   export type ChannelUpsertWithoutPostsInput = {
@@ -20833,6 +23564,7 @@ export namespace Prisma {
     members?: ChannelMemberUpdateManyWithoutChannelNestedInput
     joinRequests?: JoinRequestUpdateManyWithoutChannelNestedInput
     pinnedByUsers?: UserUpdateManyWithoutPinnedChannelNestedInput
+    notifications?: NotificationUpdateManyWithoutChannelNestedInput
   }
 
   export type ChannelUncheckedUpdateWithoutPostsInput = {
@@ -20846,6 +23578,7 @@ export namespace Prisma {
     members?: ChannelMemberUncheckedUpdateManyWithoutChannelNestedInput
     joinRequests?: JoinRequestUncheckedUpdateManyWithoutChannelNestedInput
     pinnedByUsers?: UserUncheckedUpdateManyWithoutPinnedChannelNestedInput
+    notifications?: NotificationUncheckedUpdateManyWithoutChannelNestedInput
   }
 
   export type FileUpsertWithWhereUniqueWithoutPostInput = {
@@ -20984,6 +23717,8 @@ export namespace Prisma {
     todos?: TodoCreateNestedManyWithoutUserInput
     postSeen?: PostSeenCreateNestedManyWithoutUserInput
     pinnedChannel?: ChannelCreateNestedOneWithoutPinnedByUsersInput
+    notificationsActed?: NotificationCreateNestedManyWithoutActorInput
+    dailyReports?: DailyReportCreateNestedManyWithoutAuthorInput
   }
 
   export type UserUncheckedCreateWithoutCommentsInput = {
@@ -21003,6 +23738,8 @@ export namespace Prisma {
     savedPosts?: SavedPostUncheckedCreateNestedManyWithoutUserInput
     todos?: TodoUncheckedCreateNestedManyWithoutUserInput
     postSeen?: PostSeenUncheckedCreateNestedManyWithoutUserInput
+    notificationsActed?: NotificationUncheckedCreateNestedManyWithoutActorInput
+    dailyReports?: DailyReportUncheckedCreateNestedManyWithoutAuthorInput
   }
 
   export type UserCreateOrConnectWithoutCommentsInput = {
@@ -21073,6 +23810,8 @@ export namespace Prisma {
     todos?: TodoUpdateManyWithoutUserNestedInput
     postSeen?: PostSeenUpdateManyWithoutUserNestedInput
     pinnedChannel?: ChannelUpdateOneWithoutPinnedByUsersNestedInput
+    notificationsActed?: NotificationUpdateManyWithoutActorNestedInput
+    dailyReports?: DailyReportUpdateManyWithoutAuthorNestedInput
   }
 
   export type UserUncheckedUpdateWithoutCommentsInput = {
@@ -21092,6 +23831,8 @@ export namespace Prisma {
     savedPosts?: SavedPostUncheckedUpdateManyWithoutUserNestedInput
     todos?: TodoUncheckedUpdateManyWithoutUserNestedInput
     postSeen?: PostSeenUncheckedUpdateManyWithoutUserNestedInput
+    notificationsActed?: NotificationUncheckedUpdateManyWithoutActorNestedInput
+    dailyReports?: DailyReportUncheckedUpdateManyWithoutAuthorNestedInput
   }
 
   export type PostCreateWithoutReactionsInput = {
@@ -21140,6 +23881,8 @@ export namespace Prisma {
     todos?: TodoCreateNestedManyWithoutUserInput
     postSeen?: PostSeenCreateNestedManyWithoutUserInput
     pinnedChannel?: ChannelCreateNestedOneWithoutPinnedByUsersInput
+    notificationsActed?: NotificationCreateNestedManyWithoutActorInput
+    dailyReports?: DailyReportCreateNestedManyWithoutAuthorInput
   }
 
   export type UserUncheckedCreateWithoutReactionsInput = {
@@ -21159,6 +23902,8 @@ export namespace Prisma {
     savedPosts?: SavedPostUncheckedCreateNestedManyWithoutUserInput
     todos?: TodoUncheckedCreateNestedManyWithoutUserInput
     postSeen?: PostSeenUncheckedCreateNestedManyWithoutUserInput
+    notificationsActed?: NotificationUncheckedCreateNestedManyWithoutActorInput
+    dailyReports?: DailyReportUncheckedCreateNestedManyWithoutAuthorInput
   }
 
   export type UserCreateOrConnectWithoutReactionsInput = {
@@ -21229,6 +23974,8 @@ export namespace Prisma {
     todos?: TodoUpdateManyWithoutUserNestedInput
     postSeen?: PostSeenUpdateManyWithoutUserNestedInput
     pinnedChannel?: ChannelUpdateOneWithoutPinnedByUsersNestedInput
+    notificationsActed?: NotificationUpdateManyWithoutActorNestedInput
+    dailyReports?: DailyReportUpdateManyWithoutAuthorNestedInput
   }
 
   export type UserUncheckedUpdateWithoutReactionsInput = {
@@ -21248,6 +23995,8 @@ export namespace Prisma {
     savedPosts?: SavedPostUncheckedUpdateManyWithoutUserNestedInput
     todos?: TodoUncheckedUpdateManyWithoutUserNestedInput
     postSeen?: PostSeenUncheckedUpdateManyWithoutUserNestedInput
+    notificationsActed?: NotificationUncheckedUpdateManyWithoutActorNestedInput
+    dailyReports?: DailyReportUncheckedUpdateManyWithoutAuthorNestedInput
   }
 
   export type PostCreateWithoutFilesInput = {
@@ -21332,6 +24081,8 @@ export namespace Prisma {
     todos?: TodoCreateNestedManyWithoutUserInput
     postSeen?: PostSeenCreateNestedManyWithoutUserInput
     pinnedChannel?: ChannelCreateNestedOneWithoutPinnedByUsersInput
+    notificationsActed?: NotificationCreateNestedManyWithoutActorInput
+    dailyReports?: DailyReportCreateNestedManyWithoutAuthorInput
   }
 
   export type UserUncheckedCreateWithoutCreatedChannelsInput = {
@@ -21351,6 +24102,8 @@ export namespace Prisma {
     savedPosts?: SavedPostUncheckedCreateNestedManyWithoutUserInput
     todos?: TodoUncheckedCreateNestedManyWithoutUserInput
     postSeen?: PostSeenUncheckedCreateNestedManyWithoutUserInput
+    notificationsActed?: NotificationUncheckedCreateNestedManyWithoutActorInput
+    dailyReports?: DailyReportUncheckedCreateNestedManyWithoutAuthorInput
   }
 
   export type UserCreateOrConnectWithoutCreatedChannelsInput = {
@@ -21442,6 +24195,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     status?: string
     user: UserCreateNestedOneWithoutJoinRequestsInput
+    notifications?: NotificationCreateNestedManyWithoutJoinRequestInput
   }
 
   export type JoinRequestUncheckedCreateWithoutChannelInput = {
@@ -21450,6 +24204,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     userId: number
     status?: string
+    notifications?: NotificationUncheckedCreateNestedManyWithoutJoinRequestInput
   }
 
   export type JoinRequestCreateOrConnectWithoutChannelInput = {
@@ -21478,6 +24233,8 @@ export namespace Prisma {
     savedPosts?: SavedPostCreateNestedManyWithoutUserInput
     todos?: TodoCreateNestedManyWithoutUserInput
     postSeen?: PostSeenCreateNestedManyWithoutUserInput
+    notificationsActed?: NotificationCreateNestedManyWithoutActorInput
+    dailyReports?: DailyReportCreateNestedManyWithoutAuthorInput
   }
 
   export type UserUncheckedCreateWithoutPinnedChannelInput = {
@@ -21497,6 +24254,8 @@ export namespace Prisma {
     savedPosts?: SavedPostUncheckedCreateNestedManyWithoutUserInput
     todos?: TodoUncheckedCreateNestedManyWithoutUserInput
     postSeen?: PostSeenUncheckedCreateNestedManyWithoutUserInput
+    notificationsActed?: NotificationUncheckedCreateNestedManyWithoutActorInput
+    dailyReports?: DailyReportUncheckedCreateNestedManyWithoutAuthorInput
   }
 
   export type UserCreateOrConnectWithoutPinnedChannelInput = {
@@ -21506,6 +24265,39 @@ export namespace Prisma {
 
   export type UserCreateManyPinnedChannelInputEnvelope = {
     data: UserCreateManyPinnedChannelInput | UserCreateManyPinnedChannelInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type NotificationCreateWithoutChannelInput = {
+    type: string
+    message: string
+    href?: string | null
+    isRead?: boolean
+    createdAt?: Date | string
+    user: UserCreateNestedOneWithoutNotificationsInput
+    actor?: UserCreateNestedOneWithoutNotificationsActedInput
+    joinRequest?: JoinRequestCreateNestedOneWithoutNotificationsInput
+  }
+
+  export type NotificationUncheckedCreateWithoutChannelInput = {
+    id?: number
+    userId: number
+    type: string
+    message: string
+    href?: string | null
+    isRead?: boolean
+    createdAt?: Date | string
+    actorId?: number | null
+    joinRequestId?: number | null
+  }
+
+  export type NotificationCreateOrConnectWithoutChannelInput = {
+    where: NotificationWhereUniqueInput
+    create: XOR<NotificationCreateWithoutChannelInput, NotificationUncheckedCreateWithoutChannelInput>
+  }
+
+  export type NotificationCreateManyChannelInputEnvelope = {
+    data: NotificationCreateManyChannelInput | NotificationCreateManyChannelInput[]
     skipDuplicates?: boolean
   }
 
@@ -21536,6 +24328,8 @@ export namespace Prisma {
     todos?: TodoUpdateManyWithoutUserNestedInput
     postSeen?: PostSeenUpdateManyWithoutUserNestedInput
     pinnedChannel?: ChannelUpdateOneWithoutPinnedByUsersNestedInput
+    notificationsActed?: NotificationUpdateManyWithoutActorNestedInput
+    dailyReports?: DailyReportUpdateManyWithoutAuthorNestedInput
   }
 
   export type UserUncheckedUpdateWithoutCreatedChannelsInput = {
@@ -21555,6 +24349,8 @@ export namespace Prisma {
     savedPosts?: SavedPostUncheckedUpdateManyWithoutUserNestedInput
     todos?: TodoUncheckedUpdateManyWithoutUserNestedInput
     postSeen?: PostSeenUncheckedUpdateManyWithoutUserNestedInput
+    notificationsActed?: NotificationUncheckedUpdateManyWithoutActorNestedInput
+    dailyReports?: DailyReportUncheckedUpdateManyWithoutAuthorNestedInput
   }
 
   export type PostSeenUpsertWithWhereUniqueWithoutChannelInput = {
@@ -21650,6 +24446,22 @@ export namespace Prisma {
     pinnedChannelId?: IntNullableFilter<"User"> | number | null
   }
 
+  export type NotificationUpsertWithWhereUniqueWithoutChannelInput = {
+    where: NotificationWhereUniqueInput
+    update: XOR<NotificationUpdateWithoutChannelInput, NotificationUncheckedUpdateWithoutChannelInput>
+    create: XOR<NotificationCreateWithoutChannelInput, NotificationUncheckedCreateWithoutChannelInput>
+  }
+
+  export type NotificationUpdateWithWhereUniqueWithoutChannelInput = {
+    where: NotificationWhereUniqueInput
+    data: XOR<NotificationUpdateWithoutChannelInput, NotificationUncheckedUpdateWithoutChannelInput>
+  }
+
+  export type NotificationUpdateManyWithWhereWithoutChannelInput = {
+    where: NotificationScalarWhereInput
+    data: XOR<NotificationUpdateManyMutationInput, NotificationUncheckedUpdateManyWithoutChannelInput>
+  }
+
   export type ChannelCreateWithoutMembersInput = {
     name: string
     createdAt?: Date | string
@@ -21660,6 +24472,7 @@ export namespace Prisma {
     posts?: PostCreateNestedManyWithoutChannelInput
     joinRequests?: JoinRequestCreateNestedManyWithoutChannelInput
     pinnedByUsers?: UserCreateNestedManyWithoutPinnedChannelInput
+    notifications?: NotificationCreateNestedManyWithoutChannelInput
   }
 
   export type ChannelUncheckedCreateWithoutMembersInput = {
@@ -21673,6 +24486,7 @@ export namespace Prisma {
     posts?: PostUncheckedCreateNestedManyWithoutChannelInput
     joinRequests?: JoinRequestUncheckedCreateNestedManyWithoutChannelInput
     pinnedByUsers?: UserUncheckedCreateNestedManyWithoutPinnedChannelInput
+    notifications?: NotificationUncheckedCreateNestedManyWithoutChannelInput
   }
 
   export type ChannelCreateOrConnectWithoutMembersInput = {
@@ -21696,6 +24510,8 @@ export namespace Prisma {
     todos?: TodoCreateNestedManyWithoutUserInput
     postSeen?: PostSeenCreateNestedManyWithoutUserInput
     pinnedChannel?: ChannelCreateNestedOneWithoutPinnedByUsersInput
+    notificationsActed?: NotificationCreateNestedManyWithoutActorInput
+    dailyReports?: DailyReportCreateNestedManyWithoutAuthorInput
   }
 
   export type UserUncheckedCreateWithoutChannelMemberInput = {
@@ -21715,6 +24531,8 @@ export namespace Prisma {
     savedPosts?: SavedPostUncheckedCreateNestedManyWithoutUserInput
     todos?: TodoUncheckedCreateNestedManyWithoutUserInput
     postSeen?: PostSeenUncheckedCreateNestedManyWithoutUserInput
+    notificationsActed?: NotificationUncheckedCreateNestedManyWithoutActorInput
+    dailyReports?: DailyReportUncheckedCreateNestedManyWithoutAuthorInput
   }
 
   export type UserCreateOrConnectWithoutChannelMemberInput = {
@@ -21743,6 +24561,7 @@ export namespace Prisma {
     posts?: PostUpdateManyWithoutChannelNestedInput
     joinRequests?: JoinRequestUpdateManyWithoutChannelNestedInput
     pinnedByUsers?: UserUpdateManyWithoutPinnedChannelNestedInput
+    notifications?: NotificationUpdateManyWithoutChannelNestedInput
   }
 
   export type ChannelUncheckedUpdateWithoutMembersInput = {
@@ -21756,6 +24575,7 @@ export namespace Prisma {
     posts?: PostUncheckedUpdateManyWithoutChannelNestedInput
     joinRequests?: JoinRequestUncheckedUpdateManyWithoutChannelNestedInput
     pinnedByUsers?: UserUncheckedUpdateManyWithoutPinnedChannelNestedInput
+    notifications?: NotificationUncheckedUpdateManyWithoutChannelNestedInput
   }
 
   export type UserUpsertWithoutChannelMemberInput = {
@@ -21785,6 +24605,8 @@ export namespace Prisma {
     todos?: TodoUpdateManyWithoutUserNestedInput
     postSeen?: PostSeenUpdateManyWithoutUserNestedInput
     pinnedChannel?: ChannelUpdateOneWithoutPinnedByUsersNestedInput
+    notificationsActed?: NotificationUpdateManyWithoutActorNestedInput
+    dailyReports?: DailyReportUpdateManyWithoutAuthorNestedInput
   }
 
   export type UserUncheckedUpdateWithoutChannelMemberInput = {
@@ -21804,6 +24626,8 @@ export namespace Prisma {
     savedPosts?: SavedPostUncheckedUpdateManyWithoutUserNestedInput
     todos?: TodoUncheckedUpdateManyWithoutUserNestedInput
     postSeen?: PostSeenUncheckedUpdateManyWithoutUserNestedInput
+    notificationsActed?: NotificationUncheckedUpdateManyWithoutActorNestedInput
+    dailyReports?: DailyReportUncheckedUpdateManyWithoutAuthorNestedInput
   }
 
   export type ChannelCreateWithoutJoinRequestsInput = {
@@ -21816,6 +24640,7 @@ export namespace Prisma {
     members?: ChannelMemberCreateNestedManyWithoutChannelInput
     posts?: PostCreateNestedManyWithoutChannelInput
     pinnedByUsers?: UserCreateNestedManyWithoutPinnedChannelInput
+    notifications?: NotificationCreateNestedManyWithoutChannelInput
   }
 
   export type ChannelUncheckedCreateWithoutJoinRequestsInput = {
@@ -21829,6 +24654,7 @@ export namespace Prisma {
     members?: ChannelMemberUncheckedCreateNestedManyWithoutChannelInput
     posts?: PostUncheckedCreateNestedManyWithoutChannelInput
     pinnedByUsers?: UserUncheckedCreateNestedManyWithoutPinnedChannelInput
+    notifications?: NotificationUncheckedCreateNestedManyWithoutChannelInput
   }
 
   export type ChannelCreateOrConnectWithoutJoinRequestsInput = {
@@ -21852,6 +24678,8 @@ export namespace Prisma {
     todos?: TodoCreateNestedManyWithoutUserInput
     postSeen?: PostSeenCreateNestedManyWithoutUserInput
     pinnedChannel?: ChannelCreateNestedOneWithoutPinnedByUsersInput
+    notificationsActed?: NotificationCreateNestedManyWithoutActorInput
+    dailyReports?: DailyReportCreateNestedManyWithoutAuthorInput
   }
 
   export type UserUncheckedCreateWithoutJoinRequestsInput = {
@@ -21871,11 +24699,46 @@ export namespace Prisma {
     savedPosts?: SavedPostUncheckedCreateNestedManyWithoutUserInput
     todos?: TodoUncheckedCreateNestedManyWithoutUserInput
     postSeen?: PostSeenUncheckedCreateNestedManyWithoutUserInput
+    notificationsActed?: NotificationUncheckedCreateNestedManyWithoutActorInput
+    dailyReports?: DailyReportUncheckedCreateNestedManyWithoutAuthorInput
   }
 
   export type UserCreateOrConnectWithoutJoinRequestsInput = {
     where: UserWhereUniqueInput
     create: XOR<UserCreateWithoutJoinRequestsInput, UserUncheckedCreateWithoutJoinRequestsInput>
+  }
+
+  export type NotificationCreateWithoutJoinRequestInput = {
+    type: string
+    message: string
+    href?: string | null
+    isRead?: boolean
+    createdAt?: Date | string
+    user: UserCreateNestedOneWithoutNotificationsInput
+    actor?: UserCreateNestedOneWithoutNotificationsActedInput
+    channel?: ChannelCreateNestedOneWithoutNotificationsInput
+  }
+
+  export type NotificationUncheckedCreateWithoutJoinRequestInput = {
+    id?: number
+    userId: number
+    type: string
+    message: string
+    href?: string | null
+    isRead?: boolean
+    createdAt?: Date | string
+    actorId?: number | null
+    channelId?: number | null
+  }
+
+  export type NotificationCreateOrConnectWithoutJoinRequestInput = {
+    where: NotificationWhereUniqueInput
+    create: XOR<NotificationCreateWithoutJoinRequestInput, NotificationUncheckedCreateWithoutJoinRequestInput>
+  }
+
+  export type NotificationCreateManyJoinRequestInputEnvelope = {
+    data: NotificationCreateManyJoinRequestInput | NotificationCreateManyJoinRequestInput[]
+    skipDuplicates?: boolean
   }
 
   export type ChannelUpsertWithoutJoinRequestsInput = {
@@ -21899,6 +24762,7 @@ export namespace Prisma {
     members?: ChannelMemberUpdateManyWithoutChannelNestedInput
     posts?: PostUpdateManyWithoutChannelNestedInput
     pinnedByUsers?: UserUpdateManyWithoutPinnedChannelNestedInput
+    notifications?: NotificationUpdateManyWithoutChannelNestedInput
   }
 
   export type ChannelUncheckedUpdateWithoutJoinRequestsInput = {
@@ -21912,6 +24776,7 @@ export namespace Prisma {
     members?: ChannelMemberUncheckedUpdateManyWithoutChannelNestedInput
     posts?: PostUncheckedUpdateManyWithoutChannelNestedInput
     pinnedByUsers?: UserUncheckedUpdateManyWithoutPinnedChannelNestedInput
+    notifications?: NotificationUncheckedUpdateManyWithoutChannelNestedInput
   }
 
   export type UserUpsertWithoutJoinRequestsInput = {
@@ -21941,6 +24806,8 @@ export namespace Prisma {
     todos?: TodoUpdateManyWithoutUserNestedInput
     postSeen?: PostSeenUpdateManyWithoutUserNestedInput
     pinnedChannel?: ChannelUpdateOneWithoutPinnedByUsersNestedInput
+    notificationsActed?: NotificationUpdateManyWithoutActorNestedInput
+    dailyReports?: DailyReportUpdateManyWithoutAuthorNestedInput
   }
 
   export type UserUncheckedUpdateWithoutJoinRequestsInput = {
@@ -21960,6 +24827,24 @@ export namespace Prisma {
     savedPosts?: SavedPostUncheckedUpdateManyWithoutUserNestedInput
     todos?: TodoUncheckedUpdateManyWithoutUserNestedInput
     postSeen?: PostSeenUncheckedUpdateManyWithoutUserNestedInput
+    notificationsActed?: NotificationUncheckedUpdateManyWithoutActorNestedInput
+    dailyReports?: DailyReportUncheckedUpdateManyWithoutAuthorNestedInput
+  }
+
+  export type NotificationUpsertWithWhereUniqueWithoutJoinRequestInput = {
+    where: NotificationWhereUniqueInput
+    update: XOR<NotificationUpdateWithoutJoinRequestInput, NotificationUncheckedUpdateWithoutJoinRequestInput>
+    create: XOR<NotificationCreateWithoutJoinRequestInput, NotificationUncheckedCreateWithoutJoinRequestInput>
+  }
+
+  export type NotificationUpdateWithWhereUniqueWithoutJoinRequestInput = {
+    where: NotificationWhereUniqueInput
+    data: XOR<NotificationUpdateWithoutJoinRequestInput, NotificationUncheckedUpdateWithoutJoinRequestInput>
+  }
+
+  export type NotificationUpdateManyWithWhereWithoutJoinRequestInput = {
+    where: NotificationScalarWhereInput
+    data: XOR<NotificationUpdateManyMutationInput, NotificationUncheckedUpdateManyWithoutJoinRequestInput>
   }
 
   export type UserCreateWithoutNotificationsInput = {
@@ -21978,6 +24863,8 @@ export namespace Prisma {
     todos?: TodoCreateNestedManyWithoutUserInput
     postSeen?: PostSeenCreateNestedManyWithoutUserInput
     pinnedChannel?: ChannelCreateNestedOneWithoutPinnedByUsersInput
+    notificationsActed?: NotificationCreateNestedManyWithoutActorInput
+    dailyReports?: DailyReportCreateNestedManyWithoutAuthorInput
   }
 
   export type UserUncheckedCreateWithoutNotificationsInput = {
@@ -21997,11 +24884,113 @@ export namespace Prisma {
     savedPosts?: SavedPostUncheckedCreateNestedManyWithoutUserInput
     todos?: TodoUncheckedCreateNestedManyWithoutUserInput
     postSeen?: PostSeenUncheckedCreateNestedManyWithoutUserInput
+    notificationsActed?: NotificationUncheckedCreateNestedManyWithoutActorInput
+    dailyReports?: DailyReportUncheckedCreateNestedManyWithoutAuthorInput
   }
 
   export type UserCreateOrConnectWithoutNotificationsInput = {
     where: UserWhereUniqueInput
     create: XOR<UserCreateWithoutNotificationsInput, UserUncheckedCreateWithoutNotificationsInput>
+  }
+
+  export type UserCreateWithoutNotificationsActedInput = {
+    username: string
+    email?: string | null
+    role: string
+    isStaff?: boolean
+    profileImage?: string | null
+    posts?: PostCreateNestedManyWithoutAuthorInput
+    comments?: CommentCreateNestedManyWithoutAuthorInput
+    reactions?: ReactionCreateNestedManyWithoutUserInput
+    channelMember?: ChannelMemberCreateNestedManyWithoutUserInput
+    createdChannels?: ChannelCreateNestedManyWithoutCreatedByInput
+    notifications?: NotificationCreateNestedManyWithoutUserInput
+    joinRequests?: JoinRequestCreateNestedManyWithoutUserInput
+    savedPosts?: SavedPostCreateNestedManyWithoutUserInput
+    todos?: TodoCreateNestedManyWithoutUserInput
+    postSeen?: PostSeenCreateNestedManyWithoutUserInput
+    pinnedChannel?: ChannelCreateNestedOneWithoutPinnedByUsersInput
+    dailyReports?: DailyReportCreateNestedManyWithoutAuthorInput
+  }
+
+  export type UserUncheckedCreateWithoutNotificationsActedInput = {
+    id?: number
+    username: string
+    email?: string | null
+    role: string
+    isStaff?: boolean
+    profileImage?: string | null
+    pinnedChannelId?: number | null
+    posts?: PostUncheckedCreateNestedManyWithoutAuthorInput
+    comments?: CommentUncheckedCreateNestedManyWithoutAuthorInput
+    reactions?: ReactionUncheckedCreateNestedManyWithoutUserInput
+    channelMember?: ChannelMemberUncheckedCreateNestedManyWithoutUserInput
+    createdChannels?: ChannelUncheckedCreateNestedManyWithoutCreatedByInput
+    notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
+    joinRequests?: JoinRequestUncheckedCreateNestedManyWithoutUserInput
+    savedPosts?: SavedPostUncheckedCreateNestedManyWithoutUserInput
+    todos?: TodoUncheckedCreateNestedManyWithoutUserInput
+    postSeen?: PostSeenUncheckedCreateNestedManyWithoutUserInput
+    dailyReports?: DailyReportUncheckedCreateNestedManyWithoutAuthorInput
+  }
+
+  export type UserCreateOrConnectWithoutNotificationsActedInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutNotificationsActedInput, UserUncheckedCreateWithoutNotificationsActedInput>
+  }
+
+  export type ChannelCreateWithoutNotificationsInput = {
+    name: string
+    createdAt?: Date | string
+    bannerKey?: string | null
+    visibility?: string
+    createdBy: UserCreateNestedOneWithoutCreatedChannelsInput
+    postSeen?: PostSeenCreateNestedManyWithoutChannelInput
+    members?: ChannelMemberCreateNestedManyWithoutChannelInput
+    posts?: PostCreateNestedManyWithoutChannelInput
+    joinRequests?: JoinRequestCreateNestedManyWithoutChannelInput
+    pinnedByUsers?: UserCreateNestedManyWithoutPinnedChannelInput
+  }
+
+  export type ChannelUncheckedCreateWithoutNotificationsInput = {
+    id?: number
+    name: string
+    createdAt?: Date | string
+    createdById: number
+    bannerKey?: string | null
+    visibility?: string
+    postSeen?: PostSeenUncheckedCreateNestedManyWithoutChannelInput
+    members?: ChannelMemberUncheckedCreateNestedManyWithoutChannelInput
+    posts?: PostUncheckedCreateNestedManyWithoutChannelInput
+    joinRequests?: JoinRequestUncheckedCreateNestedManyWithoutChannelInput
+    pinnedByUsers?: UserUncheckedCreateNestedManyWithoutPinnedChannelInput
+  }
+
+  export type ChannelCreateOrConnectWithoutNotificationsInput = {
+    where: ChannelWhereUniqueInput
+    create: XOR<ChannelCreateWithoutNotificationsInput, ChannelUncheckedCreateWithoutNotificationsInput>
+  }
+
+  export type JoinRequestCreateWithoutNotificationsInput = {
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    status?: string
+    channel: ChannelCreateNestedOneWithoutJoinRequestsInput
+    user: UserCreateNestedOneWithoutJoinRequestsInput
+  }
+
+  export type JoinRequestUncheckedCreateWithoutNotificationsInput = {
+    id?: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    channelId: number
+    userId: number
+    status?: string
+  }
+
+  export type JoinRequestCreateOrConnectWithoutNotificationsInput = {
+    where: JoinRequestWhereUniqueInput
+    create: XOR<JoinRequestCreateWithoutNotificationsInput, JoinRequestUncheckedCreateWithoutNotificationsInput>
   }
 
   export type UserUpsertWithoutNotificationsInput = {
@@ -22031,6 +25020,8 @@ export namespace Prisma {
     todos?: TodoUpdateManyWithoutUserNestedInput
     postSeen?: PostSeenUpdateManyWithoutUserNestedInput
     pinnedChannel?: ChannelUpdateOneWithoutPinnedByUsersNestedInput
+    notificationsActed?: NotificationUpdateManyWithoutActorNestedInput
+    dailyReports?: DailyReportUpdateManyWithoutAuthorNestedInput
   }
 
   export type UserUncheckedUpdateWithoutNotificationsInput = {
@@ -22050,6 +25041,126 @@ export namespace Prisma {
     savedPosts?: SavedPostUncheckedUpdateManyWithoutUserNestedInput
     todos?: TodoUncheckedUpdateManyWithoutUserNestedInput
     postSeen?: PostSeenUncheckedUpdateManyWithoutUserNestedInput
+    notificationsActed?: NotificationUncheckedUpdateManyWithoutActorNestedInput
+    dailyReports?: DailyReportUncheckedUpdateManyWithoutAuthorNestedInput
+  }
+
+  export type UserUpsertWithoutNotificationsActedInput = {
+    update: XOR<UserUpdateWithoutNotificationsActedInput, UserUncheckedUpdateWithoutNotificationsActedInput>
+    create: XOR<UserCreateWithoutNotificationsActedInput, UserUncheckedCreateWithoutNotificationsActedInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutNotificationsActedInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutNotificationsActedInput, UserUncheckedUpdateWithoutNotificationsActedInput>
+  }
+
+  export type UserUpdateWithoutNotificationsActedInput = {
+    username?: StringFieldUpdateOperationsInput | string
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: StringFieldUpdateOperationsInput | string
+    isStaff?: BoolFieldUpdateOperationsInput | boolean
+    profileImage?: NullableStringFieldUpdateOperationsInput | string | null
+    posts?: PostUpdateManyWithoutAuthorNestedInput
+    comments?: CommentUpdateManyWithoutAuthorNestedInput
+    reactions?: ReactionUpdateManyWithoutUserNestedInput
+    channelMember?: ChannelMemberUpdateManyWithoutUserNestedInput
+    createdChannels?: ChannelUpdateManyWithoutCreatedByNestedInput
+    notifications?: NotificationUpdateManyWithoutUserNestedInput
+    joinRequests?: JoinRequestUpdateManyWithoutUserNestedInput
+    savedPosts?: SavedPostUpdateManyWithoutUserNestedInput
+    todos?: TodoUpdateManyWithoutUserNestedInput
+    postSeen?: PostSeenUpdateManyWithoutUserNestedInput
+    pinnedChannel?: ChannelUpdateOneWithoutPinnedByUsersNestedInput
+    dailyReports?: DailyReportUpdateManyWithoutAuthorNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutNotificationsActedInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    username?: StringFieldUpdateOperationsInput | string
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: StringFieldUpdateOperationsInput | string
+    isStaff?: BoolFieldUpdateOperationsInput | boolean
+    profileImage?: NullableStringFieldUpdateOperationsInput | string | null
+    pinnedChannelId?: NullableIntFieldUpdateOperationsInput | number | null
+    posts?: PostUncheckedUpdateManyWithoutAuthorNestedInput
+    comments?: CommentUncheckedUpdateManyWithoutAuthorNestedInput
+    reactions?: ReactionUncheckedUpdateManyWithoutUserNestedInput
+    channelMember?: ChannelMemberUncheckedUpdateManyWithoutUserNestedInput
+    createdChannels?: ChannelUncheckedUpdateManyWithoutCreatedByNestedInput
+    notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
+    joinRequests?: JoinRequestUncheckedUpdateManyWithoutUserNestedInput
+    savedPosts?: SavedPostUncheckedUpdateManyWithoutUserNestedInput
+    todos?: TodoUncheckedUpdateManyWithoutUserNestedInput
+    postSeen?: PostSeenUncheckedUpdateManyWithoutUserNestedInput
+    dailyReports?: DailyReportUncheckedUpdateManyWithoutAuthorNestedInput
+  }
+
+  export type ChannelUpsertWithoutNotificationsInput = {
+    update: XOR<ChannelUpdateWithoutNotificationsInput, ChannelUncheckedUpdateWithoutNotificationsInput>
+    create: XOR<ChannelCreateWithoutNotificationsInput, ChannelUncheckedCreateWithoutNotificationsInput>
+    where?: ChannelWhereInput
+  }
+
+  export type ChannelUpdateToOneWithWhereWithoutNotificationsInput = {
+    where?: ChannelWhereInput
+    data: XOR<ChannelUpdateWithoutNotificationsInput, ChannelUncheckedUpdateWithoutNotificationsInput>
+  }
+
+  export type ChannelUpdateWithoutNotificationsInput = {
+    name?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    bannerKey?: NullableStringFieldUpdateOperationsInput | string | null
+    visibility?: StringFieldUpdateOperationsInput | string
+    createdBy?: UserUpdateOneRequiredWithoutCreatedChannelsNestedInput
+    postSeen?: PostSeenUpdateManyWithoutChannelNestedInput
+    members?: ChannelMemberUpdateManyWithoutChannelNestedInput
+    posts?: PostUpdateManyWithoutChannelNestedInput
+    joinRequests?: JoinRequestUpdateManyWithoutChannelNestedInput
+    pinnedByUsers?: UserUpdateManyWithoutPinnedChannelNestedInput
+  }
+
+  export type ChannelUncheckedUpdateWithoutNotificationsInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    name?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdById?: IntFieldUpdateOperationsInput | number
+    bannerKey?: NullableStringFieldUpdateOperationsInput | string | null
+    visibility?: StringFieldUpdateOperationsInput | string
+    postSeen?: PostSeenUncheckedUpdateManyWithoutChannelNestedInput
+    members?: ChannelMemberUncheckedUpdateManyWithoutChannelNestedInput
+    posts?: PostUncheckedUpdateManyWithoutChannelNestedInput
+    joinRequests?: JoinRequestUncheckedUpdateManyWithoutChannelNestedInput
+    pinnedByUsers?: UserUncheckedUpdateManyWithoutPinnedChannelNestedInput
+  }
+
+  export type JoinRequestUpsertWithoutNotificationsInput = {
+    update: XOR<JoinRequestUpdateWithoutNotificationsInput, JoinRequestUncheckedUpdateWithoutNotificationsInput>
+    create: XOR<JoinRequestCreateWithoutNotificationsInput, JoinRequestUncheckedCreateWithoutNotificationsInput>
+    where?: JoinRequestWhereInput
+  }
+
+  export type JoinRequestUpdateToOneWithWhereWithoutNotificationsInput = {
+    where?: JoinRequestWhereInput
+    data: XOR<JoinRequestUpdateWithoutNotificationsInput, JoinRequestUncheckedUpdateWithoutNotificationsInput>
+  }
+
+  export type JoinRequestUpdateWithoutNotificationsInput = {
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    status?: StringFieldUpdateOperationsInput | string
+    channel?: ChannelUpdateOneRequiredWithoutJoinRequestsNestedInput
+    user?: UserUpdateOneRequiredWithoutJoinRequestsNestedInput
+  }
+
+  export type JoinRequestUncheckedUpdateWithoutNotificationsInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    channelId?: IntFieldUpdateOperationsInput | number
+    userId?: IntFieldUpdateOperationsInput | number
+    status?: StringFieldUpdateOperationsInput | string
   }
 
   export type UserCreateWithoutSavedPostsInput = {
@@ -22068,6 +25179,8 @@ export namespace Prisma {
     todos?: TodoCreateNestedManyWithoutUserInput
     postSeen?: PostSeenCreateNestedManyWithoutUserInput
     pinnedChannel?: ChannelCreateNestedOneWithoutPinnedByUsersInput
+    notificationsActed?: NotificationCreateNestedManyWithoutActorInput
+    dailyReports?: DailyReportCreateNestedManyWithoutAuthorInput
   }
 
   export type UserUncheckedCreateWithoutSavedPostsInput = {
@@ -22087,6 +25200,8 @@ export namespace Prisma {
     joinRequests?: JoinRequestUncheckedCreateNestedManyWithoutUserInput
     todos?: TodoUncheckedCreateNestedManyWithoutUserInput
     postSeen?: PostSeenUncheckedCreateNestedManyWithoutUserInput
+    notificationsActed?: NotificationUncheckedCreateNestedManyWithoutActorInput
+    dailyReports?: DailyReportUncheckedCreateNestedManyWithoutAuthorInput
   }
 
   export type UserCreateOrConnectWithoutSavedPostsInput = {
@@ -22151,6 +25266,8 @@ export namespace Prisma {
     todos?: TodoUpdateManyWithoutUserNestedInput
     postSeen?: PostSeenUpdateManyWithoutUserNestedInput
     pinnedChannel?: ChannelUpdateOneWithoutPinnedByUsersNestedInput
+    notificationsActed?: NotificationUpdateManyWithoutActorNestedInput
+    dailyReports?: DailyReportUpdateManyWithoutAuthorNestedInput
   }
 
   export type UserUncheckedUpdateWithoutSavedPostsInput = {
@@ -22170,6 +25287,8 @@ export namespace Prisma {
     joinRequests?: JoinRequestUncheckedUpdateManyWithoutUserNestedInput
     todos?: TodoUncheckedUpdateManyWithoutUserNestedInput
     postSeen?: PostSeenUncheckedUpdateManyWithoutUserNestedInput
+    notificationsActed?: NotificationUncheckedUpdateManyWithoutActorNestedInput
+    dailyReports?: DailyReportUncheckedUpdateManyWithoutAuthorNestedInput
   }
 
   export type PostUpsertWithoutSavedByInput = {
@@ -22224,6 +25343,8 @@ export namespace Prisma {
     savedPosts?: SavedPostCreateNestedManyWithoutUserInput
     postSeen?: PostSeenCreateNestedManyWithoutUserInput
     pinnedChannel?: ChannelCreateNestedOneWithoutPinnedByUsersInput
+    notificationsActed?: NotificationCreateNestedManyWithoutActorInput
+    dailyReports?: DailyReportCreateNestedManyWithoutAuthorInput
   }
 
   export type UserUncheckedCreateWithoutTodosInput = {
@@ -22243,6 +25364,8 @@ export namespace Prisma {
     joinRequests?: JoinRequestUncheckedCreateNestedManyWithoutUserInput
     savedPosts?: SavedPostUncheckedCreateNestedManyWithoutUserInput
     postSeen?: PostSeenUncheckedCreateNestedManyWithoutUserInput
+    notificationsActed?: NotificationUncheckedCreateNestedManyWithoutActorInput
+    dailyReports?: DailyReportUncheckedCreateNestedManyWithoutAuthorInput
   }
 
   export type UserCreateOrConnectWithoutTodosInput = {
@@ -22277,6 +25400,8 @@ export namespace Prisma {
     savedPosts?: SavedPostUpdateManyWithoutUserNestedInput
     postSeen?: PostSeenUpdateManyWithoutUserNestedInput
     pinnedChannel?: ChannelUpdateOneWithoutPinnedByUsersNestedInput
+    notificationsActed?: NotificationUpdateManyWithoutActorNestedInput
+    dailyReports?: DailyReportUpdateManyWithoutAuthorNestedInput
   }
 
   export type UserUncheckedUpdateWithoutTodosInput = {
@@ -22296,6 +25421,8 @@ export namespace Prisma {
     joinRequests?: JoinRequestUncheckedUpdateManyWithoutUserNestedInput
     savedPosts?: SavedPostUncheckedUpdateManyWithoutUserNestedInput
     postSeen?: PostSeenUncheckedUpdateManyWithoutUserNestedInput
+    notificationsActed?: NotificationUncheckedUpdateManyWithoutActorNestedInput
+    dailyReports?: DailyReportUncheckedUpdateManyWithoutAuthorNestedInput
   }
 
   export type UserCreateWithoutPostSeenInput = {
@@ -22314,6 +25441,8 @@ export namespace Prisma {
     savedPosts?: SavedPostCreateNestedManyWithoutUserInput
     todos?: TodoCreateNestedManyWithoutUserInput
     pinnedChannel?: ChannelCreateNestedOneWithoutPinnedByUsersInput
+    notificationsActed?: NotificationCreateNestedManyWithoutActorInput
+    dailyReports?: DailyReportCreateNestedManyWithoutAuthorInput
   }
 
   export type UserUncheckedCreateWithoutPostSeenInput = {
@@ -22333,6 +25462,8 @@ export namespace Prisma {
     joinRequests?: JoinRequestUncheckedCreateNestedManyWithoutUserInput
     savedPosts?: SavedPostUncheckedCreateNestedManyWithoutUserInput
     todos?: TodoUncheckedCreateNestedManyWithoutUserInput
+    notificationsActed?: NotificationUncheckedCreateNestedManyWithoutActorInput
+    dailyReports?: DailyReportUncheckedCreateNestedManyWithoutAuthorInput
   }
 
   export type UserCreateOrConnectWithoutPostSeenInput = {
@@ -22380,6 +25511,7 @@ export namespace Prisma {
     posts?: PostCreateNestedManyWithoutChannelInput
     joinRequests?: JoinRequestCreateNestedManyWithoutChannelInput
     pinnedByUsers?: UserCreateNestedManyWithoutPinnedChannelInput
+    notifications?: NotificationCreateNestedManyWithoutChannelInput
   }
 
   export type ChannelUncheckedCreateWithoutPostSeenInput = {
@@ -22393,6 +25525,7 @@ export namespace Prisma {
     posts?: PostUncheckedCreateNestedManyWithoutChannelInput
     joinRequests?: JoinRequestUncheckedCreateNestedManyWithoutChannelInput
     pinnedByUsers?: UserUncheckedCreateNestedManyWithoutPinnedChannelInput
+    notifications?: NotificationUncheckedCreateNestedManyWithoutChannelInput
   }
 
   export type ChannelCreateOrConnectWithoutPostSeenInput = {
@@ -22427,6 +25560,8 @@ export namespace Prisma {
     savedPosts?: SavedPostUpdateManyWithoutUserNestedInput
     todos?: TodoUpdateManyWithoutUserNestedInput
     pinnedChannel?: ChannelUpdateOneWithoutPinnedByUsersNestedInput
+    notificationsActed?: NotificationUpdateManyWithoutActorNestedInput
+    dailyReports?: DailyReportUpdateManyWithoutAuthorNestedInput
   }
 
   export type UserUncheckedUpdateWithoutPostSeenInput = {
@@ -22446,6 +25581,8 @@ export namespace Prisma {
     joinRequests?: JoinRequestUncheckedUpdateManyWithoutUserNestedInput
     savedPosts?: SavedPostUncheckedUpdateManyWithoutUserNestedInput
     todos?: TodoUncheckedUpdateManyWithoutUserNestedInput
+    notificationsActed?: NotificationUncheckedUpdateManyWithoutActorNestedInput
+    dailyReports?: DailyReportUncheckedUpdateManyWithoutAuthorNestedInput
   }
 
   export type PostUpsertWithoutSeenByInput = {
@@ -22505,6 +25642,7 @@ export namespace Prisma {
     posts?: PostUpdateManyWithoutChannelNestedInput
     joinRequests?: JoinRequestUpdateManyWithoutChannelNestedInput
     pinnedByUsers?: UserUpdateManyWithoutPinnedChannelNestedInput
+    notifications?: NotificationUpdateManyWithoutChannelNestedInput
   }
 
   export type ChannelUncheckedUpdateWithoutPostSeenInput = {
@@ -22518,6 +25656,105 @@ export namespace Prisma {
     posts?: PostUncheckedUpdateManyWithoutChannelNestedInput
     joinRequests?: JoinRequestUncheckedUpdateManyWithoutChannelNestedInput
     pinnedByUsers?: UserUncheckedUpdateManyWithoutPinnedChannelNestedInput
+    notifications?: NotificationUncheckedUpdateManyWithoutChannelNestedInput
+  }
+
+  export type UserCreateWithoutDailyReportsInput = {
+    username: string
+    email?: string | null
+    role: string
+    isStaff?: boolean
+    profileImage?: string | null
+    posts?: PostCreateNestedManyWithoutAuthorInput
+    comments?: CommentCreateNestedManyWithoutAuthorInput
+    reactions?: ReactionCreateNestedManyWithoutUserInput
+    channelMember?: ChannelMemberCreateNestedManyWithoutUserInput
+    createdChannels?: ChannelCreateNestedManyWithoutCreatedByInput
+    notifications?: NotificationCreateNestedManyWithoutUserInput
+    joinRequests?: JoinRequestCreateNestedManyWithoutUserInput
+    savedPosts?: SavedPostCreateNestedManyWithoutUserInput
+    todos?: TodoCreateNestedManyWithoutUserInput
+    postSeen?: PostSeenCreateNestedManyWithoutUserInput
+    pinnedChannel?: ChannelCreateNestedOneWithoutPinnedByUsersInput
+    notificationsActed?: NotificationCreateNestedManyWithoutActorInput
+  }
+
+  export type UserUncheckedCreateWithoutDailyReportsInput = {
+    id?: number
+    username: string
+    email?: string | null
+    role: string
+    isStaff?: boolean
+    profileImage?: string | null
+    pinnedChannelId?: number | null
+    posts?: PostUncheckedCreateNestedManyWithoutAuthorInput
+    comments?: CommentUncheckedCreateNestedManyWithoutAuthorInput
+    reactions?: ReactionUncheckedCreateNestedManyWithoutUserInput
+    channelMember?: ChannelMemberUncheckedCreateNestedManyWithoutUserInput
+    createdChannels?: ChannelUncheckedCreateNestedManyWithoutCreatedByInput
+    notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
+    joinRequests?: JoinRequestUncheckedCreateNestedManyWithoutUserInput
+    savedPosts?: SavedPostUncheckedCreateNestedManyWithoutUserInput
+    todos?: TodoUncheckedCreateNestedManyWithoutUserInput
+    postSeen?: PostSeenUncheckedCreateNestedManyWithoutUserInput
+    notificationsActed?: NotificationUncheckedCreateNestedManyWithoutActorInput
+  }
+
+  export type UserCreateOrConnectWithoutDailyReportsInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutDailyReportsInput, UserUncheckedCreateWithoutDailyReportsInput>
+  }
+
+  export type UserUpsertWithoutDailyReportsInput = {
+    update: XOR<UserUpdateWithoutDailyReportsInput, UserUncheckedUpdateWithoutDailyReportsInput>
+    create: XOR<UserCreateWithoutDailyReportsInput, UserUncheckedCreateWithoutDailyReportsInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutDailyReportsInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutDailyReportsInput, UserUncheckedUpdateWithoutDailyReportsInput>
+  }
+
+  export type UserUpdateWithoutDailyReportsInput = {
+    username?: StringFieldUpdateOperationsInput | string
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: StringFieldUpdateOperationsInput | string
+    isStaff?: BoolFieldUpdateOperationsInput | boolean
+    profileImage?: NullableStringFieldUpdateOperationsInput | string | null
+    posts?: PostUpdateManyWithoutAuthorNestedInput
+    comments?: CommentUpdateManyWithoutAuthorNestedInput
+    reactions?: ReactionUpdateManyWithoutUserNestedInput
+    channelMember?: ChannelMemberUpdateManyWithoutUserNestedInput
+    createdChannels?: ChannelUpdateManyWithoutCreatedByNestedInput
+    notifications?: NotificationUpdateManyWithoutUserNestedInput
+    joinRequests?: JoinRequestUpdateManyWithoutUserNestedInput
+    savedPosts?: SavedPostUpdateManyWithoutUserNestedInput
+    todos?: TodoUpdateManyWithoutUserNestedInput
+    postSeen?: PostSeenUpdateManyWithoutUserNestedInput
+    pinnedChannel?: ChannelUpdateOneWithoutPinnedByUsersNestedInput
+    notificationsActed?: NotificationUpdateManyWithoutActorNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutDailyReportsInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    username?: StringFieldUpdateOperationsInput | string
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: StringFieldUpdateOperationsInput | string
+    isStaff?: BoolFieldUpdateOperationsInput | boolean
+    profileImage?: NullableStringFieldUpdateOperationsInput | string | null
+    pinnedChannelId?: NullableIntFieldUpdateOperationsInput | number | null
+    posts?: PostUncheckedUpdateManyWithoutAuthorNestedInput
+    comments?: CommentUncheckedUpdateManyWithoutAuthorNestedInput
+    reactions?: ReactionUncheckedUpdateManyWithoutUserNestedInput
+    channelMember?: ChannelMemberUncheckedUpdateManyWithoutUserNestedInput
+    createdChannels?: ChannelUncheckedUpdateManyWithoutCreatedByNestedInput
+    notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
+    joinRequests?: JoinRequestUncheckedUpdateManyWithoutUserNestedInput
+    savedPosts?: SavedPostUncheckedUpdateManyWithoutUserNestedInput
+    todos?: TodoUncheckedUpdateManyWithoutUserNestedInput
+    postSeen?: PostSeenUncheckedUpdateManyWithoutUserNestedInput
+    notificationsActed?: NotificationUncheckedUpdateManyWithoutActorNestedInput
   }
 
   export type PostCreateManyAuthorInput = {
@@ -22562,6 +25799,9 @@ export namespace Prisma {
     href?: string | null
     isRead?: boolean
     createdAt?: Date | string
+    actorId?: number | null
+    channelId?: number | null
+    joinRequestId?: number | null
   }
 
   export type JoinRequestCreateManyUserInput = {
@@ -22581,8 +25821,9 @@ export namespace Prisma {
   export type TodoCreateManyUserInput = {
     id?: number
     title: string
-    priority?: string
+    priority: $Enums.Priority
     completed?: boolean
+    completedAt?: Date | string | null
     deletedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -22593,6 +25834,39 @@ export namespace Prisma {
     postId: number
     channelId: number
     seenAt?: Date | string
+  }
+
+  export type NotificationCreateManyActorInput = {
+    id?: number
+    userId: number
+    type: string
+    message: string
+    href?: string | null
+    isRead?: boolean
+    createdAt?: Date | string
+    channelId?: number | null
+    joinRequestId?: number | null
+  }
+
+  export type DailyReportCreateManyAuthorInput = {
+    id?: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    reportYmd: string
+    branchName: string
+    newConnectionRequest?: number
+    pendingConnection?: number
+    completedConnection?: number
+    reasonPendingConnection?: string | null
+    internetTkt?: number
+    pendingTkt?: number
+    completedTkt?: number
+    reasonPendingTkt?: string | null
+    expireCustomerDay?: number
+    renewDay?: number
+    activeCustomer?: number
+    totalExpireCustomer?: number
+    outgoingCalls?: number
   }
 
   export type PostUpdateWithoutAuthorInput = {
@@ -22692,6 +25966,7 @@ export namespace Prisma {
     posts?: PostUpdateManyWithoutChannelNestedInput
     joinRequests?: JoinRequestUpdateManyWithoutChannelNestedInput
     pinnedByUsers?: UserUpdateManyWithoutPinnedChannelNestedInput
+    notifications?: NotificationUpdateManyWithoutChannelNestedInput
   }
 
   export type ChannelUncheckedUpdateWithoutCreatedByInput = {
@@ -22705,6 +25980,7 @@ export namespace Prisma {
     posts?: PostUncheckedUpdateManyWithoutChannelNestedInput
     joinRequests?: JoinRequestUncheckedUpdateManyWithoutChannelNestedInput
     pinnedByUsers?: UserUncheckedUpdateManyWithoutPinnedChannelNestedInput
+    notifications?: NotificationUncheckedUpdateManyWithoutChannelNestedInput
   }
 
   export type ChannelUncheckedUpdateManyWithoutCreatedByInput = {
@@ -22721,6 +25997,9 @@ export namespace Prisma {
     href?: NullableStringFieldUpdateOperationsInput | string | null
     isRead?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    actor?: UserUpdateOneWithoutNotificationsActedNestedInput
+    channel?: ChannelUpdateOneWithoutNotificationsNestedInput
+    joinRequest?: JoinRequestUpdateOneWithoutNotificationsNestedInput
   }
 
   export type NotificationUncheckedUpdateWithoutUserInput = {
@@ -22730,6 +26009,9 @@ export namespace Prisma {
     href?: NullableStringFieldUpdateOperationsInput | string | null
     isRead?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    actorId?: NullableIntFieldUpdateOperationsInput | number | null
+    channelId?: NullableIntFieldUpdateOperationsInput | number | null
+    joinRequestId?: NullableIntFieldUpdateOperationsInput | number | null
   }
 
   export type NotificationUncheckedUpdateManyWithoutUserInput = {
@@ -22739,6 +26021,9 @@ export namespace Prisma {
     href?: NullableStringFieldUpdateOperationsInput | string | null
     isRead?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    actorId?: NullableIntFieldUpdateOperationsInput | number | null
+    channelId?: NullableIntFieldUpdateOperationsInput | number | null
+    joinRequestId?: NullableIntFieldUpdateOperationsInput | number | null
   }
 
   export type JoinRequestUpdateWithoutUserInput = {
@@ -22746,6 +26031,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     status?: StringFieldUpdateOperationsInput | string
     channel?: ChannelUpdateOneRequiredWithoutJoinRequestsNestedInput
+    notifications?: NotificationUpdateManyWithoutJoinRequestNestedInput
   }
 
   export type JoinRequestUncheckedUpdateWithoutUserInput = {
@@ -22754,6 +26040,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     channelId?: IntFieldUpdateOperationsInput | number
     status?: StringFieldUpdateOperationsInput | string
+    notifications?: NotificationUncheckedUpdateManyWithoutJoinRequestNestedInput
   }
 
   export type JoinRequestUncheckedUpdateManyWithoutUserInput = {
@@ -22783,8 +26070,9 @@ export namespace Prisma {
 
   export type TodoUpdateWithoutUserInput = {
     title?: StringFieldUpdateOperationsInput | string
-    priority?: StringFieldUpdateOperationsInput | string
+    priority?: EnumPriorityFieldUpdateOperationsInput | $Enums.Priority
     completed?: BoolFieldUpdateOperationsInput | boolean
+    completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -22793,8 +26081,9 @@ export namespace Prisma {
   export type TodoUncheckedUpdateWithoutUserInput = {
     id?: IntFieldUpdateOperationsInput | number
     title?: StringFieldUpdateOperationsInput | string
-    priority?: StringFieldUpdateOperationsInput | string
+    priority?: EnumPriorityFieldUpdateOperationsInput | $Enums.Priority
     completed?: BoolFieldUpdateOperationsInput | boolean
+    completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -22803,8 +26092,9 @@ export namespace Prisma {
   export type TodoUncheckedUpdateManyWithoutUserInput = {
     id?: IntFieldUpdateOperationsInput | number
     title?: StringFieldUpdateOperationsInput | string
-    priority?: StringFieldUpdateOperationsInput | string
+    priority?: EnumPriorityFieldUpdateOperationsInput | $Enums.Priority
     completed?: BoolFieldUpdateOperationsInput | boolean
+    completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -22828,6 +26118,103 @@ export namespace Prisma {
     postId?: IntFieldUpdateOperationsInput | number
     channelId?: IntFieldUpdateOperationsInput | number
     seenAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type NotificationUpdateWithoutActorInput = {
+    type?: StringFieldUpdateOperationsInput | string
+    message?: StringFieldUpdateOperationsInput | string
+    href?: NullableStringFieldUpdateOperationsInput | string | null
+    isRead?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    user?: UserUpdateOneRequiredWithoutNotificationsNestedInput
+    channel?: ChannelUpdateOneWithoutNotificationsNestedInput
+    joinRequest?: JoinRequestUpdateOneWithoutNotificationsNestedInput
+  }
+
+  export type NotificationUncheckedUpdateWithoutActorInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    userId?: IntFieldUpdateOperationsInput | number
+    type?: StringFieldUpdateOperationsInput | string
+    message?: StringFieldUpdateOperationsInput | string
+    href?: NullableStringFieldUpdateOperationsInput | string | null
+    isRead?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    channelId?: NullableIntFieldUpdateOperationsInput | number | null
+    joinRequestId?: NullableIntFieldUpdateOperationsInput | number | null
+  }
+
+  export type NotificationUncheckedUpdateManyWithoutActorInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    userId?: IntFieldUpdateOperationsInput | number
+    type?: StringFieldUpdateOperationsInput | string
+    message?: StringFieldUpdateOperationsInput | string
+    href?: NullableStringFieldUpdateOperationsInput | string | null
+    isRead?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    channelId?: NullableIntFieldUpdateOperationsInput | number | null
+    joinRequestId?: NullableIntFieldUpdateOperationsInput | number | null
+  }
+
+  export type DailyReportUpdateWithoutAuthorInput = {
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    reportYmd?: StringFieldUpdateOperationsInput | string
+    branchName?: StringFieldUpdateOperationsInput | string
+    newConnectionRequest?: IntFieldUpdateOperationsInput | number
+    pendingConnection?: IntFieldUpdateOperationsInput | number
+    completedConnection?: IntFieldUpdateOperationsInput | number
+    reasonPendingConnection?: NullableStringFieldUpdateOperationsInput | string | null
+    internetTkt?: IntFieldUpdateOperationsInput | number
+    pendingTkt?: IntFieldUpdateOperationsInput | number
+    completedTkt?: IntFieldUpdateOperationsInput | number
+    reasonPendingTkt?: NullableStringFieldUpdateOperationsInput | string | null
+    expireCustomerDay?: IntFieldUpdateOperationsInput | number
+    renewDay?: IntFieldUpdateOperationsInput | number
+    activeCustomer?: IntFieldUpdateOperationsInput | number
+    totalExpireCustomer?: IntFieldUpdateOperationsInput | number
+    outgoingCalls?: IntFieldUpdateOperationsInput | number
+  }
+
+  export type DailyReportUncheckedUpdateWithoutAuthorInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    reportYmd?: StringFieldUpdateOperationsInput | string
+    branchName?: StringFieldUpdateOperationsInput | string
+    newConnectionRequest?: IntFieldUpdateOperationsInput | number
+    pendingConnection?: IntFieldUpdateOperationsInput | number
+    completedConnection?: IntFieldUpdateOperationsInput | number
+    reasonPendingConnection?: NullableStringFieldUpdateOperationsInput | string | null
+    internetTkt?: IntFieldUpdateOperationsInput | number
+    pendingTkt?: IntFieldUpdateOperationsInput | number
+    completedTkt?: IntFieldUpdateOperationsInput | number
+    reasonPendingTkt?: NullableStringFieldUpdateOperationsInput | string | null
+    expireCustomerDay?: IntFieldUpdateOperationsInput | number
+    renewDay?: IntFieldUpdateOperationsInput | number
+    activeCustomer?: IntFieldUpdateOperationsInput | number
+    totalExpireCustomer?: IntFieldUpdateOperationsInput | number
+    outgoingCalls?: IntFieldUpdateOperationsInput | number
+  }
+
+  export type DailyReportUncheckedUpdateManyWithoutAuthorInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    reportYmd?: StringFieldUpdateOperationsInput | string
+    branchName?: StringFieldUpdateOperationsInput | string
+    newConnectionRequest?: IntFieldUpdateOperationsInput | number
+    pendingConnection?: IntFieldUpdateOperationsInput | number
+    completedConnection?: IntFieldUpdateOperationsInput | number
+    reasonPendingConnection?: NullableStringFieldUpdateOperationsInput | string | null
+    internetTkt?: IntFieldUpdateOperationsInput | number
+    pendingTkt?: IntFieldUpdateOperationsInput | number
+    completedTkt?: IntFieldUpdateOperationsInput | number
+    reasonPendingTkt?: NullableStringFieldUpdateOperationsInput | string | null
+    expireCustomerDay?: IntFieldUpdateOperationsInput | number
+    renewDay?: IntFieldUpdateOperationsInput | number
+    activeCustomer?: IntFieldUpdateOperationsInput | number
+    totalExpireCustomer?: IntFieldUpdateOperationsInput | number
+    outgoingCalls?: IntFieldUpdateOperationsInput | number
   }
 
   export type FileCreateManyPostInput = {
@@ -22991,6 +26378,18 @@ export namespace Prisma {
     profileImage?: string | null
   }
 
+  export type NotificationCreateManyChannelInput = {
+    id?: number
+    userId: number
+    type: string
+    message: string
+    href?: string | null
+    isRead?: boolean
+    createdAt?: Date | string
+    actorId?: number | null
+    joinRequestId?: number | null
+  }
+
   export type PostSeenUpdateWithoutChannelInput = {
     seenAt?: DateTimeFieldUpdateOperationsInput | Date | string
     user?: UserUpdateOneRequiredWithoutPostSeenNestedInput
@@ -23066,6 +26465,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     status?: StringFieldUpdateOperationsInput | string
     user?: UserUpdateOneRequiredWithoutJoinRequestsNestedInput
+    notifications?: NotificationUpdateManyWithoutJoinRequestNestedInput
   }
 
   export type JoinRequestUncheckedUpdateWithoutChannelInput = {
@@ -23074,6 +26474,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     userId?: IntFieldUpdateOperationsInput | number
     status?: StringFieldUpdateOperationsInput | string
+    notifications?: NotificationUncheckedUpdateManyWithoutJoinRequestNestedInput
   }
 
   export type JoinRequestUncheckedUpdateManyWithoutChannelInput = {
@@ -23100,6 +26501,8 @@ export namespace Prisma {
     savedPosts?: SavedPostUpdateManyWithoutUserNestedInput
     todos?: TodoUpdateManyWithoutUserNestedInput
     postSeen?: PostSeenUpdateManyWithoutUserNestedInput
+    notificationsActed?: NotificationUpdateManyWithoutActorNestedInput
+    dailyReports?: DailyReportUpdateManyWithoutAuthorNestedInput
   }
 
   export type UserUncheckedUpdateWithoutPinnedChannelInput = {
@@ -23119,6 +26522,8 @@ export namespace Prisma {
     savedPosts?: SavedPostUncheckedUpdateManyWithoutUserNestedInput
     todos?: TodoUncheckedUpdateManyWithoutUserNestedInput
     postSeen?: PostSeenUncheckedUpdateManyWithoutUserNestedInput
+    notificationsActed?: NotificationUncheckedUpdateManyWithoutActorNestedInput
+    dailyReports?: DailyReportUncheckedUpdateManyWithoutAuthorNestedInput
   }
 
   export type UserUncheckedUpdateManyWithoutPinnedChannelInput = {
@@ -23128,6 +26533,88 @@ export namespace Prisma {
     role?: StringFieldUpdateOperationsInput | string
     isStaff?: BoolFieldUpdateOperationsInput | boolean
     profileImage?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type NotificationUpdateWithoutChannelInput = {
+    type?: StringFieldUpdateOperationsInput | string
+    message?: StringFieldUpdateOperationsInput | string
+    href?: NullableStringFieldUpdateOperationsInput | string | null
+    isRead?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    user?: UserUpdateOneRequiredWithoutNotificationsNestedInput
+    actor?: UserUpdateOneWithoutNotificationsActedNestedInput
+    joinRequest?: JoinRequestUpdateOneWithoutNotificationsNestedInput
+  }
+
+  export type NotificationUncheckedUpdateWithoutChannelInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    userId?: IntFieldUpdateOperationsInput | number
+    type?: StringFieldUpdateOperationsInput | string
+    message?: StringFieldUpdateOperationsInput | string
+    href?: NullableStringFieldUpdateOperationsInput | string | null
+    isRead?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    actorId?: NullableIntFieldUpdateOperationsInput | number | null
+    joinRequestId?: NullableIntFieldUpdateOperationsInput | number | null
+  }
+
+  export type NotificationUncheckedUpdateManyWithoutChannelInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    userId?: IntFieldUpdateOperationsInput | number
+    type?: StringFieldUpdateOperationsInput | string
+    message?: StringFieldUpdateOperationsInput | string
+    href?: NullableStringFieldUpdateOperationsInput | string | null
+    isRead?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    actorId?: NullableIntFieldUpdateOperationsInput | number | null
+    joinRequestId?: NullableIntFieldUpdateOperationsInput | number | null
+  }
+
+  export type NotificationCreateManyJoinRequestInput = {
+    id?: number
+    userId: number
+    type: string
+    message: string
+    href?: string | null
+    isRead?: boolean
+    createdAt?: Date | string
+    actorId?: number | null
+    channelId?: number | null
+  }
+
+  export type NotificationUpdateWithoutJoinRequestInput = {
+    type?: StringFieldUpdateOperationsInput | string
+    message?: StringFieldUpdateOperationsInput | string
+    href?: NullableStringFieldUpdateOperationsInput | string | null
+    isRead?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    user?: UserUpdateOneRequiredWithoutNotificationsNestedInput
+    actor?: UserUpdateOneWithoutNotificationsActedNestedInput
+    channel?: ChannelUpdateOneWithoutNotificationsNestedInput
+  }
+
+  export type NotificationUncheckedUpdateWithoutJoinRequestInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    userId?: IntFieldUpdateOperationsInput | number
+    type?: StringFieldUpdateOperationsInput | string
+    message?: StringFieldUpdateOperationsInput | string
+    href?: NullableStringFieldUpdateOperationsInput | string | null
+    isRead?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    actorId?: NullableIntFieldUpdateOperationsInput | number | null
+    channelId?: NullableIntFieldUpdateOperationsInput | number | null
+  }
+
+  export type NotificationUncheckedUpdateManyWithoutJoinRequestInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    userId?: IntFieldUpdateOperationsInput | number
+    type?: StringFieldUpdateOperationsInput | string
+    message?: StringFieldUpdateOperationsInput | string
+    href?: NullableStringFieldUpdateOperationsInput | string | null
+    isRead?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    actorId?: NullableIntFieldUpdateOperationsInput | number | null
+    channelId?: NullableIntFieldUpdateOperationsInput | number | null
   }
 
 

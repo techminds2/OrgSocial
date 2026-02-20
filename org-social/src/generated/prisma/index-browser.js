@@ -194,7 +194,10 @@ exports.Prisma.NotificationScalarFieldEnum = {
   message: 'message',
   href: 'href',
   isRead: 'isRead',
-  createdAt: 'createdAt'
+  createdAt: 'createdAt',
+  actorId: 'actorId',
+  channelId: 'channelId',
+  joinRequestId: 'joinRequestId'
 };
 
 exports.Prisma.SavedPostScalarFieldEnum = {
@@ -210,6 +213,7 @@ exports.Prisma.TodoScalarFieldEnum = {
   title: 'title',
   priority: 'priority',
   completed: 'completed',
+  completedAt: 'completedAt',
   deletedAt: 'deletedAt',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
@@ -221,6 +225,28 @@ exports.Prisma.PostSeenScalarFieldEnum = {
   postId: 'postId',
   channelId: 'channelId',
   seenAt: 'seenAt'
+};
+
+exports.Prisma.DailyReportScalarFieldEnum = {
+  id: 'id',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  authorId: 'authorId',
+  reportYmd: 'reportYmd',
+  branchName: 'branchName',
+  newConnectionRequest: 'newConnectionRequest',
+  pendingConnection: 'pendingConnection',
+  completedConnection: 'completedConnection',
+  reasonPendingConnection: 'reasonPendingConnection',
+  internetTkt: 'internetTkt',
+  pendingTkt: 'pendingTkt',
+  completedTkt: 'completedTkt',
+  reasonPendingTkt: 'reasonPendingTkt',
+  expireCustomerDay: 'expireCustomerDay',
+  renewDay: 'renewDay',
+  activeCustomer: 'activeCustomer',
+  totalExpireCustomer: 'totalExpireCustomer',
+  outgoingCalls: 'outgoingCalls'
 };
 
 exports.Prisma.SortOrder = {
@@ -237,7 +263,11 @@ exports.Prisma.NullsOrder = {
   first: 'first',
   last: 'last'
 };
-
+exports.Priority = exports.$Enums.Priority = {
+  Low: 'Low',
+  Medium: 'Medium',
+  High: 'High'
+};
 
 exports.Prisma.ModelName = {
   User: 'User',
@@ -251,7 +281,8 @@ exports.Prisma.ModelName = {
   Notification: 'Notification',
   SavedPost: 'SavedPost',
   Todo: 'Todo',
-  PostSeen: 'PostSeen'
+  PostSeen: 'PostSeen',
+  DailyReport: 'DailyReport'
 };
 
 /**
