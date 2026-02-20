@@ -27,6 +27,7 @@ type Notification = {
   type?: "post" | "join-request" | "comment" | "JOIN_REQUEST";
   channelName?: string;
   username?: string;
+  isRead?: boolean;
 };
 
 function useMounted() {
@@ -232,29 +233,33 @@ export default function NavBar({ profileImage }: NavBarProps) {
                   const n: Notification = { ...raw, type: normalizeType(raw) };
                   const key = notifKey(n);
 
-                  if (n.type === "post") {
-                    return (
-                      <Menu.Item
-                        key={key}
-                        onClick={() => {
-                          const match = n.href?.match(/\/posts\/(\d+)/);
-                          if (!match) return;
-
-                          const postId = Number(match[1]);
-                          window.dispatchEvent(
-                            new CustomEvent("open-post-modal", {
-                              detail: { postId },
-                            }),
-                          );
-                        }}
-                      >
-                        {n.message}
-                      </Menu.Item>
-                    );
-                  }
-
                   return (
-                    <Menu.Item key={key} component={Link} href={n.href}>
+                    <Menu.Item
+                      key={key}
+                      component={Link}
+                      href={n.href}
+                      className={`rounded px-2 py-1 ${
+                        !n.isRead ? "bg-gray-100 font-medium" : "bg-white"
+                      }`}
+                      onClick={async () => {
+                        if (!n.isRead) {
+                          await fetch(`/api/notifications/${n.id}/mark-read`, {
+                            method: "PATCH",
+                          });
+                          setNotifications((prev) =>
+                            prev.map((x) =>
+                              x.id === n.id ? { ...x, isRead: true } : x,
+                            ),
+                          );
+
+                          if (n.type === "join-request") {
+                            setNotifications((prev) =>
+                              prev.filter((x) => x.id !== n.id),
+                            );
+                          }
+                        }
+                      }}
+                    >
                       {n.message}
                     </Menu.Item>
                   );
@@ -263,6 +268,23 @@ export default function NavBar({ profileImage }: NavBarProps) {
             </ScrollArea.Autosize>
 
             <Menu.Divider />
+
+            {/* ✅ Move "Mark all as seen" here, inside dropdown */}
+            <Menu.Item
+              onClick={async () => {
+                await fetch("/api/notifications/mark-all-read", {
+                  method: "PATCH",
+                });
+                setNotifications((prev) =>
+                  prev.map((n) => ({ ...n, isRead: true })),
+                );
+                setNotifications((prev) =>
+                  prev.filter((n) => n.type !== "join-request"),
+                );
+              }}
+            >
+              Mark all as seen
+            </Menu.Item>
 
             <Menu.Item component={Link} href="/notifications">
               View all notifications
