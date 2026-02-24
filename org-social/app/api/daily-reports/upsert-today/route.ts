@@ -38,7 +38,8 @@ export async function POST(req: NextRequest) {
 
     const reportYmd = cleanStr(body?.reportYmd) || todayNepalYmd();
     const branchName = cleanBranch(cleanStr(body?.branchName));
-    if (!branchName) return noStoreJson({ error: "Branch Name is required" }, 400);
+    if (!branchName)
+      return noStoreJson({ error: "Branch Name is required" }, 400);
 
     const data = {
       reportYmd,
@@ -59,6 +60,7 @@ export async function POST(req: NextRequest) {
       activeCustomer: int0(body?.activeCustomer),
       totalExpireCustomer: int0(body?.totalExpireCustomer),
       outgoingCalls: int0(body?.outgoingCalls),
+      trunkIssueRemarks: cleanStr(body?.trunkIssueRemarks) || null,
     };
 
     const report = await prisma.dailyReport.upsert({
@@ -77,7 +79,14 @@ export async function POST(req: NextRequest) {
 
     return noStoreJson({ reportYmd, report }, 200);
   } catch (e) {
-    console.error("DAILY REPORT UPSERT ERROR:", e);
-    return noStoreJson({ error: "Server error" }, 500);
+    console.error("🔥 DAILY REPORT UPSERT FULL ERROR:", e);
+
+    return NextResponse.json(
+      {
+        error: "Server error",
+        debug: String(e),
+      },
+      { status: 500 },
+    );
   }
 }

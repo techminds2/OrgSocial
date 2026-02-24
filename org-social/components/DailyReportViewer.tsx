@@ -223,6 +223,10 @@ export default function DailyReportViewer({
                 <Table.Td fw={600}>Total Out going Calls (Follow UP)</Table.Td>
                 <Table.Td>{report.outgoingCalls}</Table.Td>
               </Table.Tr>
+              <Table.Tr>
+                <Table.Td fw={600}>Trunk Issues</Table.Td>
+                <Table.Td>{report.trunkIssueRemarks || "-"}</Table.Td>
+              </Table.Tr>
             </Table.Tbody>
           </Table>
         </Paper>

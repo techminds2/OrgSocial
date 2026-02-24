@@ -60,45 +60,50 @@ export default function ProfilePage() {
 
   // user
   // user
-useEffect(() => {
-  let mounted = true;
+  useEffect(() => {
+    let mounted = true;
 
-  (async () => {
-    try {
-      const res = await fetch("/api/auth/me", {
-        credentials: "include",
-        cache: "no-store",
-      });
-      if (!res.ok) throw new Error("Not authenticated");
+    (async () => {
+      try {
+        const res = await fetch("/api/auth/me", {
+          credentials: "include",
+          cache: "no-store",
+        });
+        if (!res.ok) throw new Error("Not authenticated");
 
-      const raw = await res.json();
+        const raw = await res.json();
 
-      const normalized: User = {
-        ...raw,
-        id: Number(raw?.id ?? raw?.user_id ?? raw?.user?.id),
-        role: raw?.role ?? raw?.user?.role ?? null,
-        username: raw?.username ?? raw?.user?.username ?? null,
-        email: raw?.email ?? raw?.user?.email ?? null,
-        profile_photo: raw?.profile_photo ?? raw?.user?.profile_photo ?? null,
-      };
+        const normalized: User = {
+          ...raw,
+          id: Number(raw?.id ?? raw?.user_id ?? raw?.user?.id),
+          role: raw?.role ?? raw?.user?.role ?? null,
+          username: raw?.username ?? raw?.user?.username ?? null,
+          email: raw?.email ?? raw?.user?.email ?? null,
+          profile_photo:
+            raw?.profileImage ??
+            raw?.profile_photo ??
+            raw?.user?.profileImage ??
+            raw?.user?.profile_photo ??
+            null,
+        };
 
-      if (!Number.isFinite(normalized.id)) {
-        throw new Error("Invalid user id from /api/auth/me");
+        if (!Number.isFinite(normalized.id)) {
+          throw new Error("Invalid user id from /api/auth/me");
+        }
+
+        if (mounted) setUser(normalized);
+      } catch (err) {
+        console.error(err);
+        if (mounted) setUser(null);
+      } finally {
+        if (mounted) setLoadingUser(false);
       }
+    })();
 
-      if (mounted) setUser(normalized);
-    } catch (err) {
-      console.error(err);
-      if (mounted) setUser(null);
-    } finally {
-      if (mounted) setLoadingUser(false);
-    }
-  })();
-
-  return () => {
-    mounted = false;
-  };
-}, []);
+    return () => {
+      mounted = false;
+    };
+  }, []);
 
   // fetch page
   const fetchPostsPage = async (opts?: {
@@ -248,6 +253,14 @@ useEffect(() => {
       </div>
     );
 
+  function normalizeMediaUrl(u?: string | null) {
+    if (!u) return "/temp.jpg";
+    const s = String(u).trim();
+    if (!s) return "/temp.jpg";
+    if (s.startsWith("http://") || s.startsWith("https://")) return s;
+    return `/api/files/${s.replace(/^\/+/, "")}`;
+  }
+
   return (
     <Container size="sm" className="py-10">
       <Paper shadow="md" className="p-6 rounded-md">
@@ -255,7 +268,7 @@ useEffect(() => {
           <Avatar
             size={100}
             radius="xl"
-            src={user.profile_photo || "/temp.jpg"}
+            src={normalizeMediaUrl(user.profile_photo)}
           />
           <Text className="text-lg font-semibold">
             {user.first_name} {user.last_name} ({user.username})

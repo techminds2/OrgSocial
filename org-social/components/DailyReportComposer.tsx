@@ -34,6 +34,7 @@ type ReportState = {
   activeCustomer: number;
   totalExpireCustomer: number;
   outgoingCalls: number;
+  trunkIssueRemarks: string;
 };
 
 function initState(reportYmd = ""): ReportState {
@@ -56,6 +57,7 @@ function initState(reportYmd = ""): ReportState {
     activeCustomer: 0,
     totalExpireCustomer: 0,
     outgoingCalls: 0,
+    trunkIssueRemarks: "",
   };
 }
 
@@ -87,7 +89,7 @@ export default function DailyReportComposer({
   const setIntFromString = (k: keyof ReportState, raw: string) => {
     const cleaned = onlyDigits(raw);
     const n = cleaned === "" ? 0 : Math.max(0, parseInt(cleaned, 10));
-    setState((p) => ({ ...p, [k]: n } as any));
+    setState((p) => ({ ...p, [k]: n }) as any);
   };
 
   const setTxt = (k: keyof ReportState, v: string) =>
@@ -122,6 +124,7 @@ export default function DailyReportComposer({
           activeCustomer: r.activeCustomer ?? 0,
           totalExpireCustomer: r.totalExpireCustomer ?? 0,
           outgoingCalls: r.outgoingCalls ?? 0,
+          trunkIssueRemarks: r.trunkIssueRemarks ?? "",
         });
         setLastUpdatedAt(r.updatedAt || r.createdAt || null);
       } else {
@@ -142,7 +145,8 @@ export default function DailyReportComposer({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [opened]);
 
-  const canSave = isOwner && state.reportYmd && state.branchName.trim().length > 0;
+  const canSave =
+    isOwner && state.reportYmd && state.branchName.trim().length > 0;
 
   const save = async () => {
     if (!canSave || saving) return;
@@ -172,6 +176,7 @@ export default function DailyReportComposer({
           activeCustomer: state.activeCustomer,
           totalExpireCustomer: state.totalExpireCustomer,
           outgoingCalls: state.outgoingCalls,
+          trunkIssueRemarks: state.trunkIssueRemarks,
         }),
       });
 
@@ -236,7 +241,10 @@ export default function DailyReportComposer({
         withinPortal
         zIndex={10000}
         overlayProps={{
-          color: colorScheme === "dark" ? theme.colors.dark[9] : theme.colors.gray[2],
+          color:
+            colorScheme === "dark"
+              ? theme.colors.dark[9]
+              : theme.colors.gray[2],
           opacity: 0.75,
           blur: 3,
         }}
@@ -255,7 +263,11 @@ export default function DailyReportComposer({
                 ref={branchRef as any}
                 required
               />
-              <TextInput label="Report Date (Nepal)" value={state.reportYmd} disabled />
+              <TextInput
+                label="Report Date (Nepal)"
+                value={state.reportYmd}
+                disabled
+              />
             </div>
 
             {lastUpdatedAt && (
@@ -351,8 +363,23 @@ export default function DailyReportComposer({
                 </Table.Tr>
 
                 <Table.Tr>
-                  <Table.Td fw={600}>Total Out going Calls (Follow UP)</Table.Td>
+                  <Table.Td fw={600}>
+                    Total Out going Calls (Follow UP)
+                  </Table.Td>
                   <Table.Td>{numInput("outgoingCalls")}</Table.Td>
+                </Table.Tr>
+                <Table.Tr>
+                  <Table.Td fw={600}>Trunk Issues</Table.Td>
+                  <Table.Td>
+                    <Textarea
+                      value={state.trunkIssueRemarks}
+                      onChange={(e) =>
+                        setTxt("trunkIssueRemarks", e.currentTarget.value)
+                      }
+                      autosize
+                      minRows={2}
+                    />
+                  </Table.Td>
                 </Table.Tr>
               </Table.Tbody>
             </Table>

@@ -220,10 +220,8 @@ model DailyReport {
   authorId Int
   author   User @relation(fields: [authorId], references: [id], onDelete: Cascade)
 
-  // Nepal-local date key for calendar navigation
   reportYmd String // "YYYY-MM-DD"
 
-  // ✅ Required fields
   branchName String
 
   newConnectionRequest    Int     @default(0)
@@ -236,11 +234,12 @@ model DailyReport {
   completedTkt     Int     @default(0)
   reasonPendingTkt String? // textarea
 
-  expireCustomerDay   Int @default(0)
-  renewDay            Int @default(0)
-  activeCustomer      Int @default(0)
-  totalExpireCustomer Int @default(0)
-  outgoingCalls       Int @default(0)
+  expireCustomerDay   Int     @default(0)
+  renewDay            Int     @default(0)
+  activeCustomer      Int     @default(0)
+  totalExpireCustomer Int     @default(0)
+  outgoingCalls       Int     @default(0)
+  trunkIssueRemarks   String?
 
   @@unique([authorId, reportYmd])
   @@index([authorId, reportYmd])

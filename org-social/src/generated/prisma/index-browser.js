@@ -246,7 +246,8 @@ exports.Prisma.DailyReportScalarFieldEnum = {
   renewDay: 'renewDay',
   activeCustomer: 'activeCustomer',
   totalExpireCustomer: 'totalExpireCustomer',
-  outgoingCalls: 'outgoingCalls'
+  outgoingCalls: 'outgoingCalls',
+  trunkIssueRemarks: 'trunkIssueRemarks'
 };
 
 exports.Prisma.SortOrder = {

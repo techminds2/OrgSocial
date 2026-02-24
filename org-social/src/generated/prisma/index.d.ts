@@ -16527,6 +16527,7 @@ export namespace Prisma {
     activeCustomer: number | null
     totalExpireCustomer: number | null
     outgoingCalls: number | null
+    trunkIssueRemarks: string | null
   }
 
   export type DailyReportMaxAggregateOutputType = {
@@ -16549,6 +16550,7 @@ export namespace Prisma {
     activeCustomer: number | null
     totalExpireCustomer: number | null
     outgoingCalls: number | null
+    trunkIssueRemarks: string | null
   }
 
   export type DailyReportCountAggregateOutputType = {
@@ -16571,6 +16573,7 @@ export namespace Prisma {
     activeCustomer: number
     totalExpireCustomer: number
     outgoingCalls: number
+    trunkIssueRemarks: number
     _all: number
   }
 
@@ -16627,6 +16630,7 @@ export namespace Prisma {
     activeCustomer?: true
     totalExpireCustomer?: true
     outgoingCalls?: true
+    trunkIssueRemarks?: true
   }
 
   export type DailyReportMaxAggregateInputType = {
@@ -16649,6 +16653,7 @@ export namespace Prisma {
     activeCustomer?: true
     totalExpireCustomer?: true
     outgoingCalls?: true
+    trunkIssueRemarks?: true
   }
 
   export type DailyReportCountAggregateInputType = {
@@ -16671,6 +16676,7 @@ export namespace Prisma {
     activeCustomer?: true
     totalExpireCustomer?: true
     outgoingCalls?: true
+    trunkIssueRemarks?: true
     _all?: true
   }
 
@@ -16780,6 +16786,7 @@ export namespace Prisma {
     activeCustomer: number
     totalExpireCustomer: number
     outgoingCalls: number
+    trunkIssueRemarks: string | null
     _count: DailyReportCountAggregateOutputType | null
     _avg: DailyReportAvgAggregateOutputType | null
     _sum: DailyReportSumAggregateOutputType | null
@@ -16821,6 +16828,7 @@ export namespace Prisma {
     activeCustomer?: boolean
     totalExpireCustomer?: boolean
     outgoingCalls?: boolean
+    trunkIssueRemarks?: boolean
     author?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["dailyReport"]>
 
@@ -16844,6 +16852,7 @@ export namespace Prisma {
     activeCustomer?: boolean
     totalExpireCustomer?: boolean
     outgoingCalls?: boolean
+    trunkIssueRemarks?: boolean
     author?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["dailyReport"]>
 
@@ -16867,6 +16876,7 @@ export namespace Prisma {
     activeCustomer?: boolean
     totalExpireCustomer?: boolean
     outgoingCalls?: boolean
+    trunkIssueRemarks?: boolean
     author?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["dailyReport"]>
 
@@ -16890,9 +16900,10 @@ export namespace Prisma {
     activeCustomer?: boolean
     totalExpireCustomer?: boolean
     outgoingCalls?: boolean
+    trunkIssueRemarks?: boolean
   }
 
-  export type DailyReportOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "createdAt" | "updatedAt" | "authorId" | "reportYmd" | "branchName" | "newConnectionRequest" | "pendingConnection" | "completedConnection" | "reasonPendingConnection" | "internetTkt" | "pendingTkt" | "completedTkt" | "reasonPendingTkt" | "expireCustomerDay" | "renewDay" | "activeCustomer" | "totalExpireCustomer" | "outgoingCalls", ExtArgs["result"]["dailyReport"]>
+  export type DailyReportOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "createdAt" | "updatedAt" | "authorId" | "reportYmd" | "branchName" | "newConnectionRequest" | "pendingConnection" | "completedConnection" | "reasonPendingConnection" | "internetTkt" | "pendingTkt" | "completedTkt" | "reasonPendingTkt" | "expireCustomerDay" | "renewDay" | "activeCustomer" | "totalExpireCustomer" | "outgoingCalls" | "trunkIssueRemarks", ExtArgs["result"]["dailyReport"]>
   export type DailyReportInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     author?: boolean | UserDefaultArgs<ExtArgs>
   }
@@ -16928,6 +16939,7 @@ export namespace Prisma {
       activeCustomer: number
       totalExpireCustomer: number
       outgoingCalls: number
+      trunkIssueRemarks: string | null
     }, ExtArgs["result"]["dailyReport"]>
     composites: {}
   }
@@ -17371,6 +17383,7 @@ export namespace Prisma {
     readonly activeCustomer: FieldRef<"DailyReport", 'Int'>
     readonly totalExpireCustomer: FieldRef<"DailyReport", 'Int'>
     readonly outgoingCalls: FieldRef<"DailyReport", 'Int'>
+    readonly trunkIssueRemarks: FieldRef<"DailyReport", 'String'>
   }
     
 
@@ -17960,7 +17973,8 @@ export namespace Prisma {
     renewDay: 'renewDay',
     activeCustomer: 'activeCustomer',
     totalExpireCustomer: 'totalExpireCustomer',
-    outgoingCalls: 'outgoingCalls'
+    outgoingCalls: 'outgoingCalls',
+    trunkIssueRemarks: 'trunkIssueRemarks'
   };
 
   export type DailyReportScalarFieldEnum = (typeof DailyReportScalarFieldEnum)[keyof typeof DailyReportScalarFieldEnum]
@@ -18942,6 +18956,7 @@ export namespace Prisma {
     activeCustomer?: IntFilter<"DailyReport"> | number
     totalExpireCustomer?: IntFilter<"DailyReport"> | number
     outgoingCalls?: IntFilter<"DailyReport"> | number
+    trunkIssueRemarks?: StringNullableFilter<"DailyReport"> | string | null
     author?: XOR<UserScalarRelationFilter, UserWhereInput>
   }
 
@@ -18965,6 +18980,7 @@ export namespace Prisma {
     activeCustomer?: SortOrder
     totalExpireCustomer?: SortOrder
     outgoingCalls?: SortOrder
+    trunkIssueRemarks?: SortOrderInput | SortOrder
     author?: UserOrderByWithRelationInput
   }
 
@@ -18992,6 +19008,7 @@ export namespace Prisma {
     activeCustomer?: IntFilter<"DailyReport"> | number
     totalExpireCustomer?: IntFilter<"DailyReport"> | number
     outgoingCalls?: IntFilter<"DailyReport"> | number
+    trunkIssueRemarks?: StringNullableFilter<"DailyReport"> | string | null
     author?: XOR<UserScalarRelationFilter, UserWhereInput>
   }, "id" | "authorId_reportYmd">
 
@@ -19015,6 +19032,7 @@ export namespace Prisma {
     activeCustomer?: SortOrder
     totalExpireCustomer?: SortOrder
     outgoingCalls?: SortOrder
+    trunkIssueRemarks?: SortOrderInput | SortOrder
     _count?: DailyReportCountOrderByAggregateInput
     _avg?: DailyReportAvgOrderByAggregateInput
     _max?: DailyReportMaxOrderByAggregateInput
@@ -19045,6 +19063,7 @@ export namespace Prisma {
     activeCustomer?: IntWithAggregatesFilter<"DailyReport"> | number
     totalExpireCustomer?: IntWithAggregatesFilter<"DailyReport"> | number
     outgoingCalls?: IntWithAggregatesFilter<"DailyReport"> | number
+    trunkIssueRemarks?: StringNullableWithAggregatesFilter<"DailyReport"> | string | null
   }
 
   export type UserCreateInput = {
@@ -19844,6 +19863,7 @@ export namespace Prisma {
     activeCustomer?: number
     totalExpireCustomer?: number
     outgoingCalls?: number
+    trunkIssueRemarks?: string | null
     author: UserCreateNestedOneWithoutDailyReportsInput
   }
 
@@ -19867,6 +19887,7 @@ export namespace Prisma {
     activeCustomer?: number
     totalExpireCustomer?: number
     outgoingCalls?: number
+    trunkIssueRemarks?: string | null
   }
 
   export type DailyReportUpdateInput = {
@@ -19887,6 +19908,7 @@ export namespace Prisma {
     activeCustomer?: IntFieldUpdateOperationsInput | number
     totalExpireCustomer?: IntFieldUpdateOperationsInput | number
     outgoingCalls?: IntFieldUpdateOperationsInput | number
+    trunkIssueRemarks?: NullableStringFieldUpdateOperationsInput | string | null
     author?: UserUpdateOneRequiredWithoutDailyReportsNestedInput
   }
 
@@ -19910,6 +19932,7 @@ export namespace Prisma {
     activeCustomer?: IntFieldUpdateOperationsInput | number
     totalExpireCustomer?: IntFieldUpdateOperationsInput | number
     outgoingCalls?: IntFieldUpdateOperationsInput | number
+    trunkIssueRemarks?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type DailyReportCreateManyInput = {
@@ -19932,6 +19955,7 @@ export namespace Prisma {
     activeCustomer?: number
     totalExpireCustomer?: number
     outgoingCalls?: number
+    trunkIssueRemarks?: string | null
   }
 
   export type DailyReportUpdateManyMutationInput = {
@@ -19952,6 +19976,7 @@ export namespace Prisma {
     activeCustomer?: IntFieldUpdateOperationsInput | number
     totalExpireCustomer?: IntFieldUpdateOperationsInput | number
     outgoingCalls?: IntFieldUpdateOperationsInput | number
+    trunkIssueRemarks?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type DailyReportUncheckedUpdateManyInput = {
@@ -19974,6 +19999,7 @@ export namespace Prisma {
     activeCustomer?: IntFieldUpdateOperationsInput | number
     totalExpireCustomer?: IntFieldUpdateOperationsInput | number
     outgoingCalls?: IntFieldUpdateOperationsInput | number
+    trunkIssueRemarks?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type IntFilter<$PrismaModel = never> = {
@@ -20852,6 +20878,7 @@ export namespace Prisma {
     activeCustomer?: SortOrder
     totalExpireCustomer?: SortOrder
     outgoingCalls?: SortOrder
+    trunkIssueRemarks?: SortOrder
   }
 
   export type DailyReportAvgOrderByAggregateInput = {
@@ -20890,6 +20917,7 @@ export namespace Prisma {
     activeCustomer?: SortOrder
     totalExpireCustomer?: SortOrder
     outgoingCalls?: SortOrder
+    trunkIssueRemarks?: SortOrder
   }
 
   export type DailyReportMinOrderByAggregateInput = {
@@ -20912,6 +20940,7 @@ export namespace Prisma {
     activeCustomer?: SortOrder
     totalExpireCustomer?: SortOrder
     outgoingCalls?: SortOrder
+    trunkIssueRemarks?: SortOrder
   }
 
   export type DailyReportSumOrderByAggregateInput = {
@@ -22897,6 +22926,7 @@ export namespace Prisma {
     activeCustomer?: number
     totalExpireCustomer?: number
     outgoingCalls?: number
+    trunkIssueRemarks?: string | null
   }
 
   export type DailyReportUncheckedCreateWithoutAuthorInput = {
@@ -22918,6 +22948,7 @@ export namespace Prisma {
     activeCustomer?: number
     totalExpireCustomer?: number
     outgoingCalls?: number
+    trunkIssueRemarks?: string | null
   }
 
   export type DailyReportCreateOrConnectWithoutAuthorInput = {
@@ -23302,6 +23333,7 @@ export namespace Prisma {
     activeCustomer?: IntFilter<"DailyReport"> | number
     totalExpireCustomer?: IntFilter<"DailyReport"> | number
     outgoingCalls?: IntFilter<"DailyReport"> | number
+    trunkIssueRemarks?: StringNullableFilter<"DailyReport"> | string | null
   }
 
   export type UserCreateWithoutPostsInput = {
@@ -25867,6 +25899,7 @@ export namespace Prisma {
     activeCustomer?: number
     totalExpireCustomer?: number
     outgoingCalls?: number
+    trunkIssueRemarks?: string | null
   }
 
   export type PostUpdateWithoutAuthorInput = {
@@ -26173,6 +26206,7 @@ export namespace Prisma {
     activeCustomer?: IntFieldUpdateOperationsInput | number
     totalExpireCustomer?: IntFieldUpdateOperationsInput | number
     outgoingCalls?: IntFieldUpdateOperationsInput | number
+    trunkIssueRemarks?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type DailyReportUncheckedUpdateWithoutAuthorInput = {
@@ -26194,6 +26228,7 @@ export namespace Prisma {
     activeCustomer?: IntFieldUpdateOperationsInput | number
     totalExpireCustomer?: IntFieldUpdateOperationsInput | number
     outgoingCalls?: IntFieldUpdateOperationsInput | number
+    trunkIssueRemarks?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type DailyReportUncheckedUpdateManyWithoutAuthorInput = {
@@ -26215,6 +26250,7 @@ export namespace Prisma {
     activeCustomer?: IntFieldUpdateOperationsInput | number
     totalExpireCustomer?: IntFieldUpdateOperationsInput | number
     outgoingCalls?: IntFieldUpdateOperationsInput | number
+    trunkIssueRemarks?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type FileCreateManyPostInput = {
