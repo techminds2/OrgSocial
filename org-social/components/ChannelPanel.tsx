@@ -409,7 +409,7 @@ export default function ChannelsPanel() {
                       {c.memberCount} members
                     </div>
                   </div>
-
+ 
                   {c.isMember ? (
                     <Link href={`/channels/${c.id}`}>
                       <Button size="xs" variant="light">
