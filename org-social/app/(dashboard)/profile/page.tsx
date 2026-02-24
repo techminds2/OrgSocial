@@ -13,6 +13,8 @@ import {
 } from "@mantine/core";
 import ShowPosts from "@/components/ShowPost";
 import MyChannels from "@/components/MyChannels";
+import DailyReportComposer from "@/components/DailyReportComposer";
+import DailyReportViewer from "@/components/DailyReportViewer";
 
 type User = {
   id: number;
@@ -57,27 +59,46 @@ export default function ProfilePage() {
   const loadMoreRef = useRef<HTMLDivElement | null>(null);
 
   // user
-  useEffect(() => {
-    let mounted = true;
-    (async () => {
-      try {
-        const res = await fetch("/api/auth/me", {
-          credentials: "include",
-          cache: "no-store",
-        });
-        if (!res.ok) throw new Error("Not authenticated");
-        const data: User = await res.json();
-        if (mounted) setUser(data);
-      } catch (err) {
-        console.error(err);
-      } finally {
-        if (mounted) setLoadingUser(false);
+  // user
+useEffect(() => {
+  let mounted = true;
+
+  (async () => {
+    try {
+      const res = await fetch("/api/auth/me", {
+        credentials: "include",
+        cache: "no-store",
+      });
+      if (!res.ok) throw new Error("Not authenticated");
+
+      const raw = await res.json();
+
+      const normalized: User = {
+        ...raw,
+        id: Number(raw?.id ?? raw?.user_id ?? raw?.user?.id),
+        role: raw?.role ?? raw?.user?.role ?? null,
+        username: raw?.username ?? raw?.user?.username ?? null,
+        email: raw?.email ?? raw?.user?.email ?? null,
+        profile_photo: raw?.profile_photo ?? raw?.user?.profile_photo ?? null,
+      };
+
+      if (!Number.isFinite(normalized.id)) {
+        throw new Error("Invalid user id from /api/auth/me");
       }
-    })();
-    return () => {
-      mounted = false;
-    };
-  }, []);
+
+      if (mounted) setUser(normalized);
+    } catch (err) {
+      console.error(err);
+      if (mounted) setUser(null);
+    } finally {
+      if (mounted) setLoadingUser(false);
+    }
+  })();
+
+  return () => {
+    mounted = false;
+  };
+}, []);
 
   // fetch page
   const fetchPostsPage = async (opts?: {
@@ -174,7 +195,7 @@ export default function ProfilePage() {
           .catch(console.error)
           .finally(() => setLoadingMore(false));
       },
-      { root: null, rootMargin: "600px", threshold: 0 }
+      { root: null, rootMargin: "600px", threshold: 0 },
     );
 
     obs.observe(el);
@@ -210,7 +231,7 @@ export default function ProfilePage() {
         comments: p.comments ?? [],
         channel: p.channel ?? null,
       })),
-    [posts, activeTab, userId, username, profilePhoto]
+    [posts, activeTab, userId, username, profilePhoto],
   );
 
   if (loadingUser)
@@ -262,7 +283,12 @@ export default function ProfilePage() {
           )}
         </div>
       </Paper>
-
+      <DailyReportComposer userId={user.id} viewerId={user.id} />
+      <DailyReportViewer
+        userId={user.id}
+        viewerId={user.id}
+        viewerRole={user.role}
+      />
       <Divider className="mb-4" />
 
       <Group justify="left" mb="md">
@@ -315,8 +341,6 @@ export default function ProfilePage() {
                 </Button>
               </div>
             )}
-
-        
           </>
         ))}
     </Container>

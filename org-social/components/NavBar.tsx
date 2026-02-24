@@ -233,6 +233,8 @@ export default function NavBar({ profileImage }: NavBarProps) {
                   const n: Notification = { ...raw, type: normalizeType(raw) };
                   const key = notifKey(n);
 
+                  if (n.type !== "post") return null;
+
                   return (
                     <Menu.Item
                       key={key}
@@ -246,17 +248,12 @@ export default function NavBar({ profileImage }: NavBarProps) {
                           await fetch(`/api/notifications/${n.id}/mark-read`, {
                             method: "PATCH",
                           });
+
                           setNotifications((prev) =>
                             prev.map((x) =>
                               x.id === n.id ? { ...x, isRead: true } : x,
                             ),
                           );
-
-                          if (n.type === "join-request") {
-                            setNotifications((prev) =>
-                              prev.filter((x) => x.id !== n.id),
-                            );
-                          }
                         }
                       }}
                     >
