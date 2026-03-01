@@ -78,6 +78,11 @@ export type PostSeen = $Result.DefaultSelection<Prisma.$PostSeenPayload>
  * 
  */
 export type DailyReport = $Result.DefaultSelection<Prisma.$DailyReportPayload>
+/**
+ * Model RegionalDailyReport
+ * 
+ */
+export type RegionalDailyReport = $Result.DefaultSelection<Prisma.$RegionalDailyReportPayload>
 
 /**
  * Enums
@@ -344,6 +349,16 @@ export class PrismaClient<
     * ```
     */
   get dailyReport(): Prisma.DailyReportDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.regionalDailyReport`: Exposes CRUD operations for the **RegionalDailyReport** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more RegionalDailyReports
+    * const regionalDailyReports = await prisma.regionalDailyReport.findMany()
+    * ```
+    */
+  get regionalDailyReport(): Prisma.RegionalDailyReportDelegate<ExtArgs, ClientOptions>;
 }
 
 export namespace Prisma {
@@ -797,7 +812,8 @@ export namespace Prisma {
     SavedPost: 'SavedPost',
     Todo: 'Todo',
     PostSeen: 'PostSeen',
-    DailyReport: 'DailyReport'
+    DailyReport: 'DailyReport',
+    RegionalDailyReport: 'RegionalDailyReport'
   };
 
   export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -816,7 +832,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "user" | "post" | "comment" | "reaction" | "file" | "channel" | "channelMember" | "joinRequest" | "notification" | "savedPost" | "todo" | "postSeen" | "dailyReport"
+      modelProps: "user" | "post" | "comment" | "reaction" | "file" | "channel" | "channelMember" | "joinRequest" | "notification" | "savedPost" | "todo" | "postSeen" | "dailyReport" | "regionalDailyReport"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -1782,6 +1798,80 @@ export namespace Prisma {
           }
         }
       }
+      RegionalDailyReport: {
+        payload: Prisma.$RegionalDailyReportPayload<ExtArgs>
+        fields: Prisma.RegionalDailyReportFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.RegionalDailyReportFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RegionalDailyReportPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.RegionalDailyReportFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RegionalDailyReportPayload>
+          }
+          findFirst: {
+            args: Prisma.RegionalDailyReportFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RegionalDailyReportPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.RegionalDailyReportFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RegionalDailyReportPayload>
+          }
+          findMany: {
+            args: Prisma.RegionalDailyReportFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RegionalDailyReportPayload>[]
+          }
+          create: {
+            args: Prisma.RegionalDailyReportCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RegionalDailyReportPayload>
+          }
+          createMany: {
+            args: Prisma.RegionalDailyReportCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.RegionalDailyReportCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RegionalDailyReportPayload>[]
+          }
+          delete: {
+            args: Prisma.RegionalDailyReportDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RegionalDailyReportPayload>
+          }
+          update: {
+            args: Prisma.RegionalDailyReportUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RegionalDailyReportPayload>
+          }
+          deleteMany: {
+            args: Prisma.RegionalDailyReportDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.RegionalDailyReportUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.RegionalDailyReportUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RegionalDailyReportPayload>[]
+          }
+          upsert: {
+            args: Prisma.RegionalDailyReportUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RegionalDailyReportPayload>
+          }
+          aggregate: {
+            args: Prisma.RegionalDailyReportAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateRegionalDailyReport>
+          }
+          groupBy: {
+            args: Prisma.RegionalDailyReportGroupByArgs<ExtArgs>
+            result: $Utils.Optional<RegionalDailyReportGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.RegionalDailyReportCountArgs<ExtArgs>
+            result: $Utils.Optional<RegionalDailyReportCountAggregateOutputType> | number
+          }
+        }
+      }
     }
   } & {
     other: {
@@ -1891,6 +1981,7 @@ export namespace Prisma {
     todo?: TodoOmit
     postSeen?: PostSeenOmit
     dailyReport?: DailyReportOmit
+    regionalDailyReport?: RegionalDailyReportOmit
   }
 
   /* Types for Logging */
@@ -1983,6 +2074,7 @@ export namespace Prisma {
     postSeen: number
     notificationsActed: number
     dailyReports: number
+    regionalReports: number
   }
 
   export type UserCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -1998,6 +2090,7 @@ export namespace Prisma {
     postSeen?: boolean | UserCountOutputTypeCountPostSeenArgs
     notificationsActed?: boolean | UserCountOutputTypeCountNotificationsActedArgs
     dailyReports?: boolean | UserCountOutputTypeCountDailyReportsArgs
+    regionalReports?: boolean | UserCountOutputTypeCountRegionalReportsArgs
   }
 
   // Custom InputTypes
@@ -2093,6 +2186,13 @@ export namespace Prisma {
    */
   export type UserCountOutputTypeCountDailyReportsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: DailyReportWhereInput
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountRegionalReportsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: RegionalDailyReportWhereInput
   }
 
 
@@ -2505,6 +2605,7 @@ export namespace Prisma {
     pinnedChannel?: boolean | User$pinnedChannelArgs<ExtArgs>
     notificationsActed?: boolean | User$notificationsActedArgs<ExtArgs>
     dailyReports?: boolean | User$dailyReportsArgs<ExtArgs>
+    regionalReports?: boolean | User$regionalReportsArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["user"]>
 
@@ -2555,6 +2656,7 @@ export namespace Prisma {
     pinnedChannel?: boolean | User$pinnedChannelArgs<ExtArgs>
     notificationsActed?: boolean | User$notificationsActedArgs<ExtArgs>
     dailyReports?: boolean | User$dailyReportsArgs<ExtArgs>
+    regionalReports?: boolean | User$regionalReportsArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type UserIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -2580,6 +2682,7 @@ export namespace Prisma {
       pinnedChannel: Prisma.$ChannelPayload<ExtArgs> | null
       notificationsActed: Prisma.$NotificationPayload<ExtArgs>[]
       dailyReports: Prisma.$DailyReportPayload<ExtArgs>[]
+      regionalReports: Prisma.$RegionalDailyReportPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: number
@@ -2996,6 +3099,7 @@ export namespace Prisma {
     pinnedChannel<T extends User$pinnedChannelArgs<ExtArgs> = {}>(args?: Subset<T, User$pinnedChannelArgs<ExtArgs>>): Prisma__ChannelClient<$Result.GetResult<Prisma.$ChannelPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     notificationsActed<T extends User$notificationsActedArgs<ExtArgs> = {}>(args?: Subset<T, User$notificationsActedArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$NotificationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     dailyReports<T extends User$dailyReportsArgs<ExtArgs> = {}>(args?: Subset<T, User$dailyReportsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$DailyReportPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    regionalReports<T extends User$regionalReportsArgs<ExtArgs> = {}>(args?: Subset<T, User$regionalReportsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$RegionalDailyReportPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -3732,6 +3836,30 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: DailyReportScalarFieldEnum | DailyReportScalarFieldEnum[]
+  }
+
+  /**
+   * User.regionalReports
+   */
+  export type User$regionalReportsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the RegionalDailyReport
+     */
+    select?: RegionalDailyReportSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the RegionalDailyReport
+     */
+    omit?: RegionalDailyReportOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RegionalDailyReportInclude<ExtArgs> | null
+    where?: RegionalDailyReportWhereInput
+    orderBy?: RegionalDailyReportOrderByWithRelationInput | RegionalDailyReportOrderByWithRelationInput[]
+    cursor?: RegionalDailyReportWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: RegionalDailyReportScalarFieldEnum | RegionalDailyReportScalarFieldEnum[]
   }
 
   /**
@@ -17799,6 +17927,1188 @@ export namespace Prisma {
 
 
   /**
+   * Model RegionalDailyReport
+   */
+
+  export type AggregateRegionalDailyReport = {
+    _count: RegionalDailyReportCountAggregateOutputType | null
+    _avg: RegionalDailyReportAvgAggregateOutputType | null
+    _sum: RegionalDailyReportSumAggregateOutputType | null
+    _min: RegionalDailyReportMinAggregateOutputType | null
+    _max: RegionalDailyReportMaxAggregateOutputType | null
+  }
+
+  export type RegionalDailyReportAvgAggregateOutputType = {
+    id: number | null
+    authorId: number | null
+    totalMeetings: number | null
+    totalBranchesVisited: number | null
+    marketingDaysPlanned: number | null
+  }
+
+  export type RegionalDailyReportSumAggregateOutputType = {
+    id: number | null
+    authorId: number | null
+    totalMeetings: number | null
+    totalBranchesVisited: number | null
+    marketingDaysPlanned: number | null
+  }
+
+  export type RegionalDailyReportMinAggregateOutputType = {
+    id: number | null
+    createdAt: Date | null
+    updatedAt: Date | null
+    authorId: number | null
+    reportYmd: string | null
+    regionName: string | null
+    totalMeetings: number | null
+    totalBranchesVisited: number | null
+    marketingDaysPlanned: number | null
+    remarks: string | null
+  }
+
+  export type RegionalDailyReportMaxAggregateOutputType = {
+    id: number | null
+    createdAt: Date | null
+    updatedAt: Date | null
+    authorId: number | null
+    reportYmd: string | null
+    regionName: string | null
+    totalMeetings: number | null
+    totalBranchesVisited: number | null
+    marketingDaysPlanned: number | null
+    remarks: string | null
+  }
+
+  export type RegionalDailyReportCountAggregateOutputType = {
+    id: number
+    createdAt: number
+    updatedAt: number
+    authorId: number
+    reportYmd: number
+    regionName: number
+    totalMeetings: number
+    totalBranchesVisited: number
+    marketingDaysPlanned: number
+    dynamicData: number
+    remarks: number
+    _all: number
+  }
+
+
+  export type RegionalDailyReportAvgAggregateInputType = {
+    id?: true
+    authorId?: true
+    totalMeetings?: true
+    totalBranchesVisited?: true
+    marketingDaysPlanned?: true
+  }
+
+  export type RegionalDailyReportSumAggregateInputType = {
+    id?: true
+    authorId?: true
+    totalMeetings?: true
+    totalBranchesVisited?: true
+    marketingDaysPlanned?: true
+  }
+
+  export type RegionalDailyReportMinAggregateInputType = {
+    id?: true
+    createdAt?: true
+    updatedAt?: true
+    authorId?: true
+    reportYmd?: true
+    regionName?: true
+    totalMeetings?: true
+    totalBranchesVisited?: true
+    marketingDaysPlanned?: true
+    remarks?: true
+  }
+
+  export type RegionalDailyReportMaxAggregateInputType = {
+    id?: true
+    createdAt?: true
+    updatedAt?: true
+    authorId?: true
+    reportYmd?: true
+    regionName?: true
+    totalMeetings?: true
+    totalBranchesVisited?: true
+    marketingDaysPlanned?: true
+    remarks?: true
+  }
+
+  export type RegionalDailyReportCountAggregateInputType = {
+    id?: true
+    createdAt?: true
+    updatedAt?: true
+    authorId?: true
+    reportYmd?: true
+    regionName?: true
+    totalMeetings?: true
+    totalBranchesVisited?: true
+    marketingDaysPlanned?: true
+    dynamicData?: true
+    remarks?: true
+    _all?: true
+  }
+
+  export type RegionalDailyReportAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which RegionalDailyReport to aggregate.
+     */
+    where?: RegionalDailyReportWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of RegionalDailyReports to fetch.
+     */
+    orderBy?: RegionalDailyReportOrderByWithRelationInput | RegionalDailyReportOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: RegionalDailyReportWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` RegionalDailyReports from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` RegionalDailyReports.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned RegionalDailyReports
+    **/
+    _count?: true | RegionalDailyReportCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: RegionalDailyReportAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: RegionalDailyReportSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: RegionalDailyReportMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: RegionalDailyReportMaxAggregateInputType
+  }
+
+  export type GetRegionalDailyReportAggregateType<T extends RegionalDailyReportAggregateArgs> = {
+        [P in keyof T & keyof AggregateRegionalDailyReport]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateRegionalDailyReport[P]>
+      : GetScalarType<T[P], AggregateRegionalDailyReport[P]>
+  }
+
+
+
+
+  export type RegionalDailyReportGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: RegionalDailyReportWhereInput
+    orderBy?: RegionalDailyReportOrderByWithAggregationInput | RegionalDailyReportOrderByWithAggregationInput[]
+    by: RegionalDailyReportScalarFieldEnum[] | RegionalDailyReportScalarFieldEnum
+    having?: RegionalDailyReportScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: RegionalDailyReportCountAggregateInputType | true
+    _avg?: RegionalDailyReportAvgAggregateInputType
+    _sum?: RegionalDailyReportSumAggregateInputType
+    _min?: RegionalDailyReportMinAggregateInputType
+    _max?: RegionalDailyReportMaxAggregateInputType
+  }
+
+  export type RegionalDailyReportGroupByOutputType = {
+    id: number
+    createdAt: Date
+    updatedAt: Date
+    authorId: number
+    reportYmd: string
+    regionName: string
+    totalMeetings: number | null
+    totalBranchesVisited: number | null
+    marketingDaysPlanned: number | null
+    dynamicData: JsonValue | null
+    remarks: string | null
+    _count: RegionalDailyReportCountAggregateOutputType | null
+    _avg: RegionalDailyReportAvgAggregateOutputType | null
+    _sum: RegionalDailyReportSumAggregateOutputType | null
+    _min: RegionalDailyReportMinAggregateOutputType | null
+    _max: RegionalDailyReportMaxAggregateOutputType | null
+  }
+
+  type GetRegionalDailyReportGroupByPayload<T extends RegionalDailyReportGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<RegionalDailyReportGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof RegionalDailyReportGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], RegionalDailyReportGroupByOutputType[P]>
+            : GetScalarType<T[P], RegionalDailyReportGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type RegionalDailyReportSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    authorId?: boolean
+    reportYmd?: boolean
+    regionName?: boolean
+    totalMeetings?: boolean
+    totalBranchesVisited?: boolean
+    marketingDaysPlanned?: boolean
+    dynamicData?: boolean
+    remarks?: boolean
+    author?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["regionalDailyReport"]>
+
+  export type RegionalDailyReportSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    authorId?: boolean
+    reportYmd?: boolean
+    regionName?: boolean
+    totalMeetings?: boolean
+    totalBranchesVisited?: boolean
+    marketingDaysPlanned?: boolean
+    dynamicData?: boolean
+    remarks?: boolean
+    author?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["regionalDailyReport"]>
+
+  export type RegionalDailyReportSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    authorId?: boolean
+    reportYmd?: boolean
+    regionName?: boolean
+    totalMeetings?: boolean
+    totalBranchesVisited?: boolean
+    marketingDaysPlanned?: boolean
+    dynamicData?: boolean
+    remarks?: boolean
+    author?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["regionalDailyReport"]>
+
+  export type RegionalDailyReportSelectScalar = {
+    id?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    authorId?: boolean
+    reportYmd?: boolean
+    regionName?: boolean
+    totalMeetings?: boolean
+    totalBranchesVisited?: boolean
+    marketingDaysPlanned?: boolean
+    dynamicData?: boolean
+    remarks?: boolean
+  }
+
+  export type RegionalDailyReportOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "createdAt" | "updatedAt" | "authorId" | "reportYmd" | "regionName" | "totalMeetings" | "totalBranchesVisited" | "marketingDaysPlanned" | "dynamicData" | "remarks", ExtArgs["result"]["regionalDailyReport"]>
+  export type RegionalDailyReportInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    author?: boolean | UserDefaultArgs<ExtArgs>
+  }
+  export type RegionalDailyReportIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    author?: boolean | UserDefaultArgs<ExtArgs>
+  }
+  export type RegionalDailyReportIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    author?: boolean | UserDefaultArgs<ExtArgs>
+  }
+
+  export type $RegionalDailyReportPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "RegionalDailyReport"
+    objects: {
+      author: Prisma.$UserPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: number
+      createdAt: Date
+      updatedAt: Date
+      authorId: number
+      reportYmd: string
+      regionName: string
+      totalMeetings: number | null
+      totalBranchesVisited: number | null
+      marketingDaysPlanned: number | null
+      dynamicData: Prisma.JsonValue | null
+      remarks: string | null
+    }, ExtArgs["result"]["regionalDailyReport"]>
+    composites: {}
+  }
+
+  type RegionalDailyReportGetPayload<S extends boolean | null | undefined | RegionalDailyReportDefaultArgs> = $Result.GetResult<Prisma.$RegionalDailyReportPayload, S>
+
+  type RegionalDailyReportCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<RegionalDailyReportFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: RegionalDailyReportCountAggregateInputType | true
+    }
+
+  export interface RegionalDailyReportDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['RegionalDailyReport'], meta: { name: 'RegionalDailyReport' } }
+    /**
+     * Find zero or one RegionalDailyReport that matches the filter.
+     * @param {RegionalDailyReportFindUniqueArgs} args - Arguments to find a RegionalDailyReport
+     * @example
+     * // Get one RegionalDailyReport
+     * const regionalDailyReport = await prisma.regionalDailyReport.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends RegionalDailyReportFindUniqueArgs>(args: SelectSubset<T, RegionalDailyReportFindUniqueArgs<ExtArgs>>): Prisma__RegionalDailyReportClient<$Result.GetResult<Prisma.$RegionalDailyReportPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one RegionalDailyReport that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {RegionalDailyReportFindUniqueOrThrowArgs} args - Arguments to find a RegionalDailyReport
+     * @example
+     * // Get one RegionalDailyReport
+     * const regionalDailyReport = await prisma.regionalDailyReport.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends RegionalDailyReportFindUniqueOrThrowArgs>(args: SelectSubset<T, RegionalDailyReportFindUniqueOrThrowArgs<ExtArgs>>): Prisma__RegionalDailyReportClient<$Result.GetResult<Prisma.$RegionalDailyReportPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first RegionalDailyReport that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {RegionalDailyReportFindFirstArgs} args - Arguments to find a RegionalDailyReport
+     * @example
+     * // Get one RegionalDailyReport
+     * const regionalDailyReport = await prisma.regionalDailyReport.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends RegionalDailyReportFindFirstArgs>(args?: SelectSubset<T, RegionalDailyReportFindFirstArgs<ExtArgs>>): Prisma__RegionalDailyReportClient<$Result.GetResult<Prisma.$RegionalDailyReportPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first RegionalDailyReport that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {RegionalDailyReportFindFirstOrThrowArgs} args - Arguments to find a RegionalDailyReport
+     * @example
+     * // Get one RegionalDailyReport
+     * const regionalDailyReport = await prisma.regionalDailyReport.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends RegionalDailyReportFindFirstOrThrowArgs>(args?: SelectSubset<T, RegionalDailyReportFindFirstOrThrowArgs<ExtArgs>>): Prisma__RegionalDailyReportClient<$Result.GetResult<Prisma.$RegionalDailyReportPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more RegionalDailyReports that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {RegionalDailyReportFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all RegionalDailyReports
+     * const regionalDailyReports = await prisma.regionalDailyReport.findMany()
+     * 
+     * // Get first 10 RegionalDailyReports
+     * const regionalDailyReports = await prisma.regionalDailyReport.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const regionalDailyReportWithIdOnly = await prisma.regionalDailyReport.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends RegionalDailyReportFindManyArgs>(args?: SelectSubset<T, RegionalDailyReportFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$RegionalDailyReportPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a RegionalDailyReport.
+     * @param {RegionalDailyReportCreateArgs} args - Arguments to create a RegionalDailyReport.
+     * @example
+     * // Create one RegionalDailyReport
+     * const RegionalDailyReport = await prisma.regionalDailyReport.create({
+     *   data: {
+     *     // ... data to create a RegionalDailyReport
+     *   }
+     * })
+     * 
+     */
+    create<T extends RegionalDailyReportCreateArgs>(args: SelectSubset<T, RegionalDailyReportCreateArgs<ExtArgs>>): Prisma__RegionalDailyReportClient<$Result.GetResult<Prisma.$RegionalDailyReportPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many RegionalDailyReports.
+     * @param {RegionalDailyReportCreateManyArgs} args - Arguments to create many RegionalDailyReports.
+     * @example
+     * // Create many RegionalDailyReports
+     * const regionalDailyReport = await prisma.regionalDailyReport.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends RegionalDailyReportCreateManyArgs>(args?: SelectSubset<T, RegionalDailyReportCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many RegionalDailyReports and returns the data saved in the database.
+     * @param {RegionalDailyReportCreateManyAndReturnArgs} args - Arguments to create many RegionalDailyReports.
+     * @example
+     * // Create many RegionalDailyReports
+     * const regionalDailyReport = await prisma.regionalDailyReport.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many RegionalDailyReports and only return the `id`
+     * const regionalDailyReportWithIdOnly = await prisma.regionalDailyReport.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends RegionalDailyReportCreateManyAndReturnArgs>(args?: SelectSubset<T, RegionalDailyReportCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$RegionalDailyReportPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a RegionalDailyReport.
+     * @param {RegionalDailyReportDeleteArgs} args - Arguments to delete one RegionalDailyReport.
+     * @example
+     * // Delete one RegionalDailyReport
+     * const RegionalDailyReport = await prisma.regionalDailyReport.delete({
+     *   where: {
+     *     // ... filter to delete one RegionalDailyReport
+     *   }
+     * })
+     * 
+     */
+    delete<T extends RegionalDailyReportDeleteArgs>(args: SelectSubset<T, RegionalDailyReportDeleteArgs<ExtArgs>>): Prisma__RegionalDailyReportClient<$Result.GetResult<Prisma.$RegionalDailyReportPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one RegionalDailyReport.
+     * @param {RegionalDailyReportUpdateArgs} args - Arguments to update one RegionalDailyReport.
+     * @example
+     * // Update one RegionalDailyReport
+     * const regionalDailyReport = await prisma.regionalDailyReport.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends RegionalDailyReportUpdateArgs>(args: SelectSubset<T, RegionalDailyReportUpdateArgs<ExtArgs>>): Prisma__RegionalDailyReportClient<$Result.GetResult<Prisma.$RegionalDailyReportPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more RegionalDailyReports.
+     * @param {RegionalDailyReportDeleteManyArgs} args - Arguments to filter RegionalDailyReports to delete.
+     * @example
+     * // Delete a few RegionalDailyReports
+     * const { count } = await prisma.regionalDailyReport.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends RegionalDailyReportDeleteManyArgs>(args?: SelectSubset<T, RegionalDailyReportDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more RegionalDailyReports.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {RegionalDailyReportUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many RegionalDailyReports
+     * const regionalDailyReport = await prisma.regionalDailyReport.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends RegionalDailyReportUpdateManyArgs>(args: SelectSubset<T, RegionalDailyReportUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more RegionalDailyReports and returns the data updated in the database.
+     * @param {RegionalDailyReportUpdateManyAndReturnArgs} args - Arguments to update many RegionalDailyReports.
+     * @example
+     * // Update many RegionalDailyReports
+     * const regionalDailyReport = await prisma.regionalDailyReport.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more RegionalDailyReports and only return the `id`
+     * const regionalDailyReportWithIdOnly = await prisma.regionalDailyReport.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends RegionalDailyReportUpdateManyAndReturnArgs>(args: SelectSubset<T, RegionalDailyReportUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$RegionalDailyReportPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one RegionalDailyReport.
+     * @param {RegionalDailyReportUpsertArgs} args - Arguments to update or create a RegionalDailyReport.
+     * @example
+     * // Update or create a RegionalDailyReport
+     * const regionalDailyReport = await prisma.regionalDailyReport.upsert({
+     *   create: {
+     *     // ... data to create a RegionalDailyReport
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the RegionalDailyReport we want to update
+     *   }
+     * })
+     */
+    upsert<T extends RegionalDailyReportUpsertArgs>(args: SelectSubset<T, RegionalDailyReportUpsertArgs<ExtArgs>>): Prisma__RegionalDailyReportClient<$Result.GetResult<Prisma.$RegionalDailyReportPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of RegionalDailyReports.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {RegionalDailyReportCountArgs} args - Arguments to filter RegionalDailyReports to count.
+     * @example
+     * // Count the number of RegionalDailyReports
+     * const count = await prisma.regionalDailyReport.count({
+     *   where: {
+     *     // ... the filter for the RegionalDailyReports we want to count
+     *   }
+     * })
+    **/
+    count<T extends RegionalDailyReportCountArgs>(
+      args?: Subset<T, RegionalDailyReportCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], RegionalDailyReportCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a RegionalDailyReport.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {RegionalDailyReportAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends RegionalDailyReportAggregateArgs>(args: Subset<T, RegionalDailyReportAggregateArgs>): Prisma.PrismaPromise<GetRegionalDailyReportAggregateType<T>>
+
+    /**
+     * Group by RegionalDailyReport.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {RegionalDailyReportGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends RegionalDailyReportGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: RegionalDailyReportGroupByArgs['orderBy'] }
+        : { orderBy?: RegionalDailyReportGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, RegionalDailyReportGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetRegionalDailyReportGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the RegionalDailyReport model
+   */
+  readonly fields: RegionalDailyReportFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for RegionalDailyReport.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__RegionalDailyReportClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    author<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the RegionalDailyReport model
+   */
+  interface RegionalDailyReportFieldRefs {
+    readonly id: FieldRef<"RegionalDailyReport", 'Int'>
+    readonly createdAt: FieldRef<"RegionalDailyReport", 'DateTime'>
+    readonly updatedAt: FieldRef<"RegionalDailyReport", 'DateTime'>
+    readonly authorId: FieldRef<"RegionalDailyReport", 'Int'>
+    readonly reportYmd: FieldRef<"RegionalDailyReport", 'String'>
+    readonly regionName: FieldRef<"RegionalDailyReport", 'String'>
+    readonly totalMeetings: FieldRef<"RegionalDailyReport", 'Int'>
+    readonly totalBranchesVisited: FieldRef<"RegionalDailyReport", 'Int'>
+    readonly marketingDaysPlanned: FieldRef<"RegionalDailyReport", 'Int'>
+    readonly dynamicData: FieldRef<"RegionalDailyReport", 'Json'>
+    readonly remarks: FieldRef<"RegionalDailyReport", 'String'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * RegionalDailyReport findUnique
+   */
+  export type RegionalDailyReportFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the RegionalDailyReport
+     */
+    select?: RegionalDailyReportSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the RegionalDailyReport
+     */
+    omit?: RegionalDailyReportOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RegionalDailyReportInclude<ExtArgs> | null
+    /**
+     * Filter, which RegionalDailyReport to fetch.
+     */
+    where: RegionalDailyReportWhereUniqueInput
+  }
+
+  /**
+   * RegionalDailyReport findUniqueOrThrow
+   */
+  export type RegionalDailyReportFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the RegionalDailyReport
+     */
+    select?: RegionalDailyReportSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the RegionalDailyReport
+     */
+    omit?: RegionalDailyReportOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RegionalDailyReportInclude<ExtArgs> | null
+    /**
+     * Filter, which RegionalDailyReport to fetch.
+     */
+    where: RegionalDailyReportWhereUniqueInput
+  }
+
+  /**
+   * RegionalDailyReport findFirst
+   */
+  export type RegionalDailyReportFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the RegionalDailyReport
+     */
+    select?: RegionalDailyReportSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the RegionalDailyReport
+     */
+    omit?: RegionalDailyReportOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RegionalDailyReportInclude<ExtArgs> | null
+    /**
+     * Filter, which RegionalDailyReport to fetch.
+     */
+    where?: RegionalDailyReportWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of RegionalDailyReports to fetch.
+     */
+    orderBy?: RegionalDailyReportOrderByWithRelationInput | RegionalDailyReportOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for RegionalDailyReports.
+     */
+    cursor?: RegionalDailyReportWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` RegionalDailyReports from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` RegionalDailyReports.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of RegionalDailyReports.
+     */
+    distinct?: RegionalDailyReportScalarFieldEnum | RegionalDailyReportScalarFieldEnum[]
+  }
+
+  /**
+   * RegionalDailyReport findFirstOrThrow
+   */
+  export type RegionalDailyReportFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the RegionalDailyReport
+     */
+    select?: RegionalDailyReportSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the RegionalDailyReport
+     */
+    omit?: RegionalDailyReportOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RegionalDailyReportInclude<ExtArgs> | null
+    /**
+     * Filter, which RegionalDailyReport to fetch.
+     */
+    where?: RegionalDailyReportWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of RegionalDailyReports to fetch.
+     */
+    orderBy?: RegionalDailyReportOrderByWithRelationInput | RegionalDailyReportOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for RegionalDailyReports.
+     */
+    cursor?: RegionalDailyReportWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` RegionalDailyReports from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` RegionalDailyReports.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of RegionalDailyReports.
+     */
+    distinct?: RegionalDailyReportScalarFieldEnum | RegionalDailyReportScalarFieldEnum[]
+  }
+
+  /**
+   * RegionalDailyReport findMany
+   */
+  export type RegionalDailyReportFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the RegionalDailyReport
+     */
+    select?: RegionalDailyReportSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the RegionalDailyReport
+     */
+    omit?: RegionalDailyReportOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RegionalDailyReportInclude<ExtArgs> | null
+    /**
+     * Filter, which RegionalDailyReports to fetch.
+     */
+    where?: RegionalDailyReportWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of RegionalDailyReports to fetch.
+     */
+    orderBy?: RegionalDailyReportOrderByWithRelationInput | RegionalDailyReportOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing RegionalDailyReports.
+     */
+    cursor?: RegionalDailyReportWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` RegionalDailyReports from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` RegionalDailyReports.
+     */
+    skip?: number
+    distinct?: RegionalDailyReportScalarFieldEnum | RegionalDailyReportScalarFieldEnum[]
+  }
+
+  /**
+   * RegionalDailyReport create
+   */
+  export type RegionalDailyReportCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the RegionalDailyReport
+     */
+    select?: RegionalDailyReportSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the RegionalDailyReport
+     */
+    omit?: RegionalDailyReportOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RegionalDailyReportInclude<ExtArgs> | null
+    /**
+     * The data needed to create a RegionalDailyReport.
+     */
+    data: XOR<RegionalDailyReportCreateInput, RegionalDailyReportUncheckedCreateInput>
+  }
+
+  /**
+   * RegionalDailyReport createMany
+   */
+  export type RegionalDailyReportCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many RegionalDailyReports.
+     */
+    data: RegionalDailyReportCreateManyInput | RegionalDailyReportCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * RegionalDailyReport createManyAndReturn
+   */
+  export type RegionalDailyReportCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the RegionalDailyReport
+     */
+    select?: RegionalDailyReportSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the RegionalDailyReport
+     */
+    omit?: RegionalDailyReportOmit<ExtArgs> | null
+    /**
+     * The data used to create many RegionalDailyReports.
+     */
+    data: RegionalDailyReportCreateManyInput | RegionalDailyReportCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RegionalDailyReportIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * RegionalDailyReport update
+   */
+  export type RegionalDailyReportUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the RegionalDailyReport
+     */
+    select?: RegionalDailyReportSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the RegionalDailyReport
+     */
+    omit?: RegionalDailyReportOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RegionalDailyReportInclude<ExtArgs> | null
+    /**
+     * The data needed to update a RegionalDailyReport.
+     */
+    data: XOR<RegionalDailyReportUpdateInput, RegionalDailyReportUncheckedUpdateInput>
+    /**
+     * Choose, which RegionalDailyReport to update.
+     */
+    where: RegionalDailyReportWhereUniqueInput
+  }
+
+  /**
+   * RegionalDailyReport updateMany
+   */
+  export type RegionalDailyReportUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update RegionalDailyReports.
+     */
+    data: XOR<RegionalDailyReportUpdateManyMutationInput, RegionalDailyReportUncheckedUpdateManyInput>
+    /**
+     * Filter which RegionalDailyReports to update
+     */
+    where?: RegionalDailyReportWhereInput
+    /**
+     * Limit how many RegionalDailyReports to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * RegionalDailyReport updateManyAndReturn
+   */
+  export type RegionalDailyReportUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the RegionalDailyReport
+     */
+    select?: RegionalDailyReportSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the RegionalDailyReport
+     */
+    omit?: RegionalDailyReportOmit<ExtArgs> | null
+    /**
+     * The data used to update RegionalDailyReports.
+     */
+    data: XOR<RegionalDailyReportUpdateManyMutationInput, RegionalDailyReportUncheckedUpdateManyInput>
+    /**
+     * Filter which RegionalDailyReports to update
+     */
+    where?: RegionalDailyReportWhereInput
+    /**
+     * Limit how many RegionalDailyReports to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RegionalDailyReportIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * RegionalDailyReport upsert
+   */
+  export type RegionalDailyReportUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the RegionalDailyReport
+     */
+    select?: RegionalDailyReportSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the RegionalDailyReport
+     */
+    omit?: RegionalDailyReportOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RegionalDailyReportInclude<ExtArgs> | null
+    /**
+     * The filter to search for the RegionalDailyReport to update in case it exists.
+     */
+    where: RegionalDailyReportWhereUniqueInput
+    /**
+     * In case the RegionalDailyReport found by the `where` argument doesn't exist, create a new RegionalDailyReport with this data.
+     */
+    create: XOR<RegionalDailyReportCreateInput, RegionalDailyReportUncheckedCreateInput>
+    /**
+     * In case the RegionalDailyReport was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<RegionalDailyReportUpdateInput, RegionalDailyReportUncheckedUpdateInput>
+  }
+
+  /**
+   * RegionalDailyReport delete
+   */
+  export type RegionalDailyReportDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the RegionalDailyReport
+     */
+    select?: RegionalDailyReportSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the RegionalDailyReport
+     */
+    omit?: RegionalDailyReportOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RegionalDailyReportInclude<ExtArgs> | null
+    /**
+     * Filter which RegionalDailyReport to delete.
+     */
+    where: RegionalDailyReportWhereUniqueInput
+  }
+
+  /**
+   * RegionalDailyReport deleteMany
+   */
+  export type RegionalDailyReportDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which RegionalDailyReports to delete
+     */
+    where?: RegionalDailyReportWhereInput
+    /**
+     * Limit how many RegionalDailyReports to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * RegionalDailyReport without action
+   */
+  export type RegionalDailyReportDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the RegionalDailyReport
+     */
+    select?: RegionalDailyReportSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the RegionalDailyReport
+     */
+    omit?: RegionalDailyReportOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RegionalDailyReportInclude<ExtArgs> | null
+  }
+
+
+  /**
    * Enums
    */
 
@@ -17980,12 +19290,37 @@ export namespace Prisma {
   export type DailyReportScalarFieldEnum = (typeof DailyReportScalarFieldEnum)[keyof typeof DailyReportScalarFieldEnum]
 
 
+  export const RegionalDailyReportScalarFieldEnum: {
+    id: 'id',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt',
+    authorId: 'authorId',
+    reportYmd: 'reportYmd',
+    regionName: 'regionName',
+    totalMeetings: 'totalMeetings',
+    totalBranchesVisited: 'totalBranchesVisited',
+    marketingDaysPlanned: 'marketingDaysPlanned',
+    dynamicData: 'dynamicData',
+    remarks: 'remarks'
+  };
+
+  export type RegionalDailyReportScalarFieldEnum = (typeof RegionalDailyReportScalarFieldEnum)[keyof typeof RegionalDailyReportScalarFieldEnum]
+
+
   export const SortOrder: {
     asc: 'asc',
     desc: 'desc'
   };
 
   export type SortOrder = (typeof SortOrder)[keyof typeof SortOrder]
+
+
+  export const NullableJsonNullValueInput: {
+    DbNull: typeof DbNull,
+    JsonNull: typeof JsonNull
+  };
+
+  export type NullableJsonNullValueInput = (typeof NullableJsonNullValueInput)[keyof typeof NullableJsonNullValueInput]
 
 
   export const QueryMode: {
@@ -18002,6 +19337,15 @@ export namespace Prisma {
   };
 
   export type NullsOrder = (typeof NullsOrder)[keyof typeof NullsOrder]
+
+
+  export const JsonNullValueFilter: {
+    DbNull: typeof DbNull,
+    JsonNull: typeof JsonNull,
+    AnyNull: typeof AnyNull
+  };
+
+  export type JsonNullValueFilter = (typeof JsonNullValueFilter)[keyof typeof JsonNullValueFilter]
 
 
   /**
@@ -18073,6 +19417,20 @@ export namespace Prisma {
 
 
   /**
+   * Reference to a field of type 'Json'
+   */
+  export type JsonFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Json'>
+    
+
+
+  /**
+   * Reference to a field of type 'QueryMode'
+   */
+  export type EnumQueryModeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'QueryMode'>
+    
+
+
+  /**
    * Reference to a field of type 'Float'
    */
   export type FloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float'>
@@ -18113,6 +19471,7 @@ export namespace Prisma {
     pinnedChannel?: XOR<ChannelNullableScalarRelationFilter, ChannelWhereInput> | null
     notificationsActed?: NotificationListRelationFilter
     dailyReports?: DailyReportListRelationFilter
+    regionalReports?: RegionalDailyReportListRelationFilter
   }
 
   export type UserOrderByWithRelationInput = {
@@ -18136,6 +19495,7 @@ export namespace Prisma {
     pinnedChannel?: ChannelOrderByWithRelationInput
     notificationsActed?: NotificationOrderByRelationAggregateInput
     dailyReports?: DailyReportOrderByRelationAggregateInput
+    regionalReports?: RegionalDailyReportOrderByRelationAggregateInput
   }
 
   export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -18162,6 +19522,7 @@ export namespace Prisma {
     pinnedChannel?: XOR<ChannelNullableScalarRelationFilter, ChannelWhereInput> | null
     notificationsActed?: NotificationListRelationFilter
     dailyReports?: DailyReportListRelationFilter
+    regionalReports?: RegionalDailyReportListRelationFilter
   }, "id" | "username" | "email">
 
   export type UserOrderByWithAggregationInput = {
@@ -19066,6 +20427,94 @@ export namespace Prisma {
     trunkIssueRemarks?: StringNullableWithAggregatesFilter<"DailyReport"> | string | null
   }
 
+  export type RegionalDailyReportWhereInput = {
+    AND?: RegionalDailyReportWhereInput | RegionalDailyReportWhereInput[]
+    OR?: RegionalDailyReportWhereInput[]
+    NOT?: RegionalDailyReportWhereInput | RegionalDailyReportWhereInput[]
+    id?: IntFilter<"RegionalDailyReport"> | number
+    createdAt?: DateTimeFilter<"RegionalDailyReport"> | Date | string
+    updatedAt?: DateTimeFilter<"RegionalDailyReport"> | Date | string
+    authorId?: IntFilter<"RegionalDailyReport"> | number
+    reportYmd?: StringFilter<"RegionalDailyReport"> | string
+    regionName?: StringFilter<"RegionalDailyReport"> | string
+    totalMeetings?: IntNullableFilter<"RegionalDailyReport"> | number | null
+    totalBranchesVisited?: IntNullableFilter<"RegionalDailyReport"> | number | null
+    marketingDaysPlanned?: IntNullableFilter<"RegionalDailyReport"> | number | null
+    dynamicData?: JsonNullableFilter<"RegionalDailyReport">
+    remarks?: StringNullableFilter<"RegionalDailyReport"> | string | null
+    author?: XOR<UserScalarRelationFilter, UserWhereInput>
+  }
+
+  export type RegionalDailyReportOrderByWithRelationInput = {
+    id?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    authorId?: SortOrder
+    reportYmd?: SortOrder
+    regionName?: SortOrder
+    totalMeetings?: SortOrderInput | SortOrder
+    totalBranchesVisited?: SortOrderInput | SortOrder
+    marketingDaysPlanned?: SortOrderInput | SortOrder
+    dynamicData?: SortOrderInput | SortOrder
+    remarks?: SortOrderInput | SortOrder
+    author?: UserOrderByWithRelationInput
+  }
+
+  export type RegionalDailyReportWhereUniqueInput = Prisma.AtLeast<{
+    id?: number
+    authorId_reportYmd?: RegionalDailyReportAuthorIdReportYmdCompoundUniqueInput
+    AND?: RegionalDailyReportWhereInput | RegionalDailyReportWhereInput[]
+    OR?: RegionalDailyReportWhereInput[]
+    NOT?: RegionalDailyReportWhereInput | RegionalDailyReportWhereInput[]
+    createdAt?: DateTimeFilter<"RegionalDailyReport"> | Date | string
+    updatedAt?: DateTimeFilter<"RegionalDailyReport"> | Date | string
+    authorId?: IntFilter<"RegionalDailyReport"> | number
+    reportYmd?: StringFilter<"RegionalDailyReport"> | string
+    regionName?: StringFilter<"RegionalDailyReport"> | string
+    totalMeetings?: IntNullableFilter<"RegionalDailyReport"> | number | null
+    totalBranchesVisited?: IntNullableFilter<"RegionalDailyReport"> | number | null
+    marketingDaysPlanned?: IntNullableFilter<"RegionalDailyReport"> | number | null
+    dynamicData?: JsonNullableFilter<"RegionalDailyReport">
+    remarks?: StringNullableFilter<"RegionalDailyReport"> | string | null
+    author?: XOR<UserScalarRelationFilter, UserWhereInput>
+  }, "id" | "authorId_reportYmd">
+
+  export type RegionalDailyReportOrderByWithAggregationInput = {
+    id?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    authorId?: SortOrder
+    reportYmd?: SortOrder
+    regionName?: SortOrder
+    totalMeetings?: SortOrderInput | SortOrder
+    totalBranchesVisited?: SortOrderInput | SortOrder
+    marketingDaysPlanned?: SortOrderInput | SortOrder
+    dynamicData?: SortOrderInput | SortOrder
+    remarks?: SortOrderInput | SortOrder
+    _count?: RegionalDailyReportCountOrderByAggregateInput
+    _avg?: RegionalDailyReportAvgOrderByAggregateInput
+    _max?: RegionalDailyReportMaxOrderByAggregateInput
+    _min?: RegionalDailyReportMinOrderByAggregateInput
+    _sum?: RegionalDailyReportSumOrderByAggregateInput
+  }
+
+  export type RegionalDailyReportScalarWhereWithAggregatesInput = {
+    AND?: RegionalDailyReportScalarWhereWithAggregatesInput | RegionalDailyReportScalarWhereWithAggregatesInput[]
+    OR?: RegionalDailyReportScalarWhereWithAggregatesInput[]
+    NOT?: RegionalDailyReportScalarWhereWithAggregatesInput | RegionalDailyReportScalarWhereWithAggregatesInput[]
+    id?: IntWithAggregatesFilter<"RegionalDailyReport"> | number
+    createdAt?: DateTimeWithAggregatesFilter<"RegionalDailyReport"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"RegionalDailyReport"> | Date | string
+    authorId?: IntWithAggregatesFilter<"RegionalDailyReport"> | number
+    reportYmd?: StringWithAggregatesFilter<"RegionalDailyReport"> | string
+    regionName?: StringWithAggregatesFilter<"RegionalDailyReport"> | string
+    totalMeetings?: IntNullableWithAggregatesFilter<"RegionalDailyReport"> | number | null
+    totalBranchesVisited?: IntNullableWithAggregatesFilter<"RegionalDailyReport"> | number | null
+    marketingDaysPlanned?: IntNullableWithAggregatesFilter<"RegionalDailyReport"> | number | null
+    dynamicData?: JsonNullableWithAggregatesFilter<"RegionalDailyReport">
+    remarks?: StringNullableWithAggregatesFilter<"RegionalDailyReport"> | string | null
+  }
+
   export type UserCreateInput = {
     username: string
     email?: string | null
@@ -19085,6 +20534,7 @@ export namespace Prisma {
     pinnedChannel?: ChannelCreateNestedOneWithoutPinnedByUsersInput
     notificationsActed?: NotificationCreateNestedManyWithoutActorInput
     dailyReports?: DailyReportCreateNestedManyWithoutAuthorInput
+    regionalReports?: RegionalDailyReportCreateNestedManyWithoutAuthorInput
   }
 
   export type UserUncheckedCreateInput = {
@@ -19107,6 +20557,7 @@ export namespace Prisma {
     postSeen?: PostSeenUncheckedCreateNestedManyWithoutUserInput
     notificationsActed?: NotificationUncheckedCreateNestedManyWithoutActorInput
     dailyReports?: DailyReportUncheckedCreateNestedManyWithoutAuthorInput
+    regionalReports?: RegionalDailyReportUncheckedCreateNestedManyWithoutAuthorInput
   }
 
   export type UserUpdateInput = {
@@ -19128,6 +20579,7 @@ export namespace Prisma {
     pinnedChannel?: ChannelUpdateOneWithoutPinnedByUsersNestedInput
     notificationsActed?: NotificationUpdateManyWithoutActorNestedInput
     dailyReports?: DailyReportUpdateManyWithoutAuthorNestedInput
+    regionalReports?: RegionalDailyReportUpdateManyWithoutAuthorNestedInput
   }
 
   export type UserUncheckedUpdateInput = {
@@ -19150,6 +20602,7 @@ export namespace Prisma {
     postSeen?: PostSeenUncheckedUpdateManyWithoutUserNestedInput
     notificationsActed?: NotificationUncheckedUpdateManyWithoutActorNestedInput
     dailyReports?: DailyReportUncheckedUpdateManyWithoutAuthorNestedInput
+    regionalReports?: RegionalDailyReportUncheckedUpdateManyWithoutAuthorNestedInput
   }
 
   export type UserCreateManyInput = {
@@ -20002,6 +21455,100 @@ export namespace Prisma {
     trunkIssueRemarks?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
+  export type RegionalDailyReportCreateInput = {
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    reportYmd: string
+    regionName: string
+    totalMeetings?: number | null
+    totalBranchesVisited?: number | null
+    marketingDaysPlanned?: number | null
+    dynamicData?: NullableJsonNullValueInput | InputJsonValue
+    remarks?: string | null
+    author: UserCreateNestedOneWithoutRegionalReportsInput
+  }
+
+  export type RegionalDailyReportUncheckedCreateInput = {
+    id?: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    authorId: number
+    reportYmd: string
+    regionName: string
+    totalMeetings?: number | null
+    totalBranchesVisited?: number | null
+    marketingDaysPlanned?: number | null
+    dynamicData?: NullableJsonNullValueInput | InputJsonValue
+    remarks?: string | null
+  }
+
+  export type RegionalDailyReportUpdateInput = {
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    reportYmd?: StringFieldUpdateOperationsInput | string
+    regionName?: StringFieldUpdateOperationsInput | string
+    totalMeetings?: NullableIntFieldUpdateOperationsInput | number | null
+    totalBranchesVisited?: NullableIntFieldUpdateOperationsInput | number | null
+    marketingDaysPlanned?: NullableIntFieldUpdateOperationsInput | number | null
+    dynamicData?: NullableJsonNullValueInput | InputJsonValue
+    remarks?: NullableStringFieldUpdateOperationsInput | string | null
+    author?: UserUpdateOneRequiredWithoutRegionalReportsNestedInput
+  }
+
+  export type RegionalDailyReportUncheckedUpdateInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    authorId?: IntFieldUpdateOperationsInput | number
+    reportYmd?: StringFieldUpdateOperationsInput | string
+    regionName?: StringFieldUpdateOperationsInput | string
+    totalMeetings?: NullableIntFieldUpdateOperationsInput | number | null
+    totalBranchesVisited?: NullableIntFieldUpdateOperationsInput | number | null
+    marketingDaysPlanned?: NullableIntFieldUpdateOperationsInput | number | null
+    dynamicData?: NullableJsonNullValueInput | InputJsonValue
+    remarks?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type RegionalDailyReportCreateManyInput = {
+    id?: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    authorId: number
+    reportYmd: string
+    regionName: string
+    totalMeetings?: number | null
+    totalBranchesVisited?: number | null
+    marketingDaysPlanned?: number | null
+    dynamicData?: NullableJsonNullValueInput | InputJsonValue
+    remarks?: string | null
+  }
+
+  export type RegionalDailyReportUpdateManyMutationInput = {
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    reportYmd?: StringFieldUpdateOperationsInput | string
+    regionName?: StringFieldUpdateOperationsInput | string
+    totalMeetings?: NullableIntFieldUpdateOperationsInput | number | null
+    totalBranchesVisited?: NullableIntFieldUpdateOperationsInput | number | null
+    marketingDaysPlanned?: NullableIntFieldUpdateOperationsInput | number | null
+    dynamicData?: NullableJsonNullValueInput | InputJsonValue
+    remarks?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type RegionalDailyReportUncheckedUpdateManyInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    authorId?: IntFieldUpdateOperationsInput | number
+    reportYmd?: StringFieldUpdateOperationsInput | string
+    regionName?: StringFieldUpdateOperationsInput | string
+    totalMeetings?: NullableIntFieldUpdateOperationsInput | number | null
+    totalBranchesVisited?: NullableIntFieldUpdateOperationsInput | number | null
+    marketingDaysPlanned?: NullableIntFieldUpdateOperationsInput | number | null
+    dynamicData?: NullableJsonNullValueInput | InputJsonValue
+    remarks?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
   export type IntFilter<$PrismaModel = never> = {
     equals?: number | IntFieldRefInput<$PrismaModel>
     in?: number[] | ListIntFieldRefInput<$PrismaModel>
@@ -20130,6 +21677,12 @@ export namespace Prisma {
     none?: DailyReportWhereInput
   }
 
+  export type RegionalDailyReportListRelationFilter = {
+    every?: RegionalDailyReportWhereInput
+    some?: RegionalDailyReportWhereInput
+    none?: RegionalDailyReportWhereInput
+  }
+
   export type SortOrderInput = {
     sort: SortOrder
     nulls?: NullsOrder
@@ -20176,6 +21729,10 @@ export namespace Prisma {
   }
 
   export type DailyReportOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type RegionalDailyReportOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -20958,6 +22515,116 @@ export namespace Prisma {
     totalExpireCustomer?: SortOrder
     outgoingCalls?: SortOrder
   }
+  export type JsonNullableFilter<$PrismaModel = never> =
+    | PatchUndefined<
+        Either<Required<JsonNullableFilterBase<$PrismaModel>>, Exclude<keyof Required<JsonNullableFilterBase<$PrismaModel>>, 'path'>>,
+        Required<JsonNullableFilterBase<$PrismaModel>>
+      >
+    | OptionalFlat<Omit<Required<JsonNullableFilterBase<$PrismaModel>>, 'path'>>
+
+  export type JsonNullableFilterBase<$PrismaModel = never> = {
+    equals?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+    path?: string[]
+    mode?: QueryMode | EnumQueryModeFieldRefInput<$PrismaModel>
+    string_contains?: string | StringFieldRefInput<$PrismaModel>
+    string_starts_with?: string | StringFieldRefInput<$PrismaModel>
+    string_ends_with?: string | StringFieldRefInput<$PrismaModel>
+    array_starts_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_ends_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_contains?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    lt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    lte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+  }
+
+  export type RegionalDailyReportAuthorIdReportYmdCompoundUniqueInput = {
+    authorId: number
+    reportYmd: string
+  }
+
+  export type RegionalDailyReportCountOrderByAggregateInput = {
+    id?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    authorId?: SortOrder
+    reportYmd?: SortOrder
+    regionName?: SortOrder
+    totalMeetings?: SortOrder
+    totalBranchesVisited?: SortOrder
+    marketingDaysPlanned?: SortOrder
+    dynamicData?: SortOrder
+    remarks?: SortOrder
+  }
+
+  export type RegionalDailyReportAvgOrderByAggregateInput = {
+    id?: SortOrder
+    authorId?: SortOrder
+    totalMeetings?: SortOrder
+    totalBranchesVisited?: SortOrder
+    marketingDaysPlanned?: SortOrder
+  }
+
+  export type RegionalDailyReportMaxOrderByAggregateInput = {
+    id?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    authorId?: SortOrder
+    reportYmd?: SortOrder
+    regionName?: SortOrder
+    totalMeetings?: SortOrder
+    totalBranchesVisited?: SortOrder
+    marketingDaysPlanned?: SortOrder
+    remarks?: SortOrder
+  }
+
+  export type RegionalDailyReportMinOrderByAggregateInput = {
+    id?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    authorId?: SortOrder
+    reportYmd?: SortOrder
+    regionName?: SortOrder
+    totalMeetings?: SortOrder
+    totalBranchesVisited?: SortOrder
+    marketingDaysPlanned?: SortOrder
+    remarks?: SortOrder
+  }
+
+  export type RegionalDailyReportSumOrderByAggregateInput = {
+    id?: SortOrder
+    authorId?: SortOrder
+    totalMeetings?: SortOrder
+    totalBranchesVisited?: SortOrder
+    marketingDaysPlanned?: SortOrder
+  }
+  export type JsonNullableWithAggregatesFilter<$PrismaModel = never> =
+    | PatchUndefined<
+        Either<Required<JsonNullableWithAggregatesFilterBase<$PrismaModel>>, Exclude<keyof Required<JsonNullableWithAggregatesFilterBase<$PrismaModel>>, 'path'>>,
+        Required<JsonNullableWithAggregatesFilterBase<$PrismaModel>>
+      >
+    | OptionalFlat<Omit<Required<JsonNullableWithAggregatesFilterBase<$PrismaModel>>, 'path'>>
+
+  export type JsonNullableWithAggregatesFilterBase<$PrismaModel = never> = {
+    equals?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+    path?: string[]
+    mode?: QueryMode | EnumQueryModeFieldRefInput<$PrismaModel>
+    string_contains?: string | StringFieldRefInput<$PrismaModel>
+    string_starts_with?: string | StringFieldRefInput<$PrismaModel>
+    string_ends_with?: string | StringFieldRefInput<$PrismaModel>
+    array_starts_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_ends_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_contains?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    lt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    lte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedJsonNullableFilter<$PrismaModel>
+    _max?: NestedJsonNullableFilter<$PrismaModel>
+  }
 
   export type PostCreateNestedManyWithoutAuthorInput = {
     create?: XOR<PostCreateWithoutAuthorInput, PostUncheckedCreateWithoutAuthorInput> | PostCreateWithoutAuthorInput[] | PostUncheckedCreateWithoutAuthorInput[]
@@ -21049,6 +22716,13 @@ export namespace Prisma {
     connect?: DailyReportWhereUniqueInput | DailyReportWhereUniqueInput[]
   }
 
+  export type RegionalDailyReportCreateNestedManyWithoutAuthorInput = {
+    create?: XOR<RegionalDailyReportCreateWithoutAuthorInput, RegionalDailyReportUncheckedCreateWithoutAuthorInput> | RegionalDailyReportCreateWithoutAuthorInput[] | RegionalDailyReportUncheckedCreateWithoutAuthorInput[]
+    connectOrCreate?: RegionalDailyReportCreateOrConnectWithoutAuthorInput | RegionalDailyReportCreateOrConnectWithoutAuthorInput[]
+    createMany?: RegionalDailyReportCreateManyAuthorInputEnvelope
+    connect?: RegionalDailyReportWhereUniqueInput | RegionalDailyReportWhereUniqueInput[]
+  }
+
   export type PostUncheckedCreateNestedManyWithoutAuthorInput = {
     create?: XOR<PostCreateWithoutAuthorInput, PostUncheckedCreateWithoutAuthorInput> | PostCreateWithoutAuthorInput[] | PostUncheckedCreateWithoutAuthorInput[]
     connectOrCreate?: PostCreateOrConnectWithoutAuthorInput | PostCreateOrConnectWithoutAuthorInput[]
@@ -21131,6 +22805,13 @@ export namespace Prisma {
     connectOrCreate?: DailyReportCreateOrConnectWithoutAuthorInput | DailyReportCreateOrConnectWithoutAuthorInput[]
     createMany?: DailyReportCreateManyAuthorInputEnvelope
     connect?: DailyReportWhereUniqueInput | DailyReportWhereUniqueInput[]
+  }
+
+  export type RegionalDailyReportUncheckedCreateNestedManyWithoutAuthorInput = {
+    create?: XOR<RegionalDailyReportCreateWithoutAuthorInput, RegionalDailyReportUncheckedCreateWithoutAuthorInput> | RegionalDailyReportCreateWithoutAuthorInput[] | RegionalDailyReportUncheckedCreateWithoutAuthorInput[]
+    connectOrCreate?: RegionalDailyReportCreateOrConnectWithoutAuthorInput | RegionalDailyReportCreateOrConnectWithoutAuthorInput[]
+    createMany?: RegionalDailyReportCreateManyAuthorInputEnvelope
+    connect?: RegionalDailyReportWhereUniqueInput | RegionalDailyReportWhereUniqueInput[]
   }
 
   export type StringFieldUpdateOperationsInput = {
@@ -21323,6 +23004,20 @@ export namespace Prisma {
     deleteMany?: DailyReportScalarWhereInput | DailyReportScalarWhereInput[]
   }
 
+  export type RegionalDailyReportUpdateManyWithoutAuthorNestedInput = {
+    create?: XOR<RegionalDailyReportCreateWithoutAuthorInput, RegionalDailyReportUncheckedCreateWithoutAuthorInput> | RegionalDailyReportCreateWithoutAuthorInput[] | RegionalDailyReportUncheckedCreateWithoutAuthorInput[]
+    connectOrCreate?: RegionalDailyReportCreateOrConnectWithoutAuthorInput | RegionalDailyReportCreateOrConnectWithoutAuthorInput[]
+    upsert?: RegionalDailyReportUpsertWithWhereUniqueWithoutAuthorInput | RegionalDailyReportUpsertWithWhereUniqueWithoutAuthorInput[]
+    createMany?: RegionalDailyReportCreateManyAuthorInputEnvelope
+    set?: RegionalDailyReportWhereUniqueInput | RegionalDailyReportWhereUniqueInput[]
+    disconnect?: RegionalDailyReportWhereUniqueInput | RegionalDailyReportWhereUniqueInput[]
+    delete?: RegionalDailyReportWhereUniqueInput | RegionalDailyReportWhereUniqueInput[]
+    connect?: RegionalDailyReportWhereUniqueInput | RegionalDailyReportWhereUniqueInput[]
+    update?: RegionalDailyReportUpdateWithWhereUniqueWithoutAuthorInput | RegionalDailyReportUpdateWithWhereUniqueWithoutAuthorInput[]
+    updateMany?: RegionalDailyReportUpdateManyWithWhereWithoutAuthorInput | RegionalDailyReportUpdateManyWithWhereWithoutAuthorInput[]
+    deleteMany?: RegionalDailyReportScalarWhereInput | RegionalDailyReportScalarWhereInput[]
+  }
+
   export type IntFieldUpdateOperationsInput = {
     set?: number
     increment?: number
@@ -21505,6 +23200,20 @@ export namespace Prisma {
     update?: DailyReportUpdateWithWhereUniqueWithoutAuthorInput | DailyReportUpdateWithWhereUniqueWithoutAuthorInput[]
     updateMany?: DailyReportUpdateManyWithWhereWithoutAuthorInput | DailyReportUpdateManyWithWhereWithoutAuthorInput[]
     deleteMany?: DailyReportScalarWhereInput | DailyReportScalarWhereInput[]
+  }
+
+  export type RegionalDailyReportUncheckedUpdateManyWithoutAuthorNestedInput = {
+    create?: XOR<RegionalDailyReportCreateWithoutAuthorInput, RegionalDailyReportUncheckedCreateWithoutAuthorInput> | RegionalDailyReportCreateWithoutAuthorInput[] | RegionalDailyReportUncheckedCreateWithoutAuthorInput[]
+    connectOrCreate?: RegionalDailyReportCreateOrConnectWithoutAuthorInput | RegionalDailyReportCreateOrConnectWithoutAuthorInput[]
+    upsert?: RegionalDailyReportUpsertWithWhereUniqueWithoutAuthorInput | RegionalDailyReportUpsertWithWhereUniqueWithoutAuthorInput[]
+    createMany?: RegionalDailyReportCreateManyAuthorInputEnvelope
+    set?: RegionalDailyReportWhereUniqueInput | RegionalDailyReportWhereUniqueInput[]
+    disconnect?: RegionalDailyReportWhereUniqueInput | RegionalDailyReportWhereUniqueInput[]
+    delete?: RegionalDailyReportWhereUniqueInput | RegionalDailyReportWhereUniqueInput[]
+    connect?: RegionalDailyReportWhereUniqueInput | RegionalDailyReportWhereUniqueInput[]
+    update?: RegionalDailyReportUpdateWithWhereUniqueWithoutAuthorInput | RegionalDailyReportUpdateWithWhereUniqueWithoutAuthorInput[]
+    updateMany?: RegionalDailyReportUpdateManyWithWhereWithoutAuthorInput | RegionalDailyReportUpdateManyWithWhereWithoutAuthorInput[]
+    deleteMany?: RegionalDailyReportScalarWhereInput | RegionalDailyReportScalarWhereInput[]
   }
 
   export type UserCreateNestedOneWithoutPostsInput = {
@@ -22353,6 +24062,20 @@ export namespace Prisma {
     update?: XOR<XOR<UserUpdateToOneWithWhereWithoutDailyReportsInput, UserUpdateWithoutDailyReportsInput>, UserUncheckedUpdateWithoutDailyReportsInput>
   }
 
+  export type UserCreateNestedOneWithoutRegionalReportsInput = {
+    create?: XOR<UserCreateWithoutRegionalReportsInput, UserUncheckedCreateWithoutRegionalReportsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutRegionalReportsInput
+    connect?: UserWhereUniqueInput
+  }
+
+  export type UserUpdateOneRequiredWithoutRegionalReportsNestedInput = {
+    create?: XOR<UserCreateWithoutRegionalReportsInput, UserUncheckedCreateWithoutRegionalReportsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutRegionalReportsInput
+    upsert?: UserUpsertWithoutRegionalReportsInput
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutRegionalReportsInput, UserUpdateWithoutRegionalReportsInput>, UserUncheckedUpdateWithoutRegionalReportsInput>
+  }
+
   export type NestedIntFilter<$PrismaModel = never> = {
     equals?: number | IntFieldRefInput<$PrismaModel>
     in?: number[] | ListIntFieldRefInput<$PrismaModel>
@@ -22569,6 +24292,29 @@ export namespace Prisma {
     _count?: NestedIntNullableFilter<$PrismaModel>
     _min?: NestedDateTimeNullableFilter<$PrismaModel>
     _max?: NestedDateTimeNullableFilter<$PrismaModel>
+  }
+  export type NestedJsonNullableFilter<$PrismaModel = never> =
+    | PatchUndefined<
+        Either<Required<NestedJsonNullableFilterBase<$PrismaModel>>, Exclude<keyof Required<NestedJsonNullableFilterBase<$PrismaModel>>, 'path'>>,
+        Required<NestedJsonNullableFilterBase<$PrismaModel>>
+      >
+    | OptionalFlat<Omit<Required<NestedJsonNullableFilterBase<$PrismaModel>>, 'path'>>
+
+  export type NestedJsonNullableFilterBase<$PrismaModel = never> = {
+    equals?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+    path?: string[]
+    mode?: QueryMode | EnumQueryModeFieldRefInput<$PrismaModel>
+    string_contains?: string | StringFieldRefInput<$PrismaModel>
+    string_starts_with?: string | StringFieldRefInput<$PrismaModel>
+    string_ends_with?: string | StringFieldRefInput<$PrismaModel>
+    array_starts_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_ends_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_contains?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    lt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    lte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
   }
 
   export type PostCreateWithoutAuthorInput = {
@@ -22961,6 +24707,41 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type RegionalDailyReportCreateWithoutAuthorInput = {
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    reportYmd: string
+    regionName: string
+    totalMeetings?: number | null
+    totalBranchesVisited?: number | null
+    marketingDaysPlanned?: number | null
+    dynamicData?: NullableJsonNullValueInput | InputJsonValue
+    remarks?: string | null
+  }
+
+  export type RegionalDailyReportUncheckedCreateWithoutAuthorInput = {
+    id?: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    reportYmd: string
+    regionName: string
+    totalMeetings?: number | null
+    totalBranchesVisited?: number | null
+    marketingDaysPlanned?: number | null
+    dynamicData?: NullableJsonNullValueInput | InputJsonValue
+    remarks?: string | null
+  }
+
+  export type RegionalDailyReportCreateOrConnectWithoutAuthorInput = {
+    where: RegionalDailyReportWhereUniqueInput
+    create: XOR<RegionalDailyReportCreateWithoutAuthorInput, RegionalDailyReportUncheckedCreateWithoutAuthorInput>
+  }
+
+  export type RegionalDailyReportCreateManyAuthorInputEnvelope = {
+    data: RegionalDailyReportCreateManyAuthorInput | RegionalDailyReportCreateManyAuthorInput[]
+    skipDuplicates?: boolean
+  }
+
   export type PostUpsertWithWhereUniqueWithoutAuthorInput = {
     where: PostWhereUniqueInput
     update: XOR<PostUpdateWithoutAuthorInput, PostUncheckedUpdateWithoutAuthorInput>
@@ -23336,6 +25117,39 @@ export namespace Prisma {
     trunkIssueRemarks?: StringNullableFilter<"DailyReport"> | string | null
   }
 
+  export type RegionalDailyReportUpsertWithWhereUniqueWithoutAuthorInput = {
+    where: RegionalDailyReportWhereUniqueInput
+    update: XOR<RegionalDailyReportUpdateWithoutAuthorInput, RegionalDailyReportUncheckedUpdateWithoutAuthorInput>
+    create: XOR<RegionalDailyReportCreateWithoutAuthorInput, RegionalDailyReportUncheckedCreateWithoutAuthorInput>
+  }
+
+  export type RegionalDailyReportUpdateWithWhereUniqueWithoutAuthorInput = {
+    where: RegionalDailyReportWhereUniqueInput
+    data: XOR<RegionalDailyReportUpdateWithoutAuthorInput, RegionalDailyReportUncheckedUpdateWithoutAuthorInput>
+  }
+
+  export type RegionalDailyReportUpdateManyWithWhereWithoutAuthorInput = {
+    where: RegionalDailyReportScalarWhereInput
+    data: XOR<RegionalDailyReportUpdateManyMutationInput, RegionalDailyReportUncheckedUpdateManyWithoutAuthorInput>
+  }
+
+  export type RegionalDailyReportScalarWhereInput = {
+    AND?: RegionalDailyReportScalarWhereInput | RegionalDailyReportScalarWhereInput[]
+    OR?: RegionalDailyReportScalarWhereInput[]
+    NOT?: RegionalDailyReportScalarWhereInput | RegionalDailyReportScalarWhereInput[]
+    id?: IntFilter<"RegionalDailyReport"> | number
+    createdAt?: DateTimeFilter<"RegionalDailyReport"> | Date | string
+    updatedAt?: DateTimeFilter<"RegionalDailyReport"> | Date | string
+    authorId?: IntFilter<"RegionalDailyReport"> | number
+    reportYmd?: StringFilter<"RegionalDailyReport"> | string
+    regionName?: StringFilter<"RegionalDailyReport"> | string
+    totalMeetings?: IntNullableFilter<"RegionalDailyReport"> | number | null
+    totalBranchesVisited?: IntNullableFilter<"RegionalDailyReport"> | number | null
+    marketingDaysPlanned?: IntNullableFilter<"RegionalDailyReport"> | number | null
+    dynamicData?: JsonNullableFilter<"RegionalDailyReport">
+    remarks?: StringNullableFilter<"RegionalDailyReport"> | string | null
+  }
+
   export type UserCreateWithoutPostsInput = {
     username: string
     email?: string | null
@@ -23354,6 +25168,7 @@ export namespace Prisma {
     pinnedChannel?: ChannelCreateNestedOneWithoutPinnedByUsersInput
     notificationsActed?: NotificationCreateNestedManyWithoutActorInput
     dailyReports?: DailyReportCreateNestedManyWithoutAuthorInput
+    regionalReports?: RegionalDailyReportCreateNestedManyWithoutAuthorInput
   }
 
   export type UserUncheckedCreateWithoutPostsInput = {
@@ -23375,6 +25190,7 @@ export namespace Prisma {
     postSeen?: PostSeenUncheckedCreateNestedManyWithoutUserInput
     notificationsActed?: NotificationUncheckedCreateNestedManyWithoutActorInput
     dailyReports?: DailyReportUncheckedCreateNestedManyWithoutAuthorInput
+    regionalReports?: RegionalDailyReportUncheckedCreateNestedManyWithoutAuthorInput
   }
 
   export type UserCreateOrConnectWithoutPostsInput = {
@@ -23552,6 +25368,7 @@ export namespace Prisma {
     pinnedChannel?: ChannelUpdateOneWithoutPinnedByUsersNestedInput
     notificationsActed?: NotificationUpdateManyWithoutActorNestedInput
     dailyReports?: DailyReportUpdateManyWithoutAuthorNestedInput
+    regionalReports?: RegionalDailyReportUpdateManyWithoutAuthorNestedInput
   }
 
   export type UserUncheckedUpdateWithoutPostsInput = {
@@ -23573,6 +25390,7 @@ export namespace Prisma {
     postSeen?: PostSeenUncheckedUpdateManyWithoutUserNestedInput
     notificationsActed?: NotificationUncheckedUpdateManyWithoutActorNestedInput
     dailyReports?: DailyReportUncheckedUpdateManyWithoutAuthorNestedInput
+    regionalReports?: RegionalDailyReportUncheckedUpdateManyWithoutAuthorNestedInput
   }
 
   export type ChannelUpsertWithoutPostsInput = {
@@ -23751,6 +25569,7 @@ export namespace Prisma {
     pinnedChannel?: ChannelCreateNestedOneWithoutPinnedByUsersInput
     notificationsActed?: NotificationCreateNestedManyWithoutActorInput
     dailyReports?: DailyReportCreateNestedManyWithoutAuthorInput
+    regionalReports?: RegionalDailyReportCreateNestedManyWithoutAuthorInput
   }
 
   export type UserUncheckedCreateWithoutCommentsInput = {
@@ -23772,6 +25591,7 @@ export namespace Prisma {
     postSeen?: PostSeenUncheckedCreateNestedManyWithoutUserInput
     notificationsActed?: NotificationUncheckedCreateNestedManyWithoutActorInput
     dailyReports?: DailyReportUncheckedCreateNestedManyWithoutAuthorInput
+    regionalReports?: RegionalDailyReportUncheckedCreateNestedManyWithoutAuthorInput
   }
 
   export type UserCreateOrConnectWithoutCommentsInput = {
@@ -23844,6 +25664,7 @@ export namespace Prisma {
     pinnedChannel?: ChannelUpdateOneWithoutPinnedByUsersNestedInput
     notificationsActed?: NotificationUpdateManyWithoutActorNestedInput
     dailyReports?: DailyReportUpdateManyWithoutAuthorNestedInput
+    regionalReports?: RegionalDailyReportUpdateManyWithoutAuthorNestedInput
   }
 
   export type UserUncheckedUpdateWithoutCommentsInput = {
@@ -23865,6 +25686,7 @@ export namespace Prisma {
     postSeen?: PostSeenUncheckedUpdateManyWithoutUserNestedInput
     notificationsActed?: NotificationUncheckedUpdateManyWithoutActorNestedInput
     dailyReports?: DailyReportUncheckedUpdateManyWithoutAuthorNestedInput
+    regionalReports?: RegionalDailyReportUncheckedUpdateManyWithoutAuthorNestedInput
   }
 
   export type PostCreateWithoutReactionsInput = {
@@ -23915,6 +25737,7 @@ export namespace Prisma {
     pinnedChannel?: ChannelCreateNestedOneWithoutPinnedByUsersInput
     notificationsActed?: NotificationCreateNestedManyWithoutActorInput
     dailyReports?: DailyReportCreateNestedManyWithoutAuthorInput
+    regionalReports?: RegionalDailyReportCreateNestedManyWithoutAuthorInput
   }
 
   export type UserUncheckedCreateWithoutReactionsInput = {
@@ -23936,6 +25759,7 @@ export namespace Prisma {
     postSeen?: PostSeenUncheckedCreateNestedManyWithoutUserInput
     notificationsActed?: NotificationUncheckedCreateNestedManyWithoutActorInput
     dailyReports?: DailyReportUncheckedCreateNestedManyWithoutAuthorInput
+    regionalReports?: RegionalDailyReportUncheckedCreateNestedManyWithoutAuthorInput
   }
 
   export type UserCreateOrConnectWithoutReactionsInput = {
@@ -24008,6 +25832,7 @@ export namespace Prisma {
     pinnedChannel?: ChannelUpdateOneWithoutPinnedByUsersNestedInput
     notificationsActed?: NotificationUpdateManyWithoutActorNestedInput
     dailyReports?: DailyReportUpdateManyWithoutAuthorNestedInput
+    regionalReports?: RegionalDailyReportUpdateManyWithoutAuthorNestedInput
   }
 
   export type UserUncheckedUpdateWithoutReactionsInput = {
@@ -24029,6 +25854,7 @@ export namespace Prisma {
     postSeen?: PostSeenUncheckedUpdateManyWithoutUserNestedInput
     notificationsActed?: NotificationUncheckedUpdateManyWithoutActorNestedInput
     dailyReports?: DailyReportUncheckedUpdateManyWithoutAuthorNestedInput
+    regionalReports?: RegionalDailyReportUncheckedUpdateManyWithoutAuthorNestedInput
   }
 
   export type PostCreateWithoutFilesInput = {
@@ -24115,6 +25941,7 @@ export namespace Prisma {
     pinnedChannel?: ChannelCreateNestedOneWithoutPinnedByUsersInput
     notificationsActed?: NotificationCreateNestedManyWithoutActorInput
     dailyReports?: DailyReportCreateNestedManyWithoutAuthorInput
+    regionalReports?: RegionalDailyReportCreateNestedManyWithoutAuthorInput
   }
 
   export type UserUncheckedCreateWithoutCreatedChannelsInput = {
@@ -24136,6 +25963,7 @@ export namespace Prisma {
     postSeen?: PostSeenUncheckedCreateNestedManyWithoutUserInput
     notificationsActed?: NotificationUncheckedCreateNestedManyWithoutActorInput
     dailyReports?: DailyReportUncheckedCreateNestedManyWithoutAuthorInput
+    regionalReports?: RegionalDailyReportUncheckedCreateNestedManyWithoutAuthorInput
   }
 
   export type UserCreateOrConnectWithoutCreatedChannelsInput = {
@@ -24267,6 +26095,7 @@ export namespace Prisma {
     postSeen?: PostSeenCreateNestedManyWithoutUserInput
     notificationsActed?: NotificationCreateNestedManyWithoutActorInput
     dailyReports?: DailyReportCreateNestedManyWithoutAuthorInput
+    regionalReports?: RegionalDailyReportCreateNestedManyWithoutAuthorInput
   }
 
   export type UserUncheckedCreateWithoutPinnedChannelInput = {
@@ -24288,6 +26117,7 @@ export namespace Prisma {
     postSeen?: PostSeenUncheckedCreateNestedManyWithoutUserInput
     notificationsActed?: NotificationUncheckedCreateNestedManyWithoutActorInput
     dailyReports?: DailyReportUncheckedCreateNestedManyWithoutAuthorInput
+    regionalReports?: RegionalDailyReportUncheckedCreateNestedManyWithoutAuthorInput
   }
 
   export type UserCreateOrConnectWithoutPinnedChannelInput = {
@@ -24362,6 +26192,7 @@ export namespace Prisma {
     pinnedChannel?: ChannelUpdateOneWithoutPinnedByUsersNestedInput
     notificationsActed?: NotificationUpdateManyWithoutActorNestedInput
     dailyReports?: DailyReportUpdateManyWithoutAuthorNestedInput
+    regionalReports?: RegionalDailyReportUpdateManyWithoutAuthorNestedInput
   }
 
   export type UserUncheckedUpdateWithoutCreatedChannelsInput = {
@@ -24383,6 +26214,7 @@ export namespace Prisma {
     postSeen?: PostSeenUncheckedUpdateManyWithoutUserNestedInput
     notificationsActed?: NotificationUncheckedUpdateManyWithoutActorNestedInput
     dailyReports?: DailyReportUncheckedUpdateManyWithoutAuthorNestedInput
+    regionalReports?: RegionalDailyReportUncheckedUpdateManyWithoutAuthorNestedInput
   }
 
   export type PostSeenUpsertWithWhereUniqueWithoutChannelInput = {
@@ -24544,6 +26376,7 @@ export namespace Prisma {
     pinnedChannel?: ChannelCreateNestedOneWithoutPinnedByUsersInput
     notificationsActed?: NotificationCreateNestedManyWithoutActorInput
     dailyReports?: DailyReportCreateNestedManyWithoutAuthorInput
+    regionalReports?: RegionalDailyReportCreateNestedManyWithoutAuthorInput
   }
 
   export type UserUncheckedCreateWithoutChannelMemberInput = {
@@ -24565,6 +26398,7 @@ export namespace Prisma {
     postSeen?: PostSeenUncheckedCreateNestedManyWithoutUserInput
     notificationsActed?: NotificationUncheckedCreateNestedManyWithoutActorInput
     dailyReports?: DailyReportUncheckedCreateNestedManyWithoutAuthorInput
+    regionalReports?: RegionalDailyReportUncheckedCreateNestedManyWithoutAuthorInput
   }
 
   export type UserCreateOrConnectWithoutChannelMemberInput = {
@@ -24639,6 +26473,7 @@ export namespace Prisma {
     pinnedChannel?: ChannelUpdateOneWithoutPinnedByUsersNestedInput
     notificationsActed?: NotificationUpdateManyWithoutActorNestedInput
     dailyReports?: DailyReportUpdateManyWithoutAuthorNestedInput
+    regionalReports?: RegionalDailyReportUpdateManyWithoutAuthorNestedInput
   }
 
   export type UserUncheckedUpdateWithoutChannelMemberInput = {
@@ -24660,6 +26495,7 @@ export namespace Prisma {
     postSeen?: PostSeenUncheckedUpdateManyWithoutUserNestedInput
     notificationsActed?: NotificationUncheckedUpdateManyWithoutActorNestedInput
     dailyReports?: DailyReportUncheckedUpdateManyWithoutAuthorNestedInput
+    regionalReports?: RegionalDailyReportUncheckedUpdateManyWithoutAuthorNestedInput
   }
 
   export type ChannelCreateWithoutJoinRequestsInput = {
@@ -24712,6 +26548,7 @@ export namespace Prisma {
     pinnedChannel?: ChannelCreateNestedOneWithoutPinnedByUsersInput
     notificationsActed?: NotificationCreateNestedManyWithoutActorInput
     dailyReports?: DailyReportCreateNestedManyWithoutAuthorInput
+    regionalReports?: RegionalDailyReportCreateNestedManyWithoutAuthorInput
   }
 
   export type UserUncheckedCreateWithoutJoinRequestsInput = {
@@ -24733,6 +26570,7 @@ export namespace Prisma {
     postSeen?: PostSeenUncheckedCreateNestedManyWithoutUserInput
     notificationsActed?: NotificationUncheckedCreateNestedManyWithoutActorInput
     dailyReports?: DailyReportUncheckedCreateNestedManyWithoutAuthorInput
+    regionalReports?: RegionalDailyReportUncheckedCreateNestedManyWithoutAuthorInput
   }
 
   export type UserCreateOrConnectWithoutJoinRequestsInput = {
@@ -24840,6 +26678,7 @@ export namespace Prisma {
     pinnedChannel?: ChannelUpdateOneWithoutPinnedByUsersNestedInput
     notificationsActed?: NotificationUpdateManyWithoutActorNestedInput
     dailyReports?: DailyReportUpdateManyWithoutAuthorNestedInput
+    regionalReports?: RegionalDailyReportUpdateManyWithoutAuthorNestedInput
   }
 
   export type UserUncheckedUpdateWithoutJoinRequestsInput = {
@@ -24861,6 +26700,7 @@ export namespace Prisma {
     postSeen?: PostSeenUncheckedUpdateManyWithoutUserNestedInput
     notificationsActed?: NotificationUncheckedUpdateManyWithoutActorNestedInput
     dailyReports?: DailyReportUncheckedUpdateManyWithoutAuthorNestedInput
+    regionalReports?: RegionalDailyReportUncheckedUpdateManyWithoutAuthorNestedInput
   }
 
   export type NotificationUpsertWithWhereUniqueWithoutJoinRequestInput = {
@@ -24897,6 +26737,7 @@ export namespace Prisma {
     pinnedChannel?: ChannelCreateNestedOneWithoutPinnedByUsersInput
     notificationsActed?: NotificationCreateNestedManyWithoutActorInput
     dailyReports?: DailyReportCreateNestedManyWithoutAuthorInput
+    regionalReports?: RegionalDailyReportCreateNestedManyWithoutAuthorInput
   }
 
   export type UserUncheckedCreateWithoutNotificationsInput = {
@@ -24918,6 +26759,7 @@ export namespace Prisma {
     postSeen?: PostSeenUncheckedCreateNestedManyWithoutUserInput
     notificationsActed?: NotificationUncheckedCreateNestedManyWithoutActorInput
     dailyReports?: DailyReportUncheckedCreateNestedManyWithoutAuthorInput
+    regionalReports?: RegionalDailyReportUncheckedCreateNestedManyWithoutAuthorInput
   }
 
   export type UserCreateOrConnectWithoutNotificationsInput = {
@@ -24943,6 +26785,7 @@ export namespace Prisma {
     postSeen?: PostSeenCreateNestedManyWithoutUserInput
     pinnedChannel?: ChannelCreateNestedOneWithoutPinnedByUsersInput
     dailyReports?: DailyReportCreateNestedManyWithoutAuthorInput
+    regionalReports?: RegionalDailyReportCreateNestedManyWithoutAuthorInput
   }
 
   export type UserUncheckedCreateWithoutNotificationsActedInput = {
@@ -24964,6 +26807,7 @@ export namespace Prisma {
     todos?: TodoUncheckedCreateNestedManyWithoutUserInput
     postSeen?: PostSeenUncheckedCreateNestedManyWithoutUserInput
     dailyReports?: DailyReportUncheckedCreateNestedManyWithoutAuthorInput
+    regionalReports?: RegionalDailyReportUncheckedCreateNestedManyWithoutAuthorInput
   }
 
   export type UserCreateOrConnectWithoutNotificationsActedInput = {
@@ -25054,6 +26898,7 @@ export namespace Prisma {
     pinnedChannel?: ChannelUpdateOneWithoutPinnedByUsersNestedInput
     notificationsActed?: NotificationUpdateManyWithoutActorNestedInput
     dailyReports?: DailyReportUpdateManyWithoutAuthorNestedInput
+    regionalReports?: RegionalDailyReportUpdateManyWithoutAuthorNestedInput
   }
 
   export type UserUncheckedUpdateWithoutNotificationsInput = {
@@ -25075,6 +26920,7 @@ export namespace Prisma {
     postSeen?: PostSeenUncheckedUpdateManyWithoutUserNestedInput
     notificationsActed?: NotificationUncheckedUpdateManyWithoutActorNestedInput
     dailyReports?: DailyReportUncheckedUpdateManyWithoutAuthorNestedInput
+    regionalReports?: RegionalDailyReportUncheckedUpdateManyWithoutAuthorNestedInput
   }
 
   export type UserUpsertWithoutNotificationsActedInput = {
@@ -25106,6 +26952,7 @@ export namespace Prisma {
     postSeen?: PostSeenUpdateManyWithoutUserNestedInput
     pinnedChannel?: ChannelUpdateOneWithoutPinnedByUsersNestedInput
     dailyReports?: DailyReportUpdateManyWithoutAuthorNestedInput
+    regionalReports?: RegionalDailyReportUpdateManyWithoutAuthorNestedInput
   }
 
   export type UserUncheckedUpdateWithoutNotificationsActedInput = {
@@ -25127,6 +26974,7 @@ export namespace Prisma {
     todos?: TodoUncheckedUpdateManyWithoutUserNestedInput
     postSeen?: PostSeenUncheckedUpdateManyWithoutUserNestedInput
     dailyReports?: DailyReportUncheckedUpdateManyWithoutAuthorNestedInput
+    regionalReports?: RegionalDailyReportUncheckedUpdateManyWithoutAuthorNestedInput
   }
 
   export type ChannelUpsertWithoutNotificationsInput = {
@@ -25213,6 +27061,7 @@ export namespace Prisma {
     pinnedChannel?: ChannelCreateNestedOneWithoutPinnedByUsersInput
     notificationsActed?: NotificationCreateNestedManyWithoutActorInput
     dailyReports?: DailyReportCreateNestedManyWithoutAuthorInput
+    regionalReports?: RegionalDailyReportCreateNestedManyWithoutAuthorInput
   }
 
   export type UserUncheckedCreateWithoutSavedPostsInput = {
@@ -25234,6 +27083,7 @@ export namespace Prisma {
     postSeen?: PostSeenUncheckedCreateNestedManyWithoutUserInput
     notificationsActed?: NotificationUncheckedCreateNestedManyWithoutActorInput
     dailyReports?: DailyReportUncheckedCreateNestedManyWithoutAuthorInput
+    regionalReports?: RegionalDailyReportUncheckedCreateNestedManyWithoutAuthorInput
   }
 
   export type UserCreateOrConnectWithoutSavedPostsInput = {
@@ -25300,6 +27150,7 @@ export namespace Prisma {
     pinnedChannel?: ChannelUpdateOneWithoutPinnedByUsersNestedInput
     notificationsActed?: NotificationUpdateManyWithoutActorNestedInput
     dailyReports?: DailyReportUpdateManyWithoutAuthorNestedInput
+    regionalReports?: RegionalDailyReportUpdateManyWithoutAuthorNestedInput
   }
 
   export type UserUncheckedUpdateWithoutSavedPostsInput = {
@@ -25321,6 +27172,7 @@ export namespace Prisma {
     postSeen?: PostSeenUncheckedUpdateManyWithoutUserNestedInput
     notificationsActed?: NotificationUncheckedUpdateManyWithoutActorNestedInput
     dailyReports?: DailyReportUncheckedUpdateManyWithoutAuthorNestedInput
+    regionalReports?: RegionalDailyReportUncheckedUpdateManyWithoutAuthorNestedInput
   }
 
   export type PostUpsertWithoutSavedByInput = {
@@ -25377,6 +27229,7 @@ export namespace Prisma {
     pinnedChannel?: ChannelCreateNestedOneWithoutPinnedByUsersInput
     notificationsActed?: NotificationCreateNestedManyWithoutActorInput
     dailyReports?: DailyReportCreateNestedManyWithoutAuthorInput
+    regionalReports?: RegionalDailyReportCreateNestedManyWithoutAuthorInput
   }
 
   export type UserUncheckedCreateWithoutTodosInput = {
@@ -25398,6 +27251,7 @@ export namespace Prisma {
     postSeen?: PostSeenUncheckedCreateNestedManyWithoutUserInput
     notificationsActed?: NotificationUncheckedCreateNestedManyWithoutActorInput
     dailyReports?: DailyReportUncheckedCreateNestedManyWithoutAuthorInput
+    regionalReports?: RegionalDailyReportUncheckedCreateNestedManyWithoutAuthorInput
   }
 
   export type UserCreateOrConnectWithoutTodosInput = {
@@ -25434,6 +27288,7 @@ export namespace Prisma {
     pinnedChannel?: ChannelUpdateOneWithoutPinnedByUsersNestedInput
     notificationsActed?: NotificationUpdateManyWithoutActorNestedInput
     dailyReports?: DailyReportUpdateManyWithoutAuthorNestedInput
+    regionalReports?: RegionalDailyReportUpdateManyWithoutAuthorNestedInput
   }
 
   export type UserUncheckedUpdateWithoutTodosInput = {
@@ -25455,6 +27310,7 @@ export namespace Prisma {
     postSeen?: PostSeenUncheckedUpdateManyWithoutUserNestedInput
     notificationsActed?: NotificationUncheckedUpdateManyWithoutActorNestedInput
     dailyReports?: DailyReportUncheckedUpdateManyWithoutAuthorNestedInput
+    regionalReports?: RegionalDailyReportUncheckedUpdateManyWithoutAuthorNestedInput
   }
 
   export type UserCreateWithoutPostSeenInput = {
@@ -25475,6 +27331,7 @@ export namespace Prisma {
     pinnedChannel?: ChannelCreateNestedOneWithoutPinnedByUsersInput
     notificationsActed?: NotificationCreateNestedManyWithoutActorInput
     dailyReports?: DailyReportCreateNestedManyWithoutAuthorInput
+    regionalReports?: RegionalDailyReportCreateNestedManyWithoutAuthorInput
   }
 
   export type UserUncheckedCreateWithoutPostSeenInput = {
@@ -25496,6 +27353,7 @@ export namespace Prisma {
     todos?: TodoUncheckedCreateNestedManyWithoutUserInput
     notificationsActed?: NotificationUncheckedCreateNestedManyWithoutActorInput
     dailyReports?: DailyReportUncheckedCreateNestedManyWithoutAuthorInput
+    regionalReports?: RegionalDailyReportUncheckedCreateNestedManyWithoutAuthorInput
   }
 
   export type UserCreateOrConnectWithoutPostSeenInput = {
@@ -25594,6 +27452,7 @@ export namespace Prisma {
     pinnedChannel?: ChannelUpdateOneWithoutPinnedByUsersNestedInput
     notificationsActed?: NotificationUpdateManyWithoutActorNestedInput
     dailyReports?: DailyReportUpdateManyWithoutAuthorNestedInput
+    regionalReports?: RegionalDailyReportUpdateManyWithoutAuthorNestedInput
   }
 
   export type UserUncheckedUpdateWithoutPostSeenInput = {
@@ -25615,6 +27474,7 @@ export namespace Prisma {
     todos?: TodoUncheckedUpdateManyWithoutUserNestedInput
     notificationsActed?: NotificationUncheckedUpdateManyWithoutActorNestedInput
     dailyReports?: DailyReportUncheckedUpdateManyWithoutAuthorNestedInput
+    regionalReports?: RegionalDailyReportUncheckedUpdateManyWithoutAuthorNestedInput
   }
 
   export type PostUpsertWithoutSeenByInput = {
@@ -25709,6 +27569,7 @@ export namespace Prisma {
     postSeen?: PostSeenCreateNestedManyWithoutUserInput
     pinnedChannel?: ChannelCreateNestedOneWithoutPinnedByUsersInput
     notificationsActed?: NotificationCreateNestedManyWithoutActorInput
+    regionalReports?: RegionalDailyReportCreateNestedManyWithoutAuthorInput
   }
 
   export type UserUncheckedCreateWithoutDailyReportsInput = {
@@ -25730,6 +27591,7 @@ export namespace Prisma {
     todos?: TodoUncheckedCreateNestedManyWithoutUserInput
     postSeen?: PostSeenUncheckedCreateNestedManyWithoutUserInput
     notificationsActed?: NotificationUncheckedCreateNestedManyWithoutActorInput
+    regionalReports?: RegionalDailyReportUncheckedCreateNestedManyWithoutAuthorInput
   }
 
   export type UserCreateOrConnectWithoutDailyReportsInput = {
@@ -25766,6 +27628,7 @@ export namespace Prisma {
     postSeen?: PostSeenUpdateManyWithoutUserNestedInput
     pinnedChannel?: ChannelUpdateOneWithoutPinnedByUsersNestedInput
     notificationsActed?: NotificationUpdateManyWithoutActorNestedInput
+    regionalReports?: RegionalDailyReportUpdateManyWithoutAuthorNestedInput
   }
 
   export type UserUncheckedUpdateWithoutDailyReportsInput = {
@@ -25787,6 +27650,109 @@ export namespace Prisma {
     todos?: TodoUncheckedUpdateManyWithoutUserNestedInput
     postSeen?: PostSeenUncheckedUpdateManyWithoutUserNestedInput
     notificationsActed?: NotificationUncheckedUpdateManyWithoutActorNestedInput
+    regionalReports?: RegionalDailyReportUncheckedUpdateManyWithoutAuthorNestedInput
+  }
+
+  export type UserCreateWithoutRegionalReportsInput = {
+    username: string
+    email?: string | null
+    role: string
+    isStaff?: boolean
+    profileImage?: string | null
+    posts?: PostCreateNestedManyWithoutAuthorInput
+    comments?: CommentCreateNestedManyWithoutAuthorInput
+    reactions?: ReactionCreateNestedManyWithoutUserInput
+    channelMember?: ChannelMemberCreateNestedManyWithoutUserInput
+    createdChannels?: ChannelCreateNestedManyWithoutCreatedByInput
+    notifications?: NotificationCreateNestedManyWithoutUserInput
+    joinRequests?: JoinRequestCreateNestedManyWithoutUserInput
+    savedPosts?: SavedPostCreateNestedManyWithoutUserInput
+    todos?: TodoCreateNestedManyWithoutUserInput
+    postSeen?: PostSeenCreateNestedManyWithoutUserInput
+    pinnedChannel?: ChannelCreateNestedOneWithoutPinnedByUsersInput
+    notificationsActed?: NotificationCreateNestedManyWithoutActorInput
+    dailyReports?: DailyReportCreateNestedManyWithoutAuthorInput
+  }
+
+  export type UserUncheckedCreateWithoutRegionalReportsInput = {
+    id?: number
+    username: string
+    email?: string | null
+    role: string
+    isStaff?: boolean
+    profileImage?: string | null
+    pinnedChannelId?: number | null
+    posts?: PostUncheckedCreateNestedManyWithoutAuthorInput
+    comments?: CommentUncheckedCreateNestedManyWithoutAuthorInput
+    reactions?: ReactionUncheckedCreateNestedManyWithoutUserInput
+    channelMember?: ChannelMemberUncheckedCreateNestedManyWithoutUserInput
+    createdChannels?: ChannelUncheckedCreateNestedManyWithoutCreatedByInput
+    notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
+    joinRequests?: JoinRequestUncheckedCreateNestedManyWithoutUserInput
+    savedPosts?: SavedPostUncheckedCreateNestedManyWithoutUserInput
+    todos?: TodoUncheckedCreateNestedManyWithoutUserInput
+    postSeen?: PostSeenUncheckedCreateNestedManyWithoutUserInput
+    notificationsActed?: NotificationUncheckedCreateNestedManyWithoutActorInput
+    dailyReports?: DailyReportUncheckedCreateNestedManyWithoutAuthorInput
+  }
+
+  export type UserCreateOrConnectWithoutRegionalReportsInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutRegionalReportsInput, UserUncheckedCreateWithoutRegionalReportsInput>
+  }
+
+  export type UserUpsertWithoutRegionalReportsInput = {
+    update: XOR<UserUpdateWithoutRegionalReportsInput, UserUncheckedUpdateWithoutRegionalReportsInput>
+    create: XOR<UserCreateWithoutRegionalReportsInput, UserUncheckedCreateWithoutRegionalReportsInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutRegionalReportsInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutRegionalReportsInput, UserUncheckedUpdateWithoutRegionalReportsInput>
+  }
+
+  export type UserUpdateWithoutRegionalReportsInput = {
+    username?: StringFieldUpdateOperationsInput | string
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: StringFieldUpdateOperationsInput | string
+    isStaff?: BoolFieldUpdateOperationsInput | boolean
+    profileImage?: NullableStringFieldUpdateOperationsInput | string | null
+    posts?: PostUpdateManyWithoutAuthorNestedInput
+    comments?: CommentUpdateManyWithoutAuthorNestedInput
+    reactions?: ReactionUpdateManyWithoutUserNestedInput
+    channelMember?: ChannelMemberUpdateManyWithoutUserNestedInput
+    createdChannels?: ChannelUpdateManyWithoutCreatedByNestedInput
+    notifications?: NotificationUpdateManyWithoutUserNestedInput
+    joinRequests?: JoinRequestUpdateManyWithoutUserNestedInput
+    savedPosts?: SavedPostUpdateManyWithoutUserNestedInput
+    todos?: TodoUpdateManyWithoutUserNestedInput
+    postSeen?: PostSeenUpdateManyWithoutUserNestedInput
+    pinnedChannel?: ChannelUpdateOneWithoutPinnedByUsersNestedInput
+    notificationsActed?: NotificationUpdateManyWithoutActorNestedInput
+    dailyReports?: DailyReportUpdateManyWithoutAuthorNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutRegionalReportsInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    username?: StringFieldUpdateOperationsInput | string
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: StringFieldUpdateOperationsInput | string
+    isStaff?: BoolFieldUpdateOperationsInput | boolean
+    profileImage?: NullableStringFieldUpdateOperationsInput | string | null
+    pinnedChannelId?: NullableIntFieldUpdateOperationsInput | number | null
+    posts?: PostUncheckedUpdateManyWithoutAuthorNestedInput
+    comments?: CommentUncheckedUpdateManyWithoutAuthorNestedInput
+    reactions?: ReactionUncheckedUpdateManyWithoutUserNestedInput
+    channelMember?: ChannelMemberUncheckedUpdateManyWithoutUserNestedInput
+    createdChannels?: ChannelUncheckedUpdateManyWithoutCreatedByNestedInput
+    notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
+    joinRequests?: JoinRequestUncheckedUpdateManyWithoutUserNestedInput
+    savedPosts?: SavedPostUncheckedUpdateManyWithoutUserNestedInput
+    todos?: TodoUncheckedUpdateManyWithoutUserNestedInput
+    postSeen?: PostSeenUncheckedUpdateManyWithoutUserNestedInput
+    notificationsActed?: NotificationUncheckedUpdateManyWithoutActorNestedInput
+    dailyReports?: DailyReportUncheckedUpdateManyWithoutAuthorNestedInput
   }
 
   export type PostCreateManyAuthorInput = {
@@ -25900,6 +27866,19 @@ export namespace Prisma {
     totalExpireCustomer?: number
     outgoingCalls?: number
     trunkIssueRemarks?: string | null
+  }
+
+  export type RegionalDailyReportCreateManyAuthorInput = {
+    id?: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    reportYmd: string
+    regionName: string
+    totalMeetings?: number | null
+    totalBranchesVisited?: number | null
+    marketingDaysPlanned?: number | null
+    dynamicData?: NullableJsonNullValueInput | InputJsonValue
+    remarks?: string | null
   }
 
   export type PostUpdateWithoutAuthorInput = {
@@ -26253,6 +28232,44 @@ export namespace Prisma {
     trunkIssueRemarks?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
+  export type RegionalDailyReportUpdateWithoutAuthorInput = {
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    reportYmd?: StringFieldUpdateOperationsInput | string
+    regionName?: StringFieldUpdateOperationsInput | string
+    totalMeetings?: NullableIntFieldUpdateOperationsInput | number | null
+    totalBranchesVisited?: NullableIntFieldUpdateOperationsInput | number | null
+    marketingDaysPlanned?: NullableIntFieldUpdateOperationsInput | number | null
+    dynamicData?: NullableJsonNullValueInput | InputJsonValue
+    remarks?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type RegionalDailyReportUncheckedUpdateWithoutAuthorInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    reportYmd?: StringFieldUpdateOperationsInput | string
+    regionName?: StringFieldUpdateOperationsInput | string
+    totalMeetings?: NullableIntFieldUpdateOperationsInput | number | null
+    totalBranchesVisited?: NullableIntFieldUpdateOperationsInput | number | null
+    marketingDaysPlanned?: NullableIntFieldUpdateOperationsInput | number | null
+    dynamicData?: NullableJsonNullValueInput | InputJsonValue
+    remarks?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type RegionalDailyReportUncheckedUpdateManyWithoutAuthorInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    reportYmd?: StringFieldUpdateOperationsInput | string
+    regionName?: StringFieldUpdateOperationsInput | string
+    totalMeetings?: NullableIntFieldUpdateOperationsInput | number | null
+    totalBranchesVisited?: NullableIntFieldUpdateOperationsInput | number | null
+    marketingDaysPlanned?: NullableIntFieldUpdateOperationsInput | number | null
+    dynamicData?: NullableJsonNullValueInput | InputJsonValue
+    remarks?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
   export type FileCreateManyPostInput = {
     id?: number
     url: string
@@ -26539,6 +28556,7 @@ export namespace Prisma {
     postSeen?: PostSeenUpdateManyWithoutUserNestedInput
     notificationsActed?: NotificationUpdateManyWithoutActorNestedInput
     dailyReports?: DailyReportUpdateManyWithoutAuthorNestedInput
+    regionalReports?: RegionalDailyReportUpdateManyWithoutAuthorNestedInput
   }
 
   export type UserUncheckedUpdateWithoutPinnedChannelInput = {
@@ -26560,6 +28578,7 @@ export namespace Prisma {
     postSeen?: PostSeenUncheckedUpdateManyWithoutUserNestedInput
     notificationsActed?: NotificationUncheckedUpdateManyWithoutActorNestedInput
     dailyReports?: DailyReportUncheckedUpdateManyWithoutAuthorNestedInput
+    regionalReports?: RegionalDailyReportUncheckedUpdateManyWithoutAuthorNestedInput
   }
 
   export type UserUncheckedUpdateManyWithoutPinnedChannelInput = {

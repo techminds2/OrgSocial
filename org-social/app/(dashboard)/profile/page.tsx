@@ -15,6 +15,8 @@ import ShowPosts from "@/components/ShowPost";
 import MyChannels from "@/components/MyChannels";
 import DailyReportComposer from "@/components/DailyReportComposer";
 import DailyReportViewer from "@/components/DailyReportViewer";
+import RegionalReportComposer from "@/components/RegionalReportComposer";
+import RegionalReportViewer from "@/components/RegionalReportViewer";
 
 type User = {
   id: number;
@@ -296,12 +298,20 @@ export default function ProfilePage() {
           )}
         </div>
       </Paper>
-      <DailyReportComposer userId={user.id} viewerId={user.id} />
-      <DailyReportViewer
+      {/* <DailyReportComposer userId={user.id} viewerId={user.id} /> */}
+      {/* <DailyReportViewer
+        userId={user.id}
+        viewerId={user.id}
+        viewerRole={user.role}
+      /> */}
+      <RegionalReportComposer userId={user.id} viewerId={user.id} />
+      <RegionalReportViewer
         userId={user.id}
         viewerId={user.id}
         viewerRole={user.role}
       />
+
+      
       <Divider className="mb-4" />
 
       <Group justify="left" mb="md">

@@ -250,9 +250,28 @@ exports.Prisma.DailyReportScalarFieldEnum = {
   trunkIssueRemarks: 'trunkIssueRemarks'
 };
 
+exports.Prisma.RegionalDailyReportScalarFieldEnum = {
+  id: 'id',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  authorId: 'authorId',
+  reportYmd: 'reportYmd',
+  regionName: 'regionName',
+  totalMeetings: 'totalMeetings',
+  totalBranchesVisited: 'totalBranchesVisited',
+  marketingDaysPlanned: 'marketingDaysPlanned',
+  dynamicData: 'dynamicData',
+  remarks: 'remarks'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
+};
+
+exports.Prisma.NullableJsonNullValueInput = {
+  DbNull: Prisma.DbNull,
+  JsonNull: Prisma.JsonNull
 };
 
 exports.Prisma.QueryMode = {
@@ -263,6 +282,12 @@ exports.Prisma.QueryMode = {
 exports.Prisma.NullsOrder = {
   first: 'first',
   last: 'last'
+};
+
+exports.Prisma.JsonNullValueFilter = {
+  DbNull: Prisma.DbNull,
+  JsonNull: Prisma.JsonNull,
+  AnyNull: Prisma.AnyNull
 };
 exports.Priority = exports.$Enums.Priority = {
   Low: 'Low',
@@ -283,7 +308,8 @@ exports.Prisma.ModelName = {
   SavedPost: 'SavedPost',
   Todo: 'Todo',
   PostSeen: 'PostSeen',
-  DailyReport: 'DailyReport'
+  DailyReport: 'DailyReport',
+  RegionalDailyReport: 'RegionalDailyReport'
 };
 
 /**

@@ -32,7 +32,8 @@ model User {
 
   notificationsActed Notification[] @relation("NotificationActor")
 
-  dailyReports DailyReport[]
+  dailyReports    DailyReport[]
+  regionalReports RegionalDailyReport[]
 }
 
 model Post {
@@ -240,6 +241,29 @@ model DailyReport {
   totalExpireCustomer Int     @default(0)
   outgoingCalls       Int     @default(0)
   trunkIssueRemarks   String?
+
+  @@unique([authorId, reportYmd])
+  @@index([authorId, reportYmd])
+  @@index([reportYmd])
+}
+
+model RegionalDailyReport {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  authorId Int
+  author   User @relation(fields: [authorId], references: [id], onDelete: Cascade)
+
+  reportYmd  String
+  regionName String
+
+  totalMeetings        Int?
+  totalBranchesVisited Int?
+  marketingDaysPlanned Int?
+
+  dynamicData Json?
+  remarks     String? @db.Text
 
   @@unique([authorId, reportYmd])
   @@index([authorId, reportYmd])
