@@ -68,15 +68,16 @@ const cleanBranch = (s: string) => s.replace(/[^a-zA-Z0-9\s-]/g, "");
 export default function DailyReportComposer({
   userId,
   viewerId,
+  viewerRole,
 }: {
   userId: number;
   viewerId: number;
+  viewerRole: string | null;
 }) {
   const theme = useMantineTheme();
   const { colorScheme } = useMantineColorScheme();
 
-  const isOwner = viewerId === userId;
-
+  const canAccess = viewerRole === "branch_manager" && viewerId === userId;
   const [opened, setOpened] = useState(false);
   const [loadingPrefill, setLoadingPrefill] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -146,7 +147,7 @@ export default function DailyReportComposer({
   }, [opened]);
 
   const canSave =
-    isOwner && state.reportYmd && state.branchName.trim().length > 0;
+    canAccess && state.reportYmd && state.branchName.trim().length > 0;
 
   const save = async () => {
     if (!canSave || saving) return;
@@ -197,8 +198,7 @@ export default function DailyReportComposer({
     }
   };
 
-  if (!isOwner) return null;
-
+  if (!canAccess) return null;
   const numInput = (k: keyof ReportState) => (
     <TextInput
       value={String(state[k] as any)}

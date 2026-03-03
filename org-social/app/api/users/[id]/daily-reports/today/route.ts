@@ -17,7 +17,7 @@ function noStoreJson(body: any, status = 200) {
 
 export async function GET(
   req: NextRequest,
-  ctx: { params: Promise<{ id: string }> }
+  ctx: { params: Promise<{ id: string }> },
 ) {
   try {
     const viewer = await requireViewer(req);

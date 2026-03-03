@@ -24,8 +24,7 @@ export default function DailyReportViewer({
   viewerId: number;
   viewerRole: string | null;
 }) {
-  const canView = viewerRole === "admin" || viewerId === userId;
-
+  const canView = viewerRole === "branch_manager" && viewerId === userId;
   const [month, setMonth] = useState(currentMonth());
   const [items, setItems] = useState<Item[]>([]);
   const [selected, setSelected] = useState<string>("");

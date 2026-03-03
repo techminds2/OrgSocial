@@ -298,22 +298,24 @@ export default function ProfilePage() {
           )}
         </div>
       </Paper>
-      {/* <DailyReportComposer userId={user.id} viewerId={user.id} /> */}
-      {/* <DailyReportViewer
-        userId={user.id}
-        viewerId={user.id}
-        viewerRole={user.role}
-      /> */}
-      <RegionalReportComposer userId={user.id} viewerId={user.id} />
-      <RegionalReportViewer
+      <DailyReportComposer
         userId={user.id}
         viewerId={user.id}
         viewerRole={user.role}
       />
 
-      
+      <DailyReportViewer
+        userId={user.id}
+        viewerId={user.id}
+        viewerRole={user.role}
+      />
+      {/* <RegionalReportComposer userId={user.id} viewerId={user.id} />
+      <RegionalReportViewer
+        userId={user.id}
+        viewerId={user.id}
+        viewerRole={user.role}
+      /> */}
       <Divider className="mb-4" />
-
       <Group justify="left" mb="md">
         <Button variant="subtle" onClick={() => setActiveTab("myPosts")}>
           My Posts
@@ -325,9 +327,7 @@ export default function ProfilePage() {
           My Channels
         </Button>
       </Group>
-
       {activeTab === "myChannels" && <MyChannels />}
-
       {activeTab !== "myChannels" &&
         (loadingPosts ? (
           <Loader size="sm" />
