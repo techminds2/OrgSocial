@@ -17,14 +17,22 @@ function currentMonth() {
 
 export default function DailyReportViewer({
   userId,
+  userRole,
   viewerId,
   viewerRole,
 }: {
   userId: number;
+  userRole: string | null;
   viewerId: number;
   viewerRole: string | null;
 }) {
-  const canView = viewerRole === "branch_manager" && viewerId === userId;
+  // ✅ Permissions:
+  // - branch_manager => only self
+  // - admin => only if target user is branch_manager
+  const canView =
+    (viewerRole === "branch_manager" && viewerId === userId) ||
+    (viewerRole === "admin" && userRole === "branch_manager");
+
   const [month, setMonth] = useState(currentMonth());
   const [items, setItems] = useState<Item[]>([]);
   const [selected, setSelected] = useState<string>("");
@@ -48,10 +56,7 @@ export default function DailyReportViewer({
     try {
       const res = await fetch(
         `/api/users/${userId}/daily-reports/month?month=${encodeURIComponent(m)}`,
-        {
-          credentials: "include",
-          cache: "no-store",
-        },
+        { credentials: "include", cache: "no-store" }
       );
       const out = await res.json();
       setItems(out.items || []);
@@ -70,10 +75,7 @@ export default function DailyReportViewer({
     try {
       const res = await fetch(
         `/api/users/${userId}/daily-reports/by-date?date=${encodeURIComponent(ymd)}`,
-        {
-          credentials: "include",
-          cache: "no-store",
-        },
+        { credentials: "include", cache: "no-store" }
       );
       const out = await res.json();
       setReport(out.report || null);
@@ -104,12 +106,7 @@ export default function DailyReportViewer({
     <div className="space-y-3 mt-4">
       <Group justify="space-between">
         <Text fw={700}>Daily Reports (Private)</Text>
-        <Select
-          data={monthOptions}
-          value={month}
-          onChange={(v) => v && setMonth(v)}
-          w={140}
-        />
+        <Select data={monthOptions} value={month} onChange={(v) => v && setMonth(v)} w={140} />
       </Group>
 
       {loading && <Text c="dimmed">Loading...</Text>}
@@ -127,22 +124,6 @@ export default function DailyReportViewer({
                 key={it.id}
                 size="xs"
                 variant={selected === it.reportYmd ? "filled" : "light"}
-                styles={{
-                  root: {
-                    backgroundColor:
-                      selected === it.reportYmd
-                        ? "var(--color-secondary)"
-                        : "transparent",
-                    color:
-                      selected === it.reportYmd
-                        ? "white"
-                        : "var(--color-secondary)",
-                    border:
-                      selected === it.reportYmd
-                        ? "none"
-                        : "1px solid var(--color-secondary)",
-                  },
-                }}
                 onClick={() => {
                   setSelected(it.reportYmd);
                   loadByDate(it.reportYmd);
@@ -158,8 +139,7 @@ export default function DailyReportViewer({
       {report && (
         <Paper withBorder p="md" radius="md">
           <Text fw={600} mb="xs">
-            {report.reportYmd} • Last modified:{" "}
-            {new Date(report.updatedAt).toLocaleString()}
+            {report.reportYmd} • Last modified: {new Date(report.updatedAt).toLocaleString()}
           </Text>
 
           <Text mb="sm">

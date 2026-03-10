@@ -17,6 +17,7 @@ import {
   Container,
 } from "@mantine/core";
 import { ListBulletIcon, Squares2X2Icon } from "@heroicons/react/24/outline";
+import { useRouter } from "next/navigation";
 
 type User = {
   id: number;
@@ -33,27 +34,116 @@ type User = {
   supervisors: any[];
 };
 
+type Me = {
+  id?: number;
+  user_id?: number;
+  username?: string | null;
+  email?: string | null;
+  role?: string | null;
+  user?: {
+    id?: number;
+    username?: string | null;
+    email?: string | null;
+    role?: string | null;
+  };
+} | null;
+
+function normalizeMeRole(data: any): string | null {
+  return data?.role ?? data?.user?.role ?? null;
+}
+
+function normalizeUsers(data: any): User[] {
+  if (Array.isArray(data?.data)) return data.data;
+  if (Array.isArray(data)) return data;
+  if (Array.isArray(data?.results)) return data.results;
+  return [];
+}
+
 export default function TeamDirectoryPage() {
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [view, setView] = useState<"grid" | "list">("grid");
+  const [me, setMe] = useState<Me>(null);
+
+  const router = useRouter();
 
   useEffect(() => {
-    fetch("/api/team-directory", { cache: "no-store" })
-      .then((res) => res.json())
-      .then((data) => {
-        setUsers(data.data || []);
-        setLoading(false);
-      });
+    let mounted = true;
+
+    async function loadUsers() {
+      try {
+        const res = await fetch("/api/team-directory", {
+          cache: "no-store",
+          credentials: "include",
+        });
+
+        if (!res.ok) {
+          throw new Error(`Team directory failed: ${res.status}`);
+        }
+
+        const data = await res.json();
+        const normalized = normalizeUsers(data);
+
+        if (mounted) {
+          setUsers(normalized);
+        }
+      } catch (error) {
+        console.error("TEAM DIRECTORY FETCH ERROR:", error);
+        if (mounted) {
+          setUsers([]);
+        }
+      } finally {
+        if (mounted) {
+          setLoading(false);
+        }
+      }
+    }
+
+    async function loadMe() {
+      try {
+        const res = await fetch("/api/auth/me", {
+          cache: "no-store",
+          credentials: "include",
+        });
+
+        if (!res.ok) {
+          throw new Error(`/api/auth/me failed: ${res.status}`);
+        }
+
+        const data = await res.json();
+
+        if (mounted) {
+          setMe(data);
+        }
+      } catch (error) {
+        console.error("ME FETCH ERROR:", error);
+        if (mounted) {
+          setMe(null);
+        }
+      }
+    }
+
+    loadUsers();
+    loadMe();
+
+    return () => {
+      mounted = false;
+    };
   }, []);
+
+  const isAdmin = normalizeMeRole(me)?.toLowerCase() === "admin";
 
   const sortedUsers = useMemo(() => {
     return [...users].sort((a, b) => {
-      const nameA = `${a.first_name} ${a.last_name}`.trim() || a.username;
-      const nameB = `${b.first_name} ${b.last_name}`.trim() || b.username;
+      const nameA =
+        `${a.first_name || ""} ${a.last_name || ""}`.trim() || a.username;
+      const nameB =
+        `${b.first_name || ""} ${b.last_name || ""}`.trim() || b.username;
 
-      return nameA.localeCompare(nameB, undefined, { sensitivity: "base" });
+      return nameA.localeCompare(nameB, undefined, {
+        sensitivity: "base",
+      });
     });
   }, [users]);
 
@@ -91,7 +181,6 @@ export default function TeamDirectoryPage() {
         </Group>
       </Group>
 
-      {/* GRID VIEW */}
       {view === "grid" && (
         <Grid align="stretch">
           {sortedUsers.map((user) => (
@@ -117,17 +206,12 @@ export default function TeamDirectoryPage() {
                     ? `${user.first_name || ""} ${user.last_name || ""}`.trim()
                     : user.username}
                 </Text>
-
-                {/* <Text size="xs" c="dimmed" ta="center">
-                  {user.role || "No role"}
-                </Text> */}
               </Card>
             </Grid.Col>
           ))}
         </Grid>
       )}
 
-      {/* LIST / TABLE VIEW */}
       <Container>
         {view === "list" && (
           <Grid>
@@ -159,9 +243,7 @@ export default function TeamDirectoryPage() {
                           <div>
                             <Text size="sm" fw={500}>
                               {user.first_name || user.last_name
-                                ? `${user.first_name || ""} ${
-                                    user.last_name || ""
-                                  }`.trim()
+                                ? `${user.first_name || ""} ${user.last_name || ""}`.trim()
                                 : user.username}
                             </Text>
                             <Text size="xs" c="dimmed">
@@ -230,6 +312,19 @@ export default function TeamDirectoryPage() {
               <Text size="sm">
                 <strong>Staff Since:</strong> {selectedUser.staff_since || "—"}
               </Text>
+
+              {isAdmin && (
+                <>
+                  <Divider my="md" />
+                  <Button
+                    fullWidth
+                    className="!bg-[var(--color-primary)] !text-white hover:!opacity-90"
+                    onClick={() => router.push(`/users/${selectedUser.id}`)}
+                  >
+                    Check Profile
+                  </Button>
+                </>
+              )}
             </>
           )}
         </Modal>

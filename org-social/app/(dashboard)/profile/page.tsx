@@ -298,17 +298,20 @@ export default function ProfilePage() {
           )}
         </div>
       </Paper>
-      <DailyReportComposer
-        userId={user.id}
-        viewerId={user.id}
-        viewerRole={user.role}
-      />
+      <div className="[&_button]:!bg-[var(--color-secondary)] [&_button]:!text-white [&_button:hover]:!opacity-90">
+        <DailyReportComposer
+          userId={user.id}
+          viewerId={user.id}
+          viewerRole={user.role}
+        />
 
-      <DailyReportViewer
-        userId={user.id}
-        viewerId={user.id}
-        viewerRole={user.role}
-      />
+        <DailyReportViewer
+          userId={user.id}
+          userRole={user.role}
+          viewerId={user.id}
+          viewerRole={user.role}
+        />
+      </div>
       {/* <RegionalReportComposer userId={user.id} viewerId={user.id} />
       <RegionalReportViewer
         userId={user.id}
@@ -317,13 +320,27 @@ export default function ProfilePage() {
       /> */}
       <Divider className="mb-4" />
       <Group justify="left" mb="md">
-        <Button variant="subtle" onClick={() => setActiveTab("myPosts")}>
+        <Button
+          variant="subtle"
+          className="!text-[var(--color-secondary)] hover:!bg-[var(--color-secondary)] hover:!text-white"
+          onClick={() => setActiveTab("myPosts")}
+        >
           My Posts
         </Button>
-        <Button variant="subtle" onClick={() => setActiveTab("savedPosts")}>
+
+        <Button
+          variant="subtle"
+          className="!text-[var(--color-secondary)] hover:!bg-[var(--color-secondary)] hover:!text-white"
+          onClick={() => setActiveTab("savedPosts")}
+        >
           Saved Posts
         </Button>
-        <Button variant="subtle" onClick={() => setActiveTab("myChannels")}>
+
+        <Button
+          variant="subtle"
+          className="!text-[var(--color-secondary)] hover:!bg-[var(--color-secondary)] hover:!text-white"
+          onClick={() => setActiveTab("myChannels")}
+        >
           My Channels
         </Button>
       </Group>

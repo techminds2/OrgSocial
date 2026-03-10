@@ -1,44 +1,74 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
-import { requireViewer, canViewDailyReports } from "@/lib/requireAuth";
+import {
+  cleanToken,
+  getUserFromRequest,
+  fetchCorporateUserById,
+  canViewDailyReports,
+} from "@/lib/auth";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
-function noStoreJson(body: any, status = 200) {
-  return NextResponse.json(body, {
-    status,
-    headers: { "Cache-Control": "no-store, max-age=0" },
-  });
-}
+type RouteContext = {
+  params: Promise<{ id: string }>;
+};
 
-export async function GET(
-  req: NextRequest,
-  ctx: { params: Promise<{ id: string }> }
-) {
+export async function GET(req: NextRequest, { params }: RouteContext) {
   try {
-    const viewer = await requireViewer(req);
-    if (!viewer) return noStoreJson({ report: null }, 200);
+    const viewer = await getUserFromRequest(req);
 
-    const { id } = await ctx.params;
-    const targetUserId = Number(id);
-    if (!Number.isFinite(targetUserId)) return noStoreJson({ error: "Invalid user id" }, 400);
-
-    if (!canViewDailyReports(targetUserId, viewer)) {
-      return noStoreJson({ error: "Forbidden" }, 403);
+    if (!viewer) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const date = req.nextUrl.searchParams.get("date")?.trim() || "";
-    if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) return noStoreJson({ error: "date must be YYYY-MM-DD" }, 400);
+    const { id } = await params;
+    const targetUserId = Number(id);
 
-    const report = await prisma.dailyReport.findUnique({
-      where: { authorId_reportYmd: { authorId: targetUserId, reportYmd: date } },
+    if (!Number.isFinite(targetUserId) || targetUserId <= 0) {
+      return NextResponse.json({ error: "Invalid user id" }, { status: 400 });
+    }
+
+    const raw = req.cookies.get("accessToken")?.value;
+    if (!raw) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const token = cleanToken(raw);
+
+    const targetUser = await fetchCorporateUserById(token, targetUserId);
+    const targetRole = (targetUser?.role ?? null) as string | null;
+
+    const allowed = canViewDailyReports({
+      viewerRole: viewer.role,
+      viewerId: viewer.user_id,
+      targetUserId,
+      targetUserRole: targetRole,
     });
 
-    return noStoreJson({ report }, 200);
-  } catch (e) {
-    console.error("DAILY REPORT BY DATE ERROR:", e);
-    return noStoreJson({ error: "Server error" }, 500);
+    if (!allowed) {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    }
+
+    const date = req.nextUrl.searchParams.get("date");
+    if (!date) {
+      return NextResponse.json({ report: null });
+    }
+
+    const report = await prisma.dailyReport.findFirst({
+      where: {
+        authorId: targetUserId,
+        reportYmd: date,
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+    });
+
+    return NextResponse.json({ report });
+  } catch (error) {
+    console.error("GET /api/users/[id]/daily-report/by-date error:", error);
+    return NextResponse.json({ error: "Server error" }, { status: 500 });
   }
 }
