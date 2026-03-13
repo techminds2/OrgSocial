@@ -15,8 +15,14 @@ import {
   Table,
   ActionIcon,
   Container,
+  Select,
+  TextInput,
 } from "@mantine/core";
-import { ListBulletIcon, Squares2X2Icon } from "@heroicons/react/24/outline";
+import {
+  ListBulletIcon,
+  Squares2X2Icon,
+  MagnifyingGlassIcon,
+} from "@heroicons/react/24/outline";
 import { useRouter } from "next/navigation";
 
 type User = {
@@ -59,12 +65,21 @@ function normalizeUsers(data: any): User[] {
   return [];
 }
 
+function getDisplayName(user: User) {
+  return (
+    `${user.first_name || ""} ${user.last_name || ""}`.trim() || user.username
+  );
+}
+
 export default function TeamDirectoryPage() {
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [view, setView] = useState<"grid" | "list">("grid");
   const [me, setMe] = useState<Me>(null);
+
+  const [roleFilter, setRoleFilter] = useState<string>("all");
+  const [search, setSearch] = useState("");
 
   const router = useRouter();
 
@@ -136,16 +151,38 @@ export default function TeamDirectoryPage() {
 
   const sortedUsers = useMemo(() => {
     return [...users].sort((a, b) => {
-      const nameA =
-        `${a.first_name || ""} ${a.last_name || ""}`.trim() || a.username;
-      const nameB =
-        `${b.first_name || ""} ${b.last_name || ""}`.trim() || b.username;
+      const nameA = getDisplayName(a);
+      const nameB = getDisplayName(b);
 
       return nameA.localeCompare(nameB, undefined, {
         sensitivity: "base",
       });
     });
   }, [users]);
+
+  const filteredUsers = useMemo(() => {
+    const q = search.trim().toLowerCase();
+
+    return sortedUsers.filter((user) => {
+      const userRole = (user.role || "").toLowerCase();
+      const username = (user.username || "").toLowerCase();
+      const firstName = (user.first_name || "").toLowerCase();
+      const lastName = (user.last_name || "").toLowerCase();
+      const fullName = `${firstName} ${lastName}`.trim();
+
+      const matchesRole =
+        roleFilter === "all" ? true : userRole === roleFilter.toLowerCase();
+
+      const matchesSearch =
+        !q ||
+        username.includes(q) ||
+        firstName.includes(q) ||
+        lastName.includes(q) ||
+        fullName.includes(q);
+
+      return matchesRole && matchesSearch;
+    });
+  }, [sortedUsers, roleFilter, search]);
 
   if (loading) {
     return (
@@ -157,10 +194,15 @@ export default function TeamDirectoryPage() {
 
   return (
     <div className="p-6">
-      <Group justify="space-between" mb="lg">
-        <Text size="xl" fw={600}>
-          Team Directory
-        </Text>
+      <Group justify="space-between" mb="lg" align="end">
+        <div>
+          <Text size="xl" fw={600}>
+            Team Directory
+          </Text>
+          <Text size="sm" c="dimmed">
+            Showing {filteredUsers.length} of {users.length} users
+          </Text>
+        </div>
 
         <Group gap={4}>
           <ActionIcon
@@ -181,10 +223,31 @@ export default function TeamDirectoryPage() {
         </Group>
       </Group>
 
+      <Group mb="lg" grow align="end">
+        <TextInput
+          label="Search user"
+          placeholder="Search by username, first name, last name"
+          value={search}
+          onChange={(e) => setSearch(e.currentTarget.value)}
+          leftSection={<MagnifyingGlassIcon className="w-4 h-4" />}
+        />
+
+        <Select
+          label="Filter by role"
+          value={roleFilter}
+          onChange={(value) => setRoleFilter(value || "all")}
+          data={[
+            { value: "all", label: "All Roles" },
+            { value: "branch_manager", label: "Branch Manager" },
+            { value: "admin", label: "Admin" },
+          ]}
+        />
+      </Group>
+
       {view === "grid" && (
         <Grid align="stretch">
-          {sortedUsers.map((user) => (
-            <Grid.Col key={user.id} span={4}>
+          {filteredUsers.map((user) => (
+            <Grid.Col key={user.id} span={{ base: 12, sm: 6, md: 4 }}>
               <Card
                 withBorder
                 shadow="sm"
@@ -202,9 +265,11 @@ export default function TeamDirectoryPage() {
                 />
 
                 <Text fw={500} size="sm" ta="center">
-                  {user.first_name || user.last_name
-                    ? `${user.first_name || ""} ${user.last_name || ""}`.trim()
-                    : user.username}
+                  {getDisplayName(user)}
+                </Text>
+
+                <Text size="xs" c="dimmed" ta="center">
+                  @{user.username}
                 </Text>
               </Card>
             </Grid.Col>
@@ -227,7 +292,7 @@ export default function TeamDirectoryPage() {
                 </Table.Thead>
 
                 <Table.Tbody>
-                  {sortedUsers.map((user) => (
+                  {filteredUsers.map((user) => (
                     <Table.Tr
                       key={user.id}
                       className="cursor-pointer"
@@ -242,9 +307,7 @@ export default function TeamDirectoryPage() {
                           />
                           <div>
                             <Text size="sm" fw={500}>
-                              {user.first_name || user.last_name
-                                ? `${user.first_name || ""} ${user.last_name || ""}`.trim()
-                                : user.username}
+                              {getDisplayName(user)}
                             </Text>
                             <Text size="xs" c="dimmed">
                               @{user.username}
@@ -258,10 +321,26 @@ export default function TeamDirectoryPage() {
                       <Table.Td>{user.email || "—"}</Table.Td>
                     </Table.Tr>
                   ))}
+
+                  {filteredUsers.length === 0 && (
+                    <Table.Tr>
+                      <Table.Td colSpan={4}>
+                        <Text ta="center" c="dimmed" py="md">
+                          No users found
+                        </Text>
+                      </Table.Td>
+                    </Table.Tr>
+                  )}
                 </Table.Tbody>
               </Table>
             </Grid.Col>
           </Grid>
+        )}
+
+        {view === "grid" && filteredUsers.length === 0 && (
+          <Text ta="center" c="dimmed" mt="xl">
+            No users found
+          </Text>
         )}
 
         <Modal

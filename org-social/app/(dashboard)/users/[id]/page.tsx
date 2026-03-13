@@ -54,7 +54,6 @@ export default async function UserProfilePage({ params }: PageProps) {
   }
 
   const token = cleanToken(raw);
-
   const targetUser = await fetchCorporateUserById(token, targetUserId);
 
   if (!targetUser) {
@@ -85,10 +84,7 @@ export default async function UserProfilePage({ params }: PageProps) {
   const department = targetUser.department ?? null;
   const organizationUnit = targetUser.organization_unit ?? null;
   const staffSince = targetUser.staff_since ?? null;
-  const profilePhoto =
-    targetUser.profile_photo ??
-    targetUser.profileImage ??
-    null;
+  const profilePhoto = targetUser.profile_photo ?? targetUser.profileImage ?? null;
 
   return (
     <Container size="sm" className="py-10">

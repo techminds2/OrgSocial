@@ -1,7 +1,19 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { Button, Group, Paper, Text, Select, Table } from "@mantine/core";
+import {
+  ActionIcon,
+  Button,
+  Group,
+  Paper,
+  Select,
+  Table,
+  Text,
+} from "@mantine/core";
+import {
+  ChevronLeftIcon,
+  ChevronRightIcon,
+} from "@heroicons/react/24/outline";
 
 type Item = {
   id: number;
@@ -12,6 +24,12 @@ type Item = {
 
 function currentMonth() {
   const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
+}
+
+function shiftMonth(month: string, delta: number) {
+  const [year, mon] = month.split("-").map(Number);
+  const d = new Date(year, mon - 1 + delta, 1);
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
 }
 
@@ -26,9 +44,6 @@ export default function DailyReportViewer({
   viewerId: number;
   viewerRole: string | null;
 }) {
-  // ✅ Permissions:
-  // - branch_manager => only self
-  // - admin => only if target user is branch_manager
   const canView =
     (viewerRole === "branch_manager" && viewerId === userId) ||
     (viewerRole === "admin" && userRole === "branch_manager");
@@ -42,12 +57,14 @@ export default function DailyReportViewer({
   const monthOptions = useMemo(() => {
     const out: { value: string; label: string }[] = [];
     const base = new Date();
-    for (let i = 0; i < 12; i++) {
+
+    for (let i = 0; i < 24; i++) {
       const d = new Date(base.getFullYear(), base.getMonth() - i, 1);
       const y = d.getFullYear();
       const m = String(d.getMonth() + 1).padStart(2, "0");
       out.push({ value: `${y}-${m}`, label: `${y}-${m}` });
     }
+
     return out;
   }, []);
 
@@ -103,18 +120,41 @@ export default function DailyReportViewer({
   if (!canView) return null;
 
   return (
-    <div className="space-y-3 mt-4">
-      <Group justify="space-between">
-        <Text fw={700}>Daily Reports (Private)</Text>
-        <Select data={monthOptions} value={month} onChange={(v) => v && setMonth(v)} w={140} />
+    <div className="space-y-4 mt-2">
+      <Group justify="space-between" align="end">
+        <Text fw={700}>Daily Reports</Text>
+
+        <Group gap="xs">
+          <ActionIcon
+            variant="light"
+            onClick={() => setMonth((prev) => shiftMonth(prev, -1))}
+          >
+            <ChevronLeftIcon className="h-4 w-4" />
+          </ActionIcon>
+
+          <Select
+            data={monthOptions}
+            value={month}
+            onChange={(v) => v && setMonth(v)}
+            w={140}
+          />
+
+          <ActionIcon
+            variant="light"
+            onClick={() => setMonth((prev) => shiftMonth(prev, 1))}
+          >
+            <ChevronRightIcon className="h-4 w-4" />
+          </ActionIcon>
+        </Group>
       </Group>
 
       {loading && <Text c="dimmed">Loading...</Text>}
 
       <Paper withBorder p="md" radius="md">
         <Text fw={600} mb="xs">
-          Days with reports
+          Dates with reports
         </Text>
+
         <div className="flex gap-2 flex-wrap">
           {items.length === 0 ? (
             <Text c="dimmed">No reports in this month.</Text>
@@ -139,7 +179,8 @@ export default function DailyReportViewer({
       {report && (
         <Paper withBorder p="md" radius="md">
           <Text fw={600} mb="xs">
-            {report.reportYmd} • Last modified: {new Date(report.updatedAt).toLocaleString()}
+            {report.reportYmd} • Last modified:{" "}
+            {new Date(report.updatedAt).toLocaleString()}
           </Text>
 
           <Text mb="sm">

@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import {
   Drawer,
   Burger,
@@ -21,13 +21,14 @@ import {
   ExclamationTriangleIcon,
   FireIcon,
   CheckCircleIcon,
+  DocumentTextIcon,
 } from "@heroicons/react/24/outline";
 
 type MenuItem =
   | { type: "link"; label: string; href: string; icon: React.ElementType }
   | { type: "heading"; label: string };
 
-const MENU_ITEMS: MenuItem[] = [
+const BASE_MENU_ITEMS: MenuItem[] = [
   { type: "heading", label: "My Team" },
   {
     type: "link",
@@ -41,12 +42,6 @@ const MENU_ITEMS: MenuItem[] = [
     href: "/team-directory",
     icon: UsersIcon,
   },
-  {
-    type: "link",
-    label: "To-do List",
-    href: "/todo",
-    icon: ClipboardDocumentListIcon,
-  },
 ];
 
 interface Todo {
@@ -57,20 +52,39 @@ interface Todo {
   createdAt: string;
 }
 
+type MeResponse = {
+  id?: number;
+  user_id?: number;
+  username?: string | null;
+  email?: string | null;
+  role?: string | null;
+  user?: {
+    id?: number;
+    username?: string | null;
+    email?: string | null;
+    role?: string | null;
+  };
+} | null;
+
+function normalizeMeRole(data: MeResponse): string | null {
+  return data?.role ?? data?.user?.role ?? null;
+}
+
 function SidebarContent({
   pathname,
   onNavigate,
   todos,
   openTodoModal,
   completeTodo,
+  isAdmin,
 }: {
   pathname: string;
   onNavigate?: () => void;
   todos?: Todo[];
   openTodoModal?: () => void;
   completeTodo?: (id: number) => void;
+  isAdmin: boolean;
 }) {
-  // ✅ High → Medium → Low, incomplete only
   const sidebarTodos =
     todos
       ?.filter((t) => !t.completed)
@@ -91,9 +105,28 @@ function SidebarContent({
     return "text-red-500";
   };
 
+  const menuItems: MenuItem[] = [
+    ...BASE_MENU_ITEMS,
+    ...(isAdmin
+      ? [
+          {
+            type: "link" as const,
+            label: "Daily Reports",
+            href: "/daily-reports/today",
+            icon: DocumentTextIcon,
+          },
+        ]
+      : []),
+    {
+      type: "link",
+      label: "To-do List",
+      href: "/todo",
+      icon: ClipboardDocumentListIcon,
+    },
+  ];
+
   return (
     <nav className="flex flex-col">
-      {/* Logo */}
       <div className="flex-shrink-0 flex items-center mb-6">
         <Link
           href="/"
@@ -103,11 +136,11 @@ function SidebarContent({
         </Link>
       </div>
 
-      {MENU_ITEMS.map((item, idx) => {
+      {menuItems.map((item, idx) => {
         if (item.type === "heading") {
           return (
             <div
-              key={idx}
+              key={`${item.label}-${idx}`}
               className="mt-4 mb-2 text-gray-500 uppercase font-semibold text-xs tracking-wider"
             >
               {item.label}
@@ -194,63 +227,107 @@ export default function Sidebar() {
   const [todos, setTodos] = useState<Todo[]>([]);
   const [newTodo, setNewTodo] = useState("");
   const [priority, setPriority] = useState<"Low" | "Medium" | "High">("Medium");
+  const [me, setMe] = useState<MeResponse>(null);
 
   const fetchTodos = async () => {
-    const res = await fetch("/api/todos");
-    const data = await res.json();
-    if (data.todos) setTodos(data.todos);
+    try {
+      const res = await fetch("/api/todos", {
+        credentials: "include",
+        cache: "no-store",
+      });
+      const data = await res.json();
+      if (data.todos) setTodos(data.todos);
+    } catch (error) {
+      console.error("TODOS FETCH ERROR:", error);
+      setTodos([]);
+    }
+  };
+
+  const fetchMe = async () => {
+    try {
+      const res = await fetch("/api/auth/me", {
+        credentials: "include",
+        cache: "no-store",
+      });
+
+      if (!res.ok) {
+        throw new Error(`/api/auth/me failed: ${res.status}`);
+      }
+
+      const data = await res.json();
+      setMe(data);
+    } catch (error) {
+      console.error("ME FETCH ERROR:", error);
+      setMe(null);
+    }
   };
 
   const addTodo = async () => {
-    if (!newTodo) return;
-    const res = await fetch("/api/todos", {
-      method: "POST",
-      body: JSON.stringify({ title: newTodo, priority }),
-      headers: { "Content-Type": "application/json" },
-    });
-    if (res.ok) {
-      setNewTodo("");
-      setPriority("Medium");
-      fetchTodos();
-      setTodoModal(false);
+    if (!newTodo.trim()) return;
+
+    try {
+      const res = await fetch("/api/todos", {
+        method: "POST",
+        body: JSON.stringify({ title: newTodo.trim(), priority }),
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+      });
+
+      if (res.ok) {
+        setNewTodo("");
+        setPriority("Medium");
+        await fetchTodos();
+        setTodoModal(false);
+      }
+    } catch (error) {
+      console.error("ADD TODO ERROR:", error);
     }
   };
 
   const completeTodo = async (id: number) => {
-    await fetch(`/api/todos/${id}`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ completed: true }),
-    });
-    fetchTodos();
+    try {
+      await fetch(`/api/todos/${id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ completed: true }),
+        credentials: "include",
+      });
+      await fetchTodos();
+    } catch (error) {
+      console.error("COMPLETE TODO ERROR:", error);
+    }
   };
 
   useEffect(() => {
     fetchTodos();
+    fetchMe();
   }, []);
 
-  const modalTodos = [
-    ...todos.filter((t) => !t.completed),
-    ...todos.filter((t) => t.completed),
-  ];
+  const modalTodos = useMemo(
+    () => [...todos.filter((t) => !t.completed), ...todos.filter((t) => t.completed)],
+    [todos]
+  );
+
+  const role = normalizeMeRole(me)?.toLowerCase() ?? null;
+  const isAdmin = role === "admin";
 
   return (
     <>
-      {/* Desktop sidebar */}
       <div className="hidden md:flex h-full flex-col p-4 overflow-y-auto">
         <SidebarContent
           pathname={pathname}
           todos={todos}
           openTodoModal={() => setTodoModal(true)}
           completeTodo={completeTodo}
+          isAdmin={isAdmin}
         />
       </div>
 
-      {/* Mobile drawer */}
       <div className="md:hidden">
         <div className="p-2">
           <Burger opened={opened} onClick={() => setOpened((o) => !o)} />
         </div>
+
         <Drawer
           opened={opened}
           onClose={() => setOpened(false)}
@@ -266,12 +343,12 @@ export default function Sidebar() {
               todos={todos}
               openTodoModal={() => setTodoModal(true)}
               completeTodo={completeTodo}
+              isAdmin={isAdmin}
             />
           </ScrollArea>
         </Drawer>
       </div>
 
-      {/* Todo Modal */}
       <Modal
         opened={todoModal}
         onClose={() => setTodoModal(false)}
@@ -285,6 +362,7 @@ export default function Sidebar() {
             onChange={(e) => setNewTodo(e.currentTarget.value)}
             className="flex-1"
           />
+
           <select
             className="p-2 rounded bg-transparent hover:bg-gray-100 focus:outline-none focus:ring-0"
             value={priority}
@@ -296,6 +374,7 @@ export default function Sidebar() {
             <option value="Medium">Medium</option>
             <option value="Low">Low</option>
           </select>
+
           <Button size="xs" variant="filled" onClick={addTodo}>
             Add
           </Button>
@@ -312,6 +391,7 @@ export default function Sidebar() {
               <span>
                 {todo.title} ({todo.priority})
               </span>
+
               {!todo.completed && (
                 <ActionIcon
                   size="sm"
