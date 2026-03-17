@@ -3,17 +3,15 @@
 import { useEffect, useMemo, useState } from "react";
 import {
   ActionIcon,
-  Button,
   Group,
   Paper,
   Select,
   Table,
   Text,
+  Modal,
 } from "@mantine/core";
-import {
-  ChevronLeftIcon,
-  ChevronRightIcon,
-} from "@heroicons/react/24/outline";
+import { DatePicker } from "@mantine/dates";
+import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/outline";
 
 type Item = {
   id: number;
@@ -31,6 +29,14 @@ function shiftMonth(month: string, delta: number) {
   const [year, mon] = month.split("-").map(Number);
   const d = new Date(year, mon - 1 + delta, 1);
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
+}
+
+function formatYMD(date: any) {
+  const d = new Date(date);
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  return `${y}-${m}-${day}`;
 }
 
 export default function DailyReportViewer({
@@ -53,6 +59,11 @@ export default function DailyReportViewer({
   const [selected, setSelected] = useState<string>("");
   const [report, setReport] = useState<any>(null);
   const [loading, setLoading] = useState(false);
+  const [opened, setOpened] = useState(false);
+
+  const reportDates = useMemo(() => {
+    return new Set(items.map((i) => i.reportYmd));
+  }, [items]);
 
   const monthOptions = useMemo(() => {
     const out: { value: string; label: string }[] = [];
@@ -73,7 +84,7 @@ export default function DailyReportViewer({
     try {
       const res = await fetch(
         `/api/users/${userId}/daily-reports/month?month=${encodeURIComponent(m)}`,
-        { credentials: "include", cache: "no-store" }
+        { credentials: "include", cache: "no-store" },
       );
       const out = await res.json();
       setItems(out.items || []);
@@ -92,7 +103,7 @@ export default function DailyReportViewer({
     try {
       const res = await fetch(
         `/api/users/${userId}/daily-reports/by-date?date=${encodeURIComponent(ymd)}`,
-        { credentials: "include", cache: "no-store" }
+        { credentials: "include", cache: "no-store" },
       );
       const out = await res.json();
       setReport(out.report || null);
@@ -107,150 +118,162 @@ export default function DailyReportViewer({
   useEffect(() => {
     if (!canView) return;
     loadMonth(month);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [month, canView]);
 
   useEffect(() => {
     const onUpd = () => loadMonth(month);
     window.addEventListener("daily-report-updated", onUpd);
     return () => window.removeEventListener("daily-report-updated", onUpd);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [month]);
 
   if (!canView) return null;
 
   return (
     <div className="space-y-4 mt-2">
+      {/* Header */}
       <Group justify="space-between" align="end">
         <Text fw={700}>Daily Reports</Text>
-
-        <Group gap="xs">
-          <ActionIcon
-            variant="light"
-            onClick={() => setMonth((prev) => shiftMonth(prev, -1))}
-          >
-            <ChevronLeftIcon className="h-4 w-4" />
-          </ActionIcon>
-
-          <Select
-            data={monthOptions}
-            value={month}
-            onChange={(v) => v && setMonth(v)}
-            w={140}
-          />
-
-          <ActionIcon
-            variant="light"
-            onClick={() => setMonth((prev) => shiftMonth(prev, 1))}
-          >
-            <ChevronRightIcon className="h-4 w-4" />
-          </ActionIcon>
-        </Group>
       </Group>
 
-      {loading && <Text c="dimmed">Loading...</Text>}
-
+      {/* Calendar */}
       <Paper withBorder p="md" radius="md">
         <Text fw={600} mb="xs">
-          Dates with reports
+          Report Calendar
         </Text>
 
-        <div className="flex gap-2 flex-wrap">
-          {items.length === 0 ? (
-            <Text c="dimmed">No reports in this month.</Text>
-          ) : (
-            items.map((it) => (
-              <Button
-                key={it.id}
-                size="xs"
-                variant={selected === it.reportYmd ? "filled" : "light"}
-                onClick={() => {
-                  setSelected(it.reportYmd);
-                  loadByDate(it.reportYmd);
+        <DatePicker
+          value={selected ? new Date(selected) : null}
+          onChange={(date) => {
+            if (!date) return;
+
+            const ymd = formatYMD(date);
+            setSelected(ymd);
+
+            if (reportDates.has(ymd)) {
+              loadByDate(ymd);
+              setOpened(true); // ✅ open modal only if report exists
+            }
+          }}
+          renderDay={(date) => {
+            const d = new Date(date);
+
+            const y = d.getFullYear();
+            const m = String(d.getMonth() + 1).padStart(2, "0");
+            const day = String(d.getDate()).padStart(2, "0");
+
+            const ymd = `${y}-${m}-${day}`;
+            const hasReport = reportDates.has(ymd);
+
+            return (
+              <div
+                style={{
+                  width: 32,
+                  height: 32,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  borderRadius: "50%",
+                  backgroundColor: hasReport
+                    ? "var(--color-secondary)"
+                    : undefined,
+                  color: hasReport ? "#fff" : undefined,
+                  fontWeight: hasReport ? 700 : 400,
                 }}
               >
-                {it.reportYmd}
-              </Button>
-            ))
-          )}
-        </div>
+                {d.getDate()}
+              </div>
+            );
+          }}
+        />
       </Paper>
 
-      {report && (
-        <Paper withBorder p="md" radius="md">
-          <Text fw={600} mb="xs">
-            {report.reportYmd} • Last modified:{" "}
-            {new Date(report.updatedAt).toLocaleString()}
-          </Text>
+      {/* ✅ Modal */}
+      <Modal
+        opened={opened}
+        onClose={() => setOpened(false)}
+        title={report?.reportYmd || "Daily Report"}
+        size="lg"
+        centered
+        styles={{
+          body: {
+            maxHeight: "70vh",
+            overflowY: "auto",
+          },
+        }}
+      >
+        {report ? (
+          <>
+            <Text mb="sm">
+              <b>Branch:</b> {report.branchName}
+            </Text>
 
-          <Text mb="sm">
-            <b>Branch:</b> {report.branchName}
-          </Text>
+            <Table withTableBorder withColumnBorders>
+              <Table.Tbody>
+                <Table.Tr>
+                  <Table.Td fw={600}>New Connection Request</Table.Td>
+                  <Table.Td>{report.newConnectionRequest}</Table.Td>
+                </Table.Tr>
+                <Table.Tr>
+                  <Table.Td fw={600}>Pending</Table.Td>
+                  <Table.Td>{report.pendingConnection}</Table.Td>
+                </Table.Tr>
+                <Table.Tr>
+                  <Table.Td fw={600}>Completed</Table.Td>
+                  <Table.Td>{report.completedConnection}</Table.Td>
+                </Table.Tr>
+                <Table.Tr>
+                  <Table.Td fw={600}>Reason for Pending</Table.Td>
+                  <Table.Td>{report.reasonPendingConnection || "-"}</Table.Td>
+                </Table.Tr>
 
-          <Table withTableBorder withColumnBorders>
-            <Table.Tbody>
-              <Table.Tr>
-                <Table.Td fw={600}>New Connection Request</Table.Td>
-                <Table.Td>{report.newConnectionRequest}</Table.Td>
-              </Table.Tr>
-              <Table.Tr>
-                <Table.Td fw={600}>Pending</Table.Td>
-                <Table.Td>{report.pendingConnection}</Table.Td>
-              </Table.Tr>
-              <Table.Tr>
-                <Table.Td fw={600}>Completed</Table.Td>
-                <Table.Td>{report.completedConnection}</Table.Td>
-              </Table.Tr>
-              <Table.Tr>
-                <Table.Td fw={600}>Reason for Pending</Table.Td>
-                <Table.Td>{report.reasonPendingConnection || "-"}</Table.Td>
-              </Table.Tr>
+                <Table.Tr>
+                  <Table.Td fw={600}>Internet Tkt</Table.Td>
+                  <Table.Td>{report.internetTkt}</Table.Td>
+                </Table.Tr>
+                <Table.Tr>
+                  <Table.Td fw={600}>Pending Tkt</Table.Td>
+                  <Table.Td>{report.pendingTkt}</Table.Td>
+                </Table.Tr>
+                <Table.Tr>
+                  <Table.Td fw={600}>Completed Tkt</Table.Td>
+                  <Table.Td>{report.completedTkt}</Table.Td>
+                </Table.Tr>
+                <Table.Tr>
+                  <Table.Td fw={600}>Reason for Pending (Tkt)</Table.Td>
+                  <Table.Td>{report.reasonPendingTkt || "-"}</Table.Td>
+                </Table.Tr>
 
-              <Table.Tr>
-                <Table.Td fw={600}>Internet Tkt</Table.Td>
-                <Table.Td>{report.internetTkt}</Table.Td>
-              </Table.Tr>
-              <Table.Tr>
-                <Table.Td fw={600}>Pending Tkt</Table.Td>
-                <Table.Td>{report.pendingTkt}</Table.Td>
-              </Table.Tr>
-              <Table.Tr>
-                <Table.Td fw={600}>Completed Tkt</Table.Td>
-                <Table.Td>{report.completedTkt}</Table.Td>
-              </Table.Tr>
-              <Table.Tr>
-                <Table.Td fw={600}>Reason for Pending (Tkt)</Table.Td>
-                <Table.Td>{report.reasonPendingTkt || "-"}</Table.Td>
-              </Table.Tr>
-
-              <Table.Tr>
-                <Table.Td fw={600}>Total Expire Customer of the day</Table.Td>
-                <Table.Td>{report.expireCustomerDay}</Table.Td>
-              </Table.Tr>
-              <Table.Tr>
-                <Table.Td fw={600}>Total Renew of the day</Table.Td>
-                <Table.Td>{report.renewDay}</Table.Td>
-              </Table.Tr>
-              <Table.Tr>
-                <Table.Td fw={600}>Total Active Customer</Table.Td>
-                <Table.Td>{report.activeCustomer}</Table.Td>
-              </Table.Tr>
-              <Table.Tr>
-                <Table.Td fw={600}>Total Expire Customer</Table.Td>
-                <Table.Td>{report.totalExpireCustomer}</Table.Td>
-              </Table.Tr>
-              <Table.Tr>
-                <Table.Td fw={600}>Total Out going Calls (Follow UP)</Table.Td>
-                <Table.Td>{report.outgoingCalls}</Table.Td>
-              </Table.Tr>
-              <Table.Tr>
-                <Table.Td fw={600}>Trunk Issues</Table.Td>
-                <Table.Td>{report.trunkIssueRemarks || "-"}</Table.Td>
-              </Table.Tr>
-            </Table.Tbody>
-          </Table>
-        </Paper>
-      )}
+                <Table.Tr>
+                  <Table.Td fw={600}>Total Expire Customer of the day</Table.Td>
+                  <Table.Td>{report.expireCustomerDay}</Table.Td>
+                </Table.Tr>
+                <Table.Tr>
+                  <Table.Td fw={600}>Total Renew of the day</Table.Td>
+                  <Table.Td>{report.renewDay}</Table.Td>
+                </Table.Tr>
+                <Table.Tr>
+                  <Table.Td fw={600}>Total Active Customer</Table.Td>
+                  <Table.Td>{report.activeCustomer}</Table.Td>
+                </Table.Tr>
+                <Table.Tr>
+                  <Table.Td fw={600}>Total Expire Customer</Table.Td>
+                  <Table.Td>{report.totalExpireCustomer}</Table.Td>
+                </Table.Tr>
+                <Table.Tr>
+                  <Table.Td fw={600}>Total Outgoing Calls</Table.Td>
+                  <Table.Td>{report.outgoingCalls}</Table.Td>
+                </Table.Tr>
+                <Table.Tr>
+                  <Table.Td fw={600}>Trunk Issues</Table.Td>
+                  <Table.Td>{report.trunkIssueRemarks || "-"}</Table.Td>
+                </Table.Tr>
+              </Table.Tbody>
+            </Table>
+          </>
+        ) : (
+          <Text c="dimmed">Loading...</Text>
+        )}
+      </Modal>
     </div>
   );
 }

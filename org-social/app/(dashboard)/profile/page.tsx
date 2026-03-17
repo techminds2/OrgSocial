@@ -298,7 +298,7 @@ export default function ProfilePage() {
           )}
         </div>
       </Paper>
-      <div className="[&_button]:!bg-[var(--color-secondary)] [&_button]:!text-white [&_button:hover]:!opacity-90">
+      <div className="space-y-4">
         <DailyReportComposer
           userId={user.id}
           viewerId={user.id}
