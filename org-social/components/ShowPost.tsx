@@ -82,7 +82,7 @@ export default function ShowPosts({
   const [likingId, setLikingId] = useState<number | null>(null);
   const [commentingId, setCommentingId] = useState<number | null>(null);
   const [commentInputs, setCommentInputs] = useState<Record<number, string>>(
-    {}
+    {},
   );
 
   const [editingPost, setEditingPost] = useState<Post | null>(null);
@@ -101,8 +101,7 @@ export default function ShowPosts({
   const [loadingMore, setLoadingMore] = useState(false);
   const loadMoreRef = useRef<HTMLDivElement | null>(null);
 
-  
-const { observeEl } = useSeenTracker(channelId ?? 0);
+  const { observeEl } = useSeenTracker(channelId ?? 0);
 
   useEffect(() => {
     if (isControlled) {
@@ -186,7 +185,7 @@ const { observeEl } = useSeenTracker(channelId ?? 0);
         await fetchPosts({ cursor: nextCursor, append: true });
         setLoadingMore(false);
       },
-      { root: null, rootMargin: "200px", threshold: 0 }
+      { root: null, rootMargin: "200px", threshold: 0 },
     );
 
     obs.observe(el);
@@ -214,8 +213,8 @@ const { observeEl } = useSeenTracker(channelId ?? 0);
                 likedByMe: liked,
                 likeCount: liked ? p.likeCount + 1 : p.likeCount - 1,
               }
-            : p
-        )
+            : p,
+        ),
       );
     } finally {
       setLikingId(null);
@@ -245,14 +244,14 @@ const { observeEl } = useSeenTracker(channelId ?? 0);
 
       setPosts((prev) =>
         prev.map((p) =>
-          p.id === postId ? { ...p, comments: [...p.comments, comment] } : p
-        )
+          p.id === postId ? { ...p, comments: [...p.comments, comment] } : p,
+        ),
       );
 
       setCommentsPost((cur) =>
         cur && cur.id === postId
           ? { ...cur, comments: [...cur.comments, comment] }
-          : cur
+          : cur,
       );
 
       setCommentInputs((prev) => ({ ...prev, [postId]: "" }));
@@ -280,7 +279,9 @@ const { observeEl } = useSeenTracker(channelId ?? 0);
       fd.append("content", editContent);
 
       const keepKeys = (editKeepFiles || []).map((f) =>
-        f.url.startsWith("/api/files/") ? f.url.replace("/api/files/", "") : f.url
+        f.url.startsWith("/api/files/")
+          ? f.url.replace("/api/files/", "")
+          : f.url,
       );
       fd.append("keepKeys", JSON.stringify(keepKeys));
 
@@ -296,10 +297,10 @@ const { observeEl } = useSeenTracker(channelId ?? 0);
       const data = await res.json();
 
       setPosts((prev) =>
-        prev.map((p) => (p.id === editingPost.id ? { ...p, ...data.post } : p))
+        prev.map((p) => (p.id === editingPost.id ? { ...p, ...data.post } : p)),
       );
       setCommentsPost((cur) =>
-        cur && cur.id === editingPost.id ? { ...cur, ...data.post } : cur
+        cur && cur.id === editingPost.id ? { ...cur, ...data.post } : cur,
       );
       setEditingPost(null);
     } catch (err) {
@@ -428,15 +429,23 @@ const { observeEl } = useSeenTracker(channelId ?? 0);
                       <img
                         key={i}
                         src={f.url}
-                        className="w-32 h-32 object-cover rounded"
+                        className="w-32 h-32 object-cover rounded cursor-pointer hover:opacity-80"
+                        onClick={() => openComments(post)}
                       />
                     );
+
                   if (f.type === "video")
                     return (
-                      <video key={i} controls className="w-48 h-32 rounded">
+                      <video
+                        key={i}
+                        controls
+                        className="w-48 h-32 rounded cursor-pointer"
+                        onClick={() => openComments(post)}
+                      >
                         <source src={f.url} />
                       </video>
                     );
+
                   return (
                     <a
                       key={i}
@@ -492,7 +501,7 @@ const { observeEl } = useSeenTracker(channelId ?? 0);
                     if (!res.ok) return;
                     const { saved } = await res.json();
                     setPosts((prev) =>
-                      prev.map((p) => (p.id === post.id ? { ...p, saved } : p))
+                      prev.map((p) => (p.id === post.id ? { ...p, saved } : p)),
                     );
                   } catch (err) {
                     console.error(err);
@@ -554,7 +563,7 @@ const { observeEl } = useSeenTracker(channelId ?? 0);
                     variant="light"
                     onClick={() =>
                       setEditKeepFiles((prev) =>
-                        prev.filter((_, i) => i !== idx)
+                        prev.filter((_, i) => i !== idx),
                       )
                     }
                   >
@@ -607,7 +616,10 @@ const { observeEl } = useSeenTracker(channelId ?? 0);
           <div className="flex gap-4 h-[70vh]">
             <div className="w-1/2 bg-gray-50 rounded-xl flex items-center justify-center overflow-hidden">
               {media?.img ? (
-                <img src={media.img.url} className="w-full h-full object-contain" />
+                <img
+                  src={media.img.url}
+                  className="w-full h-full object-contain"
+                />
               ) : media?.vid ? (
                 <video controls className="w-full h-full">
                   <source src={media.vid.url} />
@@ -619,7 +631,7 @@ const { observeEl } = useSeenTracker(channelId ?? 0);
               )}
             </div>
 
-            <div className="w-1/2 flex flex-col border-l pl-3">
+            <div className="w-1/2 flex flex-col pl-3">
               <ScrollArea className="flex-1" offsetScrollbars>
                 <div className="flex flex-col gap-3 pr-2 pb-4">
                   {commentsPost.comments.length === 0 ? (
@@ -635,7 +647,9 @@ const { observeEl } = useSeenTracker(channelId ?? 0);
                         />
                         <div className="bg-gray-50 rounded-lg px-3 py-2 w-full">
                           <div className="flex items-center justify-between gap-2">
-                            <p className="text-sm font-semibold">{c.author.username}</p>
+                            <p className="text-sm font-semibold">
+                              {c.author.username}
+                            </p>
                             <p className="text-xs text-gray-400">
                               {new Date(c.createdAt).toLocaleString()}
                             </p>
@@ -650,7 +664,7 @@ const { observeEl } = useSeenTracker(channelId ?? 0);
 
               <form
                 onSubmit={(e) => submitComment(commentsPost.id, e)}
-                className="pt-3 mt-2 border-t flex gap-2 bg-white sticky bottom-0"
+                className="pt-3 mt-2  flex gap-2 bg-white sticky bottom-0"
               >
                 <TextInput
                   placeholder="Write a comment..."
@@ -663,7 +677,22 @@ const { observeEl } = useSeenTracker(channelId ?? 0);
                   }
                   className="flex-1"
                 />
-                <Button type="submit" loading={commentingId === commentsPost.id}>
+                <Button
+                  type="submit"
+                  loading={commentingId === commentsPost.id}
+                  styles={{
+                    root: {
+                      backgroundColor: "var(--color-secondary)",
+                      color: "white",
+                      transition: "all 0.2s ease",
+                      "&:hover": { backgroundColor: "var(--color-primary)" },
+                      "&:disabled": {
+                        backgroundColor: "rgba(90, 140, 189, 0.5)",
+                        color: "white",
+                      },
+                    },
+                  }}
+                >
                   Post
                 </Button>
               </form>

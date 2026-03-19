@@ -22,6 +22,7 @@ import {
   FireIcon,
   CheckCircleIcon,
   DocumentTextIcon,
+  HomeIcon,
 } from "@heroicons/react/24/outline";
 
 type MenuItem =
@@ -106,6 +107,7 @@ function SidebarContent({
   };
 
   const menuItems: MenuItem[] = [
+    { type: "link", label: "Home", href: "/", icon: HomeIcon }, // Home link added
     ...BASE_MENU_ITEMS,
     ...(isAdmin
       ? [

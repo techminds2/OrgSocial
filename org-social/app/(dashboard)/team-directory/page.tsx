@@ -193,7 +193,8 @@ export default function TeamDirectoryPage() {
   }
 
   return (
-    <div className="p-6">
+    <Container className="py-6">
+      {/* Header */}
       <Group justify="space-between" mb="lg" align="end">
         <div>
           <Text size="xl" fw={600}>
@@ -223,6 +224,7 @@ export default function TeamDirectoryPage() {
         </Group>
       </Group>
 
+      {/* Filters */}
       <Group mb="lg" grow align="end">
         <TextInput
           label="Search user"
@@ -244,7 +246,8 @@ export default function TeamDirectoryPage() {
         />
       </Group>
 
-      {view === "grid" && (
+      {/* Users */}
+      {view === "grid" && filteredUsers.length > 0 && (
         <Grid align="stretch">
           {filteredUsers.map((user) => (
             <Grid.Col key={user.id} span={{ base: 12, sm: 6, md: 4 }}>
@@ -271,143 +274,141 @@ export default function TeamDirectoryPage() {
                 <Text size="xs" c="dimmed" ta="center">
                   @{user.username}
                 </Text>
+                <Text size="sm" c="dimmed">
+                  {user.department || "—"}
+                </Text>
               </Card>
             </Grid.Col>
           ))}
         </Grid>
       )}
 
-      <Container>
-        {view === "list" && (
-          <Grid>
-            <Grid.Col span={12}>
-              <Table withTableBorder striped highlightOnHover>
-                <Table.Thead>
-                  <Table.Tr>
-                    <Table.Th>Employee</Table.Th>
-                    <Table.Th>Role</Table.Th>
-                    <Table.Th>Department</Table.Th>
-                    <Table.Th>Email</Table.Th>
-                  </Table.Tr>
-                </Table.Thead>
+      {view === "list" && filteredUsers.length > 0 && (
+        <Grid>
+          <Grid.Col span={12}>
+            <Table withTableBorder striped highlightOnHover>
+              <Table.Thead>
+                <Table.Tr>
+                  <Table.Th>Employee</Table.Th>
+                  <Table.Th>Role</Table.Th>
+                  <Table.Th>Department</Table.Th>
+                  <Table.Th>Email</Table.Th>
+                </Table.Tr>
+              </Table.Thead>
 
-                <Table.Tbody>
-                  {filteredUsers.map((user) => (
-                    <Table.Tr
-                      key={user.id}
-                      className="cursor-pointer"
-                      onClick={() => setSelectedUser(user)}
-                    >
-                      <Table.Td>
-                        <Group gap="sm">
-                          <Avatar
-                            src={user.profile_photo}
-                            size={36}
-                            radius="xl"
-                          />
-                          <div>
-                            <Text size="sm" fw={500}>
-                              {getDisplayName(user)}
-                            </Text>
-                            <Text size="xs" c="dimmed">
-                              @{user.username}
-                            </Text>
-                          </div>
-                        </Group>
-                      </Table.Td>
-
-                      <Table.Td>{user.role || "—"}</Table.Td>
-                      <Table.Td>{user.department || "—"}</Table.Td>
-                      <Table.Td>{user.email || "—"}</Table.Td>
-                    </Table.Tr>
-                  ))}
-
-                  {filteredUsers.length === 0 && (
-                    <Table.Tr>
-                      <Table.Td colSpan={4}>
-                        <Text ta="center" c="dimmed" py="md">
-                          No users found
-                        </Text>
-                      </Table.Td>
-                    </Table.Tr>
-                  )}
-                </Table.Tbody>
-              </Table>
-            </Grid.Col>
-          </Grid>
-        )}
-
-        {view === "grid" && filteredUsers.length === 0 && (
-          <Text ta="center" c="dimmed" mt="xl">
-            No users found
-          </Text>
-        )}
-
-        <Modal
-          opened={!!selectedUser}
-          onClose={() => setSelectedUser(null)}
-          title="Employee Details"
-          size="md"
-        >
-          {selectedUser && (
-            <>
-              <Group mb="md">
-                <Avatar
-                  src={selectedUser.profile_photo}
-                  size={80}
-                  radius="xl"
-                />
-                <div>
-                  <Text size="lg" fw={600}>
-                    {selectedUser.first_name || "-"}{" "}
-                    {selectedUser.last_name || ""}
-                  </Text>
-                  <Text size="sm" c="dimmed">
-                    @{selectedUser.username}
-                  </Text>
-                </div>
-              </Group>
-
-              <Divider my="sm" />
-
-              <Group mb="xs">
-                <Text fw={500}>Job Title:</Text>
-                <Badge variant="light">{selectedUser.job_title || "—"}</Badge>
-              </Group>
-
-              <Text size="sm">
-                <strong>Email:</strong> {selectedUser.email || "—"}
-              </Text>
-
-              <Text size="sm">
-                <strong>Department:</strong> {selectedUser.department || "—"}
-              </Text>
-
-              <Text size="sm">
-                <strong>Organization Unit:</strong>{" "}
-                {selectedUser.organization_unit || "—"}
-              </Text>
-
-              <Text size="sm">
-                <strong>Staff Since:</strong> {selectedUser.staff_since || "—"}
-              </Text>
-
-              {isAdmin && (
-                <>
-                  <Divider my="md" />
-                  <Button
-                    fullWidth
-                    className="!bg-[var(--color-primary)] !text-white hover:!opacity-90"
-                    onClick={() => router.push(`/users/${selectedUser.id}`)}
+              <Table.Tbody>
+                {filteredUsers.map((user) => (
+                  <Table.Tr
+                    key={user.id}
+                    className="cursor-pointer"
+                    onClick={() => setSelectedUser(user)}
                   >
-                    Check Profile
-                  </Button>
-                </>
-              )}
-            </>
-          )}
-        </Modal>
-      </Container>
-    </div>
+                    <Table.Td>
+                      <Group gap="sm">
+                        <Avatar
+                          src={user.profile_photo}
+                          size={36}
+                          radius="xl"
+                        />
+                        <div>
+                          <Text size="sm" fw={500}>
+                            {getDisplayName(user)}
+                          </Text>
+                          <Text size="xs" c="dimmed">
+                            @{user.username}
+                          </Text>
+                        </div>
+                      </Group>
+                    </Table.Td>
+
+                    <Table.Td>{user.role || "—"}</Table.Td>
+                    <Table.Td>{user.department || "—"}</Table.Td>
+                    <Table.Td>{user.email || "—"}</Table.Td>
+                  </Table.Tr>
+                ))}
+
+                {filteredUsers.length === 0 && (
+                  <Table.Tr>
+                    <Table.Td colSpan={4}>
+                      <Text ta="center" c="dimmed" py="md">
+                        No users found
+                      </Text>
+                    </Table.Td>
+                  </Table.Tr>
+                )}
+              </Table.Tbody>
+            </Table>
+          </Grid.Col>
+        </Grid>
+      )}
+
+      {filteredUsers.length === 0 && (
+        <Text ta="center" c="dimmed" mt="xl">
+          No users found
+        </Text>
+      )}
+
+      {/* Modal */}
+      <Modal
+        opened={!!selectedUser}
+        onClose={() => setSelectedUser(null)}
+        title="Employee Details"
+        size="md"
+      >
+        {selectedUser && (
+          <>
+            <Group mb="md">
+              <Avatar src={selectedUser.profile_photo} size={80} radius="xl" />
+              <div>
+                <Text size="lg" fw={600}>
+                  {selectedUser.first_name || "-"}{" "}
+                  {selectedUser.last_name || ""}
+                </Text>
+                <Text size="sm" c="dimmed">
+                  @{selectedUser.username}
+                </Text>
+              </div>
+            </Group>
+
+            <Divider my="sm" />
+
+            <Group mb="xs">
+              <Text fw={500}>Job Title:</Text>
+              <Badge variant="light">{selectedUser.job_title || "—"}</Badge>
+            </Group>
+
+            <Text size="sm">
+              <strong>Email:</strong> {selectedUser.email || "—"}
+            </Text>
+
+            <Text size="sm">
+              <strong>Department:</strong> {selectedUser.department || "—"}
+            </Text>
+
+            <Text size="sm">
+              <strong>Organization Unit:</strong>{" "}
+              {selectedUser.organization_unit || "—"}
+            </Text>
+
+            <Text size="sm">
+              <strong>Staff Since:</strong> {selectedUser.staff_since || "—"}
+            </Text>
+
+            {isAdmin && (
+              <>
+                <Divider my="md" />
+                <Button
+                  fullWidth
+                  className="!bg-[var(--color-primary)] !text-white hover:!opacity-90"
+                  onClick={() => router.push(`/users/${selectedUser.id}`)}
+                >
+                  Check Profile
+                </Button>
+              </>
+            )}
+          </>
+        )}
+      </Modal>
+    </Container>
   );
 }
