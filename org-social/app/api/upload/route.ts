@@ -48,7 +48,6 @@ import prisma from "@/lib/prisma";
 import { jwtVerify } from "jose";
 import { DJANGO_JWT_SECRET as SECRET } from "@/lib/jwtSecret";
 
-
 // const SECRET_STR = process.env.DJANGO_JWT_SECRET || "";
 // const SECRET = new TextEncoder().encode(SECRET_STR);
 
@@ -76,7 +75,7 @@ export async function POST(req: NextRequest) {
     if (!userId) {
       return NextResponse.json(
         { error: "Invalid token payload" },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -105,7 +104,7 @@ export async function POST(req: NextRequest) {
           Key: key,
           Body: Buffer.from(ab),
           ContentType: file.type || "application/octet-stream",
-        })
+        }),
       );
       console.log("Files to store in DB:", uploadedFiles);
 
@@ -121,7 +120,7 @@ export async function POST(req: NextRequest) {
         author: { connect: { id: userId } },
         files: {
           create: uploadedFiles.map((f) =>
-            f.type ? { url: f.url, type: f.type } : { url: f.url }
+            f.type ? { url: f.url, type: f.type } : { url: f.url },
           ),
         },
       },
@@ -134,9 +133,16 @@ export async function POST(req: NextRequest) {
     });
   } catch (error) {
     console.error("UPLOAD ERROR:", error);
+
+    let message = "Unknown error";
+
+    if (error instanceof Error) {
+      message = error.message;
+    }
+
     return NextResponse.json(
-      { error: "Post failed", detail: error?.message ?? String(error) },
-      { status: 500 }
+      { error: "Post failed", detail: message },
+      { status: 500 },
     );
   }
 }

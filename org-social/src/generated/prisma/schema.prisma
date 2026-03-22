@@ -269,3 +269,15 @@ model RegionalDailyReport {
   @@index([authorId, reportYmd])
   @@index([reportYmd])
 }
+
+model CalendarNote {
+  id          Int      @id @default(autoincrement())
+  userId      Int
+  noteDate    String // YYYY-MM-DD (Nepal date string, same style as reportYmd)
+  title       String
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([userId, noteDate])
+}

@@ -10,6 +10,7 @@ import {
   ScrollArea,
   Text,
   Loader,
+  Badge,
 } from "@mantine/core";
 import { BellIcon } from "@heroicons/react/24/outline";
 import useNotifications from "@/hooks/useNotifications";
@@ -19,15 +20,23 @@ interface NavBarProps {
 }
 
 type Notification = {
-  id: number;
+  id: number | string;
+  sourceId?: number;
   message: string;
   createdAt: string | Date;
   channelId?: number;
   href: string;
-  type?: "post" | "join-request" | "comment" | "JOIN_REQUEST";
+  type?:
+    | "post"
+    | "join-request"
+    | "comment"
+    | "JOIN_REQUEST"
+    | "calendar-note";
   channelName?: string;
   username?: string;
   isRead?: boolean;
+  description?: string;
+  noteDate?: string;
 };
 
 function useMounted() {
@@ -58,6 +67,7 @@ function notifKey(n: Notification) {
 
 function mergeDedupe(prev: Notification[], incoming: Notification[]) {
   const map = new Map<string, Notification>();
+
   [...incoming, ...prev].forEach((raw) => {
     const n: Notification = { ...raw, type: normalizeType(raw) };
     map.set(notifKey(n), n);
@@ -66,6 +76,27 @@ function mergeDedupe(prev: Notification[], incoming: Notification[]) {
   return Array.from(map.values()).sort(
     (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
   );
+}
+
+function todayNepalYmd() {
+  const now = new Date();
+
+  const parts = new Intl.DateTimeFormat("en-CA", {
+    timeZone: "Asia/Kathmandu",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  }).formatToParts(now);
+
+  const year = parts.find((p) => p.type === "year")?.value ?? "";
+  const month = parts.find((p) => p.type === "month")?.value ?? "";
+  const day = parts.find((p) => p.type === "day")?.value ?? "";
+
+  return `${year}-${month}-${day}`;
+}
+
+function calendarReadStorageKey(userId: number | null) {
+  return `calendar-note-read:${userId ?? "guest"}:${todayNepalYmd()}`;
 }
 
 export default function NavBar({ profileImage }: NavBarProps) {
@@ -78,20 +109,38 @@ export default function NavBar({ profileImage }: NavBarProps) {
   const [username, setUsername] = useState<string>("");
   const [meProfileImage, setMeProfileImage] = useState<string | null>(null);
   const [meId, setMeId] = useState<number | null>(null);
+  const [calendarReadIds, setCalendarReadIds] = useState<string[]>([]);
 
-  // Hook stays safe: it only becomes "active" when meId exists
   useNotifications(meId, (updater: any) => {
     const incoming = typeof updater === "function" ? updater([]) : [updater];
     setNotifications((prev) => mergeDedupe(prev, incoming as any));
   });
 
-  // Fetch notifications
+  useEffect(() => {
+    if (!meId || typeof window === "undefined") return;
+
+    try {
+      const raw = localStorage.getItem(calendarReadStorageKey(meId));
+      const parsed = raw ? JSON.parse(raw) : [];
+      setCalendarReadIds(Array.isArray(parsed) ? parsed : []);
+    } catch {
+      setCalendarReadIds([]);
+    }
+  }, [meId]);
+
+  const persistCalendarReadIds = (ids: string[]) => {
+    setCalendarReadIds(ids);
+    if (typeof window !== "undefined") {
+      localStorage.setItem(calendarReadStorageKey(meId), JSON.stringify(ids));
+    }
+  };
+
   useEffect(() => {
     let alive = true;
 
     async function fetchNotifications() {
       try {
-        const res = await fetch("/api/notifications/join-requests", {
+        const res = await fetch("/api/notifications", {
           method: "GET",
           credentials: "include",
           headers: { Accept: "application/json" },
@@ -105,9 +154,22 @@ export default function NavBar({ profileImage }: NavBarProps) {
           ? data.notifications
           : [];
 
-        if (alive) {
-          setNotifications((prev) => mergeDedupe(prev, incoming as any));
-        }
+        if (!alive) return;
+
+        setNotifications((prev) =>
+          mergeDedupe(
+            prev,
+            incoming.map((n: Notification) => {
+              if (normalizeType(n) === "calendar-note") {
+                return {
+                  ...n,
+                  isRead: calendarReadIds.includes(String(n.id)),
+                };
+              }
+              return n;
+            }) as any,
+          ),
+        );
       } catch (err) {
         console.error("Failed to fetch notifications:", err);
       } finally {
@@ -116,12 +178,19 @@ export default function NavBar({ profileImage }: NavBarProps) {
     }
 
     fetchNotifications();
+
+    const onCalendarNoteUpdated = () => {
+      fetchNotifications();
+    };
+
+    window.addEventListener("calendar-note-updated", onCalendarNoteUpdated);
+
     return () => {
       alive = false;
+      window.removeEventListener("calendar-note-updated", onCalendarNoteUpdated);
     };
-  }, []);
+  }, [calendarReadIds]);
 
-  // Fetch current user
   useEffect(() => {
     let alive = true;
 
@@ -160,6 +229,11 @@ export default function NavBar({ profileImage }: NavBarProps) {
     [notifications],
   );
 
+  const unreadCount = useMemo(
+    () => notifications.filter((n) => !n.isRead).length,
+    [notifications],
+  );
+
   const handleLogout = async () => {
     try {
       await fetch("/api/auth/logout", {
@@ -174,7 +248,6 @@ export default function NavBar({ profileImage }: NavBarProps) {
     }
   };
 
-  // ✅ SSR-safe placeholders: same markup on server & initial client render
   if (!mounted) {
     return (
       <nav className="bg-white shadow-sm fixed top-0 left-64 right-0 z-30 h-14">
@@ -201,14 +274,14 @@ export default function NavBar({ profileImage }: NavBarProps) {
   return (
     <nav className="bg-white shadow-sm fixed top-0 left-64 right-0 z-30 h-14">
       <div className="py-1 lg:px-8 flex justify-end items-center gap-4">
-        {/* Notifications Menu */}
-        <Menu shadow="md" width={320} position="bottom-end" withArrow>
+        <Menu shadow="md" width={340} position="bottom-end" withArrow>
           <Menu.Target>
             <div className="cursor-pointer">
               <Indicator
                 color="red"
-                size={8}
+                size={16}
                 offset={4}
+                label={unreadCount > 0 ? unreadCount : undefined}
                 disabled={notifications.length === 0}
               >
                 <BellIcon className="h-6 w-6 text-gray-700" />
@@ -219,7 +292,7 @@ export default function NavBar({ profileImage }: NavBarProps) {
           <Menu.Dropdown>
             <Menu.Label>Notifications</Menu.Label>
 
-            <ScrollArea.Autosize mah={300}>
+            <ScrollArea.Autosize mah={320}>
               {loadingNotifications ? (
                 <div className="flex justify-center py-4">
                   <Loader size="sm" />
@@ -233,7 +306,57 @@ export default function NavBar({ profileImage }: NavBarProps) {
                   const n: Notification = { ...raw, type: normalizeType(raw) };
                   const key = notifKey(n);
 
-                  if (n.type !== "post") return null;
+                  if (n.type === "calendar-note") {
+                    return (
+                      <Menu.Item
+                        key={key}
+                        component={Link}
+                        href={n.href}
+                        className={`rounded px-2 py-2 ${
+                          !n.isRead ? "bg-gray-100 font-medium" : "bg-white"
+                        }`}
+                        onClick={() => {
+                          const id = String(n.id);
+                          if (!calendarReadIds.includes(id)) {
+                            persistCalendarReadIds([...calendarReadIds, id]);
+                          }
+
+                          setNotifications((prev) =>
+                            prev.map((x) =>
+                              String(x.id) === id ? { ...x, isRead: true } : x,
+                            ),
+                          );
+                        }}
+                      >
+                        <div className="flex flex-col gap-1">
+                          <div className="flex items-center justify-between gap-2">
+                            <Text size="sm" fw={600}>
+                              {n.message}
+                            </Text>
+                            <Badge size="xs" variant="light" color="grape">
+                              Note
+                            </Badge>
+                          </div>
+
+                          {n.noteDate ? (
+                            <Text size="xs" c="dimmed">
+                              Scheduled for {n.noteDate}
+                            </Text>
+                          ) : null}
+
+                          {n.description ? (
+                            <Text size="xs" c="dimmed" lineClamp={2}>
+                              {n.description}
+                            </Text>
+                          ) : null}
+                        </div>
+                      </Menu.Item>
+                    );
+                  }
+
+                  if (n.type !== "post" && n.type !== "join-request") {
+                    return null;
+                  }
 
                   return (
                     <Menu.Item
@@ -244,7 +367,7 @@ export default function NavBar({ profileImage }: NavBarProps) {
                         !n.isRead ? "bg-gray-100 font-medium" : "bg-white"
                       }`}
                       onClick={async () => {
-                        if (!n.isRead) {
+                        if (typeof n.id === "number" && !n.isRead) {
                           await fetch(`/api/notifications/${n.id}/mark-read`, {
                             method: "PATCH",
                           });
@@ -266,17 +389,22 @@ export default function NavBar({ profileImage }: NavBarProps) {
 
             <Menu.Divider />
 
-            {/* ✅ Move "Mark all as seen" here, inside dropdown */}
             <Menu.Item
               onClick={async () => {
                 await fetch("/api/notifications/mark-all-read", {
                   method: "PATCH",
-                });
+                }).catch(() => null);
+
+                const calendarIds = notifications
+                  .filter((n) => n.type === "calendar-note")
+                  .map((n) => String(n.id));
+
+                persistCalendarReadIds([
+                  ...new Set([...calendarReadIds, ...calendarIds]),
+                ]);
+
                 setNotifications((prev) =>
                   prev.map((n) => ({ ...n, isRead: true })),
-                );
-                setNotifications((prev) =>
-                  prev.filter((n) => n.type !== "join-request"),
                 );
               }}
             >
@@ -289,7 +417,6 @@ export default function NavBar({ profileImage }: NavBarProps) {
           </Menu.Dropdown>
         </Menu>
 
-        {/* Profile Menu */}
         <Menu shadow="md" width={180} position="bottom-end" withArrow>
           <Menu.Target>
             <div className="flex items-center cursor-pointer gap-2">

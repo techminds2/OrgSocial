@@ -264,6 +264,16 @@ exports.Prisma.RegionalDailyReportScalarFieldEnum = {
   remarks: 'remarks'
 };
 
+exports.Prisma.CalendarNoteScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  noteDate: 'noteDate',
+  title: 'title',
+  description: 'description',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -309,7 +319,8 @@ exports.Prisma.ModelName = {
   Todo: 'Todo',
   PostSeen: 'PostSeen',
   DailyReport: 'DailyReport',
-  RegionalDailyReport: 'RegionalDailyReport'
+  RegionalDailyReport: 'RegionalDailyReport',
+  CalendarNote: 'CalendarNote'
 };
 
 /**

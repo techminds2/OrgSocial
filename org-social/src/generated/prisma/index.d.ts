@@ -83,6 +83,11 @@ export type DailyReport = $Result.DefaultSelection<Prisma.$DailyReportPayload>
  * 
  */
 export type RegionalDailyReport = $Result.DefaultSelection<Prisma.$RegionalDailyReportPayload>
+/**
+ * Model CalendarNote
+ * 
+ */
+export type CalendarNote = $Result.DefaultSelection<Prisma.$CalendarNotePayload>
 
 /**
  * Enums
@@ -359,6 +364,16 @@ export class PrismaClient<
     * ```
     */
   get regionalDailyReport(): Prisma.RegionalDailyReportDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.calendarNote`: Exposes CRUD operations for the **CalendarNote** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more CalendarNotes
+    * const calendarNotes = await prisma.calendarNote.findMany()
+    * ```
+    */
+  get calendarNote(): Prisma.CalendarNoteDelegate<ExtArgs, ClientOptions>;
 }
 
 export namespace Prisma {
@@ -813,7 +828,8 @@ export namespace Prisma {
     Todo: 'Todo',
     PostSeen: 'PostSeen',
     DailyReport: 'DailyReport',
-    RegionalDailyReport: 'RegionalDailyReport'
+    RegionalDailyReport: 'RegionalDailyReport',
+    CalendarNote: 'CalendarNote'
   };
 
   export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -832,7 +848,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "user" | "post" | "comment" | "reaction" | "file" | "channel" | "channelMember" | "joinRequest" | "notification" | "savedPost" | "todo" | "postSeen" | "dailyReport" | "regionalDailyReport"
+      modelProps: "user" | "post" | "comment" | "reaction" | "file" | "channel" | "channelMember" | "joinRequest" | "notification" | "savedPost" | "todo" | "postSeen" | "dailyReport" | "regionalDailyReport" | "calendarNote"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -1872,6 +1888,80 @@ export namespace Prisma {
           }
         }
       }
+      CalendarNote: {
+        payload: Prisma.$CalendarNotePayload<ExtArgs>
+        fields: Prisma.CalendarNoteFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.CalendarNoteFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CalendarNotePayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.CalendarNoteFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CalendarNotePayload>
+          }
+          findFirst: {
+            args: Prisma.CalendarNoteFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CalendarNotePayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.CalendarNoteFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CalendarNotePayload>
+          }
+          findMany: {
+            args: Prisma.CalendarNoteFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CalendarNotePayload>[]
+          }
+          create: {
+            args: Prisma.CalendarNoteCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CalendarNotePayload>
+          }
+          createMany: {
+            args: Prisma.CalendarNoteCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.CalendarNoteCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CalendarNotePayload>[]
+          }
+          delete: {
+            args: Prisma.CalendarNoteDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CalendarNotePayload>
+          }
+          update: {
+            args: Prisma.CalendarNoteUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CalendarNotePayload>
+          }
+          deleteMany: {
+            args: Prisma.CalendarNoteDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.CalendarNoteUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.CalendarNoteUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CalendarNotePayload>[]
+          }
+          upsert: {
+            args: Prisma.CalendarNoteUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CalendarNotePayload>
+          }
+          aggregate: {
+            args: Prisma.CalendarNoteAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateCalendarNote>
+          }
+          groupBy: {
+            args: Prisma.CalendarNoteGroupByArgs<ExtArgs>
+            result: $Utils.Optional<CalendarNoteGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.CalendarNoteCountArgs<ExtArgs>
+            result: $Utils.Optional<CalendarNoteCountAggregateOutputType> | number
+          }
+        }
+      }
     }
   } & {
     other: {
@@ -1982,6 +2072,7 @@ export namespace Prisma {
     postSeen?: PostSeenOmit
     dailyReport?: DailyReportOmit
     regionalDailyReport?: RegionalDailyReportOmit
+    calendarNote?: CalendarNoteOmit
   }
 
   /* Types for Logging */
@@ -19109,6 +19200,1065 @@ export namespace Prisma {
 
 
   /**
+   * Model CalendarNote
+   */
+
+  export type AggregateCalendarNote = {
+    _count: CalendarNoteCountAggregateOutputType | null
+    _avg: CalendarNoteAvgAggregateOutputType | null
+    _sum: CalendarNoteSumAggregateOutputType | null
+    _min: CalendarNoteMinAggregateOutputType | null
+    _max: CalendarNoteMaxAggregateOutputType | null
+  }
+
+  export type CalendarNoteAvgAggregateOutputType = {
+    id: number | null
+    userId: number | null
+  }
+
+  export type CalendarNoteSumAggregateOutputType = {
+    id: number | null
+    userId: number | null
+  }
+
+  export type CalendarNoteMinAggregateOutputType = {
+    id: number | null
+    userId: number | null
+    noteDate: string | null
+    title: string | null
+    description: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type CalendarNoteMaxAggregateOutputType = {
+    id: number | null
+    userId: number | null
+    noteDate: string | null
+    title: string | null
+    description: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type CalendarNoteCountAggregateOutputType = {
+    id: number
+    userId: number
+    noteDate: number
+    title: number
+    description: number
+    createdAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type CalendarNoteAvgAggregateInputType = {
+    id?: true
+    userId?: true
+  }
+
+  export type CalendarNoteSumAggregateInputType = {
+    id?: true
+    userId?: true
+  }
+
+  export type CalendarNoteMinAggregateInputType = {
+    id?: true
+    userId?: true
+    noteDate?: true
+    title?: true
+    description?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type CalendarNoteMaxAggregateInputType = {
+    id?: true
+    userId?: true
+    noteDate?: true
+    title?: true
+    description?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type CalendarNoteCountAggregateInputType = {
+    id?: true
+    userId?: true
+    noteDate?: true
+    title?: true
+    description?: true
+    createdAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type CalendarNoteAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which CalendarNote to aggregate.
+     */
+    where?: CalendarNoteWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of CalendarNotes to fetch.
+     */
+    orderBy?: CalendarNoteOrderByWithRelationInput | CalendarNoteOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: CalendarNoteWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` CalendarNotes from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` CalendarNotes.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned CalendarNotes
+    **/
+    _count?: true | CalendarNoteCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: CalendarNoteAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: CalendarNoteSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: CalendarNoteMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: CalendarNoteMaxAggregateInputType
+  }
+
+  export type GetCalendarNoteAggregateType<T extends CalendarNoteAggregateArgs> = {
+        [P in keyof T & keyof AggregateCalendarNote]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateCalendarNote[P]>
+      : GetScalarType<T[P], AggregateCalendarNote[P]>
+  }
+
+
+
+
+  export type CalendarNoteGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: CalendarNoteWhereInput
+    orderBy?: CalendarNoteOrderByWithAggregationInput | CalendarNoteOrderByWithAggregationInput[]
+    by: CalendarNoteScalarFieldEnum[] | CalendarNoteScalarFieldEnum
+    having?: CalendarNoteScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: CalendarNoteCountAggregateInputType | true
+    _avg?: CalendarNoteAvgAggregateInputType
+    _sum?: CalendarNoteSumAggregateInputType
+    _min?: CalendarNoteMinAggregateInputType
+    _max?: CalendarNoteMaxAggregateInputType
+  }
+
+  export type CalendarNoteGroupByOutputType = {
+    id: number
+    userId: number
+    noteDate: string
+    title: string
+    description: string | null
+    createdAt: Date
+    updatedAt: Date
+    _count: CalendarNoteCountAggregateOutputType | null
+    _avg: CalendarNoteAvgAggregateOutputType | null
+    _sum: CalendarNoteSumAggregateOutputType | null
+    _min: CalendarNoteMinAggregateOutputType | null
+    _max: CalendarNoteMaxAggregateOutputType | null
+  }
+
+  type GetCalendarNoteGroupByPayload<T extends CalendarNoteGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<CalendarNoteGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof CalendarNoteGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], CalendarNoteGroupByOutputType[P]>
+            : GetScalarType<T[P], CalendarNoteGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type CalendarNoteSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    userId?: boolean
+    noteDate?: boolean
+    title?: boolean
+    description?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }, ExtArgs["result"]["calendarNote"]>
+
+  export type CalendarNoteSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    userId?: boolean
+    noteDate?: boolean
+    title?: boolean
+    description?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }, ExtArgs["result"]["calendarNote"]>
+
+  export type CalendarNoteSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    userId?: boolean
+    noteDate?: boolean
+    title?: boolean
+    description?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }, ExtArgs["result"]["calendarNote"]>
+
+  export type CalendarNoteSelectScalar = {
+    id?: boolean
+    userId?: boolean
+    noteDate?: boolean
+    title?: boolean
+    description?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }
+
+  export type CalendarNoteOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "userId" | "noteDate" | "title" | "description" | "createdAt" | "updatedAt", ExtArgs["result"]["calendarNote"]>
+
+  export type $CalendarNotePayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "CalendarNote"
+    objects: {}
+    scalars: $Extensions.GetPayloadResult<{
+      id: number
+      userId: number
+      noteDate: string
+      title: string
+      description: string | null
+      createdAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["calendarNote"]>
+    composites: {}
+  }
+
+  type CalendarNoteGetPayload<S extends boolean | null | undefined | CalendarNoteDefaultArgs> = $Result.GetResult<Prisma.$CalendarNotePayload, S>
+
+  type CalendarNoteCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<CalendarNoteFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: CalendarNoteCountAggregateInputType | true
+    }
+
+  export interface CalendarNoteDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['CalendarNote'], meta: { name: 'CalendarNote' } }
+    /**
+     * Find zero or one CalendarNote that matches the filter.
+     * @param {CalendarNoteFindUniqueArgs} args - Arguments to find a CalendarNote
+     * @example
+     * // Get one CalendarNote
+     * const calendarNote = await prisma.calendarNote.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends CalendarNoteFindUniqueArgs>(args: SelectSubset<T, CalendarNoteFindUniqueArgs<ExtArgs>>): Prisma__CalendarNoteClient<$Result.GetResult<Prisma.$CalendarNotePayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one CalendarNote that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {CalendarNoteFindUniqueOrThrowArgs} args - Arguments to find a CalendarNote
+     * @example
+     * // Get one CalendarNote
+     * const calendarNote = await prisma.calendarNote.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends CalendarNoteFindUniqueOrThrowArgs>(args: SelectSubset<T, CalendarNoteFindUniqueOrThrowArgs<ExtArgs>>): Prisma__CalendarNoteClient<$Result.GetResult<Prisma.$CalendarNotePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first CalendarNote that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CalendarNoteFindFirstArgs} args - Arguments to find a CalendarNote
+     * @example
+     * // Get one CalendarNote
+     * const calendarNote = await prisma.calendarNote.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends CalendarNoteFindFirstArgs>(args?: SelectSubset<T, CalendarNoteFindFirstArgs<ExtArgs>>): Prisma__CalendarNoteClient<$Result.GetResult<Prisma.$CalendarNotePayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first CalendarNote that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CalendarNoteFindFirstOrThrowArgs} args - Arguments to find a CalendarNote
+     * @example
+     * // Get one CalendarNote
+     * const calendarNote = await prisma.calendarNote.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends CalendarNoteFindFirstOrThrowArgs>(args?: SelectSubset<T, CalendarNoteFindFirstOrThrowArgs<ExtArgs>>): Prisma__CalendarNoteClient<$Result.GetResult<Prisma.$CalendarNotePayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more CalendarNotes that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CalendarNoteFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all CalendarNotes
+     * const calendarNotes = await prisma.calendarNote.findMany()
+     * 
+     * // Get first 10 CalendarNotes
+     * const calendarNotes = await prisma.calendarNote.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const calendarNoteWithIdOnly = await prisma.calendarNote.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends CalendarNoteFindManyArgs>(args?: SelectSubset<T, CalendarNoteFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CalendarNotePayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a CalendarNote.
+     * @param {CalendarNoteCreateArgs} args - Arguments to create a CalendarNote.
+     * @example
+     * // Create one CalendarNote
+     * const CalendarNote = await prisma.calendarNote.create({
+     *   data: {
+     *     // ... data to create a CalendarNote
+     *   }
+     * })
+     * 
+     */
+    create<T extends CalendarNoteCreateArgs>(args: SelectSubset<T, CalendarNoteCreateArgs<ExtArgs>>): Prisma__CalendarNoteClient<$Result.GetResult<Prisma.$CalendarNotePayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many CalendarNotes.
+     * @param {CalendarNoteCreateManyArgs} args - Arguments to create many CalendarNotes.
+     * @example
+     * // Create many CalendarNotes
+     * const calendarNote = await prisma.calendarNote.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends CalendarNoteCreateManyArgs>(args?: SelectSubset<T, CalendarNoteCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many CalendarNotes and returns the data saved in the database.
+     * @param {CalendarNoteCreateManyAndReturnArgs} args - Arguments to create many CalendarNotes.
+     * @example
+     * // Create many CalendarNotes
+     * const calendarNote = await prisma.calendarNote.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many CalendarNotes and only return the `id`
+     * const calendarNoteWithIdOnly = await prisma.calendarNote.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends CalendarNoteCreateManyAndReturnArgs>(args?: SelectSubset<T, CalendarNoteCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CalendarNotePayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a CalendarNote.
+     * @param {CalendarNoteDeleteArgs} args - Arguments to delete one CalendarNote.
+     * @example
+     * // Delete one CalendarNote
+     * const CalendarNote = await prisma.calendarNote.delete({
+     *   where: {
+     *     // ... filter to delete one CalendarNote
+     *   }
+     * })
+     * 
+     */
+    delete<T extends CalendarNoteDeleteArgs>(args: SelectSubset<T, CalendarNoteDeleteArgs<ExtArgs>>): Prisma__CalendarNoteClient<$Result.GetResult<Prisma.$CalendarNotePayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one CalendarNote.
+     * @param {CalendarNoteUpdateArgs} args - Arguments to update one CalendarNote.
+     * @example
+     * // Update one CalendarNote
+     * const calendarNote = await prisma.calendarNote.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends CalendarNoteUpdateArgs>(args: SelectSubset<T, CalendarNoteUpdateArgs<ExtArgs>>): Prisma__CalendarNoteClient<$Result.GetResult<Prisma.$CalendarNotePayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more CalendarNotes.
+     * @param {CalendarNoteDeleteManyArgs} args - Arguments to filter CalendarNotes to delete.
+     * @example
+     * // Delete a few CalendarNotes
+     * const { count } = await prisma.calendarNote.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends CalendarNoteDeleteManyArgs>(args?: SelectSubset<T, CalendarNoteDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more CalendarNotes.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CalendarNoteUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many CalendarNotes
+     * const calendarNote = await prisma.calendarNote.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends CalendarNoteUpdateManyArgs>(args: SelectSubset<T, CalendarNoteUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more CalendarNotes and returns the data updated in the database.
+     * @param {CalendarNoteUpdateManyAndReturnArgs} args - Arguments to update many CalendarNotes.
+     * @example
+     * // Update many CalendarNotes
+     * const calendarNote = await prisma.calendarNote.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more CalendarNotes and only return the `id`
+     * const calendarNoteWithIdOnly = await prisma.calendarNote.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends CalendarNoteUpdateManyAndReturnArgs>(args: SelectSubset<T, CalendarNoteUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CalendarNotePayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one CalendarNote.
+     * @param {CalendarNoteUpsertArgs} args - Arguments to update or create a CalendarNote.
+     * @example
+     * // Update or create a CalendarNote
+     * const calendarNote = await prisma.calendarNote.upsert({
+     *   create: {
+     *     // ... data to create a CalendarNote
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the CalendarNote we want to update
+     *   }
+     * })
+     */
+    upsert<T extends CalendarNoteUpsertArgs>(args: SelectSubset<T, CalendarNoteUpsertArgs<ExtArgs>>): Prisma__CalendarNoteClient<$Result.GetResult<Prisma.$CalendarNotePayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of CalendarNotes.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CalendarNoteCountArgs} args - Arguments to filter CalendarNotes to count.
+     * @example
+     * // Count the number of CalendarNotes
+     * const count = await prisma.calendarNote.count({
+     *   where: {
+     *     // ... the filter for the CalendarNotes we want to count
+     *   }
+     * })
+    **/
+    count<T extends CalendarNoteCountArgs>(
+      args?: Subset<T, CalendarNoteCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], CalendarNoteCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a CalendarNote.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CalendarNoteAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends CalendarNoteAggregateArgs>(args: Subset<T, CalendarNoteAggregateArgs>): Prisma.PrismaPromise<GetCalendarNoteAggregateType<T>>
+
+    /**
+     * Group by CalendarNote.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CalendarNoteGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends CalendarNoteGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: CalendarNoteGroupByArgs['orderBy'] }
+        : { orderBy?: CalendarNoteGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, CalendarNoteGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetCalendarNoteGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the CalendarNote model
+   */
+  readonly fields: CalendarNoteFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for CalendarNote.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__CalendarNoteClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the CalendarNote model
+   */
+  interface CalendarNoteFieldRefs {
+    readonly id: FieldRef<"CalendarNote", 'Int'>
+    readonly userId: FieldRef<"CalendarNote", 'Int'>
+    readonly noteDate: FieldRef<"CalendarNote", 'String'>
+    readonly title: FieldRef<"CalendarNote", 'String'>
+    readonly description: FieldRef<"CalendarNote", 'String'>
+    readonly createdAt: FieldRef<"CalendarNote", 'DateTime'>
+    readonly updatedAt: FieldRef<"CalendarNote", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * CalendarNote findUnique
+   */
+  export type CalendarNoteFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CalendarNote
+     */
+    select?: CalendarNoteSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CalendarNote
+     */
+    omit?: CalendarNoteOmit<ExtArgs> | null
+    /**
+     * Filter, which CalendarNote to fetch.
+     */
+    where: CalendarNoteWhereUniqueInput
+  }
+
+  /**
+   * CalendarNote findUniqueOrThrow
+   */
+  export type CalendarNoteFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CalendarNote
+     */
+    select?: CalendarNoteSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CalendarNote
+     */
+    omit?: CalendarNoteOmit<ExtArgs> | null
+    /**
+     * Filter, which CalendarNote to fetch.
+     */
+    where: CalendarNoteWhereUniqueInput
+  }
+
+  /**
+   * CalendarNote findFirst
+   */
+  export type CalendarNoteFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CalendarNote
+     */
+    select?: CalendarNoteSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CalendarNote
+     */
+    omit?: CalendarNoteOmit<ExtArgs> | null
+    /**
+     * Filter, which CalendarNote to fetch.
+     */
+    where?: CalendarNoteWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of CalendarNotes to fetch.
+     */
+    orderBy?: CalendarNoteOrderByWithRelationInput | CalendarNoteOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for CalendarNotes.
+     */
+    cursor?: CalendarNoteWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` CalendarNotes from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` CalendarNotes.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of CalendarNotes.
+     */
+    distinct?: CalendarNoteScalarFieldEnum | CalendarNoteScalarFieldEnum[]
+  }
+
+  /**
+   * CalendarNote findFirstOrThrow
+   */
+  export type CalendarNoteFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CalendarNote
+     */
+    select?: CalendarNoteSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CalendarNote
+     */
+    omit?: CalendarNoteOmit<ExtArgs> | null
+    /**
+     * Filter, which CalendarNote to fetch.
+     */
+    where?: CalendarNoteWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of CalendarNotes to fetch.
+     */
+    orderBy?: CalendarNoteOrderByWithRelationInput | CalendarNoteOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for CalendarNotes.
+     */
+    cursor?: CalendarNoteWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` CalendarNotes from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` CalendarNotes.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of CalendarNotes.
+     */
+    distinct?: CalendarNoteScalarFieldEnum | CalendarNoteScalarFieldEnum[]
+  }
+
+  /**
+   * CalendarNote findMany
+   */
+  export type CalendarNoteFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CalendarNote
+     */
+    select?: CalendarNoteSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CalendarNote
+     */
+    omit?: CalendarNoteOmit<ExtArgs> | null
+    /**
+     * Filter, which CalendarNotes to fetch.
+     */
+    where?: CalendarNoteWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of CalendarNotes to fetch.
+     */
+    orderBy?: CalendarNoteOrderByWithRelationInput | CalendarNoteOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing CalendarNotes.
+     */
+    cursor?: CalendarNoteWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` CalendarNotes from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` CalendarNotes.
+     */
+    skip?: number
+    distinct?: CalendarNoteScalarFieldEnum | CalendarNoteScalarFieldEnum[]
+  }
+
+  /**
+   * CalendarNote create
+   */
+  export type CalendarNoteCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CalendarNote
+     */
+    select?: CalendarNoteSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CalendarNote
+     */
+    omit?: CalendarNoteOmit<ExtArgs> | null
+    /**
+     * The data needed to create a CalendarNote.
+     */
+    data: XOR<CalendarNoteCreateInput, CalendarNoteUncheckedCreateInput>
+  }
+
+  /**
+   * CalendarNote createMany
+   */
+  export type CalendarNoteCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many CalendarNotes.
+     */
+    data: CalendarNoteCreateManyInput | CalendarNoteCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * CalendarNote createManyAndReturn
+   */
+  export type CalendarNoteCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CalendarNote
+     */
+    select?: CalendarNoteSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the CalendarNote
+     */
+    omit?: CalendarNoteOmit<ExtArgs> | null
+    /**
+     * The data used to create many CalendarNotes.
+     */
+    data: CalendarNoteCreateManyInput | CalendarNoteCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * CalendarNote update
+   */
+  export type CalendarNoteUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CalendarNote
+     */
+    select?: CalendarNoteSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CalendarNote
+     */
+    omit?: CalendarNoteOmit<ExtArgs> | null
+    /**
+     * The data needed to update a CalendarNote.
+     */
+    data: XOR<CalendarNoteUpdateInput, CalendarNoteUncheckedUpdateInput>
+    /**
+     * Choose, which CalendarNote to update.
+     */
+    where: CalendarNoteWhereUniqueInput
+  }
+
+  /**
+   * CalendarNote updateMany
+   */
+  export type CalendarNoteUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update CalendarNotes.
+     */
+    data: XOR<CalendarNoteUpdateManyMutationInput, CalendarNoteUncheckedUpdateManyInput>
+    /**
+     * Filter which CalendarNotes to update
+     */
+    where?: CalendarNoteWhereInput
+    /**
+     * Limit how many CalendarNotes to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * CalendarNote updateManyAndReturn
+   */
+  export type CalendarNoteUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CalendarNote
+     */
+    select?: CalendarNoteSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the CalendarNote
+     */
+    omit?: CalendarNoteOmit<ExtArgs> | null
+    /**
+     * The data used to update CalendarNotes.
+     */
+    data: XOR<CalendarNoteUpdateManyMutationInput, CalendarNoteUncheckedUpdateManyInput>
+    /**
+     * Filter which CalendarNotes to update
+     */
+    where?: CalendarNoteWhereInput
+    /**
+     * Limit how many CalendarNotes to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * CalendarNote upsert
+   */
+  export type CalendarNoteUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CalendarNote
+     */
+    select?: CalendarNoteSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CalendarNote
+     */
+    omit?: CalendarNoteOmit<ExtArgs> | null
+    /**
+     * The filter to search for the CalendarNote to update in case it exists.
+     */
+    where: CalendarNoteWhereUniqueInput
+    /**
+     * In case the CalendarNote found by the `where` argument doesn't exist, create a new CalendarNote with this data.
+     */
+    create: XOR<CalendarNoteCreateInput, CalendarNoteUncheckedCreateInput>
+    /**
+     * In case the CalendarNote was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<CalendarNoteUpdateInput, CalendarNoteUncheckedUpdateInput>
+  }
+
+  /**
+   * CalendarNote delete
+   */
+  export type CalendarNoteDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CalendarNote
+     */
+    select?: CalendarNoteSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CalendarNote
+     */
+    omit?: CalendarNoteOmit<ExtArgs> | null
+    /**
+     * Filter which CalendarNote to delete.
+     */
+    where: CalendarNoteWhereUniqueInput
+  }
+
+  /**
+   * CalendarNote deleteMany
+   */
+  export type CalendarNoteDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which CalendarNotes to delete
+     */
+    where?: CalendarNoteWhereInput
+    /**
+     * Limit how many CalendarNotes to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * CalendarNote without action
+   */
+  export type CalendarNoteDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CalendarNote
+     */
+    select?: CalendarNoteSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CalendarNote
+     */
+    omit?: CalendarNoteOmit<ExtArgs> | null
+  }
+
+
+  /**
    * Enums
    */
 
@@ -19305,6 +20455,19 @@ export namespace Prisma {
   };
 
   export type RegionalDailyReportScalarFieldEnum = (typeof RegionalDailyReportScalarFieldEnum)[keyof typeof RegionalDailyReportScalarFieldEnum]
+
+
+  export const CalendarNoteScalarFieldEnum: {
+    id: 'id',
+    userId: 'userId',
+    noteDate: 'noteDate',
+    title: 'title',
+    description: 'description',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type CalendarNoteScalarFieldEnum = (typeof CalendarNoteScalarFieldEnum)[keyof typeof CalendarNoteScalarFieldEnum]
 
 
   export const SortOrder: {
@@ -20515,6 +21678,70 @@ export namespace Prisma {
     remarks?: StringNullableWithAggregatesFilter<"RegionalDailyReport"> | string | null
   }
 
+  export type CalendarNoteWhereInput = {
+    AND?: CalendarNoteWhereInput | CalendarNoteWhereInput[]
+    OR?: CalendarNoteWhereInput[]
+    NOT?: CalendarNoteWhereInput | CalendarNoteWhereInput[]
+    id?: IntFilter<"CalendarNote"> | number
+    userId?: IntFilter<"CalendarNote"> | number
+    noteDate?: StringFilter<"CalendarNote"> | string
+    title?: StringFilter<"CalendarNote"> | string
+    description?: StringNullableFilter<"CalendarNote"> | string | null
+    createdAt?: DateTimeFilter<"CalendarNote"> | Date | string
+    updatedAt?: DateTimeFilter<"CalendarNote"> | Date | string
+  }
+
+  export type CalendarNoteOrderByWithRelationInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    noteDate?: SortOrder
+    title?: SortOrder
+    description?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type CalendarNoteWhereUniqueInput = Prisma.AtLeast<{
+    id?: number
+    AND?: CalendarNoteWhereInput | CalendarNoteWhereInput[]
+    OR?: CalendarNoteWhereInput[]
+    NOT?: CalendarNoteWhereInput | CalendarNoteWhereInput[]
+    userId?: IntFilter<"CalendarNote"> | number
+    noteDate?: StringFilter<"CalendarNote"> | string
+    title?: StringFilter<"CalendarNote"> | string
+    description?: StringNullableFilter<"CalendarNote"> | string | null
+    createdAt?: DateTimeFilter<"CalendarNote"> | Date | string
+    updatedAt?: DateTimeFilter<"CalendarNote"> | Date | string
+  }, "id">
+
+  export type CalendarNoteOrderByWithAggregationInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    noteDate?: SortOrder
+    title?: SortOrder
+    description?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: CalendarNoteCountOrderByAggregateInput
+    _avg?: CalendarNoteAvgOrderByAggregateInput
+    _max?: CalendarNoteMaxOrderByAggregateInput
+    _min?: CalendarNoteMinOrderByAggregateInput
+    _sum?: CalendarNoteSumOrderByAggregateInput
+  }
+
+  export type CalendarNoteScalarWhereWithAggregatesInput = {
+    AND?: CalendarNoteScalarWhereWithAggregatesInput | CalendarNoteScalarWhereWithAggregatesInput[]
+    OR?: CalendarNoteScalarWhereWithAggregatesInput[]
+    NOT?: CalendarNoteScalarWhereWithAggregatesInput | CalendarNoteScalarWhereWithAggregatesInput[]
+    id?: IntWithAggregatesFilter<"CalendarNote"> | number
+    userId?: IntWithAggregatesFilter<"CalendarNote"> | number
+    noteDate?: StringWithAggregatesFilter<"CalendarNote"> | string
+    title?: StringWithAggregatesFilter<"CalendarNote"> | string
+    description?: StringNullableWithAggregatesFilter<"CalendarNote"> | string | null
+    createdAt?: DateTimeWithAggregatesFilter<"CalendarNote"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"CalendarNote"> | Date | string
+  }
+
   export type UserCreateInput = {
     username: string
     email?: string | null
@@ -21547,6 +22774,73 @@ export namespace Prisma {
     marketingDaysPlanned?: NullableIntFieldUpdateOperationsInput | number | null
     dynamicData?: NullableJsonNullValueInput | InputJsonValue
     remarks?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type CalendarNoteCreateInput = {
+    userId: number
+    noteDate: string
+    title: string
+    description?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type CalendarNoteUncheckedCreateInput = {
+    id?: number
+    userId: number
+    noteDate: string
+    title: string
+    description?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type CalendarNoteUpdateInput = {
+    userId?: IntFieldUpdateOperationsInput | number
+    noteDate?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type CalendarNoteUncheckedUpdateInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    userId?: IntFieldUpdateOperationsInput | number
+    noteDate?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type CalendarNoteCreateManyInput = {
+    id?: number
+    userId: number
+    noteDate: string
+    title: string
+    description?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type CalendarNoteUpdateManyMutationInput = {
+    userId?: IntFieldUpdateOperationsInput | number
+    noteDate?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type CalendarNoteUncheckedUpdateManyInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    userId?: IntFieldUpdateOperationsInput | number
+    noteDate?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type IntFilter<$PrismaModel = never> = {
@@ -22624,6 +23918,46 @@ export namespace Prisma {
     _count?: NestedIntNullableFilter<$PrismaModel>
     _min?: NestedJsonNullableFilter<$PrismaModel>
     _max?: NestedJsonNullableFilter<$PrismaModel>
+  }
+
+  export type CalendarNoteCountOrderByAggregateInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    noteDate?: SortOrder
+    title?: SortOrder
+    description?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type CalendarNoteAvgOrderByAggregateInput = {
+    id?: SortOrder
+    userId?: SortOrder
+  }
+
+  export type CalendarNoteMaxOrderByAggregateInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    noteDate?: SortOrder
+    title?: SortOrder
+    description?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type CalendarNoteMinOrderByAggregateInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    noteDate?: SortOrder
+    title?: SortOrder
+    description?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type CalendarNoteSumOrderByAggregateInput = {
+    id?: SortOrder
+    userId?: SortOrder
   }
 
   export type PostCreateNestedManyWithoutAuthorInput = {

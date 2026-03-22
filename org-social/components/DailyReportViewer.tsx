@@ -3,12 +3,18 @@
 import { useEffect, useMemo, useState } from "react";
 import {
   ActionIcon,
+  Button,
+  Divider,
   Group,
+  Modal,
   Paper,
   Select,
+  Stack,
   Table,
   Text,
-  Modal,
+  TextInput,
+  Textarea,
+  Badge,
 } from "@mantine/core";
 import { DatePicker } from "@mantine/dates";
 import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/outline";
@@ -16,6 +22,16 @@ import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/outline";
 type Item = {
   id: number;
   reportYmd: string;
+  createdAt: string;
+  updatedAt: string;
+};
+
+type CalendarNote = {
+  id: number;
+  userId: number;
+  noteDate: string;
+  title: string;
+  description?: string | null;
   createdAt: string;
   updatedAt: string;
 };
@@ -39,6 +55,11 @@ function formatYMD(date: any) {
   return `${y}-${m}-${day}`;
 }
 
+function monthToDate(month: string) {
+  const [y, m] = month.split("-").map(Number);
+  return new Date(y, m - 1, 1);
+}
+
 export default function DailyReportViewer({
   userId,
   userRole,
@@ -54,16 +75,40 @@ export default function DailyReportViewer({
     (viewerRole === "branch_manager" && viewerId === userId) ||
     (viewerRole === "admin" && userRole === "branch_manager");
 
+  const canManageNotes = viewerRole === "branch_manager" && viewerId === userId;
+
   const [month, setMonth] = useState(currentMonth());
+  const [calendarDate, setCalendarDate] = useState<Date>(
+    monthToDate(currentMonth()),
+  );
+
   const [items, setItems] = useState<Item[]>([]);
+  const [notesMonth, setNotesMonth] = useState<CalendarNote[]>([]);
+
   const [selected, setSelected] = useState<string>("");
   const [report, setReport] = useState<any>(null);
-  const [loading, setLoading] = useState(false);
+  const [notesForDay, setNotesForDay] = useState<CalendarNote[]>([]);
+
+  const [loadingMonth, setLoadingMonth] = useState(false);
+  const [loadingDay, setLoadingDay] = useState(false);
   const [opened, setOpened] = useState(false);
+
+  const [noteTitle, setNoteTitle] = useState("");
+  const [noteDescription, setNoteDescription] = useState("");
+  const [editingNoteId, setEditingNoteId] = useState<number | null>(null);
+  const [savingNote, setSavingNote] = useState(false);
 
   const reportDates = useMemo(() => {
     return new Set(items.map((i) => i.reportYmd));
   }, [items]);
+
+  const noteCountsByDate = useMemo(() => {
+    const out: Record<string, number> = {};
+    for (const n of notesMonth) {
+      out[n.noteDate] = (out[n.noteDate] || 0) + 1;
+    }
+    return out;
+  }, [notesMonth]);
 
   const monthOptions = useMemo(() => {
     const out: { value: string; label: string }[] = [];
@@ -79,39 +124,67 @@ export default function DailyReportViewer({
     return out;
   }, []);
 
+  const notesOfMonthSorted = useMemo(() => {
+    return [...notesMonth].sort((a, b) => {
+      if (a.noteDate !== b.noteDate)
+        return a.noteDate.localeCompare(b.noteDate);
+      return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
+    });
+  }, [notesMonth]);
+
   const loadMonth = async (m: string) => {
-    setLoading(true);
+    setLoadingMonth(true);
     try {
-      const res = await fetch(
-        `/api/users/${userId}/daily-reports/month?month=${encodeURIComponent(m)}`,
-        { credentials: "include", cache: "no-store" },
-      );
-      const out = await res.json();
-      setItems(out.items || []);
-      setSelected("");
-      setReport(null);
+      const [reportRes, noteRes] = await Promise.all([
+        fetch(
+          `/api/users/${userId}/daily-reports/month?month=${encodeURIComponent(m)}`,
+          { credentials: "include", cache: "no-store" },
+        ),
+        fetch(
+          `/api/calendar-notes/month?month=${encodeURIComponent(m)}&userId=${userId}`,
+          { credentials: "include", cache: "no-store" },
+        ),
+      ]);
+
+      const reportOut = await reportRes.json().catch(() => ({}));
+      const noteOut = await noteRes.json().catch(() => ({}));
+
+      setItems(reportOut.items || []);
+      setNotesMonth(noteOut.items || []);
     } catch (e) {
       console.error(e);
       setItems([]);
+      setNotesMonth([]);
     } finally {
-      setLoading(false);
+      setLoadingMonth(false);
     }
   };
 
-  const loadByDate = async (ymd: string) => {
-    setLoading(true);
+  const loadDay = async (ymd: string) => {
+    setLoadingDay(true);
     try {
-      const res = await fetch(
-        `/api/users/${userId}/daily-reports/by-date?date=${encodeURIComponent(ymd)}`,
-        { credentials: "include", cache: "no-store" },
-      );
-      const out = await res.json();
-      setReport(out.report || null);
+      const [reportRes, noteRes] = await Promise.all([
+        fetch(
+          `/api/users/${userId}/daily-reports/by-date?date=${encodeURIComponent(ymd)}`,
+          { credentials: "include", cache: "no-store" },
+        ),
+        fetch(
+          `/api/calendar-notes/by-date?date=${encodeURIComponent(ymd)}&userId=${userId}`,
+          { credentials: "include", cache: "no-store" },
+        ),
+      ]);
+
+      const reportOut = await reportRes.json().catch(() => ({}));
+      const noteOut = await noteRes.json().catch(() => ({}));
+
+      setReport(reportOut.report || null);
+      setNotesForDay(noteOut.notes || []);
     } catch (e) {
       console.error(e);
       setReport(null);
+      setNotesForDay([]);
     } finally {
-      setLoading(false);
+      setLoadingDay(false);
     }
   };
 
@@ -122,156 +195,530 @@ export default function DailyReportViewer({
 
   useEffect(() => {
     const onUpd = () => loadMonth(month);
+    const onNoteUpd = () => {
+      loadMonth(month);
+      if (selected) loadDay(selected);
+    };
+
     window.addEventListener("daily-report-updated", onUpd);
-    return () => window.removeEventListener("daily-report-updated", onUpd);
-  }, [month]);
+    window.addEventListener("calendar-note-updated", onNoteUpd);
+
+    return () => {
+      window.removeEventListener("daily-report-updated", onUpd);
+      window.removeEventListener("calendar-note-updated", onNoteUpd);
+    };
+  }, [month, selected]);
 
   if (!canView) return null;
 
+  const openDate = async (ymd: string) => {
+    setSelected(ymd);
+    setReport(null);
+    setNotesForDay([]);
+    setEditingNoteId(null);
+    setNoteTitle("");
+    setNoteDescription("");
+    setOpened(true);
+    await loadDay(ymd);
+  };
+
+  const startEditNote = (note: CalendarNote) => {
+    setEditingNoteId(note.id);
+    setNoteTitle(note.title);
+    setNoteDescription(note.description || "");
+  };
+
+  const resetNoteForm = () => {
+    setEditingNoteId(null);
+    setNoteTitle("");
+    setNoteDescription("");
+  };
+
+  const saveNote = async () => {
+    if (!canManageNotes || !selected || !noteTitle.trim() || savingNote) return;
+
+    setSavingNote(true);
+    try {
+      if (editingNoteId) {
+        const res = await fetch(`/api/calendar-notes/${editingNoteId}`, {
+          method: "PATCH",
+          credentials: "include",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            noteDate: selected,
+            title: noteTitle.trim(),
+            description: noteDescription.trim(),
+          }),
+        });
+
+        if (!res.ok) {
+          const txt = await res.text().catch(() => "");
+          console.error("Note update failed:", res.status, txt);
+          return;
+        }
+      } else {
+        const res = await fetch(`/api/calendar-notes`, {
+          method: "POST",
+          credentials: "include",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            userId,
+            noteDate: selected,
+            title: noteTitle.trim(),
+            description: noteDescription.trim(),
+          }),
+        });
+
+        if (!res.ok) {
+          const txt = await res.text().catch(() => "");
+          console.error("Note create failed:", res.status, txt);
+          return;
+        }
+      }
+
+      resetNoteForm();
+      await Promise.all([loadMonth(month), loadDay(selected)]);
+      window.dispatchEvent(new CustomEvent("calendar-note-updated"));
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setSavingNote(false);
+    }
+  };
+
+  const deleteNote = async (id: number) => {
+    if (!canManageNotes) return;
+
+    try {
+      const res = await fetch(`/api/calendar-notes/${id}`, {
+        method: "DELETE",
+        credentials: "include",
+      });
+
+      if (!res.ok) {
+        const txt = await res.text().catch(() => "");
+        console.error("Note delete failed:", res.status, txt);
+        return;
+      }
+
+      if (editingNoteId === id) resetNoteForm();
+
+      await Promise.all([loadMonth(month), loadDay(selected)]);
+      window.dispatchEvent(new CustomEvent("calendar-note-updated"));
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
   return (
     <div className="space-y-4 mt-2">
-      {/* Header */}
       <Group justify="space-between" align="end">
-        <Text fw={700}>Daily Reports</Text>
+        <Text fw={700}>Daily Reports & Scheduled Notes</Text>
       </Group>
 
-      {/* Calendar */}
-      <Paper withBorder p="md" radius="md">
-        <Text fw={600} mb="xs">
-          Report Calendar
-        </Text>
+      <div className="grid grid-cols-1 xl:grid-cols-[minmax(0,1fr)_360px] gap-4">
+        {/* LEFT: CALENDAR */}
+        <Paper withBorder p="md" radius="md">
+          <Group justify="space-between" mb="sm" align="center">
+            <Text fw={600}>Report & Notes Calendar</Text>
 
-        <DatePicker
-          value={selected ? new Date(selected) : null}
-          onChange={(date) => {
-            if (!date) return;
-
-            const ymd = formatYMD(date);
-            setSelected(ymd);
-
-            if (reportDates.has(ymd)) {
-              loadByDate(ymd);
-              setOpened(true); // ✅ open modal only if report exists
-            }
-          }}
-          renderDay={(date) => {
-            const d = new Date(date);
-
-            const y = d.getFullYear();
-            const m = String(d.getMonth() + 1).padStart(2, "0");
-            const day = String(d.getDate()).padStart(2, "0");
-
-            const ymd = `${y}-${m}-${day}`;
-            const hasReport = reportDates.has(ymd);
-
-            return (
-              <div
-                style={{
-                  width: 32,
-                  height: 32,
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  borderRadius: "50%",
-                  backgroundColor: hasReport
-                    ? "var(--color-secondary)"
-                    : undefined,
-                  color: hasReport ? "#fff" : undefined,
-                  fontWeight: hasReport ? 700 : 400,
+            <Group gap="xs">
+              <ActionIcon
+                variant="light"
+                onClick={() => {
+                  const next = shiftMonth(month, -1);
+                  setMonth(next);
+                  setCalendarDate(monthToDate(next));
                 }}
               >
-                {d.getDate()}
-              </div>
-            );
-          }}
-        />
-      </Paper>
+                <ChevronLeftIcon className="h-4 w-4" />
+              </ActionIcon>
 
-      {/* ✅ Modal */}
+              <Select
+                data={monthOptions}
+                value={month}
+                onChange={(v) => {
+                  if (!v) return;
+                  setMonth(v);
+                  setCalendarDate(monthToDate(v));
+                }}
+                w={130}
+              />
+
+              <ActionIcon
+                variant="light"
+                onClick={() => {
+                  const next = shiftMonth(month, 1);
+                  setMonth(next);
+                  setCalendarDate(monthToDate(next));
+                }}
+              >
+                <ChevronRightIcon className="h-4 w-4" />
+              </ActionIcon>
+            </Group>
+          </Group>
+
+          <DatePicker
+            key={month}
+            value={selected ? new Date(selected) : null}
+            onChange={(date: any) => {
+              if (!date) return;
+              const ymd = formatYMD(date);
+              openDate(ymd);
+            }}
+            date={calendarDate}
+            onDateChange={(date: string) => {
+              const d = new Date(date);
+
+              const nextMonth = `${d.getFullYear()}-${String(
+                d.getMonth() + 1,
+              ).padStart(2, "0")}`;
+
+              setCalendarDate(d);
+
+              if (nextMonth !== month) {
+                setMonth(nextMonth);
+              }
+            }}
+            renderDay={(date: any) => {
+              const d = new Date(date);
+              const ymd = formatYMD(d);
+
+              const hasReport = reportDates.has(ymd);
+              const noteCount = noteCountsByDate[ymd] || 0;
+              const hasNote = noteCount > 0;
+
+              return (
+                <div
+                  style={{
+                    width: 32,
+                    height: 32,
+                    position: "relative",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    borderRadius: "50%",
+                    backgroundColor: hasReport
+                      ? "var(--color-secondary)"
+                      : hasNote
+                        ? "rgba(90, 140, 189, 0.18)"
+                        : undefined,
+                    color: hasReport ? "#fff" : undefined,
+                    fontWeight: hasReport || hasNote ? 700 : 400,
+                  }}
+                >
+                  {d.getDate()}
+
+                  {hasNote && (
+                    <span
+                      style={{
+                        position: "absolute",
+                        top: -2,
+                        right: -1,
+                        fontSize: 13,
+                        fontWeight: 800,
+                        lineHeight: 1,
+                        color: hasReport ? "#fff" : "var(--color-secondary)",
+                      }}
+                    >
+                      +
+                    </span>
+                  )}
+                </div>
+              );
+            }}
+          />
+
+          <Group mt="sm" gap="xs">
+            <Badge variant="light" color="blue">
+              Blue day = Daily report exists
+            </Badge>
+            <Badge variant="light" color="grape">
+              + = One or more notes
+            </Badge>
+          </Group>
+
+          {loadingMonth && (
+            <Text size="sm" c="dimmed" mt="sm">
+              Loading month data...
+            </Text>
+          )}
+        </Paper>
+
+        {/* RIGHT: MONTH NOTE LIST */}
+        <Paper withBorder p="md" radius="md">
+          <Group justify="space-between" mb="sm">
+            <Text fw={600}>Events / Notes of {month}</Text>
+            <Badge variant="light">{notesOfMonthSorted.length}</Badge>
+          </Group>
+
+          <Stack gap="sm">
+            {notesOfMonthSorted.length === 0 ? (
+              <Text size="sm" c="dimmed">
+                No scheduled notes in this month.
+              </Text>
+            ) : (
+              notesOfMonthSorted.map((note) => (
+                <Paper
+                  key={note.id}
+                  withBorder
+                  p="sm"
+                  radius="md"
+                  style={{ cursor: "pointer" }}
+                  onClick={() => openDate(note.noteDate)}
+                >
+                  <Group justify="space-between" align="start" wrap="nowrap">
+                    <div>
+                      <Text fw={600} size="sm">
+                        {note.title}
+                      </Text>
+                      <Text size="xs" c="dimmed" mb={4}>
+                        {note.noteDate}
+                      </Text>
+                      {note.description ? (
+                        <Text size="sm" c="dimmed" lineClamp={2}>
+                          {note.description}
+                        </Text>
+                      ) : null}
+                    </div>
+
+                    <Badge size="xs" variant="light" color="grape">
+                      Note
+                    </Badge>
+                  </Group>
+                </Paper>
+              ))
+            )}
+          </Stack>
+        </Paper>
+      </div>
+
+      {/* MODAL */}
       <Modal
         opened={opened}
-        onClose={() => setOpened(false)}
-        title={report?.reportYmd || "Daily Report"}
-        size="lg"
+        onClose={() => {
+          setOpened(false);
+          resetNoteForm();
+        }}
+        title={selected || "Day Details"}
+        size="xl"
         centered
         styles={{
           body: {
-            maxHeight: "70vh",
+            maxHeight: "75vh",
             overflowY: "auto",
           },
         }}
       >
-        {report ? (
-          <>
-            <Text mb="sm">
-              <b>Branch:</b> {report.branchName}
-            </Text>
-
-            <Table withTableBorder withColumnBorders>
-              <Table.Tbody>
-                <Table.Tr>
-                  <Table.Td fw={600}>New Connection Request</Table.Td>
-                  <Table.Td>{report.newConnectionRequest}</Table.Td>
-                </Table.Tr>
-                <Table.Tr>
-                  <Table.Td fw={600}>Pending</Table.Td>
-                  <Table.Td>{report.pendingConnection}</Table.Td>
-                </Table.Tr>
-                <Table.Tr>
-                  <Table.Td fw={600}>Completed</Table.Td>
-                  <Table.Td>{report.completedConnection}</Table.Td>
-                </Table.Tr>
-                <Table.Tr>
-                  <Table.Td fw={600}>Reason for Pending</Table.Td>
-                  <Table.Td>{report.reasonPendingConnection || "-"}</Table.Td>
-                </Table.Tr>
-
-                <Table.Tr>
-                  <Table.Td fw={600}>Internet Tkt</Table.Td>
-                  <Table.Td>{report.internetTkt}</Table.Td>
-                </Table.Tr>
-                <Table.Tr>
-                  <Table.Td fw={600}>Pending Tkt</Table.Td>
-                  <Table.Td>{report.pendingTkt}</Table.Td>
-                </Table.Tr>
-                <Table.Tr>
-                  <Table.Td fw={600}>Completed Tkt</Table.Td>
-                  <Table.Td>{report.completedTkt}</Table.Td>
-                </Table.Tr>
-                <Table.Tr>
-                  <Table.Td fw={600}>Reason for Pending (Tkt)</Table.Td>
-                  <Table.Td>{report.reasonPendingTkt || "-"}</Table.Td>
-                </Table.Tr>
-
-                <Table.Tr>
-                  <Table.Td fw={600}>Total Expire Customer of the day</Table.Td>
-                  <Table.Td>{report.expireCustomerDay}</Table.Td>
-                </Table.Tr>
-                <Table.Tr>
-                  <Table.Td fw={600}>Total Renew of the day</Table.Td>
-                  <Table.Td>{report.renewDay}</Table.Td>
-                </Table.Tr>
-                <Table.Tr>
-                  <Table.Td fw={600}>Total Active Customer</Table.Td>
-                  <Table.Td>{report.activeCustomer}</Table.Td>
-                </Table.Tr>
-                <Table.Tr>
-                  <Table.Td fw={600}>Total Expire Customer</Table.Td>
-                  <Table.Td>{report.totalExpireCustomer}</Table.Td>
-                </Table.Tr>
-                <Table.Tr>
-                  <Table.Td fw={600}>Total Outgoing Calls</Table.Td>
-                  <Table.Td>{report.outgoingCalls}</Table.Td>
-                </Table.Tr>
-                <Table.Tr>
-                  <Table.Td fw={600}>Trunk Issues</Table.Td>
-                  <Table.Td>{report.trunkIssueRemarks || "-"}</Table.Td>
-                </Table.Tr>
-              </Table.Tbody>
-            </Table>
-          </>
-        ) : (
+        {loadingDay ? (
           <Text c="dimmed">Loading...</Text>
+        ) : (
+          <div className="space-y-4">
+            {/* DAILY REPORT */}
+            <Paper withBorder p="md" radius="md">
+              <Group justify="space-between" mb="sm">
+                <Text fw={700}>Daily Report</Text>
+                {report ? (
+                  <Badge color="blue" variant="light">
+                    Available
+                  </Badge>
+                ) : (
+                  <Badge variant="light" color="gray">
+                    No report
+                  </Badge>
+                )}
+              </Group>
+
+              {report ? (
+                <>
+                  <Text mb="sm">
+                    <b>Branch:</b> {report.branchName}
+                  </Text>
+
+                  <Table withTableBorder withColumnBorders>
+                    <Table.Tbody>
+                      <Table.Tr>
+                        <Table.Td fw={600}>New Connection Request</Table.Td>
+                        <Table.Td>{report.newConnectionRequest}</Table.Td>
+                      </Table.Tr>
+                      <Table.Tr>
+                        <Table.Td fw={600}>Pending</Table.Td>
+                        <Table.Td>{report.pendingConnection}</Table.Td>
+                      </Table.Tr>
+                      <Table.Tr>
+                        <Table.Td fw={600}>Completed</Table.Td>
+                        <Table.Td>{report.completedConnection}</Table.Td>
+                      </Table.Tr>
+                      <Table.Tr>
+                        <Table.Td fw={600}>Reason for Pending</Table.Td>
+                        <Table.Td>
+                          {report.reasonPendingConnection || "-"}
+                        </Table.Td>
+                      </Table.Tr>
+
+                      <Table.Tr>
+                        <Table.Td fw={600}>Internet Tkt</Table.Td>
+                        <Table.Td>{report.internetTkt}</Table.Td>
+                      </Table.Tr>
+                      <Table.Tr>
+                        <Table.Td fw={600}>Pending Tkt</Table.Td>
+                        <Table.Td>{report.pendingTkt}</Table.Td>
+                      </Table.Tr>
+                      <Table.Tr>
+                        <Table.Td fw={600}>Completed Tkt</Table.Td>
+                        <Table.Td>{report.completedTkt}</Table.Td>
+                      </Table.Tr>
+                      <Table.Tr>
+                        <Table.Td fw={600}>Reason for Pending (Tkt)</Table.Td>
+                        <Table.Td>{report.reasonPendingTkt || "-"}</Table.Td>
+                      </Table.Tr>
+
+                      <Table.Tr>
+                        <Table.Td fw={600}>
+                          Total Expire Customer of the day
+                        </Table.Td>
+                        <Table.Td>{report.expireCustomerDay}</Table.Td>
+                      </Table.Tr>
+                      <Table.Tr>
+                        <Table.Td fw={600}>Total Renew of the day</Table.Td>
+                        <Table.Td>{report.renewDay}</Table.Td>
+                      </Table.Tr>
+                      <Table.Tr>
+                        <Table.Td fw={600}>Total Active Customer</Table.Td>
+                        <Table.Td>{report.activeCustomer}</Table.Td>
+                      </Table.Tr>
+                      <Table.Tr>
+                        <Table.Td fw={600}>Total Expire Customer</Table.Td>
+                        <Table.Td>{report.totalExpireCustomer}</Table.Td>
+                      </Table.Tr>
+                      <Table.Tr>
+                        <Table.Td fw={600}>Total Outgoing Calls</Table.Td>
+                        <Table.Td>{report.outgoingCalls}</Table.Td>
+                      </Table.Tr>
+                      <Table.Tr>
+                        <Table.Td fw={600}>Trunk Issues</Table.Td>
+                        <Table.Td>{report.trunkIssueRemarks || "-"}</Table.Td>
+                      </Table.Tr>
+                    </Table.Tbody>
+                  </Table>
+                </>
+              ) : (
+                <Text c="dimmed" size="sm">
+                  No daily report available for this date.
+                </Text>
+              )}
+            </Paper>
+
+            <Divider />
+
+            {/* NOTES */}
+            <Paper withBorder p="md" radius="md">
+              <Group justify="space-between" mb="sm">
+                <Text fw={700}>Scheduled Notes</Text>
+                <Badge variant="light" color="grape">
+                  {notesForDay.length}
+                </Badge>
+              </Group>
+
+              <Stack gap="sm">
+                {notesForDay.length === 0 ? (
+                  <Text c="dimmed" size="sm">
+                    No scheduled notes for this date.
+                  </Text>
+                ) : (
+                  notesForDay.map((note) => (
+                    <Paper key={note.id} withBorder p="sm" radius="md">
+                      <Group
+                        justify="space-between"
+                        align="start"
+                        wrap="nowrap"
+                      >
+                        <div>
+                          <Text fw={600}>{note.title}</Text>
+                          {note.description ? (
+                            <Text size="sm" c="dimmed">
+                              {note.description}
+                            </Text>
+                          ) : null}
+                        </div>
+
+                        {canManageNotes && (
+                          <Group gap="xs">
+                            <Button
+                              size="xs"
+                              variant="light"
+                              onClick={() => startEditNote(note)}
+                            >
+                              Edit
+                            </Button>
+                            <Button
+                              size="xs"
+                              color="red"
+                              variant="light"
+                              onClick={() => deleteNote(note.id)}
+                            >
+                              Delete
+                            </Button>
+                          </Group>
+                        )}
+                      </Group>
+                    </Paper>
+                  ))
+                )}
+              </Stack>
+
+              {canManageNotes && (
+                <Paper withBorder p="sm" radius="md" mt="md">
+                  <Stack gap="sm">
+                    <Text fw={600}>
+                      {editingNoteId ? "Edit Note" : "Add Note"}
+                    </Text>
+
+                    <TextInput
+                      label="Title"
+                      placeholder="Enter note title"
+                      value={noteTitle}
+                      onChange={(e) => setNoteTitle(e.currentTarget.value)}
+                      required
+                    />
+
+                    <Textarea
+                      label="Description"
+                      placeholder="Optional description"
+                      value={noteDescription}
+                      onChange={(e) =>
+                        setNoteDescription(e.currentTarget.value)
+                      }
+                      autosize
+                      minRows={3}
+                    />
+
+                    <Group justify="flex-end">
+                      {editingNoteId ? (
+                        <Button variant="default" onClick={resetNoteForm}>
+                          Cancel Edit
+                        </Button>
+                      ) : null}
+
+                      <Button
+                        onClick={saveNote}
+                        loading={savingNote}
+                        disabled={!noteTitle.trim()}
+                        styles={{
+                          root: {
+                            backgroundColor: "var(--color-primary)",
+                            color: "white",
+                          },
+                        }}
+                      >
+                        {editingNoteId ? "Update Note" : "Save Note"}
+                      </Button>
+                    </Group>
+                  </Stack>
+                </Paper>
+              )}
+            </Paper>
+          </div>
         )}
       </Modal>
     </div>
