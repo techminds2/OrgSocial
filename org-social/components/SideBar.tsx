@@ -71,6 +71,11 @@ function normalizeMeRole(data: MeResponse): string | null {
   return data?.role ?? data?.user?.role ?? null;
 }
 
+function isPathActive(pathname: string, href: string) {
+  if (href === "/") return pathname === "/";
+  return pathname === href || pathname.startsWith(`${href}/`);
+}
+
 function SidebarContent({
   pathname,
   onNavigate,
@@ -107,7 +112,7 @@ function SidebarContent({
   };
 
   const menuItems: MenuItem[] = [
-    { type: "link", label: "Home", href: "/", icon: HomeIcon }, // Home link added
+    { type: "link", label: "Home", href: "/", icon: HomeIcon },
     ...BASE_MENU_ITEMS,
     ...(isAdmin
       ? [
@@ -150,7 +155,7 @@ function SidebarContent({
           );
         }
 
-        const isActive = pathname === item.href;
+        const isActive = isPathActive(pathname, item.href);
         const Icon = item.icon;
 
         if (item.href === "/todo") {
@@ -162,9 +167,17 @@ function SidebarContent({
                 openTodoModal?.();
                 onNavigate?.();
               }}
-              className="flex items-center gap-3 w-full text-left px-4 py-2 text-gray-700 rounded hover:bg-blue-100"
+              className={`flex items-center gap-3 w-full text-left px-4 py-2 rounded transition ${
+                isActive
+                  ? "bg-blue-100 text-blue-700 font-semibold"
+                  : "text-gray-700 hover:bg-blue-100"
+              }`}
             >
-              <Icon className="h-5 w-5 text-gray-500" />
+              <Icon
+                className={`h-5 w-5 ${
+                  isActive ? "text-blue-700" : "text-gray-500"
+                }`}
+              />
               <span className="text-sm">{item.label}</span>
             </button>
           );
@@ -181,7 +194,11 @@ function SidebarContent({
                 : "text-gray-700 hover:bg-blue-100"
             }`}
           >
-            <Icon className="h-5 w-5 text-gray-500" />
+            <Icon
+              className={`h-5 w-5 ${
+                isActive ? "text-blue-700" : "text-gray-500"
+              }`}
+            />
             {item.label}
           </Link>
         );
@@ -306,7 +323,10 @@ export default function Sidebar() {
   }, []);
 
   const modalTodos = useMemo(
-    () => [...todos.filter((t) => !t.completed), ...todos.filter((t) => t.completed)],
+    () => [
+      ...todos.filter((t) => !t.completed),
+      ...todos.filter((t) => t.completed),
+    ],
     [todos]
   );
 

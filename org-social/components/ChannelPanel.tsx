@@ -11,7 +11,7 @@ import {
 import Link from "next/link";
 import { useEffect, useState, useCallback } from "react";
 import Cropper from "react-easy-crop";
-import { useSearchParams, useRouter } from "next/navigation";
+import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import getCroppedImg from "@/lib/getCroppedImg";
 
 type Channel = {
@@ -48,9 +48,14 @@ type MemberPick = {
   role: "viewer" | "editor" | "admin";
 };
 
+function isChannelActive(pathname: string, channelId: number) {
+  return pathname === `/channels/${channelId}`;
+}
+
 export default function ChannelsPanel() {
   const searchParams = useSearchParams();
   const router = useRouter();
+  const pathname = usePathname() ?? "";
 
   const [channels, setChannels] = useState<Channel[]>([]);
   const [publicChannels, setPublicChannels] = useState<PublicChannel[]>([]);
@@ -121,7 +126,7 @@ export default function ChannelsPanel() {
         ];
       });
     },
-    [publicChannels],
+    [publicChannels]
   );
 
   useEffect(() => {
@@ -129,7 +134,7 @@ export default function ChannelsPanel() {
     loadPublicChannels();
 
     const raw = new URLSearchParams(window.location.search).get(
-      "deletedChannelId",
+      "deletedChannelId"
     );
     if (!raw) return;
 
@@ -190,8 +195,8 @@ export default function ChannelsPanel() {
 
       setPublicChannels((prev) =>
         prev.map((c) =>
-          c.id === id ? { ...c, isMember: true, hasPendingRequest: false } : c,
-        ),
+          c.id === id ? { ...c, isMember: true, hasPendingRequest: false } : c
+        )
       );
     };
 
@@ -199,7 +204,7 @@ export default function ChannelsPanel() {
     return () =>
       window.removeEventListener(
         "channel-join-accepted",
-        onJoinAccepted as any,
+        onJoinAccepted as any
       );
   }, [moveChannelToJoined]);
 
@@ -218,8 +223,8 @@ export default function ChannelsPanel() {
       formData.append(
         "members",
         JSON.stringify(
-          pickedMembers.map((m) => ({ userId: m.userId, role: m.role })),
-        ),
+          pickedMembers.map((m) => ({ userId: m.userId, role: m.role }))
+        )
       );
 
       const res = await fetch("/api/channels", {
@@ -298,8 +303,8 @@ export default function ChannelsPanel() {
 
       setPublicChannels((prev) =>
         prev.map((c) =>
-          c.id === channelId ? { ...c, hasPendingRequest: true } : c,
-        ),
+          c.id === channelId ? { ...c, hasPendingRequest: true } : c
+        )
       );
     } catch (e) {
       console.error("Request join error:", e);
@@ -316,8 +321,8 @@ export default function ChannelsPanel() {
 
       setPublicChannels((prev) =>
         prev.map((c) =>
-          c.id === channelId ? { ...c, hasPendingRequest: false } : c,
-        ),
+          c.id === channelId ? { ...c, hasPendingRequest: false } : c
+        )
       );
     } catch (e) {
       console.error("Cancel join request error:", e);
@@ -355,42 +360,73 @@ export default function ChannelsPanel() {
 
       <ScrollArea className="flex-1">
         <div className="flex flex-col gap-2">
-          {channels.map((ch) => (
-            <Link key={ch.id} href={`/channels/${ch.id}`}>
-              <div className="px-2 py-1 rounded hover:bg-gray-200 cursor-pointer flex justify-between items-center gap-2">
-                <div className="flex items-center gap-2 min-w-0">
-                  {ch.bannerKey ? (
-                    <img
-                      src={getBannerUrl(ch.bannerKey)}
-                      alt={ch.name}
-                      className="w-6 h-6 rounded object-cover flex-shrink-0"
-                    />
-                  ) : (
-                    <div className="w-6 h-6 rounded bg-gray-300 flex items-center justify-center text-xs text-gray-600">
-                      
-                    </div>
-                  )}
+          {channels.map((ch) => {
+            const active = isChannelActive(pathname, ch.id);
 
-                  <div className="truncate">
-                    <span className="truncate">{ch.name}</span>
+            return (
+              <Link key={ch.id} href={`/channels/${ch.id}`}>
+                <div
+                  className={`px-2 py-2 rounded cursor-pointer flex justify-between items-center gap-2 transition ${
+                    active
+                      ? "bg-blue-100 border border-blue-200"
+                      : "hover:bg-gray-200"
+                  }`}
+                >
+                  <div className="flex items-center gap-2 min-w-0">
+                    {ch.bannerKey ? (
+                      <img
+                        src={getBannerUrl(ch.bannerKey)}
+                        alt={ch.name}
+                        className="w-6 h-6 rounded object-cover flex-shrink-0"
+                      />
+                    ) : (
+                      <div
+                        className={`w-6 h-6 rounded flex items-center justify-center text-xs flex-shrink-0 ${
+                          active
+                            ? "bg-blue-200 text-blue-700"
+                            : "bg-gray-300 text-gray-600"
+                        }`}
+                      >
+                        #
+                      </div>
+                    )}
+
+                    <div className="truncate">
+                      <div
+                        className={`truncate text-sm ${
+                          active ? "text-blue-700 font-semibold" : "text-gray-800"
+                        }`}
+                      >
+                        {ch.name}
+                      </div>
+
+                      {active && (
+                        <div className="text-[11px] text-blue-600">
+                          Current channel
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-2 flex-shrink-0">
                     {ch.visibility === "public" && (
-                      <span className="ml-2 text-[10px] px-1 py-[1px] rounded bg-green-100 text-green-700">
+                      <span className="text-[10px] px-1 py-[1px] rounded bg-green-100 text-green-700">
                         public
+                      </span>
+                    )}
+
+                    {(ch.unseenCount ?? 0) > 0 && (
+                      <span className="text-[11px] px-2 py-[2px] rounded-full bg-blue-600 text-white">
+                        {ch.unseenCount}
                       </span>
                     )}
                   </div>
                 </div>
+              </Link>
+            );
+          })}
 
-                {(ch.unseenCount ?? 0) > 0 && (
-                  <span className="text-[11px] px-2 py-[2px] rounded-full bg-blue-600 text-white flex-shrink-0">
-                    {ch.unseenCount}
-                  </span>
-                )}
-              </div>
-            </Link>
-          ))}
-
-          <div className="mt-4 pt-3 ">
+          <div className="mt-4 pt-3">
             <Text size="sm" fw={600} className="mb-2">
               Public channels
             </Text>
@@ -398,44 +434,65 @@ export default function ChannelsPanel() {
             {publicChannels.length === 0 ? (
               <div className="text-xs text-gray-500">No public channels</div>
             ) : (
-              publicChannels.map((c) => (
-                <div
-                  key={c.id}
-                  className="px-2 py-2 rounded hover:bg-gray-100 flex justify-between items-center"
-                >
-                  <div className="text-sm">
-                    <div className="font-medium"> {c.name}</div>
-                    <div className="text-xs text-gray-500">
-                      {c.memberCount} members
+              publicChannels.map((c) => {
+                const active = isChannelActive(pathname, c.id);
+
+                return (
+                  <div
+                    key={c.id}
+                    className={`px-2 py-2 rounded flex justify-between items-center transition ${
+                      active
+                        ? "bg-blue-100 border border-blue-200"
+                        : "hover:bg-gray-100"
+                    }`}
+                  >
+                    <div className="text-sm min-w-0">
+                      <div
+                        className={`font-medium truncate ${
+                          active ? "text-blue-700" : ""
+                        }`}
+                      >
+                        {c.name}
+                      </div>
+                      <div
+                        className={`text-xs ${
+                          active ? "text-blue-600" : "text-gray-500"
+                        }`}
+                      >
+                        {active ? "Current channel" : `${c.memberCount} members`}
+                      </div>
                     </div>
-                  </div>
- 
-                  {c.isMember ? (
-                    <Link href={`/channels/${c.id}`}>
-                      <Button size="xs" variant="light">
-                        Open
+
+                    {c.isMember ? (
+                      <Link href={`/channels/${c.id}`}>
+                        <Button
+                          size="xs"
+                          variant={active ? "filled" : "light"}
+                        >
+                          {active ? "Opened" : "Open"}
+                        </Button>
+                      </Link>
+                    ) : c.hasPendingRequest ? (
+                      <Button
+                        size="xs"
+                        variant="light"
+                        color="red"
+                        onClick={() => cancelJoinRequest(c.id)}
+                      >
+                        Cancel
                       </Button>
-                    </Link>
-                  ) : c.hasPendingRequest ? (
-                    <Button
-                      size="xs"
-                      variant="light"
-                      color="red"
-                      onClick={() => cancelJoinRequest(c.id)}
-                    >
-                      Cancel
-                    </Button>
-                  ) : (
-                    <Button
-                      size="xs"
-                      variant="light"
-                      onClick={() => requestJoin(c.id)}
-                    >
-                      Request
-                    </Button>
-                  )}
-                </div>
-              ))
+                    ) : (
+                      <Button
+                        size="xs"
+                        variant="light"
+                        onClick={() => requestJoin(c.id)}
+                      >
+                        Request
+                      </Button>
+                    )}
+                  </div>
+                );
+              })
             )}
           </div>
         </div>
@@ -462,8 +519,8 @@ export default function ChannelsPanel() {
             value={visibility}
             onChange={(e) => setVisibility(e.currentTarget.value as any)}
           >
-            <option value="private">Private </option>
-            <option value="public">Public </option>
+            <option value="private">Private</option>
+            <option value="public">Public</option>
           </select>
           <div className="text-xs text-gray-500 mt-1">
             {visibility === "public"
@@ -552,8 +609,8 @@ export default function ChannelsPanel() {
                       const role = e.currentTarget.value as MemberPick["role"];
                       setPickedMembers((prev) =>
                         prev.map((x) =>
-                          x.userId === m.userId ? { ...x, role } : x,
-                        ),
+                          x.userId === m.userId ? { ...x, role } : x
+                        )
                       );
                     }}
                   >
@@ -568,7 +625,7 @@ export default function ChannelsPanel() {
                     variant="light"
                     onClick={() =>
                       setPickedMembers((prev) =>
-                        prev.filter((x) => x.userId !== m.userId),
+                        prev.filter((x) => x.userId !== m.userId)
                       )
                     }
                   >

@@ -17,6 +17,7 @@ import { HeartIcon as HeartSolid } from "@heroicons/react/24/solid";
 import { ChatBubbleLeftIcon } from "@heroicons/react/24/outline";
 import { StarIcon as StarOutline } from "@heroicons/react/24/outline";
 import { StarIcon as StarSolid } from "@heroicons/react/24/solid";
+import { DocumentTextIcon, PlayIcon } from "@heroicons/react/24/outline";
 import { useSeenTracker } from "@/lib/useSeenTracker";
 
 type ShowPostsProps = {
@@ -68,6 +69,20 @@ type Post = {
 
   comments: Comment[];
 };
+
+function getFileName(url: string) {
+  try {
+    return decodeURIComponent(url.split("/").pop() || "Document");
+  } catch {
+    return url.split("/").pop() || "Document";
+  }
+}
+
+function getMediaGridClass(fileCount: number) {
+  if (fileCount === 1) return "grid grid-cols-1 gap-3 mb-3";
+  if (fileCount === 2) return "grid grid-cols-2 gap-3 mb-3";
+  return "grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3";
+}
 
 export default function ShowPosts({
   channelId,
@@ -192,7 +207,6 @@ export default function ShowPosts({
     return () => obs.disconnect();
   }, [loading, loadingMore, hasMore, nextCursor]);
 
-  /* ---------------- LIKE ---------------- */
   const toggleLike = async (postId: number) => {
     if (likingId === postId) return;
     setLikingId(postId);
@@ -216,12 +230,21 @@ export default function ShowPosts({
             : p,
         ),
       );
+
+      setCommentsPost((cur) =>
+        cur && cur.id === postId
+          ? {
+              ...cur,
+              likedByMe: liked,
+              likeCount: liked ? cur.likeCount + 1 : cur.likeCount - 1,
+            }
+          : cur,
+      );
     } finally {
       setLikingId(null);
     }
   };
 
-  /* ---------------- ADD COMMENT ---------------- */
   const submitComment = async (postId: number, e: FormEvent) => {
     e.preventDefault();
     if (commentingId === postId) return;
@@ -262,7 +285,6 @@ export default function ShowPosts({
     }
   };
 
-  /* ---------------- EDIT/DELETE ---------------- */
   const openEdit = (post: Post) => {
     setEditingPost(post);
     setEditContent(post.content || "");
@@ -339,7 +361,6 @@ export default function ShowPosts({
     }
   };
 
-  /* ---------------- COMMENTS MODAL helpers ---------------- */
   const openComments = (post: Post) => setCommentsPost(post);
 
   const media = useMemo(() => {
@@ -354,169 +375,233 @@ export default function ShowPosts({
 
   return (
     <>
-      <div className="w-full max-w-2xl ml-0 mr-auto flex flex-col gap-4">
-        {posts.map((post) => (
-          <div
-            key={post.id}
-            data-postid={post.id}
-            ref={observeEl}
-            className="bg-white shadow rounded-xl p-4"
-          >
-            <div className="flex items-center justify-between mb-2">
-              <div className="flex items-center gap-3">
-                <img
-                  src={post.author.profileImage || "/temp.jpg"}
-                  alt={post.author.username}
-                  className="w-10 h-10 rounded-full object-cover border"
-                  onError={(e) => (e.currentTarget.src = "/temp.jpg")}
-                />
-                <div>
-                  <p className="font-semibold">{post.author.username}</p>
-                  <p className="text-xs text-gray-500">
-                    {showChannel && (
-                      <>
-                        {post.channel
-                          ? `Posted in ${post.channel.name}`
-                          : "Posted on dashboard"}
-                        {" · "}
-                      </>
-                    )}
+      <div className="w-full max-w-4xl mx-auto flex flex-col gap-5">
+        {posts.map((post) => {
+          const fileCount = post.files.length;
 
-                    {post.savedAt
-                      ? new Date(post.savedAt).toLocaleString()
-                      : new Date(post.createdAt).toLocaleString()}
+          return (
+            <div
+              key={post.id}
+              data-postid={post.id}
+              ref={observeEl}
+              className="bg-white shadow-sm border border-gray-100 rounded-2xl px-5 py-4"
+            >
+              <div className="flex items-center justify-between mb-3">
+                <div className="flex items-center gap-3 min-w-0">
+                  <img
+                    src={post.author.profileImage || "/temp.jpg"}
+                    alt={post.author.username}
+                    className="w-10 h-10 rounded-full object-cover border flex-shrink-0"
+                    onError={(e) => (e.currentTarget.src = "/temp.jpg")}
+                  />
+                  <div className="min-w-0">
+                    <p className="font-semibold truncate">
+                      {post.author.username}
+                    </p>
+                    <p className="text-xs text-gray-500 truncate">
+                      {showChannel && (
+                        <>
+                          {post.channel
+                            ? `Posted in ${post.channel.name}`
+                            : "Posted on dashboard"}
+                          {" · "}
+                        </>
+                      )}
 
-                    {post.isEdited && (
-                      <span className="ml-2 text-gray-400">(edited)</span>
-                    )}
-                  </p>
+                      {post.savedAt
+                        ? new Date(post.savedAt).toLocaleString()
+                        : new Date(post.createdAt).toLocaleString()}
+
+                      {post.isEdited && (
+                        <span className="ml-2 text-gray-400">(edited)</span>
+                      )}
+                    </p>
+                  </div>
                 </div>
+
+                {post.isMine && (
+                  <Menu position="bottom-end" withArrow withinPortal>
+                    <Menu.Target>
+                      <ActionIcon
+                        variant="subtle"
+                        radius="xl"
+                        aria-label="Post actions"
+                        loading={deletingId === post.id}
+                      >
+                        ⋯
+                      </ActionIcon>
+                    </Menu.Target>
+
+                    <Menu.Dropdown>
+                      <Menu.Item onClick={() => openEdit(post)}>Edit</Menu.Item>
+                      <Menu.Item color="red" onClick={() => deletePost(post.id)}>
+                        Delete
+                      </Menu.Item>
+                    </Menu.Dropdown>
+                  </Menu>
+                )}
               </div>
 
-              {post.isMine && (
-                <Menu position="bottom-end" withArrow withinPortal>
-                  <Menu.Target>
+              <div
+                className="post-content mb-4"
+                dangerouslySetInnerHTML={{ __html: post.content }}
+              />
+
+              {post.files.length > 0 && (
+                <div className={getMediaGridClass(fileCount)}>
+                  {post.files.map((f, i) => {
+                    if (f.type === "image") {
+                      return (
+                        <div
+                          key={i}
+                          className="relative group cursor-pointer"
+                          onClick={() => openComments(post)}
+                        >
+                          <img
+                            src={f.url}
+                            className={`w-full rounded-xl transition group-hover:opacity-95 ${
+                              fileCount === 1
+                                ? "h-[380px] object-cover"
+                                : "h-56 object-cover"
+                            }`}
+                            alt=""
+                          />
+                          <div className="absolute inset-0 rounded-xl bg-black/0 group-hover:bg-black/10 transition" />
+                        </div>
+                      );
+                    }
+
+                    if (f.type === "video") {
+                      return (
+                        <div
+                          key={i}
+                          className="relative group cursor-pointer overflow-hidden rounded-xl bg-black"
+                          onClick={() => openComments(post)}
+                        >
+                          <video
+                            controls
+                            className={`w-full rounded-xl ${
+                              fileCount === 1
+                                ? "h-[380px] object-cover"
+                                : "h-56 object-cover"
+                            }`}
+                          >
+                            <source src={f.url} />
+                          </video>
+
+                          <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
+                            <div className="bg-black/45 text-white rounded-full px-3 py-2 text-xs flex items-center gap-1">
+                              <PlayIcon className="w-4 h-4" />
+                              Play
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    }
+
+                    return (
+                      <a
+                        key={i}
+                        href={f.url}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="flex items-center gap-3 p-4 border border-gray-200 rounded-xl bg-gray-50 hover:bg-gray-100 transition min-h-[88px]"
+                      >
+                        <div className="w-12 h-12 flex items-center justify-center rounded-lg bg-blue-100 text-blue-600 flex-shrink-0">
+                          <DocumentTextIcon className="w-6 h-6" />
+                        </div>
+
+                        <div className="min-w-0">
+                          <div className="text-sm font-medium text-gray-800 truncate">
+                            {getFileName(f.url)}
+                          </div>
+                          <div className="text-xs text-gray-500 mt-1">
+                            Open document preview
+                          </div>
+                        </div>
+                      </a>
+                    );
+                  })}
+                </div>
+              )}
+
+              <div className="flex items-center justify-between mt-1 pt-1">
+                <div className="flex items-center gap-6">
+                  <div className="flex items-center gap-1.5">
                     <ActionIcon
                       variant="subtle"
+                      color={post.likedByMe ? "red" : "gray"}
+                      loading={likingId === post.id}
+                      onClick={() => toggleLike(post.id)}
                       radius="xl"
-                      aria-label="Post actions"
-                      loading={deletingId === post.id}
+                      size="lg"
+                      className="transition hover:bg-gray-100"
                     >
-                      ⋯
+                      {post.likedByMe ? (
+                        <HeartSolid className="w-6 h-6 text-red-500" />
+                      ) : (
+                        <HeartOutline className="w-6 h-6 text-gray-400" />
+                      )}
                     </ActionIcon>
-                  </Menu.Target>
 
-                  <Menu.Dropdown>
-                    <Menu.Item onClick={() => openEdit(post)}>Edit</Menu.Item>
-                    <Menu.Item color="red" onClick={() => deletePost(post.id)}>
-                      Delete
-                    </Menu.Item>
-                  </Menu.Dropdown>
-                </Menu>
-              )}
-            </div>
+                    <Text size="sm" c="dimmed">
+                      {post.likeCount}
+                    </Text>
+                  </div>
 
-            <div
-              className="post-content mb-3"
-              dangerouslySetInnerHTML={{ __html: post.content }}
-            />
+                  <button
+                    onClick={() => openComments(post)}
+                    className="flex items-center gap-1.5 text-gray-500 hover:text-blue-600 transition"
+                    type="button"
+                  >
+                    <ChatBubbleLeftIcon className="w-6 h-6" />
+                    <span className="text-sm">{post.comments.length}</span>
+                  </button>
+                </div>
 
-            {post.files.length > 0 && (
-              <div className="flex gap-2 flex-wrap mb-3">
-                {post.files.map((f, i) => {
-                  if (f.type === "image")
-                    return (
-                      <img
-                        key={i}
-                        src={f.url}
-                        className="w-32 h-32 object-cover rounded cursor-pointer hover:opacity-80"
-                        onClick={() => openComments(post)}
-                      />
-                    );
+                <div className="flex items-center">
+                  <button
+                    type="button"
+                    onClick={async () => {
+                      try {
+                        const res = await fetch(`/api/posts/${post.id}/save`, {
+                          method: "POST",
+                          credentials: "include",
+                        });
+                        if (!res.ok) return;
 
-                  if (f.type === "video")
-                    return (
-                      <video
-                        key={i}
-                        controls
-                        className="w-48 h-32 rounded cursor-pointer"
-                        onClick={() => openComments(post)}
-                      >
-                        <source src={f.url} />
-                      </video>
-                    );
-
-                  return (
-                    <a
-                      key={i}
-                      href={f.url}
-                      target="_blank"
-                      className="px-2 py-1 bg-gray-100 rounded text-xs"
-                    >
-                      {f.url.split("/").pop()}
-                    </a>
-                  );
-                })}
+                        const { saved } = await res.json();
+                        setPosts((prev) =>
+                          prev.map((p) =>
+                            p.id === post.id ? { ...p, saved } : p,
+                          ),
+                        );
+                        setCommentsPost((cur) =>
+                          cur && cur.id === post.id
+                            ? { ...cur, saved }
+                            : cur,
+                        );
+                      } catch (err) {
+                        console.error(err);
+                      }
+                    }}
+                    className={`flex items-center transition ${
+                      post.saved
+                        ? "text-yellow-500"
+                        : "text-gray-400 hover:text-yellow-500"
+                    }`}
+                  >
+                    {post.saved ? (
+                      <StarSolid className="w-6 h-6" />
+                    ) : (
+                      <StarOutline className="w-6 h-6" />
+                    )}
+                  </button>
+                </div>
               </div>
-            )}
-
-            <div className="flex items-center gap-3 mb-2">
-              <ActionIcon
-                variant={post.likedByMe ? "filled" : "subtle"}
-                color={post.likedByMe ? "red" : "gray"}
-                loading={likingId === post.id}
-                onClick={() => toggleLike(post.id)}
-                radius="xl"
-              >
-                {post.likedByMe ? (
-                  <HeartSolid className="w-5 h-5 text-white" />
-                ) : (
-                  <HeartOutline className="w-5 h-5" />
-                )}
-              </ActionIcon>
-              <Text size="sm">{post.likeCount}</Text>
-
-              <Button
-                size="xs"
-                variant="subtle"
-                color="dark"
-                className="flex items-center"
-                onClick={() => openComments(post)}
-              >
-                <ChatBubbleLeftIcon className="w-4 h-4 text-black" />
-                <span className="ml-2">Comments ({post.comments.length})</span>
-              </Button>
-
-              <Button
-                size="xs"
-                variant="subtle"
-                color="yellow"
-                className="flex items-center gap-1"
-                onClick={async () => {
-                  try {
-                    const res = await fetch(`/api/posts/${post.id}/save`, {
-                      method: "POST",
-                      credentials: "include",
-                    });
-                    if (!res.ok) return;
-                    const { saved } = await res.json();
-                    setPosts((prev) =>
-                      prev.map((p) => (p.id === post.id ? { ...p, saved } : p)),
-                    );
-                  } catch (err) {
-                    console.error(err);
-                  }
-                }}
-              >
-                {post.saved ? (
-                  <StarSolid className="h-4 w-4 text-yellow-500" />
-                ) : (
-                  <StarOutline className="h-4 w-4" />
-                )}
-              </Button>
             </div>
-          </div>
-        ))}
+          );
+        })}
 
         <div ref={loadMoreRef} />
 
@@ -527,7 +612,6 @@ export default function ShowPosts({
         )}
       </div>
 
-      {/* Edit Modal */}
       <Modal
         opened={!!editingPost}
         onClose={() => setEditingPost(null)}
@@ -602,7 +686,6 @@ export default function ShowPosts({
         </div>
       </Modal>
 
-      {/* Comments Modal */}
       <Modal
         opened={!!commentsPost}
         onClose={() => setCommentsPost(null)}
@@ -619,6 +702,7 @@ export default function ShowPosts({
                 <img
                   src={media.img.url}
                   className="w-full h-full object-contain"
+                  alt=""
                 />
               ) : media?.vid ? (
                 <video controls className="w-full h-full">
@@ -664,7 +748,7 @@ export default function ShowPosts({
 
               <form
                 onSubmit={(e) => submitComment(commentsPost.id, e)}
-                className="pt-3 mt-2  flex gap-2 bg-white sticky bottom-0"
+                className="pt-3 mt-2 flex gap-2 bg-white sticky bottom-0"
               >
                 <TextInput
                   placeholder="Write a comment..."
