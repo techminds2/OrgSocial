@@ -177,7 +177,7 @@ export default function CreatePost({ channelId }: CreatePostProps) {
   const avatarSrc = normalizeMediaUrl(me?.profileImage);
 
   return (
-    <div className="bg-white rounded-2xl shadow p-4 w-full max-w-2xl relative">
+    <div className="bg-white rounded-2xl shadow p-3 w-full max-w-[720px] mx-auto">
       <div className="flex gap-4">
         <img
           src={avatarSrc}

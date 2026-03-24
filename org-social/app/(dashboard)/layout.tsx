@@ -11,8 +11,8 @@ export default function DashboardLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="h-screen">
-      <aside className="fixed top-0 left-0 w-64 h-full bg-gray-50 border-r border-gray-200 z-40">
+    <div className="h-screen overflow-hidden bg-gray-50">
+      <aside className="fixed top-0 left-0 w-64 h-screen bg-gray-50 border-r border-gray-200 z-40">
         <Sidebar />
       </aside>
 
@@ -24,11 +24,12 @@ export default function DashboardLayout({
         </Suspense>
       </aside>
 
-      <div className="grid grid-cols-[16rem_1fr_16rem] pt-14 h-[calc(100vh-3.5rem)] overflow-hidden">
-        {/* center */}
-        <section className="col-start-2 overflow-y-auto">
-          <main className="bg-gray-50 flex justify-center">
-            <div className="w-full max-w-3xl px-6 py-6">{children}</div>
+      <div className="grid grid-cols-[16rem_1fr_16rem] pt-14 h-screen">
+        <section className="col-start-2 h-[calc(100vh-3.5rem)] overflow-y-auto bg-gray-50">
+          <main className="min-h-full bg-gray-50 flex justify-center">
+            <div className="w-full max-w-[720px] px-4 pt-4 pb-2">
+              {children}
+            </div>
           </main>
         </section>
       </div>

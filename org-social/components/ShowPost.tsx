@@ -17,7 +17,12 @@ import { HeartIcon as HeartSolid } from "@heroicons/react/24/solid";
 import { ChatBubbleLeftIcon } from "@heroicons/react/24/outline";
 import { StarIcon as StarOutline } from "@heroicons/react/24/outline";
 import { StarIcon as StarSolid } from "@heroicons/react/24/solid";
-import { DocumentTextIcon, PlayIcon } from "@heroicons/react/24/outline";
+import {
+  DocumentTextIcon,
+  PlayIcon,
+  ChevronLeftIcon,
+  ChevronRightIcon,
+} from "@heroicons/react/24/outline";
 import { useSeenTracker } from "@/lib/useSeenTracker";
 
 type ShowPostsProps = {
@@ -84,6 +89,10 @@ function getMediaGridClass(fileCount: number) {
   return "grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3";
 }
 
+function getDisplayFiles(files: FileType[]) {
+  return files.filter((f) => f.type === "image" || f.type === "video");
+}
+
 export default function ShowPosts({
   channelId,
   posts: propPosts,
@@ -109,6 +118,7 @@ export default function ShowPosts({
 
   const [deletingId, setDeletingId] = useState<number | null>(null);
   const [commentsPost, setCommentsPost] = useState<Post | null>(null);
+  const [activeMediaIndex, setActiveMediaIndex] = useState(0);
 
   const LIMIT = 10;
   const [nextCursor, setNextCursor] = useState<number | null>(null);
@@ -361,30 +371,48 @@ export default function ShowPosts({
     }
   };
 
-  const openComments = (post: Post) => setCommentsPost(post);
+  const openComments = (post: Post, mediaIndex = 0) => {
+    setCommentsPost(post);
+    setActiveMediaIndex(mediaIndex);
+  };
 
-  const media = useMemo(() => {
-    if (!commentsPost) return null;
-    const img = commentsPost.files?.find((f) => f.type === "image") || null;
-    const vid = commentsPost.files?.find((f) => f.type === "video") || null;
-    return { img, vid };
+  const mediaFiles = useMemo(() => {
+    if (!commentsPost) return [];
+    return getDisplayFiles(commentsPost.files || []);
   }, [commentsPost]);
+
+  const activeMedia = mediaFiles[activeMediaIndex] || null;
+
+  const prevMedia = () => {
+    if (!mediaFiles.length) return;
+    setActiveMediaIndex((prev) =>
+      prev === 0 ? mediaFiles.length - 1 : prev - 1,
+    );
+  };
+
+  const nextMedia = () => {
+    if (!mediaFiles.length) return;
+    setActiveMediaIndex((prev) =>
+      prev === mediaFiles.length - 1 ? 0 : prev + 1,
+    );
+  };
 
   if (loading) return <p className="text-center">Loading posts...</p>;
   if (!posts.length) return <p className="text-center">No posts yet.</p>;
 
   return (
     <>
-      <div className="w-full max-w-4xl mx-auto flex flex-col gap-5">
+      <div className="w-full max-w-3xl mx-auto flex flex-col gap-4 pb-2">
         {posts.map((post) => {
           const fileCount = post.files.length;
+          const mediaOnlyFiles = getDisplayFiles(post.files);
 
           return (
             <div
               key={post.id}
               data-postid={post.id}
               ref={observeEl}
-              className="bg-white shadow-sm border border-gray-100 rounded-2xl px-5 py-4"
+              className="bg-white shadow-sm border border-gray-100 rounded-2xl px-4 py-3"
             >
               <div className="flex items-center justify-between mb-3">
                 <div className="flex items-center gap-3 min-w-0">
@@ -434,7 +462,10 @@ export default function ShowPosts({
 
                     <Menu.Dropdown>
                       <Menu.Item onClick={() => openEdit(post)}>Edit</Menu.Item>
-                      <Menu.Item color="red" onClick={() => deletePost(post.id)}>
+                      <Menu.Item
+                        color="red"
+                        onClick={() => deletePost(post.id)}
+                      >
                         Delete
                       </Menu.Item>
                     </Menu.Dropdown>
@@ -450,52 +481,63 @@ export default function ShowPosts({
               {post.files.length > 0 && (
                 <div className={getMediaGridClass(fileCount)}>
                   {post.files.map((f, i) => {
+                    const mediaIndex = mediaOnlyFiles.findIndex(
+                      (m) => m.url === f.url && m.type === f.type,
+                    );
+
                     if (f.type === "image") {
                       return (
-                        <div
+                        <button
                           key={i}
-                          className="relative group cursor-pointer"
-                          onClick={() => openComments(post)}
+                          type="button"
+                          className="relative group cursor-pointer text-left overflow-hidden rounded-2xl bg-gray-100"
+                          onClick={() =>
+                            openComments(post, mediaIndex >= 0 ? mediaIndex : 0)
+                          }
                         >
                           <img
                             src={f.url}
-                            className={`w-full rounded-xl transition group-hover:opacity-95 ${
+                            className={`w-full transition duration-200 group-hover:scale-[1.01] ${
                               fileCount === 1
-                                ? "h-[380px] object-cover"
-                                : "h-56 object-cover"
+                                ? "h-[320px] object-cover"
+                                : "h-52 object-cover"
                             }`}
                             alt=""
                           />
-                          <div className="absolute inset-0 rounded-xl bg-black/0 group-hover:bg-black/10 transition" />
-                        </div>
+                          <div className="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition" />
+                        </button>
                       );
                     }
 
                     if (f.type === "video") {
                       return (
-                        <div
+                        <button
                           key={i}
-                          className="relative group cursor-pointer overflow-hidden rounded-xl bg-black"
-                          onClick={() => openComments(post)}
+                          type="button"
+                          className="relative group cursor-pointer overflow-hidden rounded-2xl bg-black text-left"
+                          onClick={() =>
+                            openComments(post, mediaIndex >= 0 ? mediaIndex : 0)
+                          }
                         >
                           <video
-                            controls
-                            className={`w-full rounded-xl ${
+                            muted
+                            playsInline
+                            className={`w-full ${
                               fileCount === 1
-                                ? "h-[380px] object-cover"
-                                : "h-56 object-cover"
+                                ? "h-[320px] object-cover"
+                                : "h-52 object-cover"
                             }`}
                           >
                             <source src={f.url} />
                           </video>
 
                           <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
-                            <div className="bg-black/45 text-white rounded-full px-3 py-2 text-xs flex items-center gap-1">
+                            <div className="bg-black/50 text-white rounded-full px-4 py-2 text-sm flex items-center gap-2">
                               <PlayIcon className="w-4 h-4" />
-                              Play
+                              Open video
                             </div>
                           </div>
-                        </div>
+                        </button>
                       );
                     }
 
@@ -550,7 +592,7 @@ export default function ShowPosts({
                   </div>
 
                   <button
-                    onClick={() => openComments(post)}
+                    onClick={() => openComments(post, 0)}
                     className="flex items-center gap-1.5 text-gray-500 hover:text-blue-600 transition"
                     type="button"
                   >
@@ -577,9 +619,7 @@ export default function ShowPosts({
                           ),
                         );
                         setCommentsPost((cur) =>
-                          cur && cur.id === post.id
-                            ? { ...cur, saved }
-                            : cur,
+                          cur && cur.id === post.id ? { ...cur, saved } : cur,
                         );
                       } catch (err) {
                         console.error(err);
@@ -602,11 +642,9 @@ export default function ShowPosts({
             </div>
           );
         })}
-
-        <div ref={loadMoreRef} />
-
+        <div ref={loadMoreRef} className="h-1" />{" "}
         {loadingMore && (
-          <div className="flex justify-center mt-2">
+          <div className="flex justify-center py-2">
             <Loader size="sm" variant="dots" />
           </div>
         )}
@@ -690,34 +728,123 @@ export default function ShowPosts({
         opened={!!commentsPost}
         onClose={() => setCommentsPost(null)}
         title={commentsPost ? `Comments · Post ${commentsPost.id}` : "Comments"}
-        size="xl"
+        size="92vw"
         centered
         withinPortal
         zIndex={11000}
+        padding="md"
       >
         {commentsPost && (
-          <div className="flex gap-4 h-[70vh]">
-            <div className="w-1/2 bg-gray-50 rounded-xl flex items-center justify-center overflow-hidden">
-              {media?.img ? (
-                <img
-                  src={media.img.url}
-                  className="w-full h-full object-contain"
-                  alt=""
-                />
-              ) : media?.vid ? (
-                <video controls className="w-full h-full">
-                  <source src={media.vid.url} />
-                </video>
-              ) : (
-                <div className="text-sm text-gray-500 p-6 text-center">
-                  No media attached
+          <div className="flex flex-col lg:flex-row gap-4 h-[70vh] max-h-[70vh] overflow-hidden">
+            <div className="lg:basis-[62%] min-w-0 flex flex-col">
+              <div className="relative flex-1 h-full max-h-[60vh] rounded-2xl overflow-hidden bg-black flex items-center justify-center">
+                {activeMedia ? (
+                  <>
+                    {activeMedia.type === "image" ? (
+                      <img
+                        src={activeMedia.url}
+                        className="max-h-full max-w-full object-contain"
+                      />
+                    ) : (
+                      <video
+                        controls
+                        autoPlay
+                        className="w-full h-full object-contain bg-black"
+                      >
+                        <source src={activeMedia.url} />
+                      </video>
+                    )}
+
+                    {mediaFiles.length > 1 && (
+                      <>
+                        <button
+                          type="button"
+                          onClick={prevMedia}
+                          className="absolute left-3 top-1/2 -translate-y-1/2 z-10 bg-black/55 hover:bg-black/70 text-white rounded-full p-2"
+                        >
+                          <ChevronLeftIcon className="w-5 h-5" />
+                        </button>
+                        <button
+                          type="button"
+                          onClick={nextMedia}
+                          className="absolute right-3 top-1/2 -translate-y-1/2 z-10 bg-black/55 hover:bg-black/70 text-white rounded-full p-2"
+                        >
+                          <ChevronRightIcon className="w-5 h-5" />
+                        </button>
+                      </>
+                    )}
+                  </>
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center text-sm text-gray-300 p-6 text-center">
+                    No image or video attached
+                  </div>
+                )}
+              </div>
+
+              {mediaFiles.length > 1 && (
+                <div className="mt-3 grid grid-cols-4 sm:grid-cols-6 gap-2">
+                  {mediaFiles.map((file, idx) => (
+                    <button
+                      key={`${file.url}-${idx}`}
+                      type="button"
+                      onClick={() => setActiveMediaIndex(idx)}
+                      className={`relative overflow-hidden rounded-xl border-2 ${
+                        activeMediaIndex === idx
+                          ? "border-blue-500"
+                          : "border-transparent"
+                      }`}
+                    >
+                      {file.type === "image" ? (
+                        <img
+                          src={file.url}
+                          alt=""
+                          className="w-full h-20 object-cover"
+                        />
+                      ) : (
+                        <div className="relative bg-black">
+                          <video className="w-full h-20 object-cover" muted>
+                            <source src={file.url} />
+                          </video>
+                          <div className="absolute inset-0 flex items-center justify-center">
+                            <div className="bg-black/55 rounded-full p-1.5">
+                              <PlayIcon className="w-4 h-4 text-white" />
+                            </div>
+                          </div>
+                        </div>
+                      )}
+                    </button>
+                  ))}
                 </div>
               )}
             </div>
-
-            <div className="w-1/2 flex flex-col pl-3">
+            <div className="lg:basis-[38%] min-w-0 flex flex-col rounded-2xl border border-gray-200 bg-white overflow-hidden max-h-full">
+              <div className="px-4 py-3 border-b bg-white">
+                <div className="flex items-center gap-3 min-w-0">
+                  <img
+                    src={commentsPost.author.profileImage || "/temp.jpg"}
+                    alt={commentsPost.author.username}
+                    className="w-10 h-10 rounded-full object-cover border"
+                    onError={(e) => (e.currentTarget.src = "/temp.jpg")}
+                  />
+                  <div className="min-w-0">
+                    <p className="text-sm font-semibold truncate">
+                      {commentsPost.author.username}
+                    </p>
+                    <p className="text-xs text-gray-500 truncate">
+                      {new Date(commentsPost.createdAt).toLocaleString()}
+                    </p>
+                  </div>
+                </div>
+              </div>
               <ScrollArea className="flex-1" offsetScrollbars>
-                <div className="flex flex-col gap-3 pr-2 pb-4">
+                <div className="p-4 flex flex-col gap-3">
+                  {commentsPost.content && (
+                    <div
+                      className="post-content border-b border-gray-100 pb-4 mb-1"
+                      dangerouslySetInnerHTML={{ __html: commentsPost.content }}
+                    />
+                  )}
+
                   {commentsPost.comments.length === 0 ? (
                     <p className="text-sm text-gray-500">No comments yet.</p>
                   ) : (
@@ -726,29 +853,30 @@ export default function ShowPosts({
                         <img
                           src={c.author.profileImage || "/temp.jpg"}
                           alt={c.author.username}
-                          className="w-7 h-7 rounded-full object-cover border"
+                          className="w-8 h-8 rounded-full object-cover border flex-shrink-0"
                           onError={(e) => (e.currentTarget.src = "/temp.jpg")}
                         />
-                        <div className="bg-gray-50 rounded-lg px-3 py-2 w-full">
+                        <div className="bg-gray-50 rounded-xl px-3 py-2 w-full">
                           <div className="flex items-center justify-between gap-2">
                             <p className="text-sm font-semibold">
                               {c.author.username}
                             </p>
-                            <p className="text-xs text-gray-400">
+                            <p className="text-xs text-gray-400 whitespace-nowrap">
                               {new Date(c.createdAt).toLocaleString()}
                             </p>
                           </div>
-                          <p className="text-sm">{c.content}</p>
+                          <p className="text-sm mt-1 break-words">
+                            {c.content}
+                          </p>
                         </div>
                       </div>
                     ))
                   )}
                 </div>
               </ScrollArea>
-
               <form
                 onSubmit={(e) => submitComment(commentsPost.id, e)}
-                className="pt-3 mt-2 flex gap-2 bg-white sticky bottom-0"
+                className="sticky bottom-0 border-t bg-white p-3 flex gap-2"
               >
                 <TextInput
                   placeholder="Write a comment..."
