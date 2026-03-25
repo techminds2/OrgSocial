@@ -53,27 +53,26 @@ type Post = {
   createdAt: string;
   updatedAt?: string;
   isEdited?: boolean;
-
   channel?: {
     id: number;
     name: string;
   } | null;
-
   files: FileType[];
   likedByMe: boolean;
   likeCount: number;
   saved?: boolean;
   savedAt?: string;
   isMine: boolean;
-
   author: {
     id: number;
     username: string;
     profileImage?: string | null;
   };
-
   comments: Comment[];
 };
+
+const LIMIT = 10;
+const FALLBACK_AVATAR = "/temp.jpg";
 
 function getFileName(url: string) {
   try {
@@ -83,14 +82,111 @@ function getFileName(url: string) {
   }
 }
 
-function getMediaGridClass(fileCount: number) {
-  if (fileCount === 1) return "grid grid-cols-1 gap-3 mb-3";
-  if (fileCount === 2) return "grid grid-cols-2 gap-3 mb-3";
-  return "grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3";
-}
-
 function getDisplayFiles(files: FileType[]) {
   return files.filter((f) => f.type === "image" || f.type === "video");
+}
+
+function formatDate(date: string) {
+  return new Date(date).toLocaleString();
+}
+
+function MediaCarousel({
+  files,
+  initialIndex = 0,
+  heightClass = "h-[320px]",
+  roundedClass = "rounded-2xl",
+  imageFit = "object-cover",
+  videoFit = "object-cover",
+  onMediaClick,
+}: {
+  files: FileType[];
+  initialIndex?: number;
+  heightClass?: string;
+  roundedClass?: string;
+  imageFit?: "object-cover" | "object-contain";
+  videoFit?: "object-cover" | "object-contain";
+  onMediaClick?: (index: number) => void;
+}) {
+  const [activeIndex, setActiveIndex] = useState(initialIndex);
+
+  useEffect(() => {
+    setActiveIndex(initialIndex);
+  }, [initialIndex]);
+
+  if (!files.length) return null;
+
+  const active = files[activeIndex];
+  const hasMultiple = files.length > 1;
+
+  const prev = () =>
+    setActiveIndex((i) => (i === 0 ? files.length - 1 : i - 1));
+
+  const next = () =>
+    setActiveIndex((i) => (i === files.length - 1 ? 0 : i + 1));
+
+  return (
+    <div
+      className={`relative w-full overflow-hidden bg-black ${roundedClass} ${heightClass} flex items-center justify-center`}
+    >
+      {active.type === "image" ? (
+        <button
+          type="button"
+          className="w-full h-full"
+          onClick={() => onMediaClick?.(activeIndex)}
+        >
+          <img
+            src={active.url}
+            alt=""
+            className={`w-full h-full ${imageFit} cursor-pointer`}
+          />
+        </button>
+      ) : (
+        <button
+          type="button"
+          className="relative w-full h-full"
+          onClick={() => onMediaClick?.(activeIndex)}
+        >
+          <video
+            muted
+            playsInline
+            className={`w-full h-full ${videoFit} cursor-pointer`}
+          >
+            <source src={active.url} />
+          </video>
+          <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
+            <div className="bg-black/50 text-white rounded-full px-4 py-2 text-sm flex items-center gap-2">
+              <PlayIcon className="w-4 h-4" />
+              Open video
+            </div>
+          </div>
+        </button>
+      )}
+
+      {hasMultiple && (
+        <>
+          <button
+            type="button"
+            onClick={prev}
+            className="absolute left-3 top-1/2 -translate-y-1/2 z-10 bg-black/55 hover:bg-black/70 text-white rounded-full p-2"
+          >
+            <ChevronLeftIcon className="w-5 h-5" />
+          </button>
+
+          <button
+            type="button"
+            onClick={next}
+            className="absolute right-3 top-1/2 -translate-y-1/2 z-10 bg-black/55 hover:bg-black/70 text-white rounded-full p-2"
+          >
+            <ChevronRightIcon className="w-5 h-5" />
+          </button>
+
+          <div className="absolute bottom-3 left-1/2 -translate-x-1/2 bg-black/50 text-white text-xs px-3 py-1 rounded-full">
+            {activeIndex + 1} / {files.length}
+          </div>
+        </>
+      )}
+    </div>
+  );
 }
 
 export default function ShowPosts({
@@ -102,57 +198,29 @@ export default function ShowPosts({
   const [posts, setPosts] = useState<Post[]>(propPosts ?? []);
 
   const [loading, setLoading] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
 
   const [likingId, setLikingId] = useState<number | null>(null);
   const [commentingId, setCommentingId] = useState<number | null>(null);
+  const [deletingId, setDeletingId] = useState<number | null>(null);
   const [commentInputs, setCommentInputs] = useState<Record<number, string>>(
     {},
   );
 
   const [editingPost, setEditingPost] = useState<Post | null>(null);
   const [editContent, setEditContent] = useState("");
-  const [savingEdit, setSavingEdit] = useState(false);
-
   const [editKeepFiles, setEditKeepFiles] = useState<FileType[]>([]);
   const [editNewFiles, setEditNewFiles] = useState<File[]>([]);
+  const [savingEdit, setSavingEdit] = useState(false);
 
-  const [deletingId, setDeletingId] = useState<number | null>(null);
   const [commentsPost, setCommentsPost] = useState<Post | null>(null);
   const [activeMediaIndex, setActiveMediaIndex] = useState(0);
 
-  const LIMIT = 10;
   const [nextCursor, setNextCursor] = useState<number | null>(null);
   const [hasMore, setHasMore] = useState(true);
-  const [loadingMore, setLoadingMore] = useState(false);
+
   const loadMoreRef = useRef<HTMLDivElement | null>(null);
-
   const { observeEl } = useSeenTracker(channelId ?? 0);
-
-  useEffect(() => {
-    if (isControlled) {
-      setPosts(propPosts ?? []);
-      setLoading(false);
-      setHasMore(false);
-      setNextCursor(null);
-      return;
-    }
-
-    const initialLoad = async () => {
-      setLoading(true);
-      setHasMore(true);
-      setNextCursor(null);
-      await fetchPosts({ cursor: null, append: false });
-      setLoading(false);
-    };
-
-    initialLoad();
-
-    const onPostCreated = () => initialLoad();
-    window.addEventListener("post-created", onPostCreated);
-
-    return () => window.removeEventListener("post-created", onPostCreated);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isControlled, channelId, propPosts]);
 
   const fetchPosts = async (opts?: {
     cursor?: number | null;
@@ -160,6 +228,8 @@ export default function ShowPosts({
   }) => {
     const cursor = opts?.cursor ?? null;
     const append = !!opts?.append;
+
+    if (!append) setLoading(true);
 
     try {
       const qs = new URLSearchParams();
@@ -171,15 +241,9 @@ export default function ShowPosts({
         : `/api/posts?${qs.toString()}`;
 
       const res = await fetch(url, { credentials: "include" });
-
-      if (!res.ok) {
-        const txt = await res.text().catch(() => "");
-        console.error(`FETCH POSTS FAILED (${res.status}) ${url} :: ${txt}`);
-        throw new Error("Failed to fetch posts");
-      }
+      if (!res.ok) throw new Error("Failed to fetch posts");
 
       const data = await res.json();
-
       const newPosts: Post[] = data.posts || [];
       const newCursor: number | null = data.nextCursor ?? null;
 
@@ -193,8 +257,26 @@ export default function ShowPosts({
       setHasMore(!!newCursor && newPosts.length > 0);
     } catch (err) {
       console.error(err);
+    } finally {
+      if (!append) setLoading(false);
     }
   };
+
+  useEffect(() => {
+    if (isControlled) {
+      setPosts(propPosts ?? []);
+      setLoading(false);
+      setHasMore(false);
+      setNextCursor(null);
+      return;
+    }
+
+    fetchPosts();
+
+    const handler = () => fetchPosts();
+    window.addEventListener("post-created", handler);
+    return () => window.removeEventListener("post-created", handler);
+  }, [channelId, isControlled, propPosts]);
 
   useEffect(() => {
     if (!loadMoreRef.current) return;
@@ -229,6 +311,7 @@ export default function ShowPosts({
       if (!res.ok) return;
 
       const { liked } = await res.json();
+
       setPosts((prev) =>
         prev.map((p) =>
           p.id === postId
@@ -295,6 +378,28 @@ export default function ShowPosts({
     }
   };
 
+  const toggleSave = async (postId: number) => {
+    try {
+      const res = await fetch(`/api/posts/${postId}/save`, {
+        method: "POST",
+        credentials: "include",
+      });
+      if (!res.ok) return;
+
+      const { saved } = await res.json();
+
+      setPosts((prev) =>
+        prev.map((p) => (p.id === postId ? { ...p, saved } : p)),
+      );
+
+      setCommentsPost((cur) =>
+        cur && cur.id === postId ? { ...cur, saved } : cur,
+      );
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   const openEdit = (post: Post) => {
     setEditingPost(post);
     setEditContent(post.content || "");
@@ -307,17 +412,16 @@ export default function ShowPosts({
     setSavingEdit(true);
 
     try {
-      const fd = new FormData();
-      fd.append("content", editContent);
-
       const keepKeys = (editKeepFiles || []).map((f) =>
         f.url.startsWith("/api/files/")
           ? f.url.replace("/api/files/", "")
           : f.url,
       );
-      fd.append("keepKeys", JSON.stringify(keepKeys));
 
-      for (const file of editNewFiles) fd.append("files", file);
+      const fd = new FormData();
+      fd.append("content", editContent);
+      fd.append("keepKeys", JSON.stringify(keepKeys));
+      editNewFiles.forEach((file) => fd.append("files", file));
 
       const res = await fetch(`/api/posts/${editingPost.id}`, {
         method: "PATCH",
@@ -326,14 +430,11 @@ export default function ShowPosts({
       });
 
       if (!res.ok) throw new Error("Failed to update post");
-      const data = await res.json();
 
-      setPosts((prev) =>
-        prev.map((p) => (p.id === editingPost.id ? { ...p, ...data.post } : p)),
-      );
-      setCommentsPost((cur) =>
-        cur && cur.id === editingPost.id ? { ...cur, ...data.post } : cur,
-      );
+      const { post } = await res.json();
+
+      setPosts((prev) => prev.map((p) => (p.id === post.id ? post : p)));
+      setCommentsPost((cur) => (cur && cur.id === post.id ? post : cur));
       setEditingPost(null);
     } catch (err) {
       console.error(err);
@@ -345,8 +446,8 @@ export default function ShowPosts({
   const deletePost = async (postId: number) => {
     const ok = window.confirm("Delete this post?");
     if (!ok) return;
-
     if (deletingId === postId) return;
+
     setDeletingId(postId);
 
     try {
@@ -376,26 +477,12 @@ export default function ShowPosts({
     setActiveMediaIndex(mediaIndex);
   };
 
-  const mediaFiles = useMemo(() => {
-    if (!commentsPost) return [];
-    return getDisplayFiles(commentsPost.files || []);
-  }, [commentsPost]);
+  const mediaFiles = useMemo(
+    () => (commentsPost ? getDisplayFiles(commentsPost.files || []) : []),
+    [commentsPost],
+  );
 
-  const activeMedia = mediaFiles[activeMediaIndex] || null;
-
-  const prevMedia = () => {
-    if (!mediaFiles.length) return;
-    setActiveMediaIndex((prev) =>
-      prev === 0 ? mediaFiles.length - 1 : prev - 1,
-    );
-  };
-
-  const nextMedia = () => {
-    if (!mediaFiles.length) return;
-    setActiveMediaIndex((prev) =>
-      prev === mediaFiles.length - 1 ? 0 : prev + 1,
-    );
-  };
+  const hasMedia = mediaFiles.length > 0;
 
   if (loading) return <p className="text-center">Loading posts...</p>;
   if (!posts.length) return <p className="text-center">No posts yet.</p>;
@@ -404,8 +491,8 @@ export default function ShowPosts({
     <>
       <div className="w-full max-w-3xl mx-auto flex flex-col gap-4 pb-2">
         {posts.map((post) => {
-          const fileCount = post.files.length;
           const mediaOnlyFiles = getDisplayFiles(post.files);
+          const documents = post.files.filter((f) => f.type === "document");
 
           return (
             <div
@@ -417,10 +504,10 @@ export default function ShowPosts({
               <div className="flex items-center justify-between mb-3">
                 <div className="flex items-center gap-3 min-w-0">
                   <img
-                    src={post.author.profileImage || "/temp.jpg"}
+                    src={post.author.profileImage || FALLBACK_AVATAR}
                     alt={post.author.username}
                     className="w-10 h-10 rounded-full object-cover border flex-shrink-0"
-                    onError={(e) => (e.currentTarget.src = "/temp.jpg")}
+                    onError={(e) => (e.currentTarget.src = FALLBACK_AVATAR)}
                   />
                   <div className="min-w-0">
                     <p className="font-semibold truncate">
@@ -435,11 +522,7 @@ export default function ShowPosts({
                           {" · "}
                         </>
                       )}
-
-                      {post.savedAt
-                        ? new Date(post.savedAt).toLocaleString()
-                        : new Date(post.createdAt).toLocaleString()}
-
+                      {formatDate(post.savedAt || post.createdAt)}
                       {post.isEdited && (
                         <span className="ml-2 text-gray-400">(edited)</span>
                       )}
@@ -459,7 +542,6 @@ export default function ShowPosts({
                         ⋯
                       </ActionIcon>
                     </Menu.Target>
-
                     <Menu.Dropdown>
                       <Menu.Item onClick={() => openEdit(post)}>Edit</Menu.Item>
                       <Menu.Item
@@ -478,92 +560,42 @@ export default function ShowPosts({
                 dangerouslySetInnerHTML={{ __html: post.content }}
               />
 
-              {post.files.length > 0 && (
-                <div className={getMediaGridClass(fileCount)}>
-                  {post.files.map((f, i) => {
-                    const mediaIndex = mediaOnlyFiles.findIndex(
-                      (m) => m.url === f.url && m.type === f.type,
-                    );
+              {mediaOnlyFiles.length > 0 && (
+                <div className="mb-3">
+                  <MediaCarousel
+                    files={mediaOnlyFiles}
+                    heightClass="h-[320px]"
+                    roundedClass="rounded-2xl"
+                    imageFit="object-cover"
+                    videoFit="object-cover"
+                    onMediaClick={(index) => openComments(post, index)}
+                  />
+                </div>
+              )}
 
-                    if (f.type === "image") {
-                      return (
-                        <button
-                          key={i}
-                          type="button"
-                          className="relative group cursor-pointer text-left overflow-hidden rounded-2xl bg-gray-100"
-                          onClick={() =>
-                            openComments(post, mediaIndex >= 0 ? mediaIndex : 0)
-                          }
-                        >
-                          <img
-                            src={f.url}
-                            className={`w-full transition duration-200 group-hover:scale-[1.01] ${
-                              fileCount === 1
-                                ? "h-[320px] object-cover"
-                                : "h-52 object-cover"
-                            }`}
-                            alt=""
-                          />
-                          <div className="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition" />
-                        </button>
-                      );
-                    }
-
-                    if (f.type === "video") {
-                      return (
-                        <button
-                          key={i}
-                          type="button"
-                          className="relative group cursor-pointer overflow-hidden rounded-2xl bg-black text-left"
-                          onClick={() =>
-                            openComments(post, mediaIndex >= 0 ? mediaIndex : 0)
-                          }
-                        >
-                          <video
-                            muted
-                            playsInline
-                            className={`w-full ${
-                              fileCount === 1
-                                ? "h-[320px] object-cover"
-                                : "h-52 object-cover"
-                            }`}
-                          >
-                            <source src={f.url} />
-                          </video>
-
-                          <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
-                            <div className="bg-black/50 text-white rounded-full px-4 py-2 text-sm flex items-center gap-2">
-                              <PlayIcon className="w-4 h-4" />
-                              Open video
-                            </div>
-                          </div>
-                        </button>
-                      );
-                    }
-
-                    return (
-                      <a
-                        key={i}
-                        href={f.url}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="flex items-center gap-3 p-4 border border-gray-200 rounded-xl bg-gray-50 hover:bg-gray-100 transition min-h-[88px]"
-                      >
-                        <div className="w-12 h-12 flex items-center justify-center rounded-lg bg-blue-100 text-blue-600 flex-shrink-0">
-                          <DocumentTextIcon className="w-6 h-6" />
+              {documents.length > 0 && (
+                <div className="grid gap-3 mb-3">
+                  {documents.map((f, i) => (
+                    <a
+                      key={i}
+                      href={f.url}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="flex items-center gap-3 p-4 border border-gray-200 rounded-xl bg-gray-50 hover:bg-gray-100 transition min-h-[88px]"
+                    >
+                      <div className="w-12 h-12 flex items-center justify-center rounded-lg bg-blue-100 text-blue-600 flex-shrink-0">
+                        <DocumentTextIcon className="w-6 h-6" />
+                      </div>
+                      <div className="min-w-0">
+                        <div className="text-sm font-medium text-gray-800 truncate">
+                          {getFileName(f.url)}
                         </div>
-
-                        <div className="min-w-0">
-                          <div className="text-sm font-medium text-gray-800 truncate">
-                            {getFileName(f.url)}
-                          </div>
-                          <div className="text-xs text-gray-500 mt-1">
-                            Open document preview
-                          </div>
+                        <div className="text-xs text-gray-500 mt-1">
+                          Open document preview
                         </div>
-                      </a>
-                    );
-                  })}
+                      </div>
+                    </a>
+                  ))}
                 </div>
               )}
 
@@ -577,7 +609,6 @@ export default function ShowPosts({
                       onClick={() => toggleLike(post.id)}
                       radius="xl"
                       size="lg"
-                      className="transition hover:bg-gray-100"
                     >
                       {post.likedByMe ? (
                         <HeartSolid className="w-6 h-6 text-red-500" />
@@ -585,64 +616,42 @@ export default function ShowPosts({
                         <HeartOutline className="w-6 h-6 text-gray-400" />
                       )}
                     </ActionIcon>
-
                     <Text size="sm" c="dimmed">
                       {post.likeCount}
                     </Text>
                   </div>
 
                   <button
-                    onClick={() => openComments(post, 0)}
-                    className="flex items-center gap-1.5 text-gray-500 hover:text-blue-600 transition"
                     type="button"
+                    onClick={() => openComments(post)}
+                    className="flex items-center gap-1.5 text-gray-500 hover:text-blue-600 transition"
                   >
                     <ChatBubbleLeftIcon className="w-6 h-6" />
                     <span className="text-sm">{post.comments.length}</span>
                   </button>
                 </div>
 
-                <div className="flex items-center">
-                  <button
-                    type="button"
-                    onClick={async () => {
-                      try {
-                        const res = await fetch(`/api/posts/${post.id}/save`, {
-                          method: "POST",
-                          credentials: "include",
-                        });
-                        if (!res.ok) return;
-
-                        const { saved } = await res.json();
-                        setPosts((prev) =>
-                          prev.map((p) =>
-                            p.id === post.id ? { ...p, saved } : p,
-                          ),
-                        );
-                        setCommentsPost((cur) =>
-                          cur && cur.id === post.id ? { ...cur, saved } : cur,
-                        );
-                      } catch (err) {
-                        console.error(err);
-                      }
-                    }}
-                    className={`flex items-center transition ${
-                      post.saved
-                        ? "text-yellow-500"
-                        : "text-gray-400 hover:text-yellow-500"
-                    }`}
-                  >
-                    {post.saved ? (
-                      <StarSolid className="w-6 h-6" />
-                    ) : (
-                      <StarOutline className="w-6 h-6" />
-                    )}
-                  </button>
-                </div>
+                <button
+                  type="button"
+                  onClick={() => toggleSave(post.id)}
+                  className={`flex items-center ${
+                    post.saved
+                      ? "text-yellow-500"
+                      : "text-gray-400 hover:text-yellow-500"
+                  }`}
+                >
+                  {post.saved ? (
+                    <StarSolid className="w-6 h-6" />
+                  ) : (
+                    <StarOutline className="w-6 h-6" />
+                  )}
+                </button>
               </div>
             </div>
           );
         })}
-        <div ref={loadMoreRef} className="h-1" />{" "}
+
+        <div ref={loadMoreRef} className="h-1" />
         {loadingMore && (
           <div className="flex justify-center py-2">
             <Loader size="sm" variant="dots" />
@@ -677,7 +686,7 @@ export default function ShowPosts({
                   className="border rounded p-2 text-xs flex items-center gap-2"
                 >
                   <span className="truncate max-w-[180px]">
-                    {f.url.split("/").pop()}
+                    {getFileName(f.url)}
                   </span>
                   <Button
                     size="xs"
@@ -728,133 +737,96 @@ export default function ShowPosts({
         opened={!!commentsPost}
         onClose={() => setCommentsPost(null)}
         title={commentsPost ? `Comments · Post ${commentsPost.id}` : "Comments"}
-        size="92vw"
+        size={hasMedia ? "92vw" : "lg"}
         centered
         withinPortal
         zIndex={11000}
         padding="md"
       >
         {commentsPost && (
-          <div className="flex flex-col lg:flex-row gap-4 h-[70vh] max-h-[70vh] overflow-hidden">
-            <div className="lg:basis-[62%] min-w-0 flex flex-col">
-              <div className="relative flex-1 h-full max-h-[60vh] rounded-2xl overflow-hidden bg-black flex items-center justify-center">
-                {activeMedia ? (
-                  <>
-                    {activeMedia.type === "image" ? (
-                      <img
-                        src={activeMedia.url}
-                        className="max-h-full max-w-full object-contain"
-                      />
+          <div
+            className={`flex gap-4 overflow-hidden ${
+              hasMedia
+                ? "flex-col lg:flex-row h-[70vh] max-h-[70vh]"
+                : "flex-col h-[75vh] max-h-[75vh]"
+            }`}
+          >
+            {hasMedia && (
+              <div className="lg:basis-[62%] min-w-0 flex flex-col">
+                <MediaCarousel
+                  files={mediaFiles}
+                  initialIndex={activeMediaIndex}
+                  heightClass="h-[60vh]"
+                  roundedClass="rounded-2xl"
+                  imageFit="object-contain"
+                  videoFit="object-contain"
+                />
+
+                <div className="flex items-center gap-1.5 px-2 py-2">
+                  <ActionIcon
+                    variant="subtle"
+                    color={commentsPost.likedByMe ? "red" : "gray"}
+                    loading={likingId === commentsPost.id}
+                    onClick={() => toggleLike(commentsPost.id)}
+                    radius="xl"
+                    size="lg"
+                  >
+                    {commentsPost.likedByMe ? (
+                      <HeartSolid className="w-6 h-6 text-red-500" />
                     ) : (
-                      <video
-                        controls
-                        autoPlay
-                        className="w-full h-full object-contain bg-black"
-                      >
-                        <source src={activeMedia.url} />
-                      </video>
+                      <HeartOutline className="w-6 h-6 text-gray-400" />
                     )}
-
-                    {mediaFiles.length > 1 && (
-                      <>
-                        <button
-                          type="button"
-                          onClick={prevMedia}
-                          className="absolute left-3 top-1/2 -translate-y-1/2 z-10 bg-black/55 hover:bg-black/70 text-white rounded-full p-2"
-                        >
-                          <ChevronLeftIcon className="w-5 h-5" />
-                        </button>
-                        <button
-                          type="button"
-                          onClick={nextMedia}
-                          className="absolute right-3 top-1/2 -translate-y-1/2 z-10 bg-black/55 hover:bg-black/70 text-white rounded-full p-2"
-                        >
-                          <ChevronRightIcon className="w-5 h-5" />
-                        </button>
-                      </>
-                    )}
-                  </>
-                ) : (
-                  <div className="w-full h-full flex items-center justify-center text-sm text-gray-300 p-6 text-center">
-                    No image or video attached
-                  </div>
-                )}
-              </div>
-
-              {mediaFiles.length > 1 && (
-                <div className="mt-3 grid grid-cols-4 sm:grid-cols-6 gap-2">
-                  {mediaFiles.map((file, idx) => (
-                    <button
-                      key={`${file.url}-${idx}`}
-                      type="button"
-                      onClick={() => setActiveMediaIndex(idx)}
-                      className={`relative overflow-hidden rounded-xl border-2 ${
-                        activeMediaIndex === idx
-                          ? "border-blue-500"
-                          : "border-transparent"
-                      }`}
-                    >
-                      {file.type === "image" ? (
-                        <img
-                          src={file.url}
-                          alt=""
-                          className="w-full h-20 object-cover"
-                        />
-                      ) : (
-                        <div className="relative bg-black">
-                          <video className="w-full h-20 object-cover" muted>
-                            <source src={file.url} />
-                          </video>
-                          <div className="absolute inset-0 flex items-center justify-center">
-                            <div className="bg-black/55 rounded-full p-1.5">
-                              <PlayIcon className="w-4 h-4 text-white" />
-                            </div>
-                          </div>
-                        </div>
-                      )}
-                    </button>
-                  ))}
+                  </ActionIcon>
+                  <Text size="sm" c="dimmed">
+                    {commentsPost.likeCount}
+                  </Text>
                 </div>
-              )}
-            </div>
-            <div className="lg:basis-[38%] min-w-0 flex flex-col rounded-2xl border border-gray-200 bg-white overflow-hidden max-h-full">
-              <div className="px-4 py-3 border-b bg-white">
+              </div>
+            )}
+
+            <div
+              className={`min-w-0 flex flex-col h-full rounded-2xl border border-gray-200 bg-white overflow-hidden ${
+                hasMedia ? "lg:basis-[38%]" : "w-full"
+              }`}
+            >
+              <div className="px-4 py-3  bg-white">
                 <div className="flex items-center gap-3 min-w-0">
                   <img
-                    src={commentsPost.author.profileImage || "/temp.jpg"}
+                    src={commentsPost.author.profileImage || FALLBACK_AVATAR}
                     alt={commentsPost.author.username}
                     className="w-10 h-10 rounded-full object-cover border"
-                    onError={(e) => (e.currentTarget.src = "/temp.jpg")}
+                    onError={(e) => (e.currentTarget.src = FALLBACK_AVATAR)}
                   />
                   <div className="min-w-0">
                     <p className="text-sm font-semibold truncate">
                       {commentsPost.author.username}
                     </p>
                     <p className="text-xs text-gray-500 truncate">
-                      {new Date(commentsPost.createdAt).toLocaleString()}
+                      {formatDate(commentsPost.createdAt)}
                     </p>
                   </div>
                 </div>
               </div>
               <ScrollArea className="flex-1" offsetScrollbars>
-                <div className="p-4 flex flex-col gap-3">
+                <div className="p-5 flex flex-col gap-4">
                   {commentsPost.content && (
                     <div
                       className="post-content border-b border-gray-100 pb-4 mb-1"
                       dangerouslySetInnerHTML={{ __html: commentsPost.content }}
                     />
                   )}
-
                   {commentsPost.comments.length === 0 ? (
                     <p className="text-sm text-gray-500">No comments yet.</p>
                   ) : (
                     commentsPost.comments.map((c) => (
                       <div key={c.id} className="flex items-start gap-2">
                         <img
-                          src={c.author.profileImage || "/temp.jpg"}
+                          src={c.author.profileImage || FALLBACK_AVATAR}
                           alt={c.author.username}
                           className="w-8 h-8 rounded-full object-cover border flex-shrink-0"
-                          onError={(e) => (e.currentTarget.src = "/temp.jpg")}
+                          onError={(e) =>
+                            (e.currentTarget.src = FALLBACK_AVATAR)
+                          }
                         />
                         <div className="bg-gray-50 rounded-xl px-3 py-2 w-full">
                           <div className="flex items-center justify-between gap-2">
@@ -862,7 +834,7 @@ export default function ShowPosts({
                               {c.author.username}
                             </p>
                             <p className="text-xs text-gray-400 whitespace-nowrap">
-                              {new Date(c.createdAt).toLocaleString()}
+                              {formatDate(c.createdAt)}
                             </p>
                           </div>
                           <p className="text-sm mt-1 break-words">
@@ -876,10 +848,10 @@ export default function ShowPosts({
               </ScrollArea>
               <form
                 onSubmit={(e) => submitComment(commentsPost.id, e)}
-                className="sticky bottom-0 border-t bg-white p-3 flex gap-2"
+                className="mt-auto  bg-white p-3 flex gap-2"
               >
                 <TextInput
-                  placeholder="Write a comment..."
+                  placeholder="Write a comment."
                   value={commentInputs[commentsPost.id] || ""}
                   onChange={(e) =>
                     setCommentInputs((prev) => ({
@@ -892,18 +864,6 @@ export default function ShowPosts({
                 <Button
                   type="submit"
                   loading={commentingId === commentsPost.id}
-                  styles={{
-                    root: {
-                      backgroundColor: "var(--color-secondary)",
-                      color: "white",
-                      transition: "all 0.2s ease",
-                      "&:hover": { backgroundColor: "var(--color-primary)" },
-                      "&:disabled": {
-                        backgroundColor: "rgba(90, 140, 189, 0.5)",
-                        color: "white",
-                      },
-                    },
-                  }}
                 >
                   Post
                 </Button>
