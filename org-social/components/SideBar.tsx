@@ -21,6 +21,7 @@ import {
   ExclamationTriangleIcon,
   FireIcon,
   CheckCircleIcon,
+  ArrowUturnLeftIcon,
   DocumentTextIcon,
   HomeIcon,
 } from "@heroicons/react/24/outline";
@@ -51,6 +52,7 @@ interface Todo {
   priority: "Low" | "Medium" | "High";
   completed: boolean;
   createdAt: string;
+  completedAt?: string | null;
 }
 
 type MeResponse = {
@@ -303,18 +305,26 @@ export default function Sidebar() {
     }
   };
 
-  const completeTodo = async (id: number) => {
+  const toggleTodo = async (id: number, completed: boolean) => {
     try {
       await fetch(`/api/todos/${id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ completed: true }),
+        body: JSON.stringify({ completed }),
         credentials: "include",
       });
       await fetchTodos();
     } catch (error) {
-      console.error("COMPLETE TODO ERROR:", error);
+      console.error("TOGGLE TODO ERROR:", error);
     }
+  };
+
+  const completeTodo = async (id: number) => {
+    await toggleTodo(id, true);
+  };
+
+  const uncompleteTodo = async (id: number) => {
+    await toggleTodo(id, false);
   };
 
   useEffect(() => {
@@ -322,13 +332,27 @@ export default function Sidebar() {
     fetchMe();
   }, []);
 
-  const modalTodos = useMemo(
-    () => [
-      ...todos.filter((t) => !t.completed),
-      ...todos.filter((t) => t.completed),
-    ],
-    [todos]
-  );
+  const modalTodos = useMemo(() => {
+    const active = todos.filter((t) => !t.completed);
+    const completed = todos.filter((t) => t.completed);
+
+    const rank = { High: 3, Medium: 2, Low: 1 };
+
+    active.sort((a, b) => {
+      if (rank[b.priority] !== rank[a.priority]) {
+        return rank[b.priority] - rank[a.priority];
+      }
+      return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+    });
+
+    completed.sort((a, b) => {
+      const aTime = a.completedAt ? new Date(a.completedAt).getTime() : 0;
+      const bTime = b.completedAt ? new Date(b.completedAt).getTime() : 0;
+      return bTime - aTime;
+    });
+
+    return [...active, ...completed];
+  }, [todos]);
 
   const role = normalizeMeRole(me)?.toLowerCase() ?? null;
   const isAdmin = role === "admin";
@@ -406,20 +430,31 @@ export default function Sidebar() {
           {modalTodos.map((todo) => (
             <li
               key={todo.id}
-              className={`flex items-center justify-between ${
-                todo.completed ? "line-through text-gray-400" : ""
+              className={`flex items-center justify-between rounded px-2 py-1 ${
+                todo.completed ? "text-gray-400" : ""
               }`}
             >
-              <span>
+              <span className={todo.completed ? "line-through" : ""}>
                 {todo.title} ({todo.priority})
               </span>
 
-              {!todo.completed && (
+              {todo.completed ? (
+                <ActionIcon
+                  size="sm"
+                  variant="subtle"
+                  color="blue"
+                  onClick={() => uncompleteTodo(todo.id)}
+                  title="Unstrike / mark incomplete"
+                >
+                  <ArrowUturnLeftIcon className="h-4 w-4" />
+                </ActionIcon>
+              ) : (
                 <ActionIcon
                   size="sm"
                   variant="subtle"
                   color="gray"
                   onClick={() => completeTodo(todo.id)}
+                  title="Mark completed"
                 >
                   <CheckCircleIcon className="h-4 w-4 text-gray-400 hover:text-gray-600" />
                 </ActionIcon>

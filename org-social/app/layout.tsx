@@ -2,6 +2,16 @@ import "@mantine/core/styles.css";
 import "./globals.css";
 
 import { MantineProvider, ColorSchemeScript } from "@mantine/core";
+import type { Metadata } from "next";
+
+// ✅ ADD THIS
+export const metadata: Metadata = {
+  title: "TechMinds Network",
+  description: "TechMinds ISP Platform",
+  icons: {
+    icon: "/icon.png", // from public folder
+  },
+};
 
 export default function RootLayout({
   children,

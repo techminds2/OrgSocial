@@ -736,12 +736,16 @@ export default function ShowPosts({
       <Modal
         opened={!!commentsPost}
         onClose={() => setCommentsPost(null)}
-        title={commentsPost ? `Comments · Post ${commentsPost.id}` : "Comments"}
         size={hasMedia ? "92vw" : "lg"}
         centered
         withinPortal
         zIndex={11000}
         padding="md"
+        withCloseButton
+        styles={{
+          header: { padding: 0, minHeight: 0 },
+          body: { paddingTop: 0 },
+        }}
       >
         {commentsPost && (
           <div
