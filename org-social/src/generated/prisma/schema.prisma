@@ -8,6 +8,11 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum PublicAccessMode {
+  open
+  request
+}
+
 model User {
   id           Int     @id @default(autoincrement())
   username     String  @unique
@@ -69,7 +74,7 @@ model Comment {
 
 model Reaction {
   id   Int    @id @default(autoincrement())
-  type String // "LIKE"
+  type String
 
   postId Int
   post   Post @relation(fields: [postId], references: [id])
@@ -96,8 +101,10 @@ model Channel {
   createdById Int
   createdBy   User @relation("ChannelCreator", fields: [createdById], references: [id])
 
-  bannerKey     String?
-  visibility    String          @default("private")
+  bannerKey        String?
+  visibility       String           @default("private") // "private" | "public"
+  publicAccessMode PublicAccessMode @default(request)
+
   postSeen      PostSeen[]
   members       ChannelMember[]
   posts         Post[]
@@ -221,19 +228,19 @@ model DailyReport {
   authorId Int
   author   User @relation(fields: [authorId], references: [id], onDelete: Cascade)
 
-  reportYmd String // "YYYY-MM-DD"
+  reportYmd String
 
   branchName String
 
   newConnectionRequest    Int     @default(0)
   pendingConnection       Int     @default(0)
   completedConnection     Int     @default(0)
-  reasonPendingConnection String? // textarea
+  reasonPendingConnection String?
 
   internetTkt      Int     @default(0)
   pendingTkt       Int     @default(0)
   completedTkt     Int     @default(0)
-  reasonPendingTkt String? // textarea
+  reasonPendingTkt String?
 
   expireCustomerDay   Int     @default(0)
   renewDay            Int     @default(0)
@@ -273,7 +280,7 @@ model RegionalDailyReport {
 model CalendarNote {
   id          Int      @id @default(autoincrement())
   userId      Int
-  noteDate    String // YYYY-MM-DD (Nepal date string, same style as reportYmd)
+  noteDate    String
   title       String
   description String?
   createdAt   DateTime @default(now())

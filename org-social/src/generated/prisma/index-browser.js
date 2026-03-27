@@ -168,7 +168,8 @@ exports.Prisma.ChannelScalarFieldEnum = {
   createdAt: 'createdAt',
   createdById: 'createdById',
   bannerKey: 'bannerKey',
-  visibility: 'visibility'
+  visibility: 'visibility',
+  publicAccessMode: 'publicAccessMode'
 };
 
 exports.Prisma.ChannelMemberScalarFieldEnum = {
@@ -299,6 +300,11 @@ exports.Prisma.JsonNullValueFilter = {
   JsonNull: Prisma.JsonNull,
   AnyNull: Prisma.AnyNull
 };
+exports.PublicAccessMode = exports.$Enums.PublicAccessMode = {
+  open: 'open',
+  request: 'request'
+};
+
 exports.Priority = exports.$Enums.Priority = {
   Low: 'Low',
   Medium: 'Medium',

@@ -11,7 +11,7 @@ import {
 import Link from "next/link";
 import { useEffect, useState, useCallback } from "react";
 import Cropper from "react-easy-crop";
-import { useSearchParams, useRouter, usePathname } from "next/navigation";
+import { usePathname } from "next/navigation";
 import getCroppedImg from "@/lib/getCroppedImg";
 
 type Channel = {
@@ -29,6 +29,7 @@ type PublicChannel = {
   name: string;
   createdAt: string;
   visibility: "public";
+  publicAccessMode: "open" | "request";
   memberCount: number;
   isMember: boolean;
   hasPendingRequest: boolean;
@@ -53,8 +54,6 @@ function isChannelActive(pathname: string, channelId: number) {
 }
 
 export default function ChannelsPanel() {
-  const searchParams = useSearchParams();
-  const router = useRouter();
   const pathname = usePathname() ?? "";
 
   const [channels, setChannels] = useState<Channel[]>([]);
@@ -62,6 +61,9 @@ export default function ChannelsPanel() {
 
   const [newChannel, setNewChannel] = useState("");
   const [visibility, setVisibility] = useState<"public" | "private">("private");
+  const [publicAccessMode, setPublicAccessMode] = useState<"open" | "request">(
+    "request",
+  );
 
   const [banner, setBanner] = useState<File | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
@@ -79,10 +81,53 @@ export default function ChannelsPanel() {
 
   async function loadChannels() {
     try {
-      const res = await fetch("/api/channels", { credentials: "include" });
-      if (!res.ok) throw new Error("Failed to fetch channels");
-      const data = await res.json();
-      setChannels(data.channels || []);
+      const [joinedRes, publicRes] = await Promise.all([
+        fetch("/api/channels", { credentials: "include" }),
+        fetch("/api/channels/public", { credentials: "include" }),
+      ]);
+
+      if (!joinedRes.ok) throw new Error("Failed to fetch channels");
+
+      const joinedData = await joinedRes.json();
+      const publicData = publicRes.ok
+        ? await publicRes.json()
+        : { channels: [] };
+
+      const joinedChannels: Channel[] = (joinedData.channels || []).map(
+        (ch: any) => ({
+          id: ch.id,
+          name: ch.name,
+          createdAt: ch.createdAt,
+          bannerKey: ch.bannerKey ?? null,
+          memberCount: ch.memberCount,
+          visibility: ch.visibility,
+          unseenCount: ch.unseenCount ?? 0,
+        }),
+      );
+
+      const openPublicChannels: Channel[] = (publicData.channels || [])
+        .filter((c: any) => c.publicAccessMode === "open")
+        .map((c: any) => ({
+          id: c.id,
+          name: c.name,
+          createdAt: c.createdAt,
+          bannerKey: c.bannerKey ?? null,
+          memberCount: c.memberCount,
+          visibility: c.visibility,
+          unseenCount: 0,
+        }));
+
+      const merged = [...joinedChannels];
+      const seen = new Set(joinedChannels.map((c) => c.id));
+
+      for (const ch of openPublicChannels) {
+        if (!seen.has(ch.id)) {
+          merged.push(ch);
+          seen.add(ch.id);
+        }
+      }
+
+      setChannels(merged);
     } catch (e) {
       console.error("Load channels failed:", e);
     }
@@ -94,8 +139,14 @@ export default function ChannelsPanel() {
         credentials: "include",
       });
       if (!res.ok) return;
+
       const data = await res.json();
-      setPublicChannels(data.channels || []);
+
+      const requestOnly = (data.channels || []).filter(
+        (c: PublicChannel) => c.publicAccessMode === "request",
+      );
+
+      setPublicChannels(requestOnly);
     } catch (e) {
       console.error("Load public channels failed:", e);
     }
@@ -126,7 +177,7 @@ export default function ChannelsPanel() {
         ];
       });
     },
-    [publicChannels]
+    [publicChannels],
   );
 
   useEffect(() => {
@@ -134,7 +185,7 @@ export default function ChannelsPanel() {
     loadPublicChannels();
 
     const raw = new URLSearchParams(window.location.search).get(
-      "deletedChannelId"
+      "deletedChannelId",
     );
     if (!raw) return;
 
@@ -195,8 +246,8 @@ export default function ChannelsPanel() {
 
       setPublicChannels((prev) =>
         prev.map((c) =>
-          c.id === id ? { ...c, isMember: true, hasPendingRequest: false } : c
-        )
+          c.id === id ? { ...c, isMember: true, hasPendingRequest: false } : c,
+        ),
       );
     };
 
@@ -204,7 +255,7 @@ export default function ChannelsPanel() {
     return () =>
       window.removeEventListener(
         "channel-join-accepted",
-        onJoinAccepted as any
+        onJoinAccepted as any,
       );
   }, [moveChannelToJoined]);
 
@@ -218,13 +269,18 @@ export default function ChannelsPanel() {
       const formData = new FormData();
       formData.append("name", trimmed);
       formData.append("visibility", visibility);
+
+      if (visibility === "public") {
+        formData.append("publicAccessMode", publicAccessMode);
+      }
+
       if (banner) formData.append("banner", banner);
 
       formData.append(
         "members",
         JSON.stringify(
-          pickedMembers.map((m) => ({ userId: m.userId, role: m.role }))
-        )
+          pickedMembers.map((m) => ({ userId: m.userId, role: m.role })),
+        ),
       );
 
       const res = await fetch("/api/channels", {
@@ -240,6 +296,7 @@ export default function ChannelsPanel() {
       }
 
       const data = await res.json();
+
       const created: Channel = {
         id: data.channel.id,
         name: data.channel.name,
@@ -249,17 +306,20 @@ export default function ChannelsPanel() {
         visibility: data.channel.visibility,
       };
 
-      setChannels((prev) => [...prev, created]);
+      setChannels((prev) => {
+        if (prev.some((c) => c.id === created.id)) return prev;
+        return [...prev, created];
+      });
       setNewChannel("");
       setBanner(null);
       setVisibility("private");
-
+      setPublicAccessMode("request");
       setUserQuery("");
       setUserResults([]);
       setPickedMembers([]);
-
       setModalOpen(false);
 
+      loadChannels();
       loadPublicChannels();
     } catch (e) {
       console.error("Create channel error:", e);
@@ -303,8 +363,14 @@ export default function ChannelsPanel() {
 
       setPublicChannels((prev) =>
         prev.map((c) =>
-          c.id === channelId ? { ...c, hasPendingRequest: true } : c
-        )
+          c.id === channelId
+            ? {
+                ...c,
+                hasPendingRequest: true,
+                pendingRequestId: c.pendingRequestId ?? -1,
+              }
+            : c,
+        ),
       );
     } catch (e) {
       console.error("Request join error:", e);
@@ -321,8 +387,10 @@ export default function ChannelsPanel() {
 
       setPublicChannels((prev) =>
         prev.map((c) =>
-          c.id === channelId ? { ...c, hasPendingRequest: false } : c
-        )
+          c.id === channelId
+            ? { ...c, hasPendingRequest: false, pendingRequestId: null }
+            : c,
+        ),
       );
     } catch (e) {
       console.error("Cancel join request error:", e);
@@ -394,7 +462,9 @@ export default function ChannelsPanel() {
                     <div className="truncate">
                       <div
                         className={`truncate text-sm ${
-                          active ? "text-blue-700 font-semibold" : "text-gray-800"
+                          active
+                            ? "text-blue-700 font-semibold"
+                            : "text-gray-800"
                         }`}
                       >
                         {ch.name}
@@ -459,16 +529,15 @@ export default function ChannelsPanel() {
                           active ? "text-blue-600" : "text-gray-500"
                         }`}
                       >
-                        {active ? "Current channel" : `${c.memberCount} members`}
+                        {active
+                          ? "Current channel"
+                          : `Requires request • ${c.memberCount} members`}
                       </div>
                     </div>
 
                     {c.isMember ? (
                       <Link href={`/channels/${c.id}`}>
-                        <Button
-                          size="xs"
-                          variant={active ? "filled" : "light"}
-                        >
+                        <Button size="xs" variant={active ? "filled" : "light"}>
                           {active ? "Opened" : "Open"}
                         </Button>
                       </Link>
@@ -517,17 +586,44 @@ export default function ChannelsPanel() {
           <select
             className="border rounded px-2 py-2 w-full text-sm"
             value={visibility}
-            onChange={(e) => setVisibility(e.currentTarget.value as any)}
+            onChange={(e) =>
+              setVisibility(e.currentTarget.value as "public" | "private")
+            }
           >
             <option value="private">Private</option>
             <option value="public">Public</option>
           </select>
+
           <div className="text-xs text-gray-500 mt-1">
             {visibility === "public"
-              ? "Public: anyone can request, admin must approve."
-              : "Private: only admin can add members directly."}
+              ? "Public channel selected."
+              : "Private: only added members can access."}
           </div>
         </div>
+
+        {visibility === "public" && (
+          <div className="mb-3">
+            <label className="text-sm font-medium block mb-1">
+              Public access
+            </label>
+            <select
+              className="border rounded px-2 py-2 w-full text-sm"
+              value={publicAccessMode}
+              onChange={(e) =>
+                setPublicAccessMode(e.currentTarget.value as "open" | "request")
+              }
+            >
+              <option value="request">Require join request</option>
+              <option value="open">Open to everyone</option>
+            </select>
+
+            <div className="text-xs text-gray-500 mt-1">
+              {publicAccessMode === "request"
+                ? "Users must request access and wait for approval."
+                : "Users can access this channel immediately."}
+            </div>
+          </div>
+        )}
 
         <FileInput
           label="Banner photo (optional)"
@@ -609,8 +705,8 @@ export default function ChannelsPanel() {
                       const role = e.currentTarget.value as MemberPick["role"];
                       setPickedMembers((prev) =>
                         prev.map((x) =>
-                          x.userId === m.userId ? { ...x, role } : x
-                        )
+                          x.userId === m.userId ? { ...x, role } : x,
+                        ),
                       );
                     }}
                   >
@@ -625,7 +721,7 @@ export default function ChannelsPanel() {
                     variant="light"
                     onClick={() =>
                       setPickedMembers((prev) =>
-                        prev.filter((x) => x.userId !== m.userId)
+                        prev.filter((x) => x.userId !== m.userId),
                       )
                     }
                   >

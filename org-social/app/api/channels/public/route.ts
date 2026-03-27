@@ -14,8 +14,6 @@ export async function GET(req: NextRequest) {
     const channels = await prisma.channel.findMany({
       where: {
         visibility: "public",
-
-        // 🔴 CRITICAL FIX: exclude channels user already joined
         NOT: {
           members: {
             some: { userId },
@@ -37,18 +35,18 @@ export async function GET(req: NextRequest) {
 
     const formatted = channels.map((c) => {
       const pending = c.joinRequests[0] ?? null;
+      const isRequestBased = c.publicAccessMode === "request";
 
       return {
         id: c.id,
         name: c.name,
         createdAt: c.createdAt,
         visibility: c.visibility,
+        publicAccessMode: c.publicAccessMode,
         memberCount: c._count.members,
-
         isMember: false,
-
-        hasPendingRequest: !!pending,
-        pendingRequestId: pending?.id ?? null,
+        hasPendingRequest: isRequestBased ? !!pending : false,
+        pendingRequestId: isRequestBased ? pending?.id ?? null : null,
       };
     });
 

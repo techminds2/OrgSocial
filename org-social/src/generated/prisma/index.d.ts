@@ -93,7 +93,15 @@ export type CalendarNote = $Result.DefaultSelection<Prisma.$CalendarNotePayload>
  * Enums
  */
 export namespace $Enums {
-  export const Priority: {
+  export const PublicAccessMode: {
+  open: 'open',
+  request: 'request'
+};
+
+export type PublicAccessMode = (typeof PublicAccessMode)[keyof typeof PublicAccessMode]
+
+
+export const Priority: {
   Low: 'Low',
   Medium: 'Medium',
   High: 'High'
@@ -102,6 +110,10 @@ export namespace $Enums {
 export type Priority = (typeof Priority)[keyof typeof Priority]
 
 }
+
+export type PublicAccessMode = $Enums.PublicAccessMode
+
+export const PublicAccessMode: typeof $Enums.PublicAccessMode
 
 export type Priority = $Enums.Priority
 
@@ -8569,6 +8581,7 @@ export namespace Prisma {
     createdById: number | null
     bannerKey: string | null
     visibility: string | null
+    publicAccessMode: $Enums.PublicAccessMode | null
   }
 
   export type ChannelMaxAggregateOutputType = {
@@ -8578,6 +8591,7 @@ export namespace Prisma {
     createdById: number | null
     bannerKey: string | null
     visibility: string | null
+    publicAccessMode: $Enums.PublicAccessMode | null
   }
 
   export type ChannelCountAggregateOutputType = {
@@ -8587,6 +8601,7 @@ export namespace Prisma {
     createdById: number
     bannerKey: number
     visibility: number
+    publicAccessMode: number
     _all: number
   }
 
@@ -8608,6 +8623,7 @@ export namespace Prisma {
     createdById?: true
     bannerKey?: true
     visibility?: true
+    publicAccessMode?: true
   }
 
   export type ChannelMaxAggregateInputType = {
@@ -8617,6 +8633,7 @@ export namespace Prisma {
     createdById?: true
     bannerKey?: true
     visibility?: true
+    publicAccessMode?: true
   }
 
   export type ChannelCountAggregateInputType = {
@@ -8626,6 +8643,7 @@ export namespace Prisma {
     createdById?: true
     bannerKey?: true
     visibility?: true
+    publicAccessMode?: true
     _all?: true
   }
 
@@ -8722,6 +8740,7 @@ export namespace Prisma {
     createdById: number
     bannerKey: string | null
     visibility: string
+    publicAccessMode: $Enums.PublicAccessMode
     _count: ChannelCountAggregateOutputType | null
     _avg: ChannelAvgAggregateOutputType | null
     _sum: ChannelSumAggregateOutputType | null
@@ -8750,6 +8769,7 @@ export namespace Prisma {
     createdById?: boolean
     bannerKey?: boolean
     visibility?: boolean
+    publicAccessMode?: boolean
     createdBy?: boolean | UserDefaultArgs<ExtArgs>
     postSeen?: boolean | Channel$postSeenArgs<ExtArgs>
     members?: boolean | Channel$membersArgs<ExtArgs>
@@ -8767,6 +8787,7 @@ export namespace Prisma {
     createdById?: boolean
     bannerKey?: boolean
     visibility?: boolean
+    publicAccessMode?: boolean
     createdBy?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["channel"]>
 
@@ -8777,6 +8798,7 @@ export namespace Prisma {
     createdById?: boolean
     bannerKey?: boolean
     visibility?: boolean
+    publicAccessMode?: boolean
     createdBy?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["channel"]>
 
@@ -8787,9 +8809,10 @@ export namespace Prisma {
     createdById?: boolean
     bannerKey?: boolean
     visibility?: boolean
+    publicAccessMode?: boolean
   }
 
-  export type ChannelOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "createdAt" | "createdById" | "bannerKey" | "visibility", ExtArgs["result"]["channel"]>
+  export type ChannelOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "createdAt" | "createdById" | "bannerKey" | "visibility" | "publicAccessMode", ExtArgs["result"]["channel"]>
   export type ChannelInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     createdBy?: boolean | UserDefaultArgs<ExtArgs>
     postSeen?: boolean | Channel$postSeenArgs<ExtArgs>
@@ -8825,6 +8848,7 @@ export namespace Prisma {
       createdById: number
       bannerKey: string | null
       visibility: string
+      publicAccessMode: $Enums.PublicAccessMode
     }, ExtArgs["result"]["channel"]>
     composites: {}
   }
@@ -9261,6 +9285,7 @@ export namespace Prisma {
     readonly createdById: FieldRef<"Channel", 'Int'>
     readonly bannerKey: FieldRef<"Channel", 'String'>
     readonly visibility: FieldRef<"Channel", 'String'>
+    readonly publicAccessMode: FieldRef<"Channel", 'PublicAccessMode'>
   }
     
 
@@ -20334,7 +20359,8 @@ export namespace Prisma {
     createdAt: 'createdAt',
     createdById: 'createdById',
     bannerKey: 'bannerKey',
-    visibility: 'visibility'
+    visibility: 'visibility',
+    publicAccessMode: 'publicAccessMode'
   };
 
   export type ChannelScalarFieldEnum = (typeof ChannelScalarFieldEnum)[keyof typeof ChannelScalarFieldEnum]
@@ -20562,6 +20588,20 @@ export namespace Prisma {
    * Reference to a field of type 'DateTime[]'
    */
   export type ListDateTimeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DateTime[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'PublicAccessMode'
+   */
+  export type EnumPublicAccessModeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'PublicAccessMode'>
+    
+
+
+  /**
+   * Reference to a field of type 'PublicAccessMode[]'
+   */
+  export type ListEnumPublicAccessModeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'PublicAccessMode[]'>
     
 
 
@@ -20974,6 +21014,7 @@ export namespace Prisma {
     createdById?: IntFilter<"Channel"> | number
     bannerKey?: StringNullableFilter<"Channel"> | string | null
     visibility?: StringFilter<"Channel"> | string
+    publicAccessMode?: EnumPublicAccessModeFilter<"Channel"> | $Enums.PublicAccessMode
     createdBy?: XOR<UserScalarRelationFilter, UserWhereInput>
     postSeen?: PostSeenListRelationFilter
     members?: ChannelMemberListRelationFilter
@@ -20990,6 +21031,7 @@ export namespace Prisma {
     createdById?: SortOrder
     bannerKey?: SortOrderInput | SortOrder
     visibility?: SortOrder
+    publicAccessMode?: SortOrder
     createdBy?: UserOrderByWithRelationInput
     postSeen?: PostSeenOrderByRelationAggregateInput
     members?: ChannelMemberOrderByRelationAggregateInput
@@ -21009,6 +21051,7 @@ export namespace Prisma {
     createdById?: IntFilter<"Channel"> | number
     bannerKey?: StringNullableFilter<"Channel"> | string | null
     visibility?: StringFilter<"Channel"> | string
+    publicAccessMode?: EnumPublicAccessModeFilter<"Channel"> | $Enums.PublicAccessMode
     createdBy?: XOR<UserScalarRelationFilter, UserWhereInput>
     postSeen?: PostSeenListRelationFilter
     members?: ChannelMemberListRelationFilter
@@ -21025,6 +21068,7 @@ export namespace Prisma {
     createdById?: SortOrder
     bannerKey?: SortOrderInput | SortOrder
     visibility?: SortOrder
+    publicAccessMode?: SortOrder
     _count?: ChannelCountOrderByAggregateInput
     _avg?: ChannelAvgOrderByAggregateInput
     _max?: ChannelMaxOrderByAggregateInput
@@ -21042,6 +21086,7 @@ export namespace Prisma {
     createdById?: IntWithAggregatesFilter<"Channel"> | number
     bannerKey?: StringNullableWithAggregatesFilter<"Channel"> | string | null
     visibility?: StringWithAggregatesFilter<"Channel"> | string
+    publicAccessMode?: EnumPublicAccessModeWithAggregatesFilter<"Channel"> | $Enums.PublicAccessMode
   }
 
   export type ChannelMemberWhereInput = {
@@ -22083,6 +22128,7 @@ export namespace Prisma {
     createdAt?: Date | string
     bannerKey?: string | null
     visibility?: string
+    publicAccessMode?: $Enums.PublicAccessMode
     createdBy: UserCreateNestedOneWithoutCreatedChannelsInput
     postSeen?: PostSeenCreateNestedManyWithoutChannelInput
     members?: ChannelMemberCreateNestedManyWithoutChannelInput
@@ -22099,6 +22145,7 @@ export namespace Prisma {
     createdById: number
     bannerKey?: string | null
     visibility?: string
+    publicAccessMode?: $Enums.PublicAccessMode
     postSeen?: PostSeenUncheckedCreateNestedManyWithoutChannelInput
     members?: ChannelMemberUncheckedCreateNestedManyWithoutChannelInput
     posts?: PostUncheckedCreateNestedManyWithoutChannelInput
@@ -22112,6 +22159,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     bannerKey?: NullableStringFieldUpdateOperationsInput | string | null
     visibility?: StringFieldUpdateOperationsInput | string
+    publicAccessMode?: EnumPublicAccessModeFieldUpdateOperationsInput | $Enums.PublicAccessMode
     createdBy?: UserUpdateOneRequiredWithoutCreatedChannelsNestedInput
     postSeen?: PostSeenUpdateManyWithoutChannelNestedInput
     members?: ChannelMemberUpdateManyWithoutChannelNestedInput
@@ -22128,6 +22176,7 @@ export namespace Prisma {
     createdById?: IntFieldUpdateOperationsInput | number
     bannerKey?: NullableStringFieldUpdateOperationsInput | string | null
     visibility?: StringFieldUpdateOperationsInput | string
+    publicAccessMode?: EnumPublicAccessModeFieldUpdateOperationsInput | $Enums.PublicAccessMode
     postSeen?: PostSeenUncheckedUpdateManyWithoutChannelNestedInput
     members?: ChannelMemberUncheckedUpdateManyWithoutChannelNestedInput
     posts?: PostUncheckedUpdateManyWithoutChannelNestedInput
@@ -22143,6 +22192,7 @@ export namespace Prisma {
     createdById: number
     bannerKey?: string | null
     visibility?: string
+    publicAccessMode?: $Enums.PublicAccessMode
   }
 
   export type ChannelUpdateManyMutationInput = {
@@ -22150,6 +22200,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     bannerKey?: NullableStringFieldUpdateOperationsInput | string | null
     visibility?: StringFieldUpdateOperationsInput | string
+    publicAccessMode?: EnumPublicAccessModeFieldUpdateOperationsInput | $Enums.PublicAccessMode
   }
 
   export type ChannelUncheckedUpdateManyInput = {
@@ -22159,6 +22210,7 @@ export namespace Prisma {
     createdById?: IntFieldUpdateOperationsInput | number
     bannerKey?: NullableStringFieldUpdateOperationsInput | string | null
     visibility?: StringFieldUpdateOperationsInput | string
+    publicAccessMode?: EnumPublicAccessModeFieldUpdateOperationsInput | $Enums.PublicAccessMode
   }
 
   export type ChannelMemberCreateInput = {
@@ -23336,6 +23388,13 @@ export namespace Prisma {
     postId?: SortOrder
   }
 
+  export type EnumPublicAccessModeFilter<$PrismaModel = never> = {
+    equals?: $Enums.PublicAccessMode | EnumPublicAccessModeFieldRefInput<$PrismaModel>
+    in?: $Enums.PublicAccessMode[] | ListEnumPublicAccessModeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.PublicAccessMode[] | ListEnumPublicAccessModeFieldRefInput<$PrismaModel>
+    not?: NestedEnumPublicAccessModeFilter<$PrismaModel> | $Enums.PublicAccessMode
+  }
+
   export type UserListRelationFilter = {
     every?: UserWhereInput
     some?: UserWhereInput
@@ -23353,6 +23412,7 @@ export namespace Prisma {
     createdById?: SortOrder
     bannerKey?: SortOrder
     visibility?: SortOrder
+    publicAccessMode?: SortOrder
   }
 
   export type ChannelAvgOrderByAggregateInput = {
@@ -23367,6 +23427,7 @@ export namespace Prisma {
     createdById?: SortOrder
     bannerKey?: SortOrder
     visibility?: SortOrder
+    publicAccessMode?: SortOrder
   }
 
   export type ChannelMinOrderByAggregateInput = {
@@ -23376,11 +23437,22 @@ export namespace Prisma {
     createdById?: SortOrder
     bannerKey?: SortOrder
     visibility?: SortOrder
+    publicAccessMode?: SortOrder
   }
 
   export type ChannelSumOrderByAggregateInput = {
     id?: SortOrder
     createdById?: SortOrder
+  }
+
+  export type EnumPublicAccessModeWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.PublicAccessMode | EnumPublicAccessModeFieldRefInput<$PrismaModel>
+    in?: $Enums.PublicAccessMode[] | ListEnumPublicAccessModeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.PublicAccessMode[] | ListEnumPublicAccessModeFieldRefInput<$PrismaModel>
+    not?: NestedEnumPublicAccessModeWithAggregatesFilter<$PrismaModel> | $Enums.PublicAccessMode
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumPublicAccessModeFilter<$PrismaModel>
+    _max?: NestedEnumPublicAccessModeFilter<$PrismaModel>
   }
 
   export type ChannelScalarRelationFilter = {
@@ -24954,6 +25026,10 @@ export namespace Prisma {
     connect?: NotificationWhereUniqueInput | NotificationWhereUniqueInput[]
   }
 
+  export type EnumPublicAccessModeFieldUpdateOperationsInput = {
+    set?: $Enums.PublicAccessMode
+  }
+
   export type UserUpdateOneRequiredWithoutCreatedChannelsNestedInput = {
     create?: XOR<UserCreateWithoutCreatedChannelsInput, UserUncheckedCreateWithoutCreatedChannelsInput>
     connectOrCreate?: UserCreateOrConnectWithoutCreatedChannelsInput
@@ -25586,6 +25662,23 @@ export namespace Prisma {
     _max?: NestedDateTimeFilter<$PrismaModel>
   }
 
+  export type NestedEnumPublicAccessModeFilter<$PrismaModel = never> = {
+    equals?: $Enums.PublicAccessMode | EnumPublicAccessModeFieldRefInput<$PrismaModel>
+    in?: $Enums.PublicAccessMode[] | ListEnumPublicAccessModeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.PublicAccessMode[] | ListEnumPublicAccessModeFieldRefInput<$PrismaModel>
+    not?: NestedEnumPublicAccessModeFilter<$PrismaModel> | $Enums.PublicAccessMode
+  }
+
+  export type NestedEnumPublicAccessModeWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.PublicAccessMode | EnumPublicAccessModeFieldRefInput<$PrismaModel>
+    in?: $Enums.PublicAccessMode[] | ListEnumPublicAccessModeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.PublicAccessMode[] | ListEnumPublicAccessModeFieldRefInput<$PrismaModel>
+    not?: NestedEnumPublicAccessModeWithAggregatesFilter<$PrismaModel> | $Enums.PublicAccessMode
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumPublicAccessModeFilter<$PrismaModel>
+    _max?: NestedEnumPublicAccessModeFilter<$PrismaModel>
+  }
+
   export type NestedEnumPriorityFilter<$PrismaModel = never> = {
     equals?: $Enums.Priority | EnumPriorityFieldRefInput<$PrismaModel>
     in?: $Enums.Priority[] | ListEnumPriorityFieldRefInput<$PrismaModel>
@@ -25756,6 +25849,7 @@ export namespace Prisma {
     createdAt?: Date | string
     bannerKey?: string | null
     visibility?: string
+    publicAccessMode?: $Enums.PublicAccessMode
     postSeen?: PostSeenCreateNestedManyWithoutChannelInput
     members?: ChannelMemberCreateNestedManyWithoutChannelInput
     posts?: PostCreateNestedManyWithoutChannelInput
@@ -25770,6 +25864,7 @@ export namespace Prisma {
     createdAt?: Date | string
     bannerKey?: string | null
     visibility?: string
+    publicAccessMode?: $Enums.PublicAccessMode
     postSeen?: PostSeenUncheckedCreateNestedManyWithoutChannelInput
     members?: ChannelMemberUncheckedCreateNestedManyWithoutChannelInput
     posts?: PostUncheckedCreateNestedManyWithoutChannelInput
@@ -25928,6 +26023,7 @@ export namespace Prisma {
     createdAt?: Date | string
     bannerKey?: string | null
     visibility?: string
+    publicAccessMode?: $Enums.PublicAccessMode
     createdBy: UserCreateNestedOneWithoutCreatedChannelsInput
     postSeen?: PostSeenCreateNestedManyWithoutChannelInput
     members?: ChannelMemberCreateNestedManyWithoutChannelInput
@@ -25943,6 +26039,7 @@ export namespace Prisma {
     createdById: number
     bannerKey?: string | null
     visibility?: string
+    publicAccessMode?: $Enums.PublicAccessMode
     postSeen?: PostSeenUncheckedCreateNestedManyWithoutChannelInput
     members?: ChannelMemberUncheckedCreateNestedManyWithoutChannelInput
     posts?: PostUncheckedCreateNestedManyWithoutChannelInput
@@ -26209,6 +26306,7 @@ export namespace Prisma {
     createdById?: IntFilter<"Channel"> | number
     bannerKey?: StringNullableFilter<"Channel"> | string | null
     visibility?: StringFilter<"Channel"> | string
+    publicAccessMode?: EnumPublicAccessModeFilter<"Channel"> | $Enums.PublicAccessMode
   }
 
   export type NotificationUpsertWithWhereUniqueWithoutUserInput = {
@@ -26371,6 +26469,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     bannerKey?: NullableStringFieldUpdateOperationsInput | string | null
     visibility?: StringFieldUpdateOperationsInput | string
+    publicAccessMode?: EnumPublicAccessModeFieldUpdateOperationsInput | $Enums.PublicAccessMode
     createdBy?: UserUpdateOneRequiredWithoutCreatedChannelsNestedInput
     postSeen?: PostSeenUpdateManyWithoutChannelNestedInput
     members?: ChannelMemberUpdateManyWithoutChannelNestedInput
@@ -26386,6 +26485,7 @@ export namespace Prisma {
     createdById?: IntFieldUpdateOperationsInput | number
     bannerKey?: NullableStringFieldUpdateOperationsInput | string | null
     visibility?: StringFieldUpdateOperationsInput | string
+    publicAccessMode?: EnumPublicAccessModeFieldUpdateOperationsInput | $Enums.PublicAccessMode
     postSeen?: PostSeenUncheckedUpdateManyWithoutChannelNestedInput
     members?: ChannelMemberUncheckedUpdateManyWithoutChannelNestedInput
     posts?: PostUncheckedUpdateManyWithoutChannelNestedInput
@@ -26537,6 +26637,7 @@ export namespace Prisma {
     createdAt?: Date | string
     bannerKey?: string | null
     visibility?: string
+    publicAccessMode?: $Enums.PublicAccessMode
     createdBy: UserCreateNestedOneWithoutCreatedChannelsInput
     postSeen?: PostSeenCreateNestedManyWithoutChannelInput
     members?: ChannelMemberCreateNestedManyWithoutChannelInput
@@ -26552,6 +26653,7 @@ export namespace Prisma {
     createdById: number
     bannerKey?: string | null
     visibility?: string
+    publicAccessMode?: $Enums.PublicAccessMode
     postSeen?: PostSeenUncheckedCreateNestedManyWithoutChannelInput
     members?: ChannelMemberUncheckedCreateNestedManyWithoutChannelInput
     joinRequests?: JoinRequestUncheckedCreateNestedManyWithoutChannelInput
@@ -26743,6 +26845,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     bannerKey?: NullableStringFieldUpdateOperationsInput | string | null
     visibility?: StringFieldUpdateOperationsInput | string
+    publicAccessMode?: EnumPublicAccessModeFieldUpdateOperationsInput | $Enums.PublicAccessMode
     createdBy?: UserUpdateOneRequiredWithoutCreatedChannelsNestedInput
     postSeen?: PostSeenUpdateManyWithoutChannelNestedInput
     members?: ChannelMemberUpdateManyWithoutChannelNestedInput
@@ -26758,6 +26861,7 @@ export namespace Prisma {
     createdById?: IntFieldUpdateOperationsInput | number
     bannerKey?: NullableStringFieldUpdateOperationsInput | string | null
     visibility?: StringFieldUpdateOperationsInput | string
+    publicAccessMode?: EnumPublicAccessModeFieldUpdateOperationsInput | $Enums.PublicAccessMode
     postSeen?: PostSeenUncheckedUpdateManyWithoutChannelNestedInput
     members?: ChannelMemberUncheckedUpdateManyWithoutChannelNestedInput
     joinRequests?: JoinRequestUncheckedUpdateManyWithoutChannelNestedInput
@@ -27665,6 +27769,7 @@ export namespace Prisma {
     createdAt?: Date | string
     bannerKey?: string | null
     visibility?: string
+    publicAccessMode?: $Enums.PublicAccessMode
     createdBy: UserCreateNestedOneWithoutCreatedChannelsInput
     postSeen?: PostSeenCreateNestedManyWithoutChannelInput
     posts?: PostCreateNestedManyWithoutChannelInput
@@ -27680,6 +27785,7 @@ export namespace Prisma {
     createdById: number
     bannerKey?: string | null
     visibility?: string
+    publicAccessMode?: $Enums.PublicAccessMode
     postSeen?: PostSeenUncheckedCreateNestedManyWithoutChannelInput
     posts?: PostUncheckedCreateNestedManyWithoutChannelInput
     joinRequests?: JoinRequestUncheckedCreateNestedManyWithoutChannelInput
@@ -27756,6 +27862,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     bannerKey?: NullableStringFieldUpdateOperationsInput | string | null
     visibility?: StringFieldUpdateOperationsInput | string
+    publicAccessMode?: EnumPublicAccessModeFieldUpdateOperationsInput | $Enums.PublicAccessMode
     createdBy?: UserUpdateOneRequiredWithoutCreatedChannelsNestedInput
     postSeen?: PostSeenUpdateManyWithoutChannelNestedInput
     posts?: PostUpdateManyWithoutChannelNestedInput
@@ -27771,6 +27878,7 @@ export namespace Prisma {
     createdById?: IntFieldUpdateOperationsInput | number
     bannerKey?: NullableStringFieldUpdateOperationsInput | string | null
     visibility?: StringFieldUpdateOperationsInput | string
+    publicAccessMode?: EnumPublicAccessModeFieldUpdateOperationsInput | $Enums.PublicAccessMode
     postSeen?: PostSeenUncheckedUpdateManyWithoutChannelNestedInput
     posts?: PostUncheckedUpdateManyWithoutChannelNestedInput
     joinRequests?: JoinRequestUncheckedUpdateManyWithoutChannelNestedInput
@@ -27837,6 +27945,7 @@ export namespace Prisma {
     createdAt?: Date | string
     bannerKey?: string | null
     visibility?: string
+    publicAccessMode?: $Enums.PublicAccessMode
     createdBy: UserCreateNestedOneWithoutCreatedChannelsInput
     postSeen?: PostSeenCreateNestedManyWithoutChannelInput
     members?: ChannelMemberCreateNestedManyWithoutChannelInput
@@ -27852,6 +27961,7 @@ export namespace Prisma {
     createdById: number
     bannerKey?: string | null
     visibility?: string
+    publicAccessMode?: $Enums.PublicAccessMode
     postSeen?: PostSeenUncheckedCreateNestedManyWithoutChannelInput
     members?: ChannelMemberUncheckedCreateNestedManyWithoutChannelInput
     posts?: PostUncheckedCreateNestedManyWithoutChannelInput
@@ -27961,6 +28071,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     bannerKey?: NullableStringFieldUpdateOperationsInput | string | null
     visibility?: StringFieldUpdateOperationsInput | string
+    publicAccessMode?: EnumPublicAccessModeFieldUpdateOperationsInput | $Enums.PublicAccessMode
     createdBy?: UserUpdateOneRequiredWithoutCreatedChannelsNestedInput
     postSeen?: PostSeenUpdateManyWithoutChannelNestedInput
     members?: ChannelMemberUpdateManyWithoutChannelNestedInput
@@ -27976,6 +28087,7 @@ export namespace Prisma {
     createdById?: IntFieldUpdateOperationsInput | number
     bannerKey?: NullableStringFieldUpdateOperationsInput | string | null
     visibility?: StringFieldUpdateOperationsInput | string
+    publicAccessMode?: EnumPublicAccessModeFieldUpdateOperationsInput | $Enums.PublicAccessMode
     postSeen?: PostSeenUncheckedUpdateManyWithoutChannelNestedInput
     members?: ChannelMemberUncheckedUpdateManyWithoutChannelNestedInput
     posts?: PostUncheckedUpdateManyWithoutChannelNestedInput
@@ -28154,6 +28266,7 @@ export namespace Prisma {
     createdAt?: Date | string
     bannerKey?: string | null
     visibility?: string
+    publicAccessMode?: $Enums.PublicAccessMode
     createdBy: UserCreateNestedOneWithoutCreatedChannelsInput
     postSeen?: PostSeenCreateNestedManyWithoutChannelInput
     members?: ChannelMemberCreateNestedManyWithoutChannelInput
@@ -28169,6 +28282,7 @@ export namespace Prisma {
     createdById: number
     bannerKey?: string | null
     visibility?: string
+    publicAccessMode?: $Enums.PublicAccessMode
     postSeen?: PostSeenUncheckedCreateNestedManyWithoutChannelInput
     members?: ChannelMemberUncheckedCreateNestedManyWithoutChannelInput
     posts?: PostUncheckedCreateNestedManyWithoutChannelInput
@@ -28327,6 +28441,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     bannerKey?: NullableStringFieldUpdateOperationsInput | string | null
     visibility?: StringFieldUpdateOperationsInput | string
+    publicAccessMode?: EnumPublicAccessModeFieldUpdateOperationsInput | $Enums.PublicAccessMode
     createdBy?: UserUpdateOneRequiredWithoutCreatedChannelsNestedInput
     postSeen?: PostSeenUpdateManyWithoutChannelNestedInput
     members?: ChannelMemberUpdateManyWithoutChannelNestedInput
@@ -28342,6 +28457,7 @@ export namespace Prisma {
     createdById?: IntFieldUpdateOperationsInput | number
     bannerKey?: NullableStringFieldUpdateOperationsInput | string | null
     visibility?: StringFieldUpdateOperationsInput | string
+    publicAccessMode?: EnumPublicAccessModeFieldUpdateOperationsInput | $Enums.PublicAccessMode
     postSeen?: PostSeenUncheckedUpdateManyWithoutChannelNestedInput
     members?: ChannelMemberUncheckedUpdateManyWithoutChannelNestedInput
     posts?: PostUncheckedUpdateManyWithoutChannelNestedInput
@@ -28730,6 +28846,7 @@ export namespace Prisma {
     createdAt?: Date | string
     bannerKey?: string | null
     visibility?: string
+    publicAccessMode?: $Enums.PublicAccessMode
     createdBy: UserCreateNestedOneWithoutCreatedChannelsInput
     members?: ChannelMemberCreateNestedManyWithoutChannelInput
     posts?: PostCreateNestedManyWithoutChannelInput
@@ -28745,6 +28862,7 @@ export namespace Prisma {
     createdById: number
     bannerKey?: string | null
     visibility?: string
+    publicAccessMode?: $Enums.PublicAccessMode
     members?: ChannelMemberUncheckedCreateNestedManyWithoutChannelInput
     posts?: PostUncheckedCreateNestedManyWithoutChannelInput
     joinRequests?: JoinRequestUncheckedCreateNestedManyWithoutChannelInput
@@ -28863,6 +28981,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     bannerKey?: NullableStringFieldUpdateOperationsInput | string | null
     visibility?: StringFieldUpdateOperationsInput | string
+    publicAccessMode?: EnumPublicAccessModeFieldUpdateOperationsInput | $Enums.PublicAccessMode
     createdBy?: UserUpdateOneRequiredWithoutCreatedChannelsNestedInput
     members?: ChannelMemberUpdateManyWithoutChannelNestedInput
     posts?: PostUpdateManyWithoutChannelNestedInput
@@ -28878,6 +28997,7 @@ export namespace Prisma {
     createdById?: IntFieldUpdateOperationsInput | number
     bannerKey?: NullableStringFieldUpdateOperationsInput | string | null
     visibility?: StringFieldUpdateOperationsInput | string
+    publicAccessMode?: EnumPublicAccessModeFieldUpdateOperationsInput | $Enums.PublicAccessMode
     members?: ChannelMemberUncheckedUpdateManyWithoutChannelNestedInput
     posts?: PostUncheckedUpdateManyWithoutChannelNestedInput
     joinRequests?: JoinRequestUncheckedUpdateManyWithoutChannelNestedInput
@@ -29122,6 +29242,7 @@ export namespace Prisma {
     createdAt?: Date | string
     bannerKey?: string | null
     visibility?: string
+    publicAccessMode?: $Enums.PublicAccessMode
   }
 
   export type NotificationCreateManyUserInput = {
@@ -29307,6 +29428,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     bannerKey?: NullableStringFieldUpdateOperationsInput | string | null
     visibility?: StringFieldUpdateOperationsInput | string
+    publicAccessMode?: EnumPublicAccessModeFieldUpdateOperationsInput | $Enums.PublicAccessMode
     postSeen?: PostSeenUpdateManyWithoutChannelNestedInput
     members?: ChannelMemberUpdateManyWithoutChannelNestedInput
     posts?: PostUpdateManyWithoutChannelNestedInput
@@ -29321,6 +29443,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     bannerKey?: NullableStringFieldUpdateOperationsInput | string | null
     visibility?: StringFieldUpdateOperationsInput | string
+    publicAccessMode?: EnumPublicAccessModeFieldUpdateOperationsInput | $Enums.PublicAccessMode
     postSeen?: PostSeenUncheckedUpdateManyWithoutChannelNestedInput
     members?: ChannelMemberUncheckedUpdateManyWithoutChannelNestedInput
     posts?: PostUncheckedUpdateManyWithoutChannelNestedInput
@@ -29335,6 +29458,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     bannerKey?: NullableStringFieldUpdateOperationsInput | string | null
     visibility?: StringFieldUpdateOperationsInput | string
+    publicAccessMode?: EnumPublicAccessModeFieldUpdateOperationsInput | $Enums.PublicAccessMode
   }
 
   export type NotificationUpdateWithoutUserInput = {

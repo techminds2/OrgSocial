@@ -17,7 +17,9 @@ async function getUserIdFromCookies() {
 
   try {
     const token = cleanToken(raw);
-    const { payload } = await jwtVerify(token, SECRET, { algorithms: ["HS256"] });
+    const { payload } = await jwtVerify(token, SECRET, {
+      algorithms: ["HS256"],
+    });
     const uid = (payload as any).user_id;
     return uid ? Number(uid) : null;
   } catch {
@@ -45,32 +47,55 @@ export default async function ChannelPage({
       name: true,
       bannerKey: true,
       visibility: true,
-      createdById: true, // ✅ added
+      publicAccessMode: true,
+      createdById: true,
     },
   });
+
   if (!channel) notFound();
 
-  const member = await prisma.channelMember.findUnique({
+  let member = await prisma.channelMember.findUnique({
     where: { channelId_userId: { channelId, userId } },
     select: { id: true, role: true },
   });
 
-  const canDelete = channel.createdById === userId || member?.role === "admin"; // ✅ added
+  if (!member && channel.visibility === "public" && channel.publicAccessMode === "open") {
+    await prisma.channelMember.upsert({
+      where: {
+        channelId_userId: { channelId, userId },
+      },
+      update: {},
+      create: {
+        channelId,
+        userId,
+        role: "viewer",
+      },
+    });
+
+    member = await prisma.channelMember.findUnique({
+      where: { channelId_userId: { channelId, userId } },
+      select: { id: true, role: true },
+    });
+  }
+
+  const canDelete =
+    channel.createdById === userId || member?.role === "admin";
 
   if (member) {
     const role = (member.role || "viewer") as "viewer" | "editor" | "admin";
+
     return (
       <ChannelFeed
         channelId={channelId}
         channelName={channel.name}
         bannerKey={channel.bannerKey}
         role={role}
-        canDelete={canDelete} // ✅ added
+        canDelete={canDelete}
       />
     );
   }
 
-  if (channel.visibility === "public") {
+  if (channel.visibility === "public" && channel.publicAccessMode === "request") {
     return (
       <JoinRequestGate
         channelId={channelId}
