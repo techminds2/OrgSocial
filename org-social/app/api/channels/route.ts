@@ -3,6 +3,9 @@ export const runtime = "nodejs";
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { getUserIdFromRequest } from "@/lib/auth";
+import crypto from "crypto";
+import { PutObjectCommand } from "@aws-sdk/client-s3";
+import { s3 } from "@/lib/s3";
 
 type Visibility = "public" | "private";
 type PublicAccessMode = "open" | "request";
@@ -15,7 +18,11 @@ const VALID_ROLES: MemberRole[] = ["viewer", "editor", "admin"];
 function normalizeMediaUrl(key?: string | null) {
   if (!key) return null;
   if (key.startsWith("http://") || key.startsWith("https://")) return key;
-  return `/api/files/${encodeURIComponent(key)}`;
+
+  return `/api/files/${key
+    .split("/")
+    .map((part) => encodeURIComponent(part))
+    .join("/")}`;
 }
 
 async function parseMembers(raw: FormDataEntryValue | null) {
@@ -123,7 +130,9 @@ export async function POST(req: NextRequest) {
     const members = await parseMembers(formData.get("members"));
 
     const finalMembers = [...members];
-    const creatorAlreadyIncluded = finalMembers.some((m) => m.userId === userId);
+    const creatorAlreadyIncluded = finalMembers.some(
+      (m) => m.userId === userId
+    );
 
     if (!creatorAlreadyIncluded) {
       finalMembers.unshift({ userId, role: "admin" });
@@ -150,12 +159,21 @@ export async function POST(req: NextRequest) {
     const bannerFile = formData.get("banner");
     let bannerKey: string | null = null;
 
-    // Keep your existing upload logic here if you already have one.
-    // If you already store uploaded files elsewhere, replace this section.
-    if (bannerFile && bannerFile instanceof File && bannerFile.size > 0) {
-      // Example only:
-      // bannerKey = await uploadChannelBanner(bannerFile);
-      bannerKey = null;
+    if (bannerFile instanceof File && bannerFile.size > 0) {
+      const buffer = Buffer.from(await bannerFile.arrayBuffer());
+      const ext = bannerFile.name.split(".").pop() || "bin";
+      const key = `uploads/channel-banners/${crypto.randomUUID()}.${ext}`;
+
+      await s3.send(
+        new PutObjectCommand({
+          Bucket: process.env.S3_BUCKET!,
+          Key: key,
+          Body: buffer,
+          ContentType: bannerFile.type || "application/octet-stream",
+        })
+      );
+
+      bannerKey = key;
     }
 
     const channel = await prisma.channel.create({
@@ -163,7 +181,8 @@ export async function POST(req: NextRequest) {
         name,
         bannerKey,
         visibility,
-        publicAccessMode: visibility === "public" ? publicAccessMode : "request",
+        publicAccessMode:
+          visibility === "public" ? publicAccessMode : "request",
         createdBy: { connect: { id: userId } },
         members: {
           create: finalMembers.map((m) => ({
@@ -189,10 +208,12 @@ export async function POST(req: NextRequest) {
         members: channel.members,
       },
     });
-  } catch (error) {
+  } catch (error: unknown) {
     console.error("CREATE CHANNEL ERROR:", error);
+    const message = error instanceof Error ? error.message : String(error);
+
     return NextResponse.json(
-      { error: "Failed to create channel" },
+      { error: "Failed to create channel", detail: message },
       { status: 500 }
     );
   }

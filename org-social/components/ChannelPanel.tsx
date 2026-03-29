@@ -19,6 +19,7 @@ type Channel = {
   name: string;
   createdAt: string;
   bannerKey?: string | null;
+  bannerUrl?: string | null;
   memberCount?: number;
   visibility?: "public" | "private";
   unseenCount?: number;
@@ -29,12 +30,13 @@ type PublicChannel = {
   name: string;
   createdAt: string;
   visibility: "public";
-  publicAccessMode: "open" | "request";
+  publicAccessMode?: "open" | "request";
   memberCount: number;
   isMember: boolean;
   hasPendingRequest: boolean;
   pendingRequestId: number | null;
   bannerKey?: string | null;
+  bannerUrl?: string | null;
 };
 
 type UserPick = {
@@ -53,6 +55,18 @@ function isChannelActive(pathname: string, channelId: number) {
   return pathname === `/channels/${channelId}`;
 }
 
+function buildFileUrl(key?: string | null) {
+  if (!key) return undefined;
+  const clean = String(key).trim().replace(/^\/+/, "");
+  if (!clean) return undefined;
+  if (clean.startsWith("http://") || clean.startsWith("https://")) return clean;
+
+  return `/api/files/${clean
+    .split("/")
+    .map((part) => encodeURIComponent(part))
+    .join("/")}`;
+}
+
 export default function ChannelsPanel() {
   const pathname = usePathname() ?? "";
 
@@ -62,7 +76,7 @@ export default function ChannelsPanel() {
   const [newChannel, setNewChannel] = useState("");
   const [visibility, setVisibility] = useState<"public" | "private">("private");
   const [publicAccessMode, setPublicAccessMode] = useState<"open" | "request">(
-    "request",
+    "request"
   );
 
   const [banner, setBanner] = useState<File | null>(null);
@@ -79,31 +93,39 @@ export default function ChannelsPanel() {
   const [zoom, setZoom] = useState(1);
   const [croppedAreaPixels, setCroppedAreaPixels] = useState<any>(null);
 
+  const getBannerUrl = (item?: { bannerUrl?: string | null; bannerKey?: string | null }) => {
+    if (!item) return undefined;
+    if (item.bannerUrl) return item.bannerUrl;
+    return buildFileUrl(item.bannerKey);
+  };
+
   async function loadChannels() {
     try {
       const [joinedRes, publicRes] = await Promise.all([
-        fetch("/api/channels", { credentials: "include" }),
-        fetch("/api/channels/public", { credentials: "include" }),
+        fetch("/api/channels", { credentials: "include", cache: "no-store" }),
+        fetch("/api/channels/public", {
+          credentials: "include",
+          cache: "no-store",
+        }),
       ]);
 
-      if (!joinedRes.ok) throw new Error("Failed to fetch channels");
+      if (!joinedRes.ok) {
+        throw new Error("Failed to fetch channels");
+      }
 
       const joinedData = await joinedRes.json();
-      const publicData = publicRes.ok
-        ? await publicRes.json()
-        : { channels: [] };
+      const publicData = publicRes.ok ? await publicRes.json() : { channels: [] };
 
-      const joinedChannels: Channel[] = (joinedData.channels || []).map(
-        (ch: any) => ({
-          id: ch.id,
-          name: ch.name,
-          createdAt: ch.createdAt,
-          bannerKey: ch.bannerKey ?? null,
-          memberCount: ch.memberCount,
-          visibility: ch.visibility,
-          unseenCount: ch.unseenCount ?? 0,
-        }),
-      );
+      const joinedChannels: Channel[] = (joinedData.channels || []).map((ch: any) => ({
+        id: ch.id,
+        name: ch.name,
+        createdAt: ch.createdAt,
+        bannerKey: ch.bannerKey ?? null,
+        bannerUrl: ch.bannerUrl ?? null,
+        memberCount: ch.memberCount,
+        visibility: ch.visibility,
+        unseenCount: ch.unseenCount ?? 0,
+      }));
 
       const openPublicChannels: Channel[] = (publicData.channels || [])
         .filter((c: any) => c.publicAccessMode === "open")
@@ -112,6 +134,7 @@ export default function ChannelsPanel() {
           name: c.name,
           createdAt: c.createdAt,
           bannerKey: c.bannerKey ?? null,
+          bannerUrl: c.bannerUrl ?? null,
           memberCount: c.memberCount,
           visibility: c.visibility,
           unseenCount: 0,
@@ -137,13 +160,14 @@ export default function ChannelsPanel() {
     try {
       const res = await fetch("/api/channels/public", {
         credentials: "include",
+        cache: "no-store",
       });
       if (!res.ok) return;
 
       const data = await res.json();
 
       const requestOnly = (data.channels || []).filter(
-        (c: PublicChannel) => c.publicAccessMode === "request",
+        (c: PublicChannel) => c.publicAccessMode !== "open"
       );
 
       setPublicChannels(requestOnly);
@@ -164,6 +188,7 @@ export default function ChannelsPanel() {
 
       setChannels((prev) => {
         if (prev.some((x) => x.id === channelId)) return prev;
+
         return [
           ...prev,
           {
@@ -171,22 +196,21 @@ export default function ChannelsPanel() {
             name: fromPrev.name,
             createdAt: fromPrev.createdAt,
             bannerKey: fromPrev.bannerKey ?? null,
+            bannerUrl: fromPrev.bannerUrl ?? null,
             memberCount: fromPrev.memberCount,
             visibility: fromPrev.visibility,
           },
         ];
       });
     },
-    [publicChannels],
+    [publicChannels]
   );
 
   useEffect(() => {
     loadChannels();
     loadPublicChannels();
 
-    const raw = new URLSearchParams(window.location.search).get(
-      "deletedChannelId",
-    );
+    const raw = new URLSearchParams(window.location.search).get("deletedChannelId");
     if (!raw) return;
 
     const id = Number(raw);
@@ -204,6 +228,7 @@ export default function ChannelsPanel() {
       setUserResults([]);
       return;
     }
+
     try {
       const res = await fetch(`/api/users/search?q=${encodeURIComponent(qq)}`, {
         credentials: "include",
@@ -246,17 +271,14 @@ export default function ChannelsPanel() {
 
       setPublicChannels((prev) =>
         prev.map((c) =>
-          c.id === id ? { ...c, isMember: true, hasPendingRequest: false } : c,
-        ),
+          c.id === id ? { ...c, isMember: true, hasPendingRequest: false } : c
+        )
       );
     };
 
     window.addEventListener("channel-join-accepted", onJoinAccepted as any);
     return () =>
-      window.removeEventListener(
-        "channel-join-accepted",
-        onJoinAccepted as any,
-      );
+      window.removeEventListener("channel-join-accepted", onJoinAccepted as any);
   }, [moveChannelToJoined]);
 
   const addChannel = async () => {
@@ -274,13 +296,15 @@ export default function ChannelsPanel() {
         formData.append("publicAccessMode", publicAccessMode);
       }
 
-      if (banner) formData.append("banner", banner);
+      if (banner) {
+        formData.append("banner", banner);
+      }
 
       formData.append(
         "members",
         JSON.stringify(
-          pickedMembers.map((m) => ({ userId: m.userId, role: m.role })),
-        ),
+          pickedMembers.map((m) => ({ userId: m.userId, role: m.role }))
+        )
       );
 
       const res = await fetch("/api/channels", {
@@ -301,7 +325,8 @@ export default function ChannelsPanel() {
         id: data.channel.id,
         name: data.channel.name,
         createdAt: data.channel.createdAt,
-        bannerKey: data.channel.bannerKey,
+        bannerKey: data.channel.bannerKey ?? null,
+        bannerUrl: data.channel.bannerUrl ?? null,
         memberCount: data.channel.members?.length,
         visibility: data.channel.visibility,
       };
@@ -310,6 +335,7 @@ export default function ChannelsPanel() {
         if (prev.some((c) => c.id === created.id)) return prev;
         return [...prev, created];
       });
+
       setNewChannel("");
       setBanner(null);
       setVisibility("private");
@@ -317,6 +343,8 @@ export default function ChannelsPanel() {
       setUserQuery("");
       setUserResults([]);
       setPickedMembers([]);
+      setCropImage(null);
+      setCropModalOpen(false);
       setModalOpen(false);
 
       loadChannels();
@@ -329,7 +357,11 @@ export default function ChannelsPanel() {
   };
 
   const onBannerChange = (file: File | null) => {
-    if (!file) return;
+    if (!file) {
+      setBanner(null);
+      return;
+    }
+
     const reader = new FileReader();
     reader.onload = () => {
       setCropImage(reader.result as string);
@@ -355,6 +387,7 @@ export default function ChannelsPanel() {
         method: "POST",
         credentials: "include",
       });
+
       if (!res.ok) {
         const t = await res.text().catch(() => "");
         console.error("REQUEST JOIN FAILED:", res.status, t);
@@ -367,10 +400,9 @@ export default function ChannelsPanel() {
             ? {
                 ...c,
                 hasPendingRequest: true,
-                pendingRequestId: c.pendingRequestId ?? -1,
               }
-            : c,
-        ),
+            : c
+        )
       );
     } catch (e) {
       console.error("Request join error:", e);
@@ -383,24 +415,24 @@ export default function ChannelsPanel() {
         method: "DELETE",
         credentials: "include",
       });
+
       if (!res.ok) return;
 
       setPublicChannels((prev) =>
         prev.map((c) =>
           c.id === channelId
-            ? { ...c, hasPendingRequest: false, pendingRequestId: null }
-            : c,
-        ),
+            ? {
+                ...c,
+                hasPendingRequest: false,
+                pendingRequestId: null,
+              }
+            : c
+        )
       );
     } catch (e) {
       console.error("Cancel join request error:", e);
     }
   }
-
-  const getBannerUrl = (bannerKey?: string | null): string | undefined => {
-    if (!bannerKey) return undefined;
-    return `/api/files/${bannerKey}`;
-  };
 
   return (
     <div className="w-64 bg-gray-50 p-3 flex flex-col h-screen">
@@ -430,6 +462,7 @@ export default function ChannelsPanel() {
         <div className="flex flex-col gap-2">
           {channels.map((ch) => {
             const active = isChannelActive(pathname, ch.id);
+            const bannerSrc = getBannerUrl(ch);
 
             return (
               <Link key={ch.id} href={`/channels/${ch.id}`}>
@@ -441,9 +474,9 @@ export default function ChannelsPanel() {
                   }`}
                 >
                   <div className="flex items-center gap-2 min-w-0">
-                    {ch.bannerKey ? (
+                    {bannerSrc ? (
                       <img
-                        src={getBannerUrl(ch.bannerKey)}
+                        src={bannerSrc}
                         alt={ch.name}
                         className="w-6 h-6 rounded object-cover flex-shrink-0"
                       />
@@ -462,9 +495,7 @@ export default function ChannelsPanel() {
                     <div className="truncate">
                       <div
                         className={`truncate text-sm ${
-                          active
-                            ? "text-blue-700 font-semibold"
-                            : "text-gray-800"
+                          active ? "text-blue-700 font-semibold" : "text-gray-800"
                         }`}
                       >
                         {ch.name}
@@ -506,32 +537,53 @@ export default function ChannelsPanel() {
             ) : (
               publicChannels.map((c) => {
                 const active = isChannelActive(pathname, c.id);
+                const bannerSrc = getBannerUrl(c);
 
                 return (
                   <div
                     key={c.id}
-                    className={`px-2 py-2 rounded flex justify-between items-center transition ${
+                    className={`px-2 py-2 rounded flex justify-between items-center gap-2 transition ${
                       active
                         ? "bg-blue-100 border border-blue-200"
                         : "hover:bg-gray-100"
                     }`}
                   >
-                    <div className="text-sm min-w-0">
-                      <div
-                        className={`font-medium truncate ${
-                          active ? "text-blue-700" : ""
-                        }`}
-                      >
-                        {c.name}
-                      </div>
-                      <div
-                        className={`text-xs ${
-                          active ? "text-blue-600" : "text-gray-500"
-                        }`}
-                      >
-                        {active
-                          ? "Current channel"
-                          : `Requires request • ${c.memberCount} members`}
+                    <div className="flex items-center gap-2 min-w-0">
+                      {bannerSrc ? (
+                        <img
+                          src={bannerSrc}
+                          alt={c.name}
+                          className="w-6 h-6 rounded object-cover flex-shrink-0"
+                        />
+                      ) : (
+                        <div
+                          className={`w-6 h-6 rounded flex items-center justify-center text-xs flex-shrink-0 ${
+                            active
+                              ? "bg-blue-200 text-blue-700"
+                              : "bg-gray-300 text-gray-600"
+                          }`}
+                        >
+                          #
+                        </div>
+                      )}
+
+                      <div className="text-sm min-w-0">
+                        <div
+                          className={`font-medium truncate ${
+                            active ? "text-blue-700" : ""
+                          }`}
+                        >
+                          {c.name}
+                        </div>
+                        <div
+                          className={`text-xs ${
+                            active ? "text-blue-600" : "text-gray-500"
+                          }`}
+                        >
+                          {active
+                            ? "Current channel"
+                            : `Requires request • ${c.memberCount} members`}
+                        </div>
                       </div>
                     </div>
 
@@ -610,7 +662,9 @@ export default function ChannelsPanel() {
               className="border rounded px-2 py-2 w-full text-sm"
               value={publicAccessMode}
               onChange={(e) =>
-                setPublicAccessMode(e.currentTarget.value as "open" | "request")
+                setPublicAccessMode(
+                  e.currentTarget.value as "open" | "request"
+                )
               }
             >
               <option value="request">Require join request</option>
@@ -651,6 +705,7 @@ export default function ChannelsPanel() {
           ) : (
             userResults.map((u) => {
               const already = pickedMembers.some((m) => m.userId === u.id);
+
               return (
                 <div
                   key={u.id}
@@ -705,8 +760,8 @@ export default function ChannelsPanel() {
                       const role = e.currentTarget.value as MemberPick["role"];
                       setPickedMembers((prev) =>
                         prev.map((x) =>
-                          x.userId === m.userId ? { ...x, role } : x,
-                        ),
+                          x.userId === m.userId ? { ...x, role } : x
+                        )
                       );
                     }}
                   >
@@ -721,7 +776,7 @@ export default function ChannelsPanel() {
                     variant="light"
                     onClick={() =>
                       setPickedMembers((prev) =>
-                        prev.filter((x) => x.userId !== m.userId),
+                        prev.filter((x) => x.userId !== m.userId)
                       )
                     }
                   >
@@ -777,6 +832,7 @@ export default function ChannelsPanel() {
             />
           </div>
         )}
+
         <div className="mt-4 flex justify-end gap-2">
           <Button variant="outline" onClick={() => setCropModalOpen(false)}>
             Cancel

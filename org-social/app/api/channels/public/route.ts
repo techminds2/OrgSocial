@@ -4,6 +4,16 @@ import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { getUserIdFromRequest } from "@/lib/auth";
 
+function normalizeMediaUrl(key?: string | null) {
+  if (!key) return null;
+  if (key.startsWith("http://") || key.startsWith("https://")) return key;
+
+  return `/api/files/${key
+    .split("/")
+    .map((part) => encodeURIComponent(part))
+    .join("/")}`;
+}
+
 export async function GET(req: NextRequest) {
   try {
     const userId = await getUserIdFromRequest(req);
@@ -43,6 +53,8 @@ export async function GET(req: NextRequest) {
         createdAt: c.createdAt,
         visibility: c.visibility,
         publicAccessMode: c.publicAccessMode,
+        bannerKey: c.bannerKey ?? null,
+        bannerUrl: normalizeMediaUrl(c.bannerKey),
         memberCount: c._count.members,
         isMember: false,
         hasPendingRequest: isRequestBased ? !!pending : false,
