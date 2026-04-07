@@ -1,5 +1,6 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
+import { requireViewer } from "@/lib/requireAuth";
 
 function todayNepalYmd() {
   const now = new Date();
@@ -14,17 +15,25 @@ function todayNepalYmd() {
   return `${y}-${m}-${d}`;
 }
 
-export async function GET() {
+export async function GET(req: NextRequest) {
   try {
-    // replace this later with actual logged-in user id
-    const userId = 1;
+    const viewer = await requireViewer(req);
+
+    if (!viewer) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
 
     const today = todayNepalYmd();
 
     const notes = await prisma.calendarNote.findMany({
       where: {
-        userId,
+        userId: viewer.userId,
         noteDate: today,
+      },
+      include: {
+        createdBy: {
+          select: { id: true, username: true, email: true },
+        },
       },
       orderBy: { createdAt: "asc" },
     });
@@ -32,13 +41,17 @@ export async function GET() {
     const reminders = notes.map((n) => ({
       id: `calendar-note-${n.id}`,
       sourceId: n.id,
-      type: "calendar-note",
+      type: n.type,
       message: n.title,
       description: n.description || "",
       createdAt: n.createdAt,
       href: `/profile?date=${n.noteDate}`,
       noteDate: n.noteDate,
       isRead: false,
+      createdBy: n.createdBy,
+      createdById: n.createdById,
+      userId: n.userId,
+      isAdminAdded: n.createdById !== n.userId,
     }));
 
     return NextResponse.json({ reminders });

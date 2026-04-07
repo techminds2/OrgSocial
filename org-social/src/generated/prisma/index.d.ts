@@ -101,6 +101,15 @@ export namespace $Enums {
 export type PublicAccessMode = (typeof PublicAccessMode)[keyof typeof PublicAccessMode]
 
 
+export const CalendarNoteType: {
+  PERSONAL: 'PERSONAL',
+  MEETING: 'MEETING',
+  ADMIN_REMINDER: 'ADMIN_REMINDER'
+};
+
+export type CalendarNoteType = (typeof CalendarNoteType)[keyof typeof CalendarNoteType]
+
+
 export const Priority: {
   Low: 'Low',
   Medium: 'Medium',
@@ -114,6 +123,10 @@ export type Priority = (typeof Priority)[keyof typeof Priority]
 export type PublicAccessMode = $Enums.PublicAccessMode
 
 export const PublicAccessMode: typeof $Enums.PublicAccessMode
+
+export type CalendarNoteType = $Enums.CalendarNoteType
+
+export const CalendarNoteType: typeof $Enums.CalendarNoteType
 
 export type Priority = $Enums.Priority
 
@@ -2178,6 +2191,8 @@ export namespace Prisma {
     notificationsActed: number
     dailyReports: number
     regionalReports: number
+    calendarNotesForUser: number
+    calendarNotesCreated: number
   }
 
   export type UserCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -2194,6 +2209,8 @@ export namespace Prisma {
     notificationsActed?: boolean | UserCountOutputTypeCountNotificationsActedArgs
     dailyReports?: boolean | UserCountOutputTypeCountDailyReportsArgs
     regionalReports?: boolean | UserCountOutputTypeCountRegionalReportsArgs
+    calendarNotesForUser?: boolean | UserCountOutputTypeCountCalendarNotesForUserArgs
+    calendarNotesCreated?: boolean | UserCountOutputTypeCountCalendarNotesCreatedArgs
   }
 
   // Custom InputTypes
@@ -2296,6 +2313,20 @@ export namespace Prisma {
    */
   export type UserCountOutputTypeCountRegionalReportsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: RegionalDailyReportWhereInput
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountCalendarNotesForUserArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: CalendarNoteWhereInput
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountCalendarNotesCreatedArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: CalendarNoteWhereInput
   }
 
 
@@ -2709,6 +2740,8 @@ export namespace Prisma {
     notificationsActed?: boolean | User$notificationsActedArgs<ExtArgs>
     dailyReports?: boolean | User$dailyReportsArgs<ExtArgs>
     regionalReports?: boolean | User$regionalReportsArgs<ExtArgs>
+    calendarNotesForUser?: boolean | User$calendarNotesForUserArgs<ExtArgs>
+    calendarNotesCreated?: boolean | User$calendarNotesCreatedArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["user"]>
 
@@ -2760,6 +2793,8 @@ export namespace Prisma {
     notificationsActed?: boolean | User$notificationsActedArgs<ExtArgs>
     dailyReports?: boolean | User$dailyReportsArgs<ExtArgs>
     regionalReports?: boolean | User$regionalReportsArgs<ExtArgs>
+    calendarNotesForUser?: boolean | User$calendarNotesForUserArgs<ExtArgs>
+    calendarNotesCreated?: boolean | User$calendarNotesCreatedArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type UserIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -2786,6 +2821,8 @@ export namespace Prisma {
       notificationsActed: Prisma.$NotificationPayload<ExtArgs>[]
       dailyReports: Prisma.$DailyReportPayload<ExtArgs>[]
       regionalReports: Prisma.$RegionalDailyReportPayload<ExtArgs>[]
+      calendarNotesForUser: Prisma.$CalendarNotePayload<ExtArgs>[]
+      calendarNotesCreated: Prisma.$CalendarNotePayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: number
@@ -3203,6 +3240,8 @@ export namespace Prisma {
     notificationsActed<T extends User$notificationsActedArgs<ExtArgs> = {}>(args?: Subset<T, User$notificationsActedArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$NotificationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     dailyReports<T extends User$dailyReportsArgs<ExtArgs> = {}>(args?: Subset<T, User$dailyReportsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$DailyReportPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     regionalReports<T extends User$regionalReportsArgs<ExtArgs> = {}>(args?: Subset<T, User$regionalReportsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$RegionalDailyReportPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    calendarNotesForUser<T extends User$calendarNotesForUserArgs<ExtArgs> = {}>(args?: Subset<T, User$calendarNotesForUserArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CalendarNotePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    calendarNotesCreated<T extends User$calendarNotesCreatedArgs<ExtArgs> = {}>(args?: Subset<T, User$calendarNotesCreatedArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CalendarNotePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -3963,6 +4002,54 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: RegionalDailyReportScalarFieldEnum | RegionalDailyReportScalarFieldEnum[]
+  }
+
+  /**
+   * User.calendarNotesForUser
+   */
+  export type User$calendarNotesForUserArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CalendarNote
+     */
+    select?: CalendarNoteSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CalendarNote
+     */
+    omit?: CalendarNoteOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CalendarNoteInclude<ExtArgs> | null
+    where?: CalendarNoteWhereInput
+    orderBy?: CalendarNoteOrderByWithRelationInput | CalendarNoteOrderByWithRelationInput[]
+    cursor?: CalendarNoteWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: CalendarNoteScalarFieldEnum | CalendarNoteScalarFieldEnum[]
+  }
+
+  /**
+   * User.calendarNotesCreated
+   */
+  export type User$calendarNotesCreatedArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CalendarNote
+     */
+    select?: CalendarNoteSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CalendarNote
+     */
+    omit?: CalendarNoteOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CalendarNoteInclude<ExtArgs> | null
+    where?: CalendarNoteWhereInput
+    orderBy?: CalendarNoteOrderByWithRelationInput | CalendarNoteOrderByWithRelationInput[]
+    cursor?: CalendarNoteWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: CalendarNoteScalarFieldEnum | CalendarNoteScalarFieldEnum[]
   }
 
   /**
@@ -19239,19 +19326,23 @@ export namespace Prisma {
   export type CalendarNoteAvgAggregateOutputType = {
     id: number | null
     userId: number | null
+    createdById: number | null
   }
 
   export type CalendarNoteSumAggregateOutputType = {
     id: number | null
     userId: number | null
+    createdById: number | null
   }
 
   export type CalendarNoteMinAggregateOutputType = {
     id: number | null
     userId: number | null
+    createdById: number | null
     noteDate: string | null
     title: string | null
     description: string | null
+    type: $Enums.CalendarNoteType | null
     createdAt: Date | null
     updatedAt: Date | null
   }
@@ -19259,9 +19350,11 @@ export namespace Prisma {
   export type CalendarNoteMaxAggregateOutputType = {
     id: number | null
     userId: number | null
+    createdById: number | null
     noteDate: string | null
     title: string | null
     description: string | null
+    type: $Enums.CalendarNoteType | null
     createdAt: Date | null
     updatedAt: Date | null
   }
@@ -19269,9 +19362,11 @@ export namespace Prisma {
   export type CalendarNoteCountAggregateOutputType = {
     id: number
     userId: number
+    createdById: number
     noteDate: number
     title: number
     description: number
+    type: number
     createdAt: number
     updatedAt: number
     _all: number
@@ -19281,19 +19376,23 @@ export namespace Prisma {
   export type CalendarNoteAvgAggregateInputType = {
     id?: true
     userId?: true
+    createdById?: true
   }
 
   export type CalendarNoteSumAggregateInputType = {
     id?: true
     userId?: true
+    createdById?: true
   }
 
   export type CalendarNoteMinAggregateInputType = {
     id?: true
     userId?: true
+    createdById?: true
     noteDate?: true
     title?: true
     description?: true
+    type?: true
     createdAt?: true
     updatedAt?: true
   }
@@ -19301,9 +19400,11 @@ export namespace Prisma {
   export type CalendarNoteMaxAggregateInputType = {
     id?: true
     userId?: true
+    createdById?: true
     noteDate?: true
     title?: true
     description?: true
+    type?: true
     createdAt?: true
     updatedAt?: true
   }
@@ -19311,9 +19412,11 @@ export namespace Prisma {
   export type CalendarNoteCountAggregateInputType = {
     id?: true
     userId?: true
+    createdById?: true
     noteDate?: true
     title?: true
     description?: true
+    type?: true
     createdAt?: true
     updatedAt?: true
     _all?: true
@@ -19408,9 +19511,11 @@ export namespace Prisma {
   export type CalendarNoteGroupByOutputType = {
     id: number
     userId: number
+    createdById: number
     noteDate: string
     title: string
     description: string | null
+    type: $Enums.CalendarNoteType
     createdAt: Date
     updatedAt: Date
     _count: CalendarNoteCountAggregateOutputType | null
@@ -19437,54 +19542,85 @@ export namespace Prisma {
   export type CalendarNoteSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     userId?: boolean
+    createdById?: boolean
     noteDate?: boolean
     title?: boolean
     description?: boolean
+    type?: boolean
     createdAt?: boolean
     updatedAt?: boolean
+    user?: boolean | UserDefaultArgs<ExtArgs>
+    createdBy?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["calendarNote"]>
 
   export type CalendarNoteSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     userId?: boolean
+    createdById?: boolean
     noteDate?: boolean
     title?: boolean
     description?: boolean
+    type?: boolean
     createdAt?: boolean
     updatedAt?: boolean
+    user?: boolean | UserDefaultArgs<ExtArgs>
+    createdBy?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["calendarNote"]>
 
   export type CalendarNoteSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     userId?: boolean
+    createdById?: boolean
     noteDate?: boolean
     title?: boolean
     description?: boolean
+    type?: boolean
     createdAt?: boolean
     updatedAt?: boolean
+    user?: boolean | UserDefaultArgs<ExtArgs>
+    createdBy?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["calendarNote"]>
 
   export type CalendarNoteSelectScalar = {
     id?: boolean
     userId?: boolean
+    createdById?: boolean
     noteDate?: boolean
     title?: boolean
     description?: boolean
+    type?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }
 
-  export type CalendarNoteOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "userId" | "noteDate" | "title" | "description" | "createdAt" | "updatedAt", ExtArgs["result"]["calendarNote"]>
+  export type CalendarNoteOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "userId" | "createdById" | "noteDate" | "title" | "description" | "type" | "createdAt" | "updatedAt", ExtArgs["result"]["calendarNote"]>
+  export type CalendarNoteInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | UserDefaultArgs<ExtArgs>
+    createdBy?: boolean | UserDefaultArgs<ExtArgs>
+  }
+  export type CalendarNoteIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | UserDefaultArgs<ExtArgs>
+    createdBy?: boolean | UserDefaultArgs<ExtArgs>
+  }
+  export type CalendarNoteIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | UserDefaultArgs<ExtArgs>
+    createdBy?: boolean | UserDefaultArgs<ExtArgs>
+  }
 
   export type $CalendarNotePayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "CalendarNote"
-    objects: {}
+    objects: {
+      user: Prisma.$UserPayload<ExtArgs>
+      createdBy: Prisma.$UserPayload<ExtArgs>
+    }
     scalars: $Extensions.GetPayloadResult<{
       id: number
       userId: number
+      createdById: number
       noteDate: string
       title: string
       description: string | null
+      type: $Enums.CalendarNoteType
       createdAt: Date
       updatedAt: Date
     }, ExtArgs["result"]["calendarNote"]>
@@ -19881,6 +20017,8 @@ export namespace Prisma {
    */
   export interface Prisma__CalendarNoteClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
+    user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    createdBy<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -19912,9 +20050,11 @@ export namespace Prisma {
   interface CalendarNoteFieldRefs {
     readonly id: FieldRef<"CalendarNote", 'Int'>
     readonly userId: FieldRef<"CalendarNote", 'Int'>
+    readonly createdById: FieldRef<"CalendarNote", 'Int'>
     readonly noteDate: FieldRef<"CalendarNote", 'String'>
     readonly title: FieldRef<"CalendarNote", 'String'>
     readonly description: FieldRef<"CalendarNote", 'String'>
+    readonly type: FieldRef<"CalendarNote", 'CalendarNoteType'>
     readonly createdAt: FieldRef<"CalendarNote", 'DateTime'>
     readonly updatedAt: FieldRef<"CalendarNote", 'DateTime'>
   }
@@ -19934,6 +20074,10 @@ export namespace Prisma {
      */
     omit?: CalendarNoteOmit<ExtArgs> | null
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CalendarNoteInclude<ExtArgs> | null
+    /**
      * Filter, which CalendarNote to fetch.
      */
     where: CalendarNoteWhereUniqueInput
@@ -19952,6 +20096,10 @@ export namespace Prisma {
      */
     omit?: CalendarNoteOmit<ExtArgs> | null
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CalendarNoteInclude<ExtArgs> | null
+    /**
      * Filter, which CalendarNote to fetch.
      */
     where: CalendarNoteWhereUniqueInput
@@ -19969,6 +20117,10 @@ export namespace Prisma {
      * Omit specific fields from the CalendarNote
      */
     omit?: CalendarNoteOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CalendarNoteInclude<ExtArgs> | null
     /**
      * Filter, which CalendarNote to fetch.
      */
@@ -20018,6 +20170,10 @@ export namespace Prisma {
      */
     omit?: CalendarNoteOmit<ExtArgs> | null
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CalendarNoteInclude<ExtArgs> | null
+    /**
      * Filter, which CalendarNote to fetch.
      */
     where?: CalendarNoteWhereInput
@@ -20066,6 +20222,10 @@ export namespace Prisma {
      */
     omit?: CalendarNoteOmit<ExtArgs> | null
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CalendarNoteInclude<ExtArgs> | null
+    /**
      * Filter, which CalendarNotes to fetch.
      */
     where?: CalendarNoteWhereInput
@@ -20109,6 +20269,10 @@ export namespace Prisma {
      */
     omit?: CalendarNoteOmit<ExtArgs> | null
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CalendarNoteInclude<ExtArgs> | null
+    /**
      * The data needed to create a CalendarNote.
      */
     data: XOR<CalendarNoteCreateInput, CalendarNoteUncheckedCreateInput>
@@ -20142,6 +20306,10 @@ export namespace Prisma {
      */
     data: CalendarNoteCreateManyInput | CalendarNoteCreateManyInput[]
     skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CalendarNoteIncludeCreateManyAndReturn<ExtArgs> | null
   }
 
   /**
@@ -20156,6 +20324,10 @@ export namespace Prisma {
      * Omit specific fields from the CalendarNote
      */
     omit?: CalendarNoteOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CalendarNoteInclude<ExtArgs> | null
     /**
      * The data needed to update a CalendarNote.
      */
@@ -20208,6 +20380,10 @@ export namespace Prisma {
      * Limit how many CalendarNotes to update.
      */
     limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CalendarNoteIncludeUpdateManyAndReturn<ExtArgs> | null
   }
 
   /**
@@ -20222,6 +20398,10 @@ export namespace Prisma {
      * Omit specific fields from the CalendarNote
      */
     omit?: CalendarNoteOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CalendarNoteInclude<ExtArgs> | null
     /**
      * The filter to search for the CalendarNote to update in case it exists.
      */
@@ -20248,6 +20428,10 @@ export namespace Prisma {
      * Omit specific fields from the CalendarNote
      */
     omit?: CalendarNoteOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CalendarNoteInclude<ExtArgs> | null
     /**
      * Filter which CalendarNote to delete.
      */
@@ -20280,6 +20464,10 @@ export namespace Prisma {
      * Omit specific fields from the CalendarNote
      */
     omit?: CalendarNoteOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CalendarNoteInclude<ExtArgs> | null
   }
 
 
@@ -20486,9 +20674,11 @@ export namespace Prisma {
   export const CalendarNoteScalarFieldEnum: {
     id: 'id',
     userId: 'userId',
+    createdById: 'createdById',
     noteDate: 'noteDate',
     title: 'title',
     description: 'description',
+    type: 'type',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt'
   };
@@ -20634,6 +20824,20 @@ export namespace Prisma {
 
 
   /**
+   * Reference to a field of type 'CalendarNoteType'
+   */
+  export type EnumCalendarNoteTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'CalendarNoteType'>
+    
+
+
+  /**
+   * Reference to a field of type 'CalendarNoteType[]'
+   */
+  export type ListEnumCalendarNoteTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'CalendarNoteType[]'>
+    
+
+
+  /**
    * Reference to a field of type 'Float'
    */
   export type FloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float'>
@@ -20675,6 +20879,8 @@ export namespace Prisma {
     notificationsActed?: NotificationListRelationFilter
     dailyReports?: DailyReportListRelationFilter
     regionalReports?: RegionalDailyReportListRelationFilter
+    calendarNotesForUser?: CalendarNoteListRelationFilter
+    calendarNotesCreated?: CalendarNoteListRelationFilter
   }
 
   export type UserOrderByWithRelationInput = {
@@ -20699,6 +20905,8 @@ export namespace Prisma {
     notificationsActed?: NotificationOrderByRelationAggregateInput
     dailyReports?: DailyReportOrderByRelationAggregateInput
     regionalReports?: RegionalDailyReportOrderByRelationAggregateInput
+    calendarNotesForUser?: CalendarNoteOrderByRelationAggregateInput
+    calendarNotesCreated?: CalendarNoteOrderByRelationAggregateInput
   }
 
   export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -20726,6 +20934,8 @@ export namespace Prisma {
     notificationsActed?: NotificationListRelationFilter
     dailyReports?: DailyReportListRelationFilter
     regionalReports?: RegionalDailyReportListRelationFilter
+    calendarNotesForUser?: CalendarNoteListRelationFilter
+    calendarNotesCreated?: CalendarNoteListRelationFilter
   }, "id" | "username" | "email">
 
   export type UserOrderByWithAggregationInput = {
@@ -21729,21 +21939,29 @@ export namespace Prisma {
     NOT?: CalendarNoteWhereInput | CalendarNoteWhereInput[]
     id?: IntFilter<"CalendarNote"> | number
     userId?: IntFilter<"CalendarNote"> | number
+    createdById?: IntFilter<"CalendarNote"> | number
     noteDate?: StringFilter<"CalendarNote"> | string
     title?: StringFilter<"CalendarNote"> | string
     description?: StringNullableFilter<"CalendarNote"> | string | null
+    type?: EnumCalendarNoteTypeFilter<"CalendarNote"> | $Enums.CalendarNoteType
     createdAt?: DateTimeFilter<"CalendarNote"> | Date | string
     updatedAt?: DateTimeFilter<"CalendarNote"> | Date | string
+    user?: XOR<UserScalarRelationFilter, UserWhereInput>
+    createdBy?: XOR<UserScalarRelationFilter, UserWhereInput>
   }
 
   export type CalendarNoteOrderByWithRelationInput = {
     id?: SortOrder
     userId?: SortOrder
+    createdById?: SortOrder
     noteDate?: SortOrder
     title?: SortOrder
     description?: SortOrderInput | SortOrder
+    type?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    user?: UserOrderByWithRelationInput
+    createdBy?: UserOrderByWithRelationInput
   }
 
   export type CalendarNoteWhereUniqueInput = Prisma.AtLeast<{
@@ -21752,19 +21970,25 @@ export namespace Prisma {
     OR?: CalendarNoteWhereInput[]
     NOT?: CalendarNoteWhereInput | CalendarNoteWhereInput[]
     userId?: IntFilter<"CalendarNote"> | number
+    createdById?: IntFilter<"CalendarNote"> | number
     noteDate?: StringFilter<"CalendarNote"> | string
     title?: StringFilter<"CalendarNote"> | string
     description?: StringNullableFilter<"CalendarNote"> | string | null
+    type?: EnumCalendarNoteTypeFilter<"CalendarNote"> | $Enums.CalendarNoteType
     createdAt?: DateTimeFilter<"CalendarNote"> | Date | string
     updatedAt?: DateTimeFilter<"CalendarNote"> | Date | string
+    user?: XOR<UserScalarRelationFilter, UserWhereInput>
+    createdBy?: XOR<UserScalarRelationFilter, UserWhereInput>
   }, "id">
 
   export type CalendarNoteOrderByWithAggregationInput = {
     id?: SortOrder
     userId?: SortOrder
+    createdById?: SortOrder
     noteDate?: SortOrder
     title?: SortOrder
     description?: SortOrderInput | SortOrder
+    type?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     _count?: CalendarNoteCountOrderByAggregateInput
@@ -21780,9 +22004,11 @@ export namespace Prisma {
     NOT?: CalendarNoteScalarWhereWithAggregatesInput | CalendarNoteScalarWhereWithAggregatesInput[]
     id?: IntWithAggregatesFilter<"CalendarNote"> | number
     userId?: IntWithAggregatesFilter<"CalendarNote"> | number
+    createdById?: IntWithAggregatesFilter<"CalendarNote"> | number
     noteDate?: StringWithAggregatesFilter<"CalendarNote"> | string
     title?: StringWithAggregatesFilter<"CalendarNote"> | string
     description?: StringNullableWithAggregatesFilter<"CalendarNote"> | string | null
+    type?: EnumCalendarNoteTypeWithAggregatesFilter<"CalendarNote"> | $Enums.CalendarNoteType
     createdAt?: DateTimeWithAggregatesFilter<"CalendarNote"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"CalendarNote"> | Date | string
   }
@@ -21807,6 +22033,8 @@ export namespace Prisma {
     notificationsActed?: NotificationCreateNestedManyWithoutActorInput
     dailyReports?: DailyReportCreateNestedManyWithoutAuthorInput
     regionalReports?: RegionalDailyReportCreateNestedManyWithoutAuthorInput
+    calendarNotesForUser?: CalendarNoteCreateNestedManyWithoutUserInput
+    calendarNotesCreated?: CalendarNoteCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateInput = {
@@ -21830,6 +22058,8 @@ export namespace Prisma {
     notificationsActed?: NotificationUncheckedCreateNestedManyWithoutActorInput
     dailyReports?: DailyReportUncheckedCreateNestedManyWithoutAuthorInput
     regionalReports?: RegionalDailyReportUncheckedCreateNestedManyWithoutAuthorInput
+    calendarNotesForUser?: CalendarNoteUncheckedCreateNestedManyWithoutUserInput
+    calendarNotesCreated?: CalendarNoteUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUpdateInput = {
@@ -21852,6 +22082,8 @@ export namespace Prisma {
     notificationsActed?: NotificationUpdateManyWithoutActorNestedInput
     dailyReports?: DailyReportUpdateManyWithoutAuthorNestedInput
     regionalReports?: RegionalDailyReportUpdateManyWithoutAuthorNestedInput
+    calendarNotesForUser?: CalendarNoteUpdateManyWithoutUserNestedInput
+    calendarNotesCreated?: CalendarNoteUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateInput = {
@@ -21875,6 +22107,8 @@ export namespace Prisma {
     notificationsActed?: NotificationUncheckedUpdateManyWithoutActorNestedInput
     dailyReports?: DailyReportUncheckedUpdateManyWithoutAuthorNestedInput
     regionalReports?: RegionalDailyReportUncheckedUpdateManyWithoutAuthorNestedInput
+    calendarNotesForUser?: CalendarNoteUncheckedUpdateManyWithoutUserNestedInput
+    calendarNotesCreated?: CalendarNoteUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserCreateManyInput = {
@@ -22829,39 +23063,47 @@ export namespace Prisma {
   }
 
   export type CalendarNoteCreateInput = {
-    userId: number
     noteDate: string
     title: string
     description?: string | null
+    type?: $Enums.CalendarNoteType
     createdAt?: Date | string
     updatedAt?: Date | string
+    user: UserCreateNestedOneWithoutCalendarNotesForUserInput
+    createdBy: UserCreateNestedOneWithoutCalendarNotesCreatedInput
   }
 
   export type CalendarNoteUncheckedCreateInput = {
     id?: number
     userId: number
+    createdById: number
     noteDate: string
     title: string
     description?: string | null
+    type?: $Enums.CalendarNoteType
     createdAt?: Date | string
     updatedAt?: Date | string
   }
 
   export type CalendarNoteUpdateInput = {
-    userId?: IntFieldUpdateOperationsInput | number
     noteDate?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
+    type?: EnumCalendarNoteTypeFieldUpdateOperationsInput | $Enums.CalendarNoteType
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    user?: UserUpdateOneRequiredWithoutCalendarNotesForUserNestedInput
+    createdBy?: UserUpdateOneRequiredWithoutCalendarNotesCreatedNestedInput
   }
 
   export type CalendarNoteUncheckedUpdateInput = {
     id?: IntFieldUpdateOperationsInput | number
     userId?: IntFieldUpdateOperationsInput | number
+    createdById?: IntFieldUpdateOperationsInput | number
     noteDate?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
+    type?: EnumCalendarNoteTypeFieldUpdateOperationsInput | $Enums.CalendarNoteType
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -22869,18 +23111,20 @@ export namespace Prisma {
   export type CalendarNoteCreateManyInput = {
     id?: number
     userId: number
+    createdById: number
     noteDate: string
     title: string
     description?: string | null
+    type?: $Enums.CalendarNoteType
     createdAt?: Date | string
     updatedAt?: Date | string
   }
 
   export type CalendarNoteUpdateManyMutationInput = {
-    userId?: IntFieldUpdateOperationsInput | number
     noteDate?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
+    type?: EnumCalendarNoteTypeFieldUpdateOperationsInput | $Enums.CalendarNoteType
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -22888,9 +23132,11 @@ export namespace Prisma {
   export type CalendarNoteUncheckedUpdateManyInput = {
     id?: IntFieldUpdateOperationsInput | number
     userId?: IntFieldUpdateOperationsInput | number
+    createdById?: IntFieldUpdateOperationsInput | number
     noteDate?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
+    type?: EnumCalendarNoteTypeFieldUpdateOperationsInput | $Enums.CalendarNoteType
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -23029,6 +23275,12 @@ export namespace Prisma {
     none?: RegionalDailyReportWhereInput
   }
 
+  export type CalendarNoteListRelationFilter = {
+    every?: CalendarNoteWhereInput
+    some?: CalendarNoteWhereInput
+    none?: CalendarNoteWhereInput
+  }
+
   export type SortOrderInput = {
     sort: SortOrder
     nulls?: NullsOrder
@@ -23079,6 +23331,10 @@ export namespace Prisma {
   }
 
   export type RegionalDailyReportOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type CalendarNoteOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -23992,12 +24248,21 @@ export namespace Prisma {
     _max?: NestedJsonNullableFilter<$PrismaModel>
   }
 
+  export type EnumCalendarNoteTypeFilter<$PrismaModel = never> = {
+    equals?: $Enums.CalendarNoteType | EnumCalendarNoteTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.CalendarNoteType[] | ListEnumCalendarNoteTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.CalendarNoteType[] | ListEnumCalendarNoteTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumCalendarNoteTypeFilter<$PrismaModel> | $Enums.CalendarNoteType
+  }
+
   export type CalendarNoteCountOrderByAggregateInput = {
     id?: SortOrder
     userId?: SortOrder
+    createdById?: SortOrder
     noteDate?: SortOrder
     title?: SortOrder
     description?: SortOrder
+    type?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -24005,14 +24270,17 @@ export namespace Prisma {
   export type CalendarNoteAvgOrderByAggregateInput = {
     id?: SortOrder
     userId?: SortOrder
+    createdById?: SortOrder
   }
 
   export type CalendarNoteMaxOrderByAggregateInput = {
     id?: SortOrder
     userId?: SortOrder
+    createdById?: SortOrder
     noteDate?: SortOrder
     title?: SortOrder
     description?: SortOrder
+    type?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -24020,9 +24288,11 @@ export namespace Prisma {
   export type CalendarNoteMinOrderByAggregateInput = {
     id?: SortOrder
     userId?: SortOrder
+    createdById?: SortOrder
     noteDate?: SortOrder
     title?: SortOrder
     description?: SortOrder
+    type?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -24030,6 +24300,17 @@ export namespace Prisma {
   export type CalendarNoteSumOrderByAggregateInput = {
     id?: SortOrder
     userId?: SortOrder
+    createdById?: SortOrder
+  }
+
+  export type EnumCalendarNoteTypeWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.CalendarNoteType | EnumCalendarNoteTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.CalendarNoteType[] | ListEnumCalendarNoteTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.CalendarNoteType[] | ListEnumCalendarNoteTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumCalendarNoteTypeWithAggregatesFilter<$PrismaModel> | $Enums.CalendarNoteType
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumCalendarNoteTypeFilter<$PrismaModel>
+    _max?: NestedEnumCalendarNoteTypeFilter<$PrismaModel>
   }
 
   export type PostCreateNestedManyWithoutAuthorInput = {
@@ -24129,6 +24410,20 @@ export namespace Prisma {
     connect?: RegionalDailyReportWhereUniqueInput | RegionalDailyReportWhereUniqueInput[]
   }
 
+  export type CalendarNoteCreateNestedManyWithoutUserInput = {
+    create?: XOR<CalendarNoteCreateWithoutUserInput, CalendarNoteUncheckedCreateWithoutUserInput> | CalendarNoteCreateWithoutUserInput[] | CalendarNoteUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: CalendarNoteCreateOrConnectWithoutUserInput | CalendarNoteCreateOrConnectWithoutUserInput[]
+    createMany?: CalendarNoteCreateManyUserInputEnvelope
+    connect?: CalendarNoteWhereUniqueInput | CalendarNoteWhereUniqueInput[]
+  }
+
+  export type CalendarNoteCreateNestedManyWithoutCreatedByInput = {
+    create?: XOR<CalendarNoteCreateWithoutCreatedByInput, CalendarNoteUncheckedCreateWithoutCreatedByInput> | CalendarNoteCreateWithoutCreatedByInput[] | CalendarNoteUncheckedCreateWithoutCreatedByInput[]
+    connectOrCreate?: CalendarNoteCreateOrConnectWithoutCreatedByInput | CalendarNoteCreateOrConnectWithoutCreatedByInput[]
+    createMany?: CalendarNoteCreateManyCreatedByInputEnvelope
+    connect?: CalendarNoteWhereUniqueInput | CalendarNoteWhereUniqueInput[]
+  }
+
   export type PostUncheckedCreateNestedManyWithoutAuthorInput = {
     create?: XOR<PostCreateWithoutAuthorInput, PostUncheckedCreateWithoutAuthorInput> | PostCreateWithoutAuthorInput[] | PostUncheckedCreateWithoutAuthorInput[]
     connectOrCreate?: PostCreateOrConnectWithoutAuthorInput | PostCreateOrConnectWithoutAuthorInput[]
@@ -24218,6 +24513,20 @@ export namespace Prisma {
     connectOrCreate?: RegionalDailyReportCreateOrConnectWithoutAuthorInput | RegionalDailyReportCreateOrConnectWithoutAuthorInput[]
     createMany?: RegionalDailyReportCreateManyAuthorInputEnvelope
     connect?: RegionalDailyReportWhereUniqueInput | RegionalDailyReportWhereUniqueInput[]
+  }
+
+  export type CalendarNoteUncheckedCreateNestedManyWithoutUserInput = {
+    create?: XOR<CalendarNoteCreateWithoutUserInput, CalendarNoteUncheckedCreateWithoutUserInput> | CalendarNoteCreateWithoutUserInput[] | CalendarNoteUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: CalendarNoteCreateOrConnectWithoutUserInput | CalendarNoteCreateOrConnectWithoutUserInput[]
+    createMany?: CalendarNoteCreateManyUserInputEnvelope
+    connect?: CalendarNoteWhereUniqueInput | CalendarNoteWhereUniqueInput[]
+  }
+
+  export type CalendarNoteUncheckedCreateNestedManyWithoutCreatedByInput = {
+    create?: XOR<CalendarNoteCreateWithoutCreatedByInput, CalendarNoteUncheckedCreateWithoutCreatedByInput> | CalendarNoteCreateWithoutCreatedByInput[] | CalendarNoteUncheckedCreateWithoutCreatedByInput[]
+    connectOrCreate?: CalendarNoteCreateOrConnectWithoutCreatedByInput | CalendarNoteCreateOrConnectWithoutCreatedByInput[]
+    createMany?: CalendarNoteCreateManyCreatedByInputEnvelope
+    connect?: CalendarNoteWhereUniqueInput | CalendarNoteWhereUniqueInput[]
   }
 
   export type StringFieldUpdateOperationsInput = {
@@ -24424,6 +24733,34 @@ export namespace Prisma {
     deleteMany?: RegionalDailyReportScalarWhereInput | RegionalDailyReportScalarWhereInput[]
   }
 
+  export type CalendarNoteUpdateManyWithoutUserNestedInput = {
+    create?: XOR<CalendarNoteCreateWithoutUserInput, CalendarNoteUncheckedCreateWithoutUserInput> | CalendarNoteCreateWithoutUserInput[] | CalendarNoteUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: CalendarNoteCreateOrConnectWithoutUserInput | CalendarNoteCreateOrConnectWithoutUserInput[]
+    upsert?: CalendarNoteUpsertWithWhereUniqueWithoutUserInput | CalendarNoteUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: CalendarNoteCreateManyUserInputEnvelope
+    set?: CalendarNoteWhereUniqueInput | CalendarNoteWhereUniqueInput[]
+    disconnect?: CalendarNoteWhereUniqueInput | CalendarNoteWhereUniqueInput[]
+    delete?: CalendarNoteWhereUniqueInput | CalendarNoteWhereUniqueInput[]
+    connect?: CalendarNoteWhereUniqueInput | CalendarNoteWhereUniqueInput[]
+    update?: CalendarNoteUpdateWithWhereUniqueWithoutUserInput | CalendarNoteUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: CalendarNoteUpdateManyWithWhereWithoutUserInput | CalendarNoteUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: CalendarNoteScalarWhereInput | CalendarNoteScalarWhereInput[]
+  }
+
+  export type CalendarNoteUpdateManyWithoutCreatedByNestedInput = {
+    create?: XOR<CalendarNoteCreateWithoutCreatedByInput, CalendarNoteUncheckedCreateWithoutCreatedByInput> | CalendarNoteCreateWithoutCreatedByInput[] | CalendarNoteUncheckedCreateWithoutCreatedByInput[]
+    connectOrCreate?: CalendarNoteCreateOrConnectWithoutCreatedByInput | CalendarNoteCreateOrConnectWithoutCreatedByInput[]
+    upsert?: CalendarNoteUpsertWithWhereUniqueWithoutCreatedByInput | CalendarNoteUpsertWithWhereUniqueWithoutCreatedByInput[]
+    createMany?: CalendarNoteCreateManyCreatedByInputEnvelope
+    set?: CalendarNoteWhereUniqueInput | CalendarNoteWhereUniqueInput[]
+    disconnect?: CalendarNoteWhereUniqueInput | CalendarNoteWhereUniqueInput[]
+    delete?: CalendarNoteWhereUniqueInput | CalendarNoteWhereUniqueInput[]
+    connect?: CalendarNoteWhereUniqueInput | CalendarNoteWhereUniqueInput[]
+    update?: CalendarNoteUpdateWithWhereUniqueWithoutCreatedByInput | CalendarNoteUpdateWithWhereUniqueWithoutCreatedByInput[]
+    updateMany?: CalendarNoteUpdateManyWithWhereWithoutCreatedByInput | CalendarNoteUpdateManyWithWhereWithoutCreatedByInput[]
+    deleteMany?: CalendarNoteScalarWhereInput | CalendarNoteScalarWhereInput[]
+  }
+
   export type IntFieldUpdateOperationsInput = {
     set?: number
     increment?: number
@@ -24620,6 +24957,34 @@ export namespace Prisma {
     update?: RegionalDailyReportUpdateWithWhereUniqueWithoutAuthorInput | RegionalDailyReportUpdateWithWhereUniqueWithoutAuthorInput[]
     updateMany?: RegionalDailyReportUpdateManyWithWhereWithoutAuthorInput | RegionalDailyReportUpdateManyWithWhereWithoutAuthorInput[]
     deleteMany?: RegionalDailyReportScalarWhereInput | RegionalDailyReportScalarWhereInput[]
+  }
+
+  export type CalendarNoteUncheckedUpdateManyWithoutUserNestedInput = {
+    create?: XOR<CalendarNoteCreateWithoutUserInput, CalendarNoteUncheckedCreateWithoutUserInput> | CalendarNoteCreateWithoutUserInput[] | CalendarNoteUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: CalendarNoteCreateOrConnectWithoutUserInput | CalendarNoteCreateOrConnectWithoutUserInput[]
+    upsert?: CalendarNoteUpsertWithWhereUniqueWithoutUserInput | CalendarNoteUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: CalendarNoteCreateManyUserInputEnvelope
+    set?: CalendarNoteWhereUniqueInput | CalendarNoteWhereUniqueInput[]
+    disconnect?: CalendarNoteWhereUniqueInput | CalendarNoteWhereUniqueInput[]
+    delete?: CalendarNoteWhereUniqueInput | CalendarNoteWhereUniqueInput[]
+    connect?: CalendarNoteWhereUniqueInput | CalendarNoteWhereUniqueInput[]
+    update?: CalendarNoteUpdateWithWhereUniqueWithoutUserInput | CalendarNoteUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: CalendarNoteUpdateManyWithWhereWithoutUserInput | CalendarNoteUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: CalendarNoteScalarWhereInput | CalendarNoteScalarWhereInput[]
+  }
+
+  export type CalendarNoteUncheckedUpdateManyWithoutCreatedByNestedInput = {
+    create?: XOR<CalendarNoteCreateWithoutCreatedByInput, CalendarNoteUncheckedCreateWithoutCreatedByInput> | CalendarNoteCreateWithoutCreatedByInput[] | CalendarNoteUncheckedCreateWithoutCreatedByInput[]
+    connectOrCreate?: CalendarNoteCreateOrConnectWithoutCreatedByInput | CalendarNoteCreateOrConnectWithoutCreatedByInput[]
+    upsert?: CalendarNoteUpsertWithWhereUniqueWithoutCreatedByInput | CalendarNoteUpsertWithWhereUniqueWithoutCreatedByInput[]
+    createMany?: CalendarNoteCreateManyCreatedByInputEnvelope
+    set?: CalendarNoteWhereUniqueInput | CalendarNoteWhereUniqueInput[]
+    disconnect?: CalendarNoteWhereUniqueInput | CalendarNoteWhereUniqueInput[]
+    delete?: CalendarNoteWhereUniqueInput | CalendarNoteWhereUniqueInput[]
+    connect?: CalendarNoteWhereUniqueInput | CalendarNoteWhereUniqueInput[]
+    update?: CalendarNoteUpdateWithWhereUniqueWithoutCreatedByInput | CalendarNoteUpdateWithWhereUniqueWithoutCreatedByInput[]
+    updateMany?: CalendarNoteUpdateManyWithWhereWithoutCreatedByInput | CalendarNoteUpdateManyWithWhereWithoutCreatedByInput[]
+    deleteMany?: CalendarNoteScalarWhereInput | CalendarNoteScalarWhereInput[]
   }
 
   export type UserCreateNestedOneWithoutPostsInput = {
@@ -25486,6 +25851,38 @@ export namespace Prisma {
     update?: XOR<XOR<UserUpdateToOneWithWhereWithoutRegionalReportsInput, UserUpdateWithoutRegionalReportsInput>, UserUncheckedUpdateWithoutRegionalReportsInput>
   }
 
+  export type UserCreateNestedOneWithoutCalendarNotesForUserInput = {
+    create?: XOR<UserCreateWithoutCalendarNotesForUserInput, UserUncheckedCreateWithoutCalendarNotesForUserInput>
+    connectOrCreate?: UserCreateOrConnectWithoutCalendarNotesForUserInput
+    connect?: UserWhereUniqueInput
+  }
+
+  export type UserCreateNestedOneWithoutCalendarNotesCreatedInput = {
+    create?: XOR<UserCreateWithoutCalendarNotesCreatedInput, UserUncheckedCreateWithoutCalendarNotesCreatedInput>
+    connectOrCreate?: UserCreateOrConnectWithoutCalendarNotesCreatedInput
+    connect?: UserWhereUniqueInput
+  }
+
+  export type EnumCalendarNoteTypeFieldUpdateOperationsInput = {
+    set?: $Enums.CalendarNoteType
+  }
+
+  export type UserUpdateOneRequiredWithoutCalendarNotesForUserNestedInput = {
+    create?: XOR<UserCreateWithoutCalendarNotesForUserInput, UserUncheckedCreateWithoutCalendarNotesForUserInput>
+    connectOrCreate?: UserCreateOrConnectWithoutCalendarNotesForUserInput
+    upsert?: UserUpsertWithoutCalendarNotesForUserInput
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutCalendarNotesForUserInput, UserUpdateWithoutCalendarNotesForUserInput>, UserUncheckedUpdateWithoutCalendarNotesForUserInput>
+  }
+
+  export type UserUpdateOneRequiredWithoutCalendarNotesCreatedNestedInput = {
+    create?: XOR<UserCreateWithoutCalendarNotesCreatedInput, UserUncheckedCreateWithoutCalendarNotesCreatedInput>
+    connectOrCreate?: UserCreateOrConnectWithoutCalendarNotesCreatedInput
+    upsert?: UserUpsertWithoutCalendarNotesCreatedInput
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutCalendarNotesCreatedInput, UserUpdateWithoutCalendarNotesCreatedInput>, UserUncheckedUpdateWithoutCalendarNotesCreatedInput>
+  }
+
   export type NestedIntFilter<$PrismaModel = never> = {
     equals?: number | IntFieldRefInput<$PrismaModel>
     in?: number[] | ListIntFieldRefInput<$PrismaModel>
@@ -25742,6 +26139,23 @@ export namespace Prisma {
     gt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
     gte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
     not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+  }
+
+  export type NestedEnumCalendarNoteTypeFilter<$PrismaModel = never> = {
+    equals?: $Enums.CalendarNoteType | EnumCalendarNoteTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.CalendarNoteType[] | ListEnumCalendarNoteTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.CalendarNoteType[] | ListEnumCalendarNoteTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumCalendarNoteTypeFilter<$PrismaModel> | $Enums.CalendarNoteType
+  }
+
+  export type NestedEnumCalendarNoteTypeWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.CalendarNoteType | EnumCalendarNoteTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.CalendarNoteType[] | ListEnumCalendarNoteTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.CalendarNoteType[] | ListEnumCalendarNoteTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumCalendarNoteTypeWithAggregatesFilter<$PrismaModel> | $Enums.CalendarNoteType
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumCalendarNoteTypeFilter<$PrismaModel>
+    _max?: NestedEnumCalendarNoteTypeFilter<$PrismaModel>
   }
 
   export type PostCreateWithoutAuthorInput = {
@@ -26173,6 +26587,68 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type CalendarNoteCreateWithoutUserInput = {
+    noteDate: string
+    title: string
+    description?: string | null
+    type?: $Enums.CalendarNoteType
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    createdBy: UserCreateNestedOneWithoutCalendarNotesCreatedInput
+  }
+
+  export type CalendarNoteUncheckedCreateWithoutUserInput = {
+    id?: number
+    createdById: number
+    noteDate: string
+    title: string
+    description?: string | null
+    type?: $Enums.CalendarNoteType
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type CalendarNoteCreateOrConnectWithoutUserInput = {
+    where: CalendarNoteWhereUniqueInput
+    create: XOR<CalendarNoteCreateWithoutUserInput, CalendarNoteUncheckedCreateWithoutUserInput>
+  }
+
+  export type CalendarNoteCreateManyUserInputEnvelope = {
+    data: CalendarNoteCreateManyUserInput | CalendarNoteCreateManyUserInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type CalendarNoteCreateWithoutCreatedByInput = {
+    noteDate: string
+    title: string
+    description?: string | null
+    type?: $Enums.CalendarNoteType
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    user: UserCreateNestedOneWithoutCalendarNotesForUserInput
+  }
+
+  export type CalendarNoteUncheckedCreateWithoutCreatedByInput = {
+    id?: number
+    userId: number
+    noteDate: string
+    title: string
+    description?: string | null
+    type?: $Enums.CalendarNoteType
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type CalendarNoteCreateOrConnectWithoutCreatedByInput = {
+    where: CalendarNoteWhereUniqueInput
+    create: XOR<CalendarNoteCreateWithoutCreatedByInput, CalendarNoteUncheckedCreateWithoutCreatedByInput>
+  }
+
+  export type CalendarNoteCreateManyCreatedByInputEnvelope = {
+    data: CalendarNoteCreateManyCreatedByInput | CalendarNoteCreateManyCreatedByInput[]
+    skipDuplicates?: boolean
+  }
+
   export type PostUpsertWithWhereUniqueWithoutAuthorInput = {
     where: PostWhereUniqueInput
     update: XOR<PostUpdateWithoutAuthorInput, PostUncheckedUpdateWithoutAuthorInput>
@@ -26584,6 +27060,53 @@ export namespace Prisma {
     remarks?: StringNullableFilter<"RegionalDailyReport"> | string | null
   }
 
+  export type CalendarNoteUpsertWithWhereUniqueWithoutUserInput = {
+    where: CalendarNoteWhereUniqueInput
+    update: XOR<CalendarNoteUpdateWithoutUserInput, CalendarNoteUncheckedUpdateWithoutUserInput>
+    create: XOR<CalendarNoteCreateWithoutUserInput, CalendarNoteUncheckedCreateWithoutUserInput>
+  }
+
+  export type CalendarNoteUpdateWithWhereUniqueWithoutUserInput = {
+    where: CalendarNoteWhereUniqueInput
+    data: XOR<CalendarNoteUpdateWithoutUserInput, CalendarNoteUncheckedUpdateWithoutUserInput>
+  }
+
+  export type CalendarNoteUpdateManyWithWhereWithoutUserInput = {
+    where: CalendarNoteScalarWhereInput
+    data: XOR<CalendarNoteUpdateManyMutationInput, CalendarNoteUncheckedUpdateManyWithoutUserInput>
+  }
+
+  export type CalendarNoteScalarWhereInput = {
+    AND?: CalendarNoteScalarWhereInput | CalendarNoteScalarWhereInput[]
+    OR?: CalendarNoteScalarWhereInput[]
+    NOT?: CalendarNoteScalarWhereInput | CalendarNoteScalarWhereInput[]
+    id?: IntFilter<"CalendarNote"> | number
+    userId?: IntFilter<"CalendarNote"> | number
+    createdById?: IntFilter<"CalendarNote"> | number
+    noteDate?: StringFilter<"CalendarNote"> | string
+    title?: StringFilter<"CalendarNote"> | string
+    description?: StringNullableFilter<"CalendarNote"> | string | null
+    type?: EnumCalendarNoteTypeFilter<"CalendarNote"> | $Enums.CalendarNoteType
+    createdAt?: DateTimeFilter<"CalendarNote"> | Date | string
+    updatedAt?: DateTimeFilter<"CalendarNote"> | Date | string
+  }
+
+  export type CalendarNoteUpsertWithWhereUniqueWithoutCreatedByInput = {
+    where: CalendarNoteWhereUniqueInput
+    update: XOR<CalendarNoteUpdateWithoutCreatedByInput, CalendarNoteUncheckedUpdateWithoutCreatedByInput>
+    create: XOR<CalendarNoteCreateWithoutCreatedByInput, CalendarNoteUncheckedCreateWithoutCreatedByInput>
+  }
+
+  export type CalendarNoteUpdateWithWhereUniqueWithoutCreatedByInput = {
+    where: CalendarNoteWhereUniqueInput
+    data: XOR<CalendarNoteUpdateWithoutCreatedByInput, CalendarNoteUncheckedUpdateWithoutCreatedByInput>
+  }
+
+  export type CalendarNoteUpdateManyWithWhereWithoutCreatedByInput = {
+    where: CalendarNoteScalarWhereInput
+    data: XOR<CalendarNoteUpdateManyMutationInput, CalendarNoteUncheckedUpdateManyWithoutCreatedByInput>
+  }
+
   export type UserCreateWithoutPostsInput = {
     username: string
     email?: string | null
@@ -26603,6 +27126,8 @@ export namespace Prisma {
     notificationsActed?: NotificationCreateNestedManyWithoutActorInput
     dailyReports?: DailyReportCreateNestedManyWithoutAuthorInput
     regionalReports?: RegionalDailyReportCreateNestedManyWithoutAuthorInput
+    calendarNotesForUser?: CalendarNoteCreateNestedManyWithoutUserInput
+    calendarNotesCreated?: CalendarNoteCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutPostsInput = {
@@ -26625,6 +27150,8 @@ export namespace Prisma {
     notificationsActed?: NotificationUncheckedCreateNestedManyWithoutActorInput
     dailyReports?: DailyReportUncheckedCreateNestedManyWithoutAuthorInput
     regionalReports?: RegionalDailyReportUncheckedCreateNestedManyWithoutAuthorInput
+    calendarNotesForUser?: CalendarNoteUncheckedCreateNestedManyWithoutUserInput
+    calendarNotesCreated?: CalendarNoteUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutPostsInput = {
@@ -26805,6 +27332,8 @@ export namespace Prisma {
     notificationsActed?: NotificationUpdateManyWithoutActorNestedInput
     dailyReports?: DailyReportUpdateManyWithoutAuthorNestedInput
     regionalReports?: RegionalDailyReportUpdateManyWithoutAuthorNestedInput
+    calendarNotesForUser?: CalendarNoteUpdateManyWithoutUserNestedInput
+    calendarNotesCreated?: CalendarNoteUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutPostsInput = {
@@ -26827,6 +27356,8 @@ export namespace Prisma {
     notificationsActed?: NotificationUncheckedUpdateManyWithoutActorNestedInput
     dailyReports?: DailyReportUncheckedUpdateManyWithoutAuthorNestedInput
     regionalReports?: RegionalDailyReportUncheckedUpdateManyWithoutAuthorNestedInput
+    calendarNotesForUser?: CalendarNoteUncheckedUpdateManyWithoutUserNestedInput
+    calendarNotesCreated?: CalendarNoteUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type ChannelUpsertWithoutPostsInput = {
@@ -27008,6 +27539,8 @@ export namespace Prisma {
     notificationsActed?: NotificationCreateNestedManyWithoutActorInput
     dailyReports?: DailyReportCreateNestedManyWithoutAuthorInput
     regionalReports?: RegionalDailyReportCreateNestedManyWithoutAuthorInput
+    calendarNotesForUser?: CalendarNoteCreateNestedManyWithoutUserInput
+    calendarNotesCreated?: CalendarNoteCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutCommentsInput = {
@@ -27030,6 +27563,8 @@ export namespace Prisma {
     notificationsActed?: NotificationUncheckedCreateNestedManyWithoutActorInput
     dailyReports?: DailyReportUncheckedCreateNestedManyWithoutAuthorInput
     regionalReports?: RegionalDailyReportUncheckedCreateNestedManyWithoutAuthorInput
+    calendarNotesForUser?: CalendarNoteUncheckedCreateNestedManyWithoutUserInput
+    calendarNotesCreated?: CalendarNoteUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutCommentsInput = {
@@ -27103,6 +27638,8 @@ export namespace Prisma {
     notificationsActed?: NotificationUpdateManyWithoutActorNestedInput
     dailyReports?: DailyReportUpdateManyWithoutAuthorNestedInput
     regionalReports?: RegionalDailyReportUpdateManyWithoutAuthorNestedInput
+    calendarNotesForUser?: CalendarNoteUpdateManyWithoutUserNestedInput
+    calendarNotesCreated?: CalendarNoteUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutCommentsInput = {
@@ -27125,6 +27662,8 @@ export namespace Prisma {
     notificationsActed?: NotificationUncheckedUpdateManyWithoutActorNestedInput
     dailyReports?: DailyReportUncheckedUpdateManyWithoutAuthorNestedInput
     regionalReports?: RegionalDailyReportUncheckedUpdateManyWithoutAuthorNestedInput
+    calendarNotesForUser?: CalendarNoteUncheckedUpdateManyWithoutUserNestedInput
+    calendarNotesCreated?: CalendarNoteUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type PostCreateWithoutReactionsInput = {
@@ -27176,6 +27715,8 @@ export namespace Prisma {
     notificationsActed?: NotificationCreateNestedManyWithoutActorInput
     dailyReports?: DailyReportCreateNestedManyWithoutAuthorInput
     regionalReports?: RegionalDailyReportCreateNestedManyWithoutAuthorInput
+    calendarNotesForUser?: CalendarNoteCreateNestedManyWithoutUserInput
+    calendarNotesCreated?: CalendarNoteCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutReactionsInput = {
@@ -27198,6 +27739,8 @@ export namespace Prisma {
     notificationsActed?: NotificationUncheckedCreateNestedManyWithoutActorInput
     dailyReports?: DailyReportUncheckedCreateNestedManyWithoutAuthorInput
     regionalReports?: RegionalDailyReportUncheckedCreateNestedManyWithoutAuthorInput
+    calendarNotesForUser?: CalendarNoteUncheckedCreateNestedManyWithoutUserInput
+    calendarNotesCreated?: CalendarNoteUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutReactionsInput = {
@@ -27271,6 +27814,8 @@ export namespace Prisma {
     notificationsActed?: NotificationUpdateManyWithoutActorNestedInput
     dailyReports?: DailyReportUpdateManyWithoutAuthorNestedInput
     regionalReports?: RegionalDailyReportUpdateManyWithoutAuthorNestedInput
+    calendarNotesForUser?: CalendarNoteUpdateManyWithoutUserNestedInput
+    calendarNotesCreated?: CalendarNoteUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutReactionsInput = {
@@ -27293,6 +27838,8 @@ export namespace Prisma {
     notificationsActed?: NotificationUncheckedUpdateManyWithoutActorNestedInput
     dailyReports?: DailyReportUncheckedUpdateManyWithoutAuthorNestedInput
     regionalReports?: RegionalDailyReportUncheckedUpdateManyWithoutAuthorNestedInput
+    calendarNotesForUser?: CalendarNoteUncheckedUpdateManyWithoutUserNestedInput
+    calendarNotesCreated?: CalendarNoteUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type PostCreateWithoutFilesInput = {
@@ -27380,6 +27927,8 @@ export namespace Prisma {
     notificationsActed?: NotificationCreateNestedManyWithoutActorInput
     dailyReports?: DailyReportCreateNestedManyWithoutAuthorInput
     regionalReports?: RegionalDailyReportCreateNestedManyWithoutAuthorInput
+    calendarNotesForUser?: CalendarNoteCreateNestedManyWithoutUserInput
+    calendarNotesCreated?: CalendarNoteCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutCreatedChannelsInput = {
@@ -27402,6 +27951,8 @@ export namespace Prisma {
     notificationsActed?: NotificationUncheckedCreateNestedManyWithoutActorInput
     dailyReports?: DailyReportUncheckedCreateNestedManyWithoutAuthorInput
     regionalReports?: RegionalDailyReportUncheckedCreateNestedManyWithoutAuthorInput
+    calendarNotesForUser?: CalendarNoteUncheckedCreateNestedManyWithoutUserInput
+    calendarNotesCreated?: CalendarNoteUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutCreatedChannelsInput = {
@@ -27534,6 +28085,8 @@ export namespace Prisma {
     notificationsActed?: NotificationCreateNestedManyWithoutActorInput
     dailyReports?: DailyReportCreateNestedManyWithoutAuthorInput
     regionalReports?: RegionalDailyReportCreateNestedManyWithoutAuthorInput
+    calendarNotesForUser?: CalendarNoteCreateNestedManyWithoutUserInput
+    calendarNotesCreated?: CalendarNoteCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutPinnedChannelInput = {
@@ -27556,6 +28109,8 @@ export namespace Prisma {
     notificationsActed?: NotificationUncheckedCreateNestedManyWithoutActorInput
     dailyReports?: DailyReportUncheckedCreateNestedManyWithoutAuthorInput
     regionalReports?: RegionalDailyReportUncheckedCreateNestedManyWithoutAuthorInput
+    calendarNotesForUser?: CalendarNoteUncheckedCreateNestedManyWithoutUserInput
+    calendarNotesCreated?: CalendarNoteUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutPinnedChannelInput = {
@@ -27631,6 +28186,8 @@ export namespace Prisma {
     notificationsActed?: NotificationUpdateManyWithoutActorNestedInput
     dailyReports?: DailyReportUpdateManyWithoutAuthorNestedInput
     regionalReports?: RegionalDailyReportUpdateManyWithoutAuthorNestedInput
+    calendarNotesForUser?: CalendarNoteUpdateManyWithoutUserNestedInput
+    calendarNotesCreated?: CalendarNoteUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutCreatedChannelsInput = {
@@ -27653,6 +28210,8 @@ export namespace Prisma {
     notificationsActed?: NotificationUncheckedUpdateManyWithoutActorNestedInput
     dailyReports?: DailyReportUncheckedUpdateManyWithoutAuthorNestedInput
     regionalReports?: RegionalDailyReportUncheckedUpdateManyWithoutAuthorNestedInput
+    calendarNotesForUser?: CalendarNoteUncheckedUpdateManyWithoutUserNestedInput
+    calendarNotesCreated?: CalendarNoteUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type PostSeenUpsertWithWhereUniqueWithoutChannelInput = {
@@ -27817,6 +28376,8 @@ export namespace Prisma {
     notificationsActed?: NotificationCreateNestedManyWithoutActorInput
     dailyReports?: DailyReportCreateNestedManyWithoutAuthorInput
     regionalReports?: RegionalDailyReportCreateNestedManyWithoutAuthorInput
+    calendarNotesForUser?: CalendarNoteCreateNestedManyWithoutUserInput
+    calendarNotesCreated?: CalendarNoteCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutChannelMemberInput = {
@@ -27839,6 +28400,8 @@ export namespace Prisma {
     notificationsActed?: NotificationUncheckedCreateNestedManyWithoutActorInput
     dailyReports?: DailyReportUncheckedCreateNestedManyWithoutAuthorInput
     regionalReports?: RegionalDailyReportUncheckedCreateNestedManyWithoutAuthorInput
+    calendarNotesForUser?: CalendarNoteUncheckedCreateNestedManyWithoutUserInput
+    calendarNotesCreated?: CalendarNoteUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutChannelMemberInput = {
@@ -27916,6 +28479,8 @@ export namespace Prisma {
     notificationsActed?: NotificationUpdateManyWithoutActorNestedInput
     dailyReports?: DailyReportUpdateManyWithoutAuthorNestedInput
     regionalReports?: RegionalDailyReportUpdateManyWithoutAuthorNestedInput
+    calendarNotesForUser?: CalendarNoteUpdateManyWithoutUserNestedInput
+    calendarNotesCreated?: CalendarNoteUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutChannelMemberInput = {
@@ -27938,6 +28503,8 @@ export namespace Prisma {
     notificationsActed?: NotificationUncheckedUpdateManyWithoutActorNestedInput
     dailyReports?: DailyReportUncheckedUpdateManyWithoutAuthorNestedInput
     regionalReports?: RegionalDailyReportUncheckedUpdateManyWithoutAuthorNestedInput
+    calendarNotesForUser?: CalendarNoteUncheckedUpdateManyWithoutUserNestedInput
+    calendarNotesCreated?: CalendarNoteUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type ChannelCreateWithoutJoinRequestsInput = {
@@ -27993,6 +28560,8 @@ export namespace Prisma {
     notificationsActed?: NotificationCreateNestedManyWithoutActorInput
     dailyReports?: DailyReportCreateNestedManyWithoutAuthorInput
     regionalReports?: RegionalDailyReportCreateNestedManyWithoutAuthorInput
+    calendarNotesForUser?: CalendarNoteCreateNestedManyWithoutUserInput
+    calendarNotesCreated?: CalendarNoteCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutJoinRequestsInput = {
@@ -28015,6 +28584,8 @@ export namespace Prisma {
     notificationsActed?: NotificationUncheckedCreateNestedManyWithoutActorInput
     dailyReports?: DailyReportUncheckedCreateNestedManyWithoutAuthorInput
     regionalReports?: RegionalDailyReportUncheckedCreateNestedManyWithoutAuthorInput
+    calendarNotesForUser?: CalendarNoteUncheckedCreateNestedManyWithoutUserInput
+    calendarNotesCreated?: CalendarNoteUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutJoinRequestsInput = {
@@ -28125,6 +28696,8 @@ export namespace Prisma {
     notificationsActed?: NotificationUpdateManyWithoutActorNestedInput
     dailyReports?: DailyReportUpdateManyWithoutAuthorNestedInput
     regionalReports?: RegionalDailyReportUpdateManyWithoutAuthorNestedInput
+    calendarNotesForUser?: CalendarNoteUpdateManyWithoutUserNestedInput
+    calendarNotesCreated?: CalendarNoteUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutJoinRequestsInput = {
@@ -28147,6 +28720,8 @@ export namespace Prisma {
     notificationsActed?: NotificationUncheckedUpdateManyWithoutActorNestedInput
     dailyReports?: DailyReportUncheckedUpdateManyWithoutAuthorNestedInput
     regionalReports?: RegionalDailyReportUncheckedUpdateManyWithoutAuthorNestedInput
+    calendarNotesForUser?: CalendarNoteUncheckedUpdateManyWithoutUserNestedInput
+    calendarNotesCreated?: CalendarNoteUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type NotificationUpsertWithWhereUniqueWithoutJoinRequestInput = {
@@ -28184,6 +28759,8 @@ export namespace Prisma {
     notificationsActed?: NotificationCreateNestedManyWithoutActorInput
     dailyReports?: DailyReportCreateNestedManyWithoutAuthorInput
     regionalReports?: RegionalDailyReportCreateNestedManyWithoutAuthorInput
+    calendarNotesForUser?: CalendarNoteCreateNestedManyWithoutUserInput
+    calendarNotesCreated?: CalendarNoteCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutNotificationsInput = {
@@ -28206,6 +28783,8 @@ export namespace Prisma {
     notificationsActed?: NotificationUncheckedCreateNestedManyWithoutActorInput
     dailyReports?: DailyReportUncheckedCreateNestedManyWithoutAuthorInput
     regionalReports?: RegionalDailyReportUncheckedCreateNestedManyWithoutAuthorInput
+    calendarNotesForUser?: CalendarNoteUncheckedCreateNestedManyWithoutUserInput
+    calendarNotesCreated?: CalendarNoteUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutNotificationsInput = {
@@ -28232,6 +28811,8 @@ export namespace Prisma {
     pinnedChannel?: ChannelCreateNestedOneWithoutPinnedByUsersInput
     dailyReports?: DailyReportCreateNestedManyWithoutAuthorInput
     regionalReports?: RegionalDailyReportCreateNestedManyWithoutAuthorInput
+    calendarNotesForUser?: CalendarNoteCreateNestedManyWithoutUserInput
+    calendarNotesCreated?: CalendarNoteCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutNotificationsActedInput = {
@@ -28254,6 +28835,8 @@ export namespace Prisma {
     postSeen?: PostSeenUncheckedCreateNestedManyWithoutUserInput
     dailyReports?: DailyReportUncheckedCreateNestedManyWithoutAuthorInput
     regionalReports?: RegionalDailyReportUncheckedCreateNestedManyWithoutAuthorInput
+    calendarNotesForUser?: CalendarNoteUncheckedCreateNestedManyWithoutUserInput
+    calendarNotesCreated?: CalendarNoteUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutNotificationsActedInput = {
@@ -28347,6 +28930,8 @@ export namespace Prisma {
     notificationsActed?: NotificationUpdateManyWithoutActorNestedInput
     dailyReports?: DailyReportUpdateManyWithoutAuthorNestedInput
     regionalReports?: RegionalDailyReportUpdateManyWithoutAuthorNestedInput
+    calendarNotesForUser?: CalendarNoteUpdateManyWithoutUserNestedInput
+    calendarNotesCreated?: CalendarNoteUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutNotificationsInput = {
@@ -28369,6 +28954,8 @@ export namespace Prisma {
     notificationsActed?: NotificationUncheckedUpdateManyWithoutActorNestedInput
     dailyReports?: DailyReportUncheckedUpdateManyWithoutAuthorNestedInput
     regionalReports?: RegionalDailyReportUncheckedUpdateManyWithoutAuthorNestedInput
+    calendarNotesForUser?: CalendarNoteUncheckedUpdateManyWithoutUserNestedInput
+    calendarNotesCreated?: CalendarNoteUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUpsertWithoutNotificationsActedInput = {
@@ -28401,6 +28988,8 @@ export namespace Prisma {
     pinnedChannel?: ChannelUpdateOneWithoutPinnedByUsersNestedInput
     dailyReports?: DailyReportUpdateManyWithoutAuthorNestedInput
     regionalReports?: RegionalDailyReportUpdateManyWithoutAuthorNestedInput
+    calendarNotesForUser?: CalendarNoteUpdateManyWithoutUserNestedInput
+    calendarNotesCreated?: CalendarNoteUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutNotificationsActedInput = {
@@ -28423,6 +29012,8 @@ export namespace Prisma {
     postSeen?: PostSeenUncheckedUpdateManyWithoutUserNestedInput
     dailyReports?: DailyReportUncheckedUpdateManyWithoutAuthorNestedInput
     regionalReports?: RegionalDailyReportUncheckedUpdateManyWithoutAuthorNestedInput
+    calendarNotesForUser?: CalendarNoteUncheckedUpdateManyWithoutUserNestedInput
+    calendarNotesCreated?: CalendarNoteUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type ChannelUpsertWithoutNotificationsInput = {
@@ -28512,6 +29103,8 @@ export namespace Prisma {
     notificationsActed?: NotificationCreateNestedManyWithoutActorInput
     dailyReports?: DailyReportCreateNestedManyWithoutAuthorInput
     regionalReports?: RegionalDailyReportCreateNestedManyWithoutAuthorInput
+    calendarNotesForUser?: CalendarNoteCreateNestedManyWithoutUserInput
+    calendarNotesCreated?: CalendarNoteCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutSavedPostsInput = {
@@ -28534,6 +29127,8 @@ export namespace Prisma {
     notificationsActed?: NotificationUncheckedCreateNestedManyWithoutActorInput
     dailyReports?: DailyReportUncheckedCreateNestedManyWithoutAuthorInput
     regionalReports?: RegionalDailyReportUncheckedCreateNestedManyWithoutAuthorInput
+    calendarNotesForUser?: CalendarNoteUncheckedCreateNestedManyWithoutUserInput
+    calendarNotesCreated?: CalendarNoteUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutSavedPostsInput = {
@@ -28601,6 +29196,8 @@ export namespace Prisma {
     notificationsActed?: NotificationUpdateManyWithoutActorNestedInput
     dailyReports?: DailyReportUpdateManyWithoutAuthorNestedInput
     regionalReports?: RegionalDailyReportUpdateManyWithoutAuthorNestedInput
+    calendarNotesForUser?: CalendarNoteUpdateManyWithoutUserNestedInput
+    calendarNotesCreated?: CalendarNoteUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutSavedPostsInput = {
@@ -28623,6 +29220,8 @@ export namespace Prisma {
     notificationsActed?: NotificationUncheckedUpdateManyWithoutActorNestedInput
     dailyReports?: DailyReportUncheckedUpdateManyWithoutAuthorNestedInput
     regionalReports?: RegionalDailyReportUncheckedUpdateManyWithoutAuthorNestedInput
+    calendarNotesForUser?: CalendarNoteUncheckedUpdateManyWithoutUserNestedInput
+    calendarNotesCreated?: CalendarNoteUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type PostUpsertWithoutSavedByInput = {
@@ -28680,6 +29279,8 @@ export namespace Prisma {
     notificationsActed?: NotificationCreateNestedManyWithoutActorInput
     dailyReports?: DailyReportCreateNestedManyWithoutAuthorInput
     regionalReports?: RegionalDailyReportCreateNestedManyWithoutAuthorInput
+    calendarNotesForUser?: CalendarNoteCreateNestedManyWithoutUserInput
+    calendarNotesCreated?: CalendarNoteCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutTodosInput = {
@@ -28702,6 +29303,8 @@ export namespace Prisma {
     notificationsActed?: NotificationUncheckedCreateNestedManyWithoutActorInput
     dailyReports?: DailyReportUncheckedCreateNestedManyWithoutAuthorInput
     regionalReports?: RegionalDailyReportUncheckedCreateNestedManyWithoutAuthorInput
+    calendarNotesForUser?: CalendarNoteUncheckedCreateNestedManyWithoutUserInput
+    calendarNotesCreated?: CalendarNoteUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutTodosInput = {
@@ -28739,6 +29342,8 @@ export namespace Prisma {
     notificationsActed?: NotificationUpdateManyWithoutActorNestedInput
     dailyReports?: DailyReportUpdateManyWithoutAuthorNestedInput
     regionalReports?: RegionalDailyReportUpdateManyWithoutAuthorNestedInput
+    calendarNotesForUser?: CalendarNoteUpdateManyWithoutUserNestedInput
+    calendarNotesCreated?: CalendarNoteUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutTodosInput = {
@@ -28761,6 +29366,8 @@ export namespace Prisma {
     notificationsActed?: NotificationUncheckedUpdateManyWithoutActorNestedInput
     dailyReports?: DailyReportUncheckedUpdateManyWithoutAuthorNestedInput
     regionalReports?: RegionalDailyReportUncheckedUpdateManyWithoutAuthorNestedInput
+    calendarNotesForUser?: CalendarNoteUncheckedUpdateManyWithoutUserNestedInput
+    calendarNotesCreated?: CalendarNoteUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserCreateWithoutPostSeenInput = {
@@ -28782,6 +29389,8 @@ export namespace Prisma {
     notificationsActed?: NotificationCreateNestedManyWithoutActorInput
     dailyReports?: DailyReportCreateNestedManyWithoutAuthorInput
     regionalReports?: RegionalDailyReportCreateNestedManyWithoutAuthorInput
+    calendarNotesForUser?: CalendarNoteCreateNestedManyWithoutUserInput
+    calendarNotesCreated?: CalendarNoteCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutPostSeenInput = {
@@ -28804,6 +29413,8 @@ export namespace Prisma {
     notificationsActed?: NotificationUncheckedCreateNestedManyWithoutActorInput
     dailyReports?: DailyReportUncheckedCreateNestedManyWithoutAuthorInput
     regionalReports?: RegionalDailyReportUncheckedCreateNestedManyWithoutAuthorInput
+    calendarNotesForUser?: CalendarNoteUncheckedCreateNestedManyWithoutUserInput
+    calendarNotesCreated?: CalendarNoteUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutPostSeenInput = {
@@ -28905,6 +29516,8 @@ export namespace Prisma {
     notificationsActed?: NotificationUpdateManyWithoutActorNestedInput
     dailyReports?: DailyReportUpdateManyWithoutAuthorNestedInput
     regionalReports?: RegionalDailyReportUpdateManyWithoutAuthorNestedInput
+    calendarNotesForUser?: CalendarNoteUpdateManyWithoutUserNestedInput
+    calendarNotesCreated?: CalendarNoteUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutPostSeenInput = {
@@ -28927,6 +29540,8 @@ export namespace Prisma {
     notificationsActed?: NotificationUncheckedUpdateManyWithoutActorNestedInput
     dailyReports?: DailyReportUncheckedUpdateManyWithoutAuthorNestedInput
     regionalReports?: RegionalDailyReportUncheckedUpdateManyWithoutAuthorNestedInput
+    calendarNotesForUser?: CalendarNoteUncheckedUpdateManyWithoutUserNestedInput
+    calendarNotesCreated?: CalendarNoteUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type PostUpsertWithoutSeenByInput = {
@@ -29024,6 +29639,8 @@ export namespace Prisma {
     pinnedChannel?: ChannelCreateNestedOneWithoutPinnedByUsersInput
     notificationsActed?: NotificationCreateNestedManyWithoutActorInput
     regionalReports?: RegionalDailyReportCreateNestedManyWithoutAuthorInput
+    calendarNotesForUser?: CalendarNoteCreateNestedManyWithoutUserInput
+    calendarNotesCreated?: CalendarNoteCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutDailyReportsInput = {
@@ -29046,6 +29663,8 @@ export namespace Prisma {
     postSeen?: PostSeenUncheckedCreateNestedManyWithoutUserInput
     notificationsActed?: NotificationUncheckedCreateNestedManyWithoutActorInput
     regionalReports?: RegionalDailyReportUncheckedCreateNestedManyWithoutAuthorInput
+    calendarNotesForUser?: CalendarNoteUncheckedCreateNestedManyWithoutUserInput
+    calendarNotesCreated?: CalendarNoteUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutDailyReportsInput = {
@@ -29083,6 +29702,8 @@ export namespace Prisma {
     pinnedChannel?: ChannelUpdateOneWithoutPinnedByUsersNestedInput
     notificationsActed?: NotificationUpdateManyWithoutActorNestedInput
     regionalReports?: RegionalDailyReportUpdateManyWithoutAuthorNestedInput
+    calendarNotesForUser?: CalendarNoteUpdateManyWithoutUserNestedInput
+    calendarNotesCreated?: CalendarNoteUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutDailyReportsInput = {
@@ -29105,6 +29726,8 @@ export namespace Prisma {
     postSeen?: PostSeenUncheckedUpdateManyWithoutUserNestedInput
     notificationsActed?: NotificationUncheckedUpdateManyWithoutActorNestedInput
     regionalReports?: RegionalDailyReportUncheckedUpdateManyWithoutAuthorNestedInput
+    calendarNotesForUser?: CalendarNoteUncheckedUpdateManyWithoutUserNestedInput
+    calendarNotesCreated?: CalendarNoteUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserCreateWithoutRegionalReportsInput = {
@@ -29126,6 +29749,8 @@ export namespace Prisma {
     pinnedChannel?: ChannelCreateNestedOneWithoutPinnedByUsersInput
     notificationsActed?: NotificationCreateNestedManyWithoutActorInput
     dailyReports?: DailyReportCreateNestedManyWithoutAuthorInput
+    calendarNotesForUser?: CalendarNoteCreateNestedManyWithoutUserInput
+    calendarNotesCreated?: CalendarNoteCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutRegionalReportsInput = {
@@ -29148,6 +29773,8 @@ export namespace Prisma {
     postSeen?: PostSeenUncheckedCreateNestedManyWithoutUserInput
     notificationsActed?: NotificationUncheckedCreateNestedManyWithoutActorInput
     dailyReports?: DailyReportUncheckedCreateNestedManyWithoutAuthorInput
+    calendarNotesForUser?: CalendarNoteUncheckedCreateNestedManyWithoutUserInput
+    calendarNotesCreated?: CalendarNoteUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutRegionalReportsInput = {
@@ -29185,6 +29812,8 @@ export namespace Prisma {
     pinnedChannel?: ChannelUpdateOneWithoutPinnedByUsersNestedInput
     notificationsActed?: NotificationUpdateManyWithoutActorNestedInput
     dailyReports?: DailyReportUpdateManyWithoutAuthorNestedInput
+    calendarNotesForUser?: CalendarNoteUpdateManyWithoutUserNestedInput
+    calendarNotesCreated?: CalendarNoteUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutRegionalReportsInput = {
@@ -29207,6 +29836,228 @@ export namespace Prisma {
     postSeen?: PostSeenUncheckedUpdateManyWithoutUserNestedInput
     notificationsActed?: NotificationUncheckedUpdateManyWithoutActorNestedInput
     dailyReports?: DailyReportUncheckedUpdateManyWithoutAuthorNestedInput
+    calendarNotesForUser?: CalendarNoteUncheckedUpdateManyWithoutUserNestedInput
+    calendarNotesCreated?: CalendarNoteUncheckedUpdateManyWithoutCreatedByNestedInput
+  }
+
+  export type UserCreateWithoutCalendarNotesForUserInput = {
+    username: string
+    email?: string | null
+    role: string
+    isStaff?: boolean
+    profileImage?: string | null
+    posts?: PostCreateNestedManyWithoutAuthorInput
+    comments?: CommentCreateNestedManyWithoutAuthorInput
+    reactions?: ReactionCreateNestedManyWithoutUserInput
+    channelMember?: ChannelMemberCreateNestedManyWithoutUserInput
+    createdChannels?: ChannelCreateNestedManyWithoutCreatedByInput
+    notifications?: NotificationCreateNestedManyWithoutUserInput
+    joinRequests?: JoinRequestCreateNestedManyWithoutUserInput
+    savedPosts?: SavedPostCreateNestedManyWithoutUserInput
+    todos?: TodoCreateNestedManyWithoutUserInput
+    postSeen?: PostSeenCreateNestedManyWithoutUserInput
+    pinnedChannel?: ChannelCreateNestedOneWithoutPinnedByUsersInput
+    notificationsActed?: NotificationCreateNestedManyWithoutActorInput
+    dailyReports?: DailyReportCreateNestedManyWithoutAuthorInput
+    regionalReports?: RegionalDailyReportCreateNestedManyWithoutAuthorInput
+    calendarNotesCreated?: CalendarNoteCreateNestedManyWithoutCreatedByInput
+  }
+
+  export type UserUncheckedCreateWithoutCalendarNotesForUserInput = {
+    id?: number
+    username: string
+    email?: string | null
+    role: string
+    isStaff?: boolean
+    profileImage?: string | null
+    pinnedChannelId?: number | null
+    posts?: PostUncheckedCreateNestedManyWithoutAuthorInput
+    comments?: CommentUncheckedCreateNestedManyWithoutAuthorInput
+    reactions?: ReactionUncheckedCreateNestedManyWithoutUserInput
+    channelMember?: ChannelMemberUncheckedCreateNestedManyWithoutUserInput
+    createdChannels?: ChannelUncheckedCreateNestedManyWithoutCreatedByInput
+    notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
+    joinRequests?: JoinRequestUncheckedCreateNestedManyWithoutUserInput
+    savedPosts?: SavedPostUncheckedCreateNestedManyWithoutUserInput
+    todos?: TodoUncheckedCreateNestedManyWithoutUserInput
+    postSeen?: PostSeenUncheckedCreateNestedManyWithoutUserInput
+    notificationsActed?: NotificationUncheckedCreateNestedManyWithoutActorInput
+    dailyReports?: DailyReportUncheckedCreateNestedManyWithoutAuthorInput
+    regionalReports?: RegionalDailyReportUncheckedCreateNestedManyWithoutAuthorInput
+    calendarNotesCreated?: CalendarNoteUncheckedCreateNestedManyWithoutCreatedByInput
+  }
+
+  export type UserCreateOrConnectWithoutCalendarNotesForUserInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutCalendarNotesForUserInput, UserUncheckedCreateWithoutCalendarNotesForUserInput>
+  }
+
+  export type UserCreateWithoutCalendarNotesCreatedInput = {
+    username: string
+    email?: string | null
+    role: string
+    isStaff?: boolean
+    profileImage?: string | null
+    posts?: PostCreateNestedManyWithoutAuthorInput
+    comments?: CommentCreateNestedManyWithoutAuthorInput
+    reactions?: ReactionCreateNestedManyWithoutUserInput
+    channelMember?: ChannelMemberCreateNestedManyWithoutUserInput
+    createdChannels?: ChannelCreateNestedManyWithoutCreatedByInput
+    notifications?: NotificationCreateNestedManyWithoutUserInput
+    joinRequests?: JoinRequestCreateNestedManyWithoutUserInput
+    savedPosts?: SavedPostCreateNestedManyWithoutUserInput
+    todos?: TodoCreateNestedManyWithoutUserInput
+    postSeen?: PostSeenCreateNestedManyWithoutUserInput
+    pinnedChannel?: ChannelCreateNestedOneWithoutPinnedByUsersInput
+    notificationsActed?: NotificationCreateNestedManyWithoutActorInput
+    dailyReports?: DailyReportCreateNestedManyWithoutAuthorInput
+    regionalReports?: RegionalDailyReportCreateNestedManyWithoutAuthorInput
+    calendarNotesForUser?: CalendarNoteCreateNestedManyWithoutUserInput
+  }
+
+  export type UserUncheckedCreateWithoutCalendarNotesCreatedInput = {
+    id?: number
+    username: string
+    email?: string | null
+    role: string
+    isStaff?: boolean
+    profileImage?: string | null
+    pinnedChannelId?: number | null
+    posts?: PostUncheckedCreateNestedManyWithoutAuthorInput
+    comments?: CommentUncheckedCreateNestedManyWithoutAuthorInput
+    reactions?: ReactionUncheckedCreateNestedManyWithoutUserInput
+    channelMember?: ChannelMemberUncheckedCreateNestedManyWithoutUserInput
+    createdChannels?: ChannelUncheckedCreateNestedManyWithoutCreatedByInput
+    notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
+    joinRequests?: JoinRequestUncheckedCreateNestedManyWithoutUserInput
+    savedPosts?: SavedPostUncheckedCreateNestedManyWithoutUserInput
+    todos?: TodoUncheckedCreateNestedManyWithoutUserInput
+    postSeen?: PostSeenUncheckedCreateNestedManyWithoutUserInput
+    notificationsActed?: NotificationUncheckedCreateNestedManyWithoutActorInput
+    dailyReports?: DailyReportUncheckedCreateNestedManyWithoutAuthorInput
+    regionalReports?: RegionalDailyReportUncheckedCreateNestedManyWithoutAuthorInput
+    calendarNotesForUser?: CalendarNoteUncheckedCreateNestedManyWithoutUserInput
+  }
+
+  export type UserCreateOrConnectWithoutCalendarNotesCreatedInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutCalendarNotesCreatedInput, UserUncheckedCreateWithoutCalendarNotesCreatedInput>
+  }
+
+  export type UserUpsertWithoutCalendarNotesForUserInput = {
+    update: XOR<UserUpdateWithoutCalendarNotesForUserInput, UserUncheckedUpdateWithoutCalendarNotesForUserInput>
+    create: XOR<UserCreateWithoutCalendarNotesForUserInput, UserUncheckedCreateWithoutCalendarNotesForUserInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutCalendarNotesForUserInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutCalendarNotesForUserInput, UserUncheckedUpdateWithoutCalendarNotesForUserInput>
+  }
+
+  export type UserUpdateWithoutCalendarNotesForUserInput = {
+    username?: StringFieldUpdateOperationsInput | string
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: StringFieldUpdateOperationsInput | string
+    isStaff?: BoolFieldUpdateOperationsInput | boolean
+    profileImage?: NullableStringFieldUpdateOperationsInput | string | null
+    posts?: PostUpdateManyWithoutAuthorNestedInput
+    comments?: CommentUpdateManyWithoutAuthorNestedInput
+    reactions?: ReactionUpdateManyWithoutUserNestedInput
+    channelMember?: ChannelMemberUpdateManyWithoutUserNestedInput
+    createdChannels?: ChannelUpdateManyWithoutCreatedByNestedInput
+    notifications?: NotificationUpdateManyWithoutUserNestedInput
+    joinRequests?: JoinRequestUpdateManyWithoutUserNestedInput
+    savedPosts?: SavedPostUpdateManyWithoutUserNestedInput
+    todos?: TodoUpdateManyWithoutUserNestedInput
+    postSeen?: PostSeenUpdateManyWithoutUserNestedInput
+    pinnedChannel?: ChannelUpdateOneWithoutPinnedByUsersNestedInput
+    notificationsActed?: NotificationUpdateManyWithoutActorNestedInput
+    dailyReports?: DailyReportUpdateManyWithoutAuthorNestedInput
+    regionalReports?: RegionalDailyReportUpdateManyWithoutAuthorNestedInput
+    calendarNotesCreated?: CalendarNoteUpdateManyWithoutCreatedByNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutCalendarNotesForUserInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    username?: StringFieldUpdateOperationsInput | string
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: StringFieldUpdateOperationsInput | string
+    isStaff?: BoolFieldUpdateOperationsInput | boolean
+    profileImage?: NullableStringFieldUpdateOperationsInput | string | null
+    pinnedChannelId?: NullableIntFieldUpdateOperationsInput | number | null
+    posts?: PostUncheckedUpdateManyWithoutAuthorNestedInput
+    comments?: CommentUncheckedUpdateManyWithoutAuthorNestedInput
+    reactions?: ReactionUncheckedUpdateManyWithoutUserNestedInput
+    channelMember?: ChannelMemberUncheckedUpdateManyWithoutUserNestedInput
+    createdChannels?: ChannelUncheckedUpdateManyWithoutCreatedByNestedInput
+    notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
+    joinRequests?: JoinRequestUncheckedUpdateManyWithoutUserNestedInput
+    savedPosts?: SavedPostUncheckedUpdateManyWithoutUserNestedInput
+    todos?: TodoUncheckedUpdateManyWithoutUserNestedInput
+    postSeen?: PostSeenUncheckedUpdateManyWithoutUserNestedInput
+    notificationsActed?: NotificationUncheckedUpdateManyWithoutActorNestedInput
+    dailyReports?: DailyReportUncheckedUpdateManyWithoutAuthorNestedInput
+    regionalReports?: RegionalDailyReportUncheckedUpdateManyWithoutAuthorNestedInput
+    calendarNotesCreated?: CalendarNoteUncheckedUpdateManyWithoutCreatedByNestedInput
+  }
+
+  export type UserUpsertWithoutCalendarNotesCreatedInput = {
+    update: XOR<UserUpdateWithoutCalendarNotesCreatedInput, UserUncheckedUpdateWithoutCalendarNotesCreatedInput>
+    create: XOR<UserCreateWithoutCalendarNotesCreatedInput, UserUncheckedCreateWithoutCalendarNotesCreatedInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutCalendarNotesCreatedInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutCalendarNotesCreatedInput, UserUncheckedUpdateWithoutCalendarNotesCreatedInput>
+  }
+
+  export type UserUpdateWithoutCalendarNotesCreatedInput = {
+    username?: StringFieldUpdateOperationsInput | string
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: StringFieldUpdateOperationsInput | string
+    isStaff?: BoolFieldUpdateOperationsInput | boolean
+    profileImage?: NullableStringFieldUpdateOperationsInput | string | null
+    posts?: PostUpdateManyWithoutAuthorNestedInput
+    comments?: CommentUpdateManyWithoutAuthorNestedInput
+    reactions?: ReactionUpdateManyWithoutUserNestedInput
+    channelMember?: ChannelMemberUpdateManyWithoutUserNestedInput
+    createdChannels?: ChannelUpdateManyWithoutCreatedByNestedInput
+    notifications?: NotificationUpdateManyWithoutUserNestedInput
+    joinRequests?: JoinRequestUpdateManyWithoutUserNestedInput
+    savedPosts?: SavedPostUpdateManyWithoutUserNestedInput
+    todos?: TodoUpdateManyWithoutUserNestedInput
+    postSeen?: PostSeenUpdateManyWithoutUserNestedInput
+    pinnedChannel?: ChannelUpdateOneWithoutPinnedByUsersNestedInput
+    notificationsActed?: NotificationUpdateManyWithoutActorNestedInput
+    dailyReports?: DailyReportUpdateManyWithoutAuthorNestedInput
+    regionalReports?: RegionalDailyReportUpdateManyWithoutAuthorNestedInput
+    calendarNotesForUser?: CalendarNoteUpdateManyWithoutUserNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutCalendarNotesCreatedInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    username?: StringFieldUpdateOperationsInput | string
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: StringFieldUpdateOperationsInput | string
+    isStaff?: BoolFieldUpdateOperationsInput | boolean
+    profileImage?: NullableStringFieldUpdateOperationsInput | string | null
+    pinnedChannelId?: NullableIntFieldUpdateOperationsInput | number | null
+    posts?: PostUncheckedUpdateManyWithoutAuthorNestedInput
+    comments?: CommentUncheckedUpdateManyWithoutAuthorNestedInput
+    reactions?: ReactionUncheckedUpdateManyWithoutUserNestedInput
+    channelMember?: ChannelMemberUncheckedUpdateManyWithoutUserNestedInput
+    createdChannels?: ChannelUncheckedUpdateManyWithoutCreatedByNestedInput
+    notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
+    joinRequests?: JoinRequestUncheckedUpdateManyWithoutUserNestedInput
+    savedPosts?: SavedPostUncheckedUpdateManyWithoutUserNestedInput
+    todos?: TodoUncheckedUpdateManyWithoutUserNestedInput
+    postSeen?: PostSeenUncheckedUpdateManyWithoutUserNestedInput
+    notificationsActed?: NotificationUncheckedUpdateManyWithoutActorNestedInput
+    dailyReports?: DailyReportUncheckedUpdateManyWithoutAuthorNestedInput
+    regionalReports?: RegionalDailyReportUncheckedUpdateManyWithoutAuthorNestedInput
+    calendarNotesForUser?: CalendarNoteUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type PostCreateManyAuthorInput = {
@@ -29334,6 +30185,28 @@ export namespace Prisma {
     marketingDaysPlanned?: number | null
     dynamicData?: NullableJsonNullValueInput | InputJsonValue
     remarks?: string | null
+  }
+
+  export type CalendarNoteCreateManyUserInput = {
+    id?: number
+    createdById: number
+    noteDate: string
+    title: string
+    description?: string | null
+    type?: $Enums.CalendarNoteType
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type CalendarNoteCreateManyCreatedByInput = {
+    id?: number
+    userId: number
+    noteDate: string
+    title: string
+    description?: string | null
+    type?: $Enums.CalendarNoteType
+    createdAt?: Date | string
+    updatedAt?: Date | string
   }
 
   export type PostUpdateWithoutAuthorInput = {
@@ -29728,6 +30601,70 @@ export namespace Prisma {
     remarks?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
+  export type CalendarNoteUpdateWithoutUserInput = {
+    noteDate?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    type?: EnumCalendarNoteTypeFieldUpdateOperationsInput | $Enums.CalendarNoteType
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdBy?: UserUpdateOneRequiredWithoutCalendarNotesCreatedNestedInput
+  }
+
+  export type CalendarNoteUncheckedUpdateWithoutUserInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    createdById?: IntFieldUpdateOperationsInput | number
+    noteDate?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    type?: EnumCalendarNoteTypeFieldUpdateOperationsInput | $Enums.CalendarNoteType
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type CalendarNoteUncheckedUpdateManyWithoutUserInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    createdById?: IntFieldUpdateOperationsInput | number
+    noteDate?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    type?: EnumCalendarNoteTypeFieldUpdateOperationsInput | $Enums.CalendarNoteType
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type CalendarNoteUpdateWithoutCreatedByInput = {
+    noteDate?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    type?: EnumCalendarNoteTypeFieldUpdateOperationsInput | $Enums.CalendarNoteType
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    user?: UserUpdateOneRequiredWithoutCalendarNotesForUserNestedInput
+  }
+
+  export type CalendarNoteUncheckedUpdateWithoutCreatedByInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    userId?: IntFieldUpdateOperationsInput | number
+    noteDate?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    type?: EnumCalendarNoteTypeFieldUpdateOperationsInput | $Enums.CalendarNoteType
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type CalendarNoteUncheckedUpdateManyWithoutCreatedByInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    userId?: IntFieldUpdateOperationsInput | number
+    noteDate?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    type?: EnumCalendarNoteTypeFieldUpdateOperationsInput | $Enums.CalendarNoteType
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type FileCreateManyPostInput = {
     id?: number
     url: string
@@ -30015,6 +30952,8 @@ export namespace Prisma {
     notificationsActed?: NotificationUpdateManyWithoutActorNestedInput
     dailyReports?: DailyReportUpdateManyWithoutAuthorNestedInput
     regionalReports?: RegionalDailyReportUpdateManyWithoutAuthorNestedInput
+    calendarNotesForUser?: CalendarNoteUpdateManyWithoutUserNestedInput
+    calendarNotesCreated?: CalendarNoteUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutPinnedChannelInput = {
@@ -30037,6 +30976,8 @@ export namespace Prisma {
     notificationsActed?: NotificationUncheckedUpdateManyWithoutActorNestedInput
     dailyReports?: DailyReportUncheckedUpdateManyWithoutAuthorNestedInput
     regionalReports?: RegionalDailyReportUncheckedUpdateManyWithoutAuthorNestedInput
+    calendarNotesForUser?: CalendarNoteUncheckedUpdateManyWithoutUserNestedInput
+    calendarNotesCreated?: CalendarNoteUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateManyWithoutPinnedChannelInput = {

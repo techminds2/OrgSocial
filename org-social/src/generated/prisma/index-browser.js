@@ -268,9 +268,11 @@ exports.Prisma.RegionalDailyReportScalarFieldEnum = {
 exports.Prisma.CalendarNoteScalarFieldEnum = {
   id: 'id',
   userId: 'userId',
+  createdById: 'createdById',
   noteDate: 'noteDate',
   title: 'title',
   description: 'description',
+  type: 'type',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 };
@@ -309,6 +311,12 @@ exports.Priority = exports.$Enums.Priority = {
   Low: 'Low',
   Medium: 'Medium',
   High: 'High'
+};
+
+exports.CalendarNoteType = exports.$Enums.CalendarNoteType = {
+  PERSONAL: 'PERSONAL',
+  MEETING: 'MEETING',
+  ADMIN_REMINDER: 'ADMIN_REMINDER'
 };
 
 exports.Prisma.ModelName = {

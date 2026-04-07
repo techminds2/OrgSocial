@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import {
   ActionIcon,
+  Badge,
   Button,
   Divider,
   Group,
@@ -14,7 +15,6 @@ import {
   Text,
   TextInput,
   Textarea,
-  Badge,
 } from "@mantine/core";
 import { DatePicker } from "@mantine/dates";
 import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/outline";
@@ -29,11 +29,18 @@ type Item = {
 type CalendarNote = {
   id: number;
   userId: number;
+  createdById: number;
   noteDate: string;
   title: string;
   description?: string | null;
+  type: "PERSONAL" | "MEETING" | "ADMIN_REMINDER";
   createdAt: string;
   updatedAt: string;
+  createdBy?: {
+    id: number;
+    username: string;
+    email?: string | null;
+  } | null;
 };
 
 function currentMonth() {
@@ -60,6 +67,92 @@ function monthToDate(month: string) {
   return new Date(y, m - 1, 1);
 }
 
+function CalendarNoteCard({
+  note,
+  canManageNotes,
+  onEdit,
+  onDelete,
+}: {
+  note: CalendarNote;
+  canManageNotes: boolean;
+  onEdit?: (note: CalendarNote) => void;
+  onDelete?: (id: number) => void;
+}) {
+  const isMeeting = note.type === "MEETING";
+  const isAdminReminder = note.type === "ADMIN_REMINDER";
+  const isAdminAdded = note.createdById !== note.userId;
+
+  const borderLeft = isMeeting
+    ? "4px solid #1971c2"
+    : isAdminReminder
+      ? "4px solid #f08c00"
+      : "4px solid #adb5bd";
+
+  const background = isMeeting
+    ? "#eef7ff"
+    : isAdminReminder
+      ? "#fff4e6"
+      : "#f8f9fa";
+
+  return (
+    <Paper withBorder p="sm" radius="md" style={{ borderLeft, background }}>
+      <Group justify="space-between" align="start" wrap="nowrap">
+        <div style={{ flex: 1 }}>
+          <Text fw={600}>{note.title}</Text>
+
+          {note.description ? (
+            <Text size="sm" c="dimmed" mt={4}>
+              {note.description}
+            </Text>
+          ) : null}
+
+          <Group gap="xs" mt={8}>
+            {isMeeting ? (
+              <Badge color="blue" variant="light">
+                Meeting Reminder
+              </Badge>
+            ) : null}
+
+            {isAdminReminder ? (
+              <Badge color="orange" variant="light">
+                Admin Reminder
+              </Badge>
+            ) : null}
+
+            {!isMeeting && !isAdminReminder ? (
+              <Badge color="gray" variant="light">
+                Personal Note
+              </Badge>
+            ) : null}
+          </Group>
+
+          {isAdminAdded ? (
+            <Text size="xs" c="dimmed" mt={6}>
+              Added by: {note.createdBy?.username || "Admin"}
+            </Text>
+          ) : null}
+        </div>
+
+        {canManageNotes ? (
+          <Group gap="xs">
+            <Button size="xs" variant="light" onClick={() => onEdit?.(note)}>
+              Edit
+            </Button>
+            <Button
+              size="xs"
+              color="red"
+              variant="light"
+              onClick={() => onDelete?.(note.id)}
+            >
+              Delete
+            </Button>
+          </Group>
+        ) : null}
+      </Group>
+    </Paper>
+  );
+}
+
 export default function DailyReportViewer({
   userId,
   userRole,
@@ -75,7 +168,11 @@ export default function DailyReportViewer({
     (viewerRole === "branch_manager" && viewerId === userId) ||
     (viewerRole === "admin" && userRole === "branch_manager");
 
-  const canManageNotes = viewerRole === "branch_manager" && viewerId === userId;
+  const canManageNotes =
+    (viewerRole === "branch_manager" && viewerId === userId) ||
+    (viewerRole === "admin" && userRole === "branch_manager");
+
+  const isAdminViewer = viewerRole === "admin";
 
   const [month, setMonth] = useState(currentMonth());
   const [calendarDate, setCalendarDate] = useState<Date>(
@@ -95,6 +192,9 @@ export default function DailyReportViewer({
 
   const [noteTitle, setNoteTitle] = useState("");
   const [noteDescription, setNoteDescription] = useState("");
+  const [noteType, setNoteType] = useState<
+    "PERSONAL" | "MEETING" | "ADMIN_REMINDER"
+  >(isAdminViewer ? "MEETING" : "PERSONAL");
   const [editingNoteId, setEditingNoteId] = useState<number | null>(null);
   const [savingNote, setSavingNote] = useState(false);
 
@@ -126,8 +226,9 @@ export default function DailyReportViewer({
 
   const notesOfMonthSorted = useMemo(() => {
     return [...notesMonth].sort((a, b) => {
-      if (a.noteDate !== b.noteDate)
+      if (a.noteDate !== b.noteDate) {
         return a.noteDate.localeCompare(b.noteDate);
+      }
       return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
     });
   }, [notesMonth]);
@@ -218,6 +319,7 @@ export default function DailyReportViewer({
     setEditingNoteId(null);
     setNoteTitle("");
     setNoteDescription("");
+    setNoteType(isAdminViewer ? "MEETING" : "PERSONAL");
     setOpened(true);
     await loadDay(ymd);
   };
@@ -226,16 +328,26 @@ export default function DailyReportViewer({
     setEditingNoteId(note.id);
     setNoteTitle(note.title);
     setNoteDescription(note.description || "");
+    setNoteType(
+      isAdminViewer
+        ? note.type === "PERSONAL"
+          ? "MEETING"
+          : note.type
+        : "PERSONAL",
+    );
   };
 
   const resetNoteForm = () => {
     setEditingNoteId(null);
     setNoteTitle("");
     setNoteDescription("");
+    setNoteType(isAdminViewer ? "MEETING" : "PERSONAL");
   };
 
   const saveNote = async () => {
     if (!canManageNotes || !selected || !noteTitle.trim() || savingNote) return;
+
+    const finalNoteType = isAdminViewer ? noteType : "PERSONAL";
 
     setSavingNote(true);
     try {
@@ -248,6 +360,7 @@ export default function DailyReportViewer({
             noteDate: selected,
             title: noteTitle.trim(),
             description: noteDescription.trim(),
+            type: finalNoteType,
           }),
         });
 
@@ -266,6 +379,7 @@ export default function DailyReportViewer({
             noteDate: selected,
             title: noteTitle.trim(),
             description: noteDescription.trim(),
+            type: finalNoteType,
           }),
         });
 
@@ -317,7 +431,6 @@ export default function DailyReportViewer({
       </Group>
 
       <div className="grid grid-cols-1 xl:grid-cols-[minmax(0,1fr)_360px] gap-4">
-        {/* LEFT: CALENDAR */}
         <Paper withBorder p="md" radius="md">
           <Group justify="space-between" mb="sm" align="center">
             <Text fw={600}>Report & Notes Calendar</Text>
@@ -445,7 +558,6 @@ export default function DailyReportViewer({
           )}
         </Paper>
 
-        {/* RIGHT: MONTH NOTE LIST */}
         <Paper withBorder p="md" radius="md">
           <Group justify="space-between" mb="sm">
             <Text fw={600}>Events / Notes of {month}</Text>
@@ -459,41 +571,22 @@ export default function DailyReportViewer({
               </Text>
             ) : (
               notesOfMonthSorted.map((note) => (
-                <Paper
+                <div
                   key={note.id}
-                  withBorder
-                  p="sm"
-                  radius="md"
                   style={{ cursor: "pointer" }}
                   onClick={() => openDate(note.noteDate)}
                 >
-                  <Group justify="space-between" align="start" wrap="nowrap">
-                    <div>
-                      <Text fw={600} size="sm">
-                        {note.title}
-                      </Text>
-                      <Text size="xs" c="dimmed" mb={4}>
-                        {note.noteDate}
-                      </Text>
-                      {note.description ? (
-                        <Text size="sm" c="dimmed" lineClamp={2}>
-                          {note.description}
-                        </Text>
-                      ) : null}
-                    </div>
-
-                    <Badge size="xs" variant="light" color="grape">
-                      Note
-                    </Badge>
-                  </Group>
-                </Paper>
+                  <CalendarNoteCard note={note} canManageNotes={false} />
+                  <Text size="xs" c="dimmed" mt={4} ml={4}>
+                    {note.noteDate}
+                  </Text>
+                </div>
               ))
             )}
           </Stack>
         </Paper>
       </div>
 
-      {/* MODAL */}
       <Modal
         opened={opened}
         onClose={() => {
@@ -514,7 +607,6 @@ export default function DailyReportViewer({
           <Text c="dimmed">Loading...</Text>
         ) : (
           <div className="space-y-4">
-            {/* DAILY REPORT */}
             <Paper withBorder p="md" radius="md">
               <Group justify="space-between" mb="sm">
                 <Text fw={700}>Daily Report</Text>
@@ -611,7 +703,6 @@ export default function DailyReportViewer({
 
             <Divider />
 
-            {/* NOTES */}
             <Paper withBorder p="md" radius="md">
               <Group justify="space-between" mb="sm">
                 <Text fw={700}>Scheduled Notes</Text>
@@ -626,44 +717,23 @@ export default function DailyReportViewer({
                     No scheduled notes for this date.
                   </Text>
                 ) : (
-                  notesForDay.map((note) => (
-                    <Paper key={note.id} withBorder p="sm" radius="md">
-                      <Group
-                        justify="space-between"
-                        align="start"
-                        wrap="nowrap"
-                      >
-                        <div>
-                          <Text fw={600}>{note.title}</Text>
-                          {note.description ? (
-                            <Text size="sm" c="dimmed">
-                              {note.description}
-                            </Text>
-                          ) : null}
-                        </div>
+                  notesForDay.map((note) => {
+                    const canEditThisNote =
+                      note.type === "PERSONAL"
+                        ? viewerId === note.userId
+                        : viewerRole === "admin" &&
+                          viewerId === note.createdById;
 
-                        {canManageNotes && (
-                          <Group gap="xs">
-                            <Button
-                              size="xs"
-                              variant="light"
-                              onClick={() => startEditNote(note)}
-                            >
-                              Edit
-                            </Button>
-                            <Button
-                              size="xs"
-                              color="red"
-                              variant="light"
-                              onClick={() => deleteNote(note.id)}
-                            >
-                              Delete
-                            </Button>
-                          </Group>
-                        )}
-                      </Group>
-                    </Paper>
-                  ))
+                    return (
+                      <CalendarNoteCard
+                        key={note.id}
+                        note={note}
+                        canManageNotes={canEditThisNote}
+                        onEdit={startEditNote}
+                        onDelete={deleteNote}
+                      />
+                    );
+                  })
                 )}
               </Stack>
 
@@ -681,6 +751,35 @@ export default function DailyReportViewer({
                       onChange={(e) => setNoteTitle(e.currentTarget.value)}
                       required
                     />
+
+                    {isAdminViewer ? (
+                      <Select
+                        label="Note Type"
+                        value={noteType}
+                        onChange={(value) =>
+                          setNoteType(
+                            (value as "MEETING" | "ADMIN_REMINDER") ||
+                              "MEETING",
+                          )
+                        }
+                        data={[
+                          {
+                            value: "MEETING",
+                            label: "Meeting Reminder",
+                          },
+                          {
+                            value: "ADMIN_REMINDER",
+                            label: "Admin Reminder",
+                          },
+                        ]}
+                      />
+                    ) : (
+                      <TextInput
+                        label="Note Type"
+                        value="Personal Note"
+                        readOnly
+                      />
+                    )}
 
                     <Textarea
                       label="Description"

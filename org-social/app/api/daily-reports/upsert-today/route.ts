@@ -27,6 +27,9 @@ const cleanBranch = (s: string) => s.replace(/[^a-zA-Z0-9\s-]/g, "").trim();
 export async function POST(req: NextRequest) {
   try {
     const viewer = await requireViewer(req);
+    if (!viewer) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
 
     if (!viewer) return noStoreJson({ error: "Unauthorized" }, 401);
     if (viewer.role !== "branch_manager") {
