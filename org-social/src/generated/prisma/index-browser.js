@@ -258,11 +258,32 @@ exports.Prisma.RegionalDailyReportScalarFieldEnum = {
   authorId: 'authorId',
   reportYmd: 'reportYmd',
   regionName: 'regionName',
-  totalMeetings: 'totalMeetings',
-  totalBranchesVisited: 'totalBranchesVisited',
-  marketingDaysPlanned: 'marketingDaysPlanned',
-  dynamicData: 'dynamicData',
-  remarks: 'remarks'
+  branchesVisitedToday: 'branchesVisitedToday',
+  keyObservations: 'keyObservations',
+  totalCollection: 'totalCollection',
+  activeCustomers: 'activeCustomers',
+  expiredCustomers: 'expiredCustomers',
+  totalCustomerBase: 'totalCustomerBase',
+  totalTickets: 'totalTickets',
+  pendingTickets: 'pendingTickets',
+  ticketsClosedToday: 'ticketsClosedToday',
+  reasonPendingTickets: 'reasonPendingTickets',
+  totalNewConnections: 'totalNewConnections',
+  newConnectionsToday: 'newConnectionsToday',
+  connectionPendingToday: 'connectionPendingToday',
+  renewalsToday: 'renewalsToday',
+  renewalPending: 'renewalPending',
+  reasonPendingConnection: 'reasonPendingConnection',
+  collectionTarget: 'collectionTarget',
+  collectionAchievement: 'collectionAchievement',
+  newConnectionTarget: 'newConnectionTarget',
+  newConnectionAchievementPct: 'newConnectionAchievementPct',
+  renewalTarget: 'renewalTarget',
+  renewalAchievementPct: 'renewalAchievementPct',
+  issueDetails: 'issueDetails',
+  immediateActionsTaken: 'immediateActionsTaken',
+  nextDayPlan: 'nextDayPlan',
+  supportRequiredFromHO: 'supportRequiredFromHO'
 };
 
 exports.Prisma.CalendarNoteScalarFieldEnum = {
@@ -282,11 +303,6 @@ exports.Prisma.SortOrder = {
   desc: 'desc'
 };
 
-exports.Prisma.NullableJsonNullValueInput = {
-  DbNull: Prisma.DbNull,
-  JsonNull: Prisma.JsonNull
-};
-
 exports.Prisma.QueryMode = {
   default: 'default',
   insensitive: 'insensitive'
@@ -295,12 +311,6 @@ exports.Prisma.QueryMode = {
 exports.Prisma.NullsOrder = {
   first: 'first',
   last: 'last'
-};
-
-exports.Prisma.JsonNullValueFilter = {
-  DbNull: Prisma.DbNull,
-  JsonNull: Prisma.JsonNull,
-  AnyNull: Prisma.AnyNull
 };
 exports.PublicAccessMode = exports.$Enums.PublicAccessMode = {
   open: 'open',

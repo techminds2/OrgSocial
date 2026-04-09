@@ -312,12 +312,18 @@ export default function ProfilePage() {
           viewerRole={user.role}
         />
       </div>
-      {/* <RegionalReportComposer userId={user.id} viewerId={user.id} />
-      <RegionalReportViewer
+      <RegionalReportComposer
         userId={user.id}
         viewerId={user.id}
         viewerRole={user.role}
-      /> */}
+      />
+
+      <RegionalReportViewer
+        userId={user.id}
+        userRole={user.role}
+        viewerId={user.id}
+        viewerRole={user.role}
+      />
       <Divider className="mb-4" />
       <Group justify="left" mb="md">
         <Button

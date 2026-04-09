@@ -273,12 +273,45 @@ model RegionalDailyReport {
   reportYmd  String
   regionName String
 
-  totalMeetings        Int?
-  totalBranchesVisited Int?
-  marketingDaysPlanned Int?
+  // 1. Branch Visit Summary
+  branchesVisitedToday String? @db.Text
+  keyObservations      String? @db.Text
 
-  dynamicData Json?
-  remarks     String? @db.Text
+  // 2. Regional Performance Overview
+  totalCollection   Int @default(0)
+  activeCustomers   Int @default(0)
+  expiredCustomers  Int @default(0)
+  totalCustomerBase Int @default(0)
+
+  // 3. Ticketing & Service Status
+  totalTickets         Int     @default(0)
+  pendingTickets       Int     @default(0)
+  ticketsClosedToday   Int     @default(0)
+  reasonPendingTickets String? @db.Text
+
+  // 4. Connection & Renewal Status
+  totalNewConnections     Int     @default(0)
+  newConnectionsToday     Int     @default(0)
+  connectionPendingToday  Int     @default(0)
+  renewalsToday           Int     @default(0)
+  renewalPending          Int     @default(0)
+  reasonPendingConnection String? @db.Text
+
+  // 5. Daily Target vs Achievement
+  collectionTarget            Int   @default(0)
+  collectionAchievement       Int   @default(0)
+  newConnectionTarget         Int   @default(0)
+  newConnectionAchievementPct Float @default(0)
+  renewalTarget               Int   @default(0)
+  renewalAchievementPct       Float @default(0)
+
+  // 6. Major Issues of the Day
+  issueDetails String? @db.Text
+
+  // 7. Action Plan & Follow-ups
+  immediateActionsTaken String? @db.Text
+  nextDayPlan           String? @db.Text
+  supportRequiredFromHO String? @db.Text
 
   @@unique([authorId, reportYmd])
   @@index([authorId, reportYmd])

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { requireViewer } from "@/lib/requireAuth";
+import { todayNepalYmd } from "@/lib/dailyReport";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -12,8 +13,6 @@ function noStoreJson(body: any, status = 200) {
     headers: { "Cache-Control": "no-store, max-age=0" },
   });
 }
-
-const isYmd = (v: string) => /^\d{4}-\d{2}-\d{2}$/.test(v);
 
 export async function GET(
   req: NextRequest,
@@ -38,21 +37,20 @@ export async function GET(
 
     if (!canView) return noStoreJson({ error: "Forbidden" }, 403);
 
-    const date = String(req.nextUrl.searchParams.get("date") || "");
-    if (!isYmd(date)) return noStoreJson({ error: "Invalid date" }, 400);
+    const reportYmd = todayNepalYmd();
 
     const report = await prisma.regionalDailyReport.findUnique({
       where: {
         authorId_reportYmd: {
           authorId: userId,
-          reportYmd: date,
+          reportYmd,
         },
       },
     });
 
-    return noStoreJson({ report });
+    return noStoreJson({ reportYmd, report });
   } catch (e) {
-    console.error("REGIONAL REPORT BY DATE ERROR:", e);
+    console.error("REGIONAL REPORT TODAY ERROR:", e);
     return noStoreJson({ error: "Server error" }, 500);
   }
 }

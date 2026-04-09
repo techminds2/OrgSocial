@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
-import { requireViewer, canViewDailyReports } from "@/lib/requireAuth";
+import { requireViewer } from "@/lib/requireAuth";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -13,40 +13,70 @@ function noStoreJson(body: any, status = 200) {
   });
 }
 
+function monthRange(month: string) {
+  const m = /^(\d{4})-(\d{2})$/.exec(month);
+  if (!m) return null;
+
+  const year = Number(m[1]);
+  const mon = Number(m[2]);
+
+  if (!year || mon < 1 || mon > 12) return null;
+
+  const start = `${year}-${String(mon).padStart(2, "0")}-01`;
+
+  const next = new Date(year, mon, 1);
+  const end = `${next.getFullYear()}-${String(next.getMonth() + 1).padStart(2, "0")}-01`;
+
+  return { start, end };
+}
+
 export async function GET(
   req: NextRequest,
-  ctx: { params: Promise<{ id: string }> }
+  ctx: { params: Promise<{ id: string }> },
 ) {
   try {
     const viewer = await requireViewer(req);
-    if (!viewer) return noStoreJson({ items: [] }, 200);
+    if (!viewer) return noStoreJson({ error: "Unauthorized" }, 401);
 
-    const { id } = await ctx.params;
-    const targetUserId = Number(id);
+    const params = await ctx.params;
+    const userId = Number(params.id);
+    if (!Number.isFinite(userId)) {
+      return noStoreJson({ error: "Invalid user id" }, 400);
+    }
 
-    if (!canViewDailyReports(targetUserId, viewer))
-      return noStoreJson({ error: "Forbidden" }, 403);
+    const viewerUserId = Number((viewer as any).userId);
+    const viewerRole = String(viewer.role || "").toLowerCase();
 
-    const month = req.nextUrl.searchParams.get("month") || "";
-    const start = `${month}-01`;
+    const canView =
+      (viewerRole === "manager" && viewerUserId === userId) ||
+      viewerRole === "admin";
 
-    const [yy, mm] = month.split("-").map(Number);
-    const next = new Date(Date.UTC(yy, mm, 1));
-    const endExclusive = `${next.getUTCFullYear()}-${String(
-      next.getUTCMonth() + 1
-    ).padStart(2, "0")}-01`;
+    if (!canView) return noStoreJson({ error: "Forbidden" }, 403);
+
+    const month = String(req.nextUrl.searchParams.get("month") || "");
+    const range = monthRange(month);
+    if (!range) return noStoreJson({ error: "Invalid month" }, 400);
 
     const items = await prisma.regionalDailyReport.findMany({
       where: {
-        authorId: targetUserId,
-        reportYmd: { gte: start, lt: endExclusive },
+        authorId: userId,
+        reportYmd: {
+          gte: range.start,
+          lt: range.end,
+        },
       },
-      select: { id: true, reportYmd: true },
-      orderBy: { reportYmd: "asc" },
+      select: {
+        id: true,
+        reportYmd: true,
+        createdAt: true,
+        updatedAt: true,
+      },
+      orderBy: [{ reportYmd: "asc" }, { id: "asc" }],
     });
 
-    return noStoreJson({ items }, 200);
+    return noStoreJson({ month, items });
   } catch (e) {
+    console.error("REGIONAL REPORT MONTH ERROR:", e);
     return noStoreJson({ error: "Server error" }, 500);
   }
 }

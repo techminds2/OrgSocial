@@ -18144,17 +18144,47 @@ export namespace Prisma {
   export type RegionalDailyReportAvgAggregateOutputType = {
     id: number | null
     authorId: number | null
-    totalMeetings: number | null
-    totalBranchesVisited: number | null
-    marketingDaysPlanned: number | null
+    totalCollection: number | null
+    activeCustomers: number | null
+    expiredCustomers: number | null
+    totalCustomerBase: number | null
+    totalTickets: number | null
+    pendingTickets: number | null
+    ticketsClosedToday: number | null
+    totalNewConnections: number | null
+    newConnectionsToday: number | null
+    connectionPendingToday: number | null
+    renewalsToday: number | null
+    renewalPending: number | null
+    collectionTarget: number | null
+    collectionAchievement: number | null
+    newConnectionTarget: number | null
+    newConnectionAchievementPct: number | null
+    renewalTarget: number | null
+    renewalAchievementPct: number | null
   }
 
   export type RegionalDailyReportSumAggregateOutputType = {
     id: number | null
     authorId: number | null
-    totalMeetings: number | null
-    totalBranchesVisited: number | null
-    marketingDaysPlanned: number | null
+    totalCollection: number | null
+    activeCustomers: number | null
+    expiredCustomers: number | null
+    totalCustomerBase: number | null
+    totalTickets: number | null
+    pendingTickets: number | null
+    ticketsClosedToday: number | null
+    totalNewConnections: number | null
+    newConnectionsToday: number | null
+    connectionPendingToday: number | null
+    renewalsToday: number | null
+    renewalPending: number | null
+    collectionTarget: number | null
+    collectionAchievement: number | null
+    newConnectionTarget: number | null
+    newConnectionAchievementPct: number | null
+    renewalTarget: number | null
+    renewalAchievementPct: number | null
   }
 
   export type RegionalDailyReportMinAggregateOutputType = {
@@ -18164,10 +18194,32 @@ export namespace Prisma {
     authorId: number | null
     reportYmd: string | null
     regionName: string | null
-    totalMeetings: number | null
-    totalBranchesVisited: number | null
-    marketingDaysPlanned: number | null
-    remarks: string | null
+    branchesVisitedToday: string | null
+    keyObservations: string | null
+    totalCollection: number | null
+    activeCustomers: number | null
+    expiredCustomers: number | null
+    totalCustomerBase: number | null
+    totalTickets: number | null
+    pendingTickets: number | null
+    ticketsClosedToday: number | null
+    reasonPendingTickets: string | null
+    totalNewConnections: number | null
+    newConnectionsToday: number | null
+    connectionPendingToday: number | null
+    renewalsToday: number | null
+    renewalPending: number | null
+    reasonPendingConnection: string | null
+    collectionTarget: number | null
+    collectionAchievement: number | null
+    newConnectionTarget: number | null
+    newConnectionAchievementPct: number | null
+    renewalTarget: number | null
+    renewalAchievementPct: number | null
+    issueDetails: string | null
+    immediateActionsTaken: string | null
+    nextDayPlan: string | null
+    supportRequiredFromHO: string | null
   }
 
   export type RegionalDailyReportMaxAggregateOutputType = {
@@ -18177,10 +18229,32 @@ export namespace Prisma {
     authorId: number | null
     reportYmd: string | null
     regionName: string | null
-    totalMeetings: number | null
-    totalBranchesVisited: number | null
-    marketingDaysPlanned: number | null
-    remarks: string | null
+    branchesVisitedToday: string | null
+    keyObservations: string | null
+    totalCollection: number | null
+    activeCustomers: number | null
+    expiredCustomers: number | null
+    totalCustomerBase: number | null
+    totalTickets: number | null
+    pendingTickets: number | null
+    ticketsClosedToday: number | null
+    reasonPendingTickets: string | null
+    totalNewConnections: number | null
+    newConnectionsToday: number | null
+    connectionPendingToday: number | null
+    renewalsToday: number | null
+    renewalPending: number | null
+    reasonPendingConnection: string | null
+    collectionTarget: number | null
+    collectionAchievement: number | null
+    newConnectionTarget: number | null
+    newConnectionAchievementPct: number | null
+    renewalTarget: number | null
+    renewalAchievementPct: number | null
+    issueDetails: string | null
+    immediateActionsTaken: string | null
+    nextDayPlan: string | null
+    supportRequiredFromHO: string | null
   }
 
   export type RegionalDailyReportCountAggregateOutputType = {
@@ -18190,11 +18264,32 @@ export namespace Prisma {
     authorId: number
     reportYmd: number
     regionName: number
-    totalMeetings: number
-    totalBranchesVisited: number
-    marketingDaysPlanned: number
-    dynamicData: number
-    remarks: number
+    branchesVisitedToday: number
+    keyObservations: number
+    totalCollection: number
+    activeCustomers: number
+    expiredCustomers: number
+    totalCustomerBase: number
+    totalTickets: number
+    pendingTickets: number
+    ticketsClosedToday: number
+    reasonPendingTickets: number
+    totalNewConnections: number
+    newConnectionsToday: number
+    connectionPendingToday: number
+    renewalsToday: number
+    renewalPending: number
+    reasonPendingConnection: number
+    collectionTarget: number
+    collectionAchievement: number
+    newConnectionTarget: number
+    newConnectionAchievementPct: number
+    renewalTarget: number
+    renewalAchievementPct: number
+    issueDetails: number
+    immediateActionsTaken: number
+    nextDayPlan: number
+    supportRequiredFromHO: number
     _all: number
   }
 
@@ -18202,17 +18297,47 @@ export namespace Prisma {
   export type RegionalDailyReportAvgAggregateInputType = {
     id?: true
     authorId?: true
-    totalMeetings?: true
-    totalBranchesVisited?: true
-    marketingDaysPlanned?: true
+    totalCollection?: true
+    activeCustomers?: true
+    expiredCustomers?: true
+    totalCustomerBase?: true
+    totalTickets?: true
+    pendingTickets?: true
+    ticketsClosedToday?: true
+    totalNewConnections?: true
+    newConnectionsToday?: true
+    connectionPendingToday?: true
+    renewalsToday?: true
+    renewalPending?: true
+    collectionTarget?: true
+    collectionAchievement?: true
+    newConnectionTarget?: true
+    newConnectionAchievementPct?: true
+    renewalTarget?: true
+    renewalAchievementPct?: true
   }
 
   export type RegionalDailyReportSumAggregateInputType = {
     id?: true
     authorId?: true
-    totalMeetings?: true
-    totalBranchesVisited?: true
-    marketingDaysPlanned?: true
+    totalCollection?: true
+    activeCustomers?: true
+    expiredCustomers?: true
+    totalCustomerBase?: true
+    totalTickets?: true
+    pendingTickets?: true
+    ticketsClosedToday?: true
+    totalNewConnections?: true
+    newConnectionsToday?: true
+    connectionPendingToday?: true
+    renewalsToday?: true
+    renewalPending?: true
+    collectionTarget?: true
+    collectionAchievement?: true
+    newConnectionTarget?: true
+    newConnectionAchievementPct?: true
+    renewalTarget?: true
+    renewalAchievementPct?: true
   }
 
   export type RegionalDailyReportMinAggregateInputType = {
@@ -18222,10 +18347,32 @@ export namespace Prisma {
     authorId?: true
     reportYmd?: true
     regionName?: true
-    totalMeetings?: true
-    totalBranchesVisited?: true
-    marketingDaysPlanned?: true
-    remarks?: true
+    branchesVisitedToday?: true
+    keyObservations?: true
+    totalCollection?: true
+    activeCustomers?: true
+    expiredCustomers?: true
+    totalCustomerBase?: true
+    totalTickets?: true
+    pendingTickets?: true
+    ticketsClosedToday?: true
+    reasonPendingTickets?: true
+    totalNewConnections?: true
+    newConnectionsToday?: true
+    connectionPendingToday?: true
+    renewalsToday?: true
+    renewalPending?: true
+    reasonPendingConnection?: true
+    collectionTarget?: true
+    collectionAchievement?: true
+    newConnectionTarget?: true
+    newConnectionAchievementPct?: true
+    renewalTarget?: true
+    renewalAchievementPct?: true
+    issueDetails?: true
+    immediateActionsTaken?: true
+    nextDayPlan?: true
+    supportRequiredFromHO?: true
   }
 
   export type RegionalDailyReportMaxAggregateInputType = {
@@ -18235,10 +18382,32 @@ export namespace Prisma {
     authorId?: true
     reportYmd?: true
     regionName?: true
-    totalMeetings?: true
-    totalBranchesVisited?: true
-    marketingDaysPlanned?: true
-    remarks?: true
+    branchesVisitedToday?: true
+    keyObservations?: true
+    totalCollection?: true
+    activeCustomers?: true
+    expiredCustomers?: true
+    totalCustomerBase?: true
+    totalTickets?: true
+    pendingTickets?: true
+    ticketsClosedToday?: true
+    reasonPendingTickets?: true
+    totalNewConnections?: true
+    newConnectionsToday?: true
+    connectionPendingToday?: true
+    renewalsToday?: true
+    renewalPending?: true
+    reasonPendingConnection?: true
+    collectionTarget?: true
+    collectionAchievement?: true
+    newConnectionTarget?: true
+    newConnectionAchievementPct?: true
+    renewalTarget?: true
+    renewalAchievementPct?: true
+    issueDetails?: true
+    immediateActionsTaken?: true
+    nextDayPlan?: true
+    supportRequiredFromHO?: true
   }
 
   export type RegionalDailyReportCountAggregateInputType = {
@@ -18248,11 +18417,32 @@ export namespace Prisma {
     authorId?: true
     reportYmd?: true
     regionName?: true
-    totalMeetings?: true
-    totalBranchesVisited?: true
-    marketingDaysPlanned?: true
-    dynamicData?: true
-    remarks?: true
+    branchesVisitedToday?: true
+    keyObservations?: true
+    totalCollection?: true
+    activeCustomers?: true
+    expiredCustomers?: true
+    totalCustomerBase?: true
+    totalTickets?: true
+    pendingTickets?: true
+    ticketsClosedToday?: true
+    reasonPendingTickets?: true
+    totalNewConnections?: true
+    newConnectionsToday?: true
+    connectionPendingToday?: true
+    renewalsToday?: true
+    renewalPending?: true
+    reasonPendingConnection?: true
+    collectionTarget?: true
+    collectionAchievement?: true
+    newConnectionTarget?: true
+    newConnectionAchievementPct?: true
+    renewalTarget?: true
+    renewalAchievementPct?: true
+    issueDetails?: true
+    immediateActionsTaken?: true
+    nextDayPlan?: true
+    supportRequiredFromHO?: true
     _all?: true
   }
 
@@ -18349,11 +18539,32 @@ export namespace Prisma {
     authorId: number
     reportYmd: string
     regionName: string
-    totalMeetings: number | null
-    totalBranchesVisited: number | null
-    marketingDaysPlanned: number | null
-    dynamicData: JsonValue | null
-    remarks: string | null
+    branchesVisitedToday: string | null
+    keyObservations: string | null
+    totalCollection: number
+    activeCustomers: number
+    expiredCustomers: number
+    totalCustomerBase: number
+    totalTickets: number
+    pendingTickets: number
+    ticketsClosedToday: number
+    reasonPendingTickets: string | null
+    totalNewConnections: number
+    newConnectionsToday: number
+    connectionPendingToday: number
+    renewalsToday: number
+    renewalPending: number
+    reasonPendingConnection: string | null
+    collectionTarget: number
+    collectionAchievement: number
+    newConnectionTarget: number
+    newConnectionAchievementPct: number
+    renewalTarget: number
+    renewalAchievementPct: number
+    issueDetails: string | null
+    immediateActionsTaken: string | null
+    nextDayPlan: string | null
+    supportRequiredFromHO: string | null
     _count: RegionalDailyReportCountAggregateOutputType | null
     _avg: RegionalDailyReportAvgAggregateOutputType | null
     _sum: RegionalDailyReportSumAggregateOutputType | null
@@ -18382,11 +18593,32 @@ export namespace Prisma {
     authorId?: boolean
     reportYmd?: boolean
     regionName?: boolean
-    totalMeetings?: boolean
-    totalBranchesVisited?: boolean
-    marketingDaysPlanned?: boolean
-    dynamicData?: boolean
-    remarks?: boolean
+    branchesVisitedToday?: boolean
+    keyObservations?: boolean
+    totalCollection?: boolean
+    activeCustomers?: boolean
+    expiredCustomers?: boolean
+    totalCustomerBase?: boolean
+    totalTickets?: boolean
+    pendingTickets?: boolean
+    ticketsClosedToday?: boolean
+    reasonPendingTickets?: boolean
+    totalNewConnections?: boolean
+    newConnectionsToday?: boolean
+    connectionPendingToday?: boolean
+    renewalsToday?: boolean
+    renewalPending?: boolean
+    reasonPendingConnection?: boolean
+    collectionTarget?: boolean
+    collectionAchievement?: boolean
+    newConnectionTarget?: boolean
+    newConnectionAchievementPct?: boolean
+    renewalTarget?: boolean
+    renewalAchievementPct?: boolean
+    issueDetails?: boolean
+    immediateActionsTaken?: boolean
+    nextDayPlan?: boolean
+    supportRequiredFromHO?: boolean
     author?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["regionalDailyReport"]>
 
@@ -18397,11 +18629,32 @@ export namespace Prisma {
     authorId?: boolean
     reportYmd?: boolean
     regionName?: boolean
-    totalMeetings?: boolean
-    totalBranchesVisited?: boolean
-    marketingDaysPlanned?: boolean
-    dynamicData?: boolean
-    remarks?: boolean
+    branchesVisitedToday?: boolean
+    keyObservations?: boolean
+    totalCollection?: boolean
+    activeCustomers?: boolean
+    expiredCustomers?: boolean
+    totalCustomerBase?: boolean
+    totalTickets?: boolean
+    pendingTickets?: boolean
+    ticketsClosedToday?: boolean
+    reasonPendingTickets?: boolean
+    totalNewConnections?: boolean
+    newConnectionsToday?: boolean
+    connectionPendingToday?: boolean
+    renewalsToday?: boolean
+    renewalPending?: boolean
+    reasonPendingConnection?: boolean
+    collectionTarget?: boolean
+    collectionAchievement?: boolean
+    newConnectionTarget?: boolean
+    newConnectionAchievementPct?: boolean
+    renewalTarget?: boolean
+    renewalAchievementPct?: boolean
+    issueDetails?: boolean
+    immediateActionsTaken?: boolean
+    nextDayPlan?: boolean
+    supportRequiredFromHO?: boolean
     author?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["regionalDailyReport"]>
 
@@ -18412,11 +18665,32 @@ export namespace Prisma {
     authorId?: boolean
     reportYmd?: boolean
     regionName?: boolean
-    totalMeetings?: boolean
-    totalBranchesVisited?: boolean
-    marketingDaysPlanned?: boolean
-    dynamicData?: boolean
-    remarks?: boolean
+    branchesVisitedToday?: boolean
+    keyObservations?: boolean
+    totalCollection?: boolean
+    activeCustomers?: boolean
+    expiredCustomers?: boolean
+    totalCustomerBase?: boolean
+    totalTickets?: boolean
+    pendingTickets?: boolean
+    ticketsClosedToday?: boolean
+    reasonPendingTickets?: boolean
+    totalNewConnections?: boolean
+    newConnectionsToday?: boolean
+    connectionPendingToday?: boolean
+    renewalsToday?: boolean
+    renewalPending?: boolean
+    reasonPendingConnection?: boolean
+    collectionTarget?: boolean
+    collectionAchievement?: boolean
+    newConnectionTarget?: boolean
+    newConnectionAchievementPct?: boolean
+    renewalTarget?: boolean
+    renewalAchievementPct?: boolean
+    issueDetails?: boolean
+    immediateActionsTaken?: boolean
+    nextDayPlan?: boolean
+    supportRequiredFromHO?: boolean
     author?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["regionalDailyReport"]>
 
@@ -18427,14 +18701,35 @@ export namespace Prisma {
     authorId?: boolean
     reportYmd?: boolean
     regionName?: boolean
-    totalMeetings?: boolean
-    totalBranchesVisited?: boolean
-    marketingDaysPlanned?: boolean
-    dynamicData?: boolean
-    remarks?: boolean
+    branchesVisitedToday?: boolean
+    keyObservations?: boolean
+    totalCollection?: boolean
+    activeCustomers?: boolean
+    expiredCustomers?: boolean
+    totalCustomerBase?: boolean
+    totalTickets?: boolean
+    pendingTickets?: boolean
+    ticketsClosedToday?: boolean
+    reasonPendingTickets?: boolean
+    totalNewConnections?: boolean
+    newConnectionsToday?: boolean
+    connectionPendingToday?: boolean
+    renewalsToday?: boolean
+    renewalPending?: boolean
+    reasonPendingConnection?: boolean
+    collectionTarget?: boolean
+    collectionAchievement?: boolean
+    newConnectionTarget?: boolean
+    newConnectionAchievementPct?: boolean
+    renewalTarget?: boolean
+    renewalAchievementPct?: boolean
+    issueDetails?: boolean
+    immediateActionsTaken?: boolean
+    nextDayPlan?: boolean
+    supportRequiredFromHO?: boolean
   }
 
-  export type RegionalDailyReportOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "createdAt" | "updatedAt" | "authorId" | "reportYmd" | "regionName" | "totalMeetings" | "totalBranchesVisited" | "marketingDaysPlanned" | "dynamicData" | "remarks", ExtArgs["result"]["regionalDailyReport"]>
+  export type RegionalDailyReportOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "createdAt" | "updatedAt" | "authorId" | "reportYmd" | "regionName" | "branchesVisitedToday" | "keyObservations" | "totalCollection" | "activeCustomers" | "expiredCustomers" | "totalCustomerBase" | "totalTickets" | "pendingTickets" | "ticketsClosedToday" | "reasonPendingTickets" | "totalNewConnections" | "newConnectionsToday" | "connectionPendingToday" | "renewalsToday" | "renewalPending" | "reasonPendingConnection" | "collectionTarget" | "collectionAchievement" | "newConnectionTarget" | "newConnectionAchievementPct" | "renewalTarget" | "renewalAchievementPct" | "issueDetails" | "immediateActionsTaken" | "nextDayPlan" | "supportRequiredFromHO", ExtArgs["result"]["regionalDailyReport"]>
   export type RegionalDailyReportInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     author?: boolean | UserDefaultArgs<ExtArgs>
   }
@@ -18457,11 +18752,32 @@ export namespace Prisma {
       authorId: number
       reportYmd: string
       regionName: string
-      totalMeetings: number | null
-      totalBranchesVisited: number | null
-      marketingDaysPlanned: number | null
-      dynamicData: Prisma.JsonValue | null
-      remarks: string | null
+      branchesVisitedToday: string | null
+      keyObservations: string | null
+      totalCollection: number
+      activeCustomers: number
+      expiredCustomers: number
+      totalCustomerBase: number
+      totalTickets: number
+      pendingTickets: number
+      ticketsClosedToday: number
+      reasonPendingTickets: string | null
+      totalNewConnections: number
+      newConnectionsToday: number
+      connectionPendingToday: number
+      renewalsToday: number
+      renewalPending: number
+      reasonPendingConnection: string | null
+      collectionTarget: number
+      collectionAchievement: number
+      newConnectionTarget: number
+      newConnectionAchievementPct: number
+      renewalTarget: number
+      renewalAchievementPct: number
+      issueDetails: string | null
+      immediateActionsTaken: string | null
+      nextDayPlan: string | null
+      supportRequiredFromHO: string | null
     }, ExtArgs["result"]["regionalDailyReport"]>
     composites: {}
   }
@@ -18892,11 +19208,32 @@ export namespace Prisma {
     readonly authorId: FieldRef<"RegionalDailyReport", 'Int'>
     readonly reportYmd: FieldRef<"RegionalDailyReport", 'String'>
     readonly regionName: FieldRef<"RegionalDailyReport", 'String'>
-    readonly totalMeetings: FieldRef<"RegionalDailyReport", 'Int'>
-    readonly totalBranchesVisited: FieldRef<"RegionalDailyReport", 'Int'>
-    readonly marketingDaysPlanned: FieldRef<"RegionalDailyReport", 'Int'>
-    readonly dynamicData: FieldRef<"RegionalDailyReport", 'Json'>
-    readonly remarks: FieldRef<"RegionalDailyReport", 'String'>
+    readonly branchesVisitedToday: FieldRef<"RegionalDailyReport", 'String'>
+    readonly keyObservations: FieldRef<"RegionalDailyReport", 'String'>
+    readonly totalCollection: FieldRef<"RegionalDailyReport", 'Int'>
+    readonly activeCustomers: FieldRef<"RegionalDailyReport", 'Int'>
+    readonly expiredCustomers: FieldRef<"RegionalDailyReport", 'Int'>
+    readonly totalCustomerBase: FieldRef<"RegionalDailyReport", 'Int'>
+    readonly totalTickets: FieldRef<"RegionalDailyReport", 'Int'>
+    readonly pendingTickets: FieldRef<"RegionalDailyReport", 'Int'>
+    readonly ticketsClosedToday: FieldRef<"RegionalDailyReport", 'Int'>
+    readonly reasonPendingTickets: FieldRef<"RegionalDailyReport", 'String'>
+    readonly totalNewConnections: FieldRef<"RegionalDailyReport", 'Int'>
+    readonly newConnectionsToday: FieldRef<"RegionalDailyReport", 'Int'>
+    readonly connectionPendingToday: FieldRef<"RegionalDailyReport", 'Int'>
+    readonly renewalsToday: FieldRef<"RegionalDailyReport", 'Int'>
+    readonly renewalPending: FieldRef<"RegionalDailyReport", 'Int'>
+    readonly reasonPendingConnection: FieldRef<"RegionalDailyReport", 'String'>
+    readonly collectionTarget: FieldRef<"RegionalDailyReport", 'Int'>
+    readonly collectionAchievement: FieldRef<"RegionalDailyReport", 'Int'>
+    readonly newConnectionTarget: FieldRef<"RegionalDailyReport", 'Int'>
+    readonly newConnectionAchievementPct: FieldRef<"RegionalDailyReport", 'Float'>
+    readonly renewalTarget: FieldRef<"RegionalDailyReport", 'Int'>
+    readonly renewalAchievementPct: FieldRef<"RegionalDailyReport", 'Float'>
+    readonly issueDetails: FieldRef<"RegionalDailyReport", 'String'>
+    readonly immediateActionsTaken: FieldRef<"RegionalDailyReport", 'String'>
+    readonly nextDayPlan: FieldRef<"RegionalDailyReport", 'String'>
+    readonly supportRequiredFromHO: FieldRef<"RegionalDailyReport", 'String'>
   }
     
 
@@ -20661,11 +20998,32 @@ export namespace Prisma {
     authorId: 'authorId',
     reportYmd: 'reportYmd',
     regionName: 'regionName',
-    totalMeetings: 'totalMeetings',
-    totalBranchesVisited: 'totalBranchesVisited',
-    marketingDaysPlanned: 'marketingDaysPlanned',
-    dynamicData: 'dynamicData',
-    remarks: 'remarks'
+    branchesVisitedToday: 'branchesVisitedToday',
+    keyObservations: 'keyObservations',
+    totalCollection: 'totalCollection',
+    activeCustomers: 'activeCustomers',
+    expiredCustomers: 'expiredCustomers',
+    totalCustomerBase: 'totalCustomerBase',
+    totalTickets: 'totalTickets',
+    pendingTickets: 'pendingTickets',
+    ticketsClosedToday: 'ticketsClosedToday',
+    reasonPendingTickets: 'reasonPendingTickets',
+    totalNewConnections: 'totalNewConnections',
+    newConnectionsToday: 'newConnectionsToday',
+    connectionPendingToday: 'connectionPendingToday',
+    renewalsToday: 'renewalsToday',
+    renewalPending: 'renewalPending',
+    reasonPendingConnection: 'reasonPendingConnection',
+    collectionTarget: 'collectionTarget',
+    collectionAchievement: 'collectionAchievement',
+    newConnectionTarget: 'newConnectionTarget',
+    newConnectionAchievementPct: 'newConnectionAchievementPct',
+    renewalTarget: 'renewalTarget',
+    renewalAchievementPct: 'renewalAchievementPct',
+    issueDetails: 'issueDetails',
+    immediateActionsTaken: 'immediateActionsTaken',
+    nextDayPlan: 'nextDayPlan',
+    supportRequiredFromHO: 'supportRequiredFromHO'
   };
 
   export type RegionalDailyReportScalarFieldEnum = (typeof RegionalDailyReportScalarFieldEnum)[keyof typeof RegionalDailyReportScalarFieldEnum]
@@ -20694,14 +21052,6 @@ export namespace Prisma {
   export type SortOrder = (typeof SortOrder)[keyof typeof SortOrder]
 
 
-  export const NullableJsonNullValueInput: {
-    DbNull: typeof DbNull,
-    JsonNull: typeof JsonNull
-  };
-
-  export type NullableJsonNullValueInput = (typeof NullableJsonNullValueInput)[keyof typeof NullableJsonNullValueInput]
-
-
   export const QueryMode: {
     default: 'default',
     insensitive: 'insensitive'
@@ -20716,15 +21066,6 @@ export namespace Prisma {
   };
 
   export type NullsOrder = (typeof NullsOrder)[keyof typeof NullsOrder]
-
-
-  export const JsonNullValueFilter: {
-    DbNull: typeof DbNull,
-    JsonNull: typeof JsonNull,
-    AnyNull: typeof AnyNull
-  };
-
-  export type JsonNullValueFilter = (typeof JsonNullValueFilter)[keyof typeof JsonNullValueFilter]
 
 
   /**
@@ -20810,16 +21151,16 @@ export namespace Prisma {
 
 
   /**
-   * Reference to a field of type 'Json'
+   * Reference to a field of type 'Float'
    */
-  export type JsonFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Json'>
+  export type FloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float'>
     
 
 
   /**
-   * Reference to a field of type 'QueryMode'
+   * Reference to a field of type 'Float[]'
    */
-  export type EnumQueryModeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'QueryMode'>
+  export type ListFloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float[]'>
     
 
 
@@ -20834,20 +21175,6 @@ export namespace Prisma {
    * Reference to a field of type 'CalendarNoteType[]'
    */
   export type ListEnumCalendarNoteTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'CalendarNoteType[]'>
-    
-
-
-  /**
-   * Reference to a field of type 'Float'
-   */
-  export type FloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float'>
-    
-
-
-  /**
-   * Reference to a field of type 'Float[]'
-   */
-  export type ListFloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float[]'>
     
   /**
    * Deep Input Types
@@ -21855,11 +22182,32 @@ export namespace Prisma {
     authorId?: IntFilter<"RegionalDailyReport"> | number
     reportYmd?: StringFilter<"RegionalDailyReport"> | string
     regionName?: StringFilter<"RegionalDailyReport"> | string
-    totalMeetings?: IntNullableFilter<"RegionalDailyReport"> | number | null
-    totalBranchesVisited?: IntNullableFilter<"RegionalDailyReport"> | number | null
-    marketingDaysPlanned?: IntNullableFilter<"RegionalDailyReport"> | number | null
-    dynamicData?: JsonNullableFilter<"RegionalDailyReport">
-    remarks?: StringNullableFilter<"RegionalDailyReport"> | string | null
+    branchesVisitedToday?: StringNullableFilter<"RegionalDailyReport"> | string | null
+    keyObservations?: StringNullableFilter<"RegionalDailyReport"> | string | null
+    totalCollection?: IntFilter<"RegionalDailyReport"> | number
+    activeCustomers?: IntFilter<"RegionalDailyReport"> | number
+    expiredCustomers?: IntFilter<"RegionalDailyReport"> | number
+    totalCustomerBase?: IntFilter<"RegionalDailyReport"> | number
+    totalTickets?: IntFilter<"RegionalDailyReport"> | number
+    pendingTickets?: IntFilter<"RegionalDailyReport"> | number
+    ticketsClosedToday?: IntFilter<"RegionalDailyReport"> | number
+    reasonPendingTickets?: StringNullableFilter<"RegionalDailyReport"> | string | null
+    totalNewConnections?: IntFilter<"RegionalDailyReport"> | number
+    newConnectionsToday?: IntFilter<"RegionalDailyReport"> | number
+    connectionPendingToday?: IntFilter<"RegionalDailyReport"> | number
+    renewalsToday?: IntFilter<"RegionalDailyReport"> | number
+    renewalPending?: IntFilter<"RegionalDailyReport"> | number
+    reasonPendingConnection?: StringNullableFilter<"RegionalDailyReport"> | string | null
+    collectionTarget?: IntFilter<"RegionalDailyReport"> | number
+    collectionAchievement?: IntFilter<"RegionalDailyReport"> | number
+    newConnectionTarget?: IntFilter<"RegionalDailyReport"> | number
+    newConnectionAchievementPct?: FloatFilter<"RegionalDailyReport"> | number
+    renewalTarget?: IntFilter<"RegionalDailyReport"> | number
+    renewalAchievementPct?: FloatFilter<"RegionalDailyReport"> | number
+    issueDetails?: StringNullableFilter<"RegionalDailyReport"> | string | null
+    immediateActionsTaken?: StringNullableFilter<"RegionalDailyReport"> | string | null
+    nextDayPlan?: StringNullableFilter<"RegionalDailyReport"> | string | null
+    supportRequiredFromHO?: StringNullableFilter<"RegionalDailyReport"> | string | null
     author?: XOR<UserScalarRelationFilter, UserWhereInput>
   }
 
@@ -21870,11 +22218,32 @@ export namespace Prisma {
     authorId?: SortOrder
     reportYmd?: SortOrder
     regionName?: SortOrder
-    totalMeetings?: SortOrderInput | SortOrder
-    totalBranchesVisited?: SortOrderInput | SortOrder
-    marketingDaysPlanned?: SortOrderInput | SortOrder
-    dynamicData?: SortOrderInput | SortOrder
-    remarks?: SortOrderInput | SortOrder
+    branchesVisitedToday?: SortOrderInput | SortOrder
+    keyObservations?: SortOrderInput | SortOrder
+    totalCollection?: SortOrder
+    activeCustomers?: SortOrder
+    expiredCustomers?: SortOrder
+    totalCustomerBase?: SortOrder
+    totalTickets?: SortOrder
+    pendingTickets?: SortOrder
+    ticketsClosedToday?: SortOrder
+    reasonPendingTickets?: SortOrderInput | SortOrder
+    totalNewConnections?: SortOrder
+    newConnectionsToday?: SortOrder
+    connectionPendingToday?: SortOrder
+    renewalsToday?: SortOrder
+    renewalPending?: SortOrder
+    reasonPendingConnection?: SortOrderInput | SortOrder
+    collectionTarget?: SortOrder
+    collectionAchievement?: SortOrder
+    newConnectionTarget?: SortOrder
+    newConnectionAchievementPct?: SortOrder
+    renewalTarget?: SortOrder
+    renewalAchievementPct?: SortOrder
+    issueDetails?: SortOrderInput | SortOrder
+    immediateActionsTaken?: SortOrderInput | SortOrder
+    nextDayPlan?: SortOrderInput | SortOrder
+    supportRequiredFromHO?: SortOrderInput | SortOrder
     author?: UserOrderByWithRelationInput
   }
 
@@ -21889,11 +22258,32 @@ export namespace Prisma {
     authorId?: IntFilter<"RegionalDailyReport"> | number
     reportYmd?: StringFilter<"RegionalDailyReport"> | string
     regionName?: StringFilter<"RegionalDailyReport"> | string
-    totalMeetings?: IntNullableFilter<"RegionalDailyReport"> | number | null
-    totalBranchesVisited?: IntNullableFilter<"RegionalDailyReport"> | number | null
-    marketingDaysPlanned?: IntNullableFilter<"RegionalDailyReport"> | number | null
-    dynamicData?: JsonNullableFilter<"RegionalDailyReport">
-    remarks?: StringNullableFilter<"RegionalDailyReport"> | string | null
+    branchesVisitedToday?: StringNullableFilter<"RegionalDailyReport"> | string | null
+    keyObservations?: StringNullableFilter<"RegionalDailyReport"> | string | null
+    totalCollection?: IntFilter<"RegionalDailyReport"> | number
+    activeCustomers?: IntFilter<"RegionalDailyReport"> | number
+    expiredCustomers?: IntFilter<"RegionalDailyReport"> | number
+    totalCustomerBase?: IntFilter<"RegionalDailyReport"> | number
+    totalTickets?: IntFilter<"RegionalDailyReport"> | number
+    pendingTickets?: IntFilter<"RegionalDailyReport"> | number
+    ticketsClosedToday?: IntFilter<"RegionalDailyReport"> | number
+    reasonPendingTickets?: StringNullableFilter<"RegionalDailyReport"> | string | null
+    totalNewConnections?: IntFilter<"RegionalDailyReport"> | number
+    newConnectionsToday?: IntFilter<"RegionalDailyReport"> | number
+    connectionPendingToday?: IntFilter<"RegionalDailyReport"> | number
+    renewalsToday?: IntFilter<"RegionalDailyReport"> | number
+    renewalPending?: IntFilter<"RegionalDailyReport"> | number
+    reasonPendingConnection?: StringNullableFilter<"RegionalDailyReport"> | string | null
+    collectionTarget?: IntFilter<"RegionalDailyReport"> | number
+    collectionAchievement?: IntFilter<"RegionalDailyReport"> | number
+    newConnectionTarget?: IntFilter<"RegionalDailyReport"> | number
+    newConnectionAchievementPct?: FloatFilter<"RegionalDailyReport"> | number
+    renewalTarget?: IntFilter<"RegionalDailyReport"> | number
+    renewalAchievementPct?: FloatFilter<"RegionalDailyReport"> | number
+    issueDetails?: StringNullableFilter<"RegionalDailyReport"> | string | null
+    immediateActionsTaken?: StringNullableFilter<"RegionalDailyReport"> | string | null
+    nextDayPlan?: StringNullableFilter<"RegionalDailyReport"> | string | null
+    supportRequiredFromHO?: StringNullableFilter<"RegionalDailyReport"> | string | null
     author?: XOR<UserScalarRelationFilter, UserWhereInput>
   }, "id" | "authorId_reportYmd">
 
@@ -21904,11 +22294,32 @@ export namespace Prisma {
     authorId?: SortOrder
     reportYmd?: SortOrder
     regionName?: SortOrder
-    totalMeetings?: SortOrderInput | SortOrder
-    totalBranchesVisited?: SortOrderInput | SortOrder
-    marketingDaysPlanned?: SortOrderInput | SortOrder
-    dynamicData?: SortOrderInput | SortOrder
-    remarks?: SortOrderInput | SortOrder
+    branchesVisitedToday?: SortOrderInput | SortOrder
+    keyObservations?: SortOrderInput | SortOrder
+    totalCollection?: SortOrder
+    activeCustomers?: SortOrder
+    expiredCustomers?: SortOrder
+    totalCustomerBase?: SortOrder
+    totalTickets?: SortOrder
+    pendingTickets?: SortOrder
+    ticketsClosedToday?: SortOrder
+    reasonPendingTickets?: SortOrderInput | SortOrder
+    totalNewConnections?: SortOrder
+    newConnectionsToday?: SortOrder
+    connectionPendingToday?: SortOrder
+    renewalsToday?: SortOrder
+    renewalPending?: SortOrder
+    reasonPendingConnection?: SortOrderInput | SortOrder
+    collectionTarget?: SortOrder
+    collectionAchievement?: SortOrder
+    newConnectionTarget?: SortOrder
+    newConnectionAchievementPct?: SortOrder
+    renewalTarget?: SortOrder
+    renewalAchievementPct?: SortOrder
+    issueDetails?: SortOrderInput | SortOrder
+    immediateActionsTaken?: SortOrderInput | SortOrder
+    nextDayPlan?: SortOrderInput | SortOrder
+    supportRequiredFromHO?: SortOrderInput | SortOrder
     _count?: RegionalDailyReportCountOrderByAggregateInput
     _avg?: RegionalDailyReportAvgOrderByAggregateInput
     _max?: RegionalDailyReportMaxOrderByAggregateInput
@@ -21926,11 +22337,32 @@ export namespace Prisma {
     authorId?: IntWithAggregatesFilter<"RegionalDailyReport"> | number
     reportYmd?: StringWithAggregatesFilter<"RegionalDailyReport"> | string
     regionName?: StringWithAggregatesFilter<"RegionalDailyReport"> | string
-    totalMeetings?: IntNullableWithAggregatesFilter<"RegionalDailyReport"> | number | null
-    totalBranchesVisited?: IntNullableWithAggregatesFilter<"RegionalDailyReport"> | number | null
-    marketingDaysPlanned?: IntNullableWithAggregatesFilter<"RegionalDailyReport"> | number | null
-    dynamicData?: JsonNullableWithAggregatesFilter<"RegionalDailyReport">
-    remarks?: StringNullableWithAggregatesFilter<"RegionalDailyReport"> | string | null
+    branchesVisitedToday?: StringNullableWithAggregatesFilter<"RegionalDailyReport"> | string | null
+    keyObservations?: StringNullableWithAggregatesFilter<"RegionalDailyReport"> | string | null
+    totalCollection?: IntWithAggregatesFilter<"RegionalDailyReport"> | number
+    activeCustomers?: IntWithAggregatesFilter<"RegionalDailyReport"> | number
+    expiredCustomers?: IntWithAggregatesFilter<"RegionalDailyReport"> | number
+    totalCustomerBase?: IntWithAggregatesFilter<"RegionalDailyReport"> | number
+    totalTickets?: IntWithAggregatesFilter<"RegionalDailyReport"> | number
+    pendingTickets?: IntWithAggregatesFilter<"RegionalDailyReport"> | number
+    ticketsClosedToday?: IntWithAggregatesFilter<"RegionalDailyReport"> | number
+    reasonPendingTickets?: StringNullableWithAggregatesFilter<"RegionalDailyReport"> | string | null
+    totalNewConnections?: IntWithAggregatesFilter<"RegionalDailyReport"> | number
+    newConnectionsToday?: IntWithAggregatesFilter<"RegionalDailyReport"> | number
+    connectionPendingToday?: IntWithAggregatesFilter<"RegionalDailyReport"> | number
+    renewalsToday?: IntWithAggregatesFilter<"RegionalDailyReport"> | number
+    renewalPending?: IntWithAggregatesFilter<"RegionalDailyReport"> | number
+    reasonPendingConnection?: StringNullableWithAggregatesFilter<"RegionalDailyReport"> | string | null
+    collectionTarget?: IntWithAggregatesFilter<"RegionalDailyReport"> | number
+    collectionAchievement?: IntWithAggregatesFilter<"RegionalDailyReport"> | number
+    newConnectionTarget?: IntWithAggregatesFilter<"RegionalDailyReport"> | number
+    newConnectionAchievementPct?: FloatWithAggregatesFilter<"RegionalDailyReport"> | number
+    renewalTarget?: IntWithAggregatesFilter<"RegionalDailyReport"> | number
+    renewalAchievementPct?: FloatWithAggregatesFilter<"RegionalDailyReport"> | number
+    issueDetails?: StringNullableWithAggregatesFilter<"RegionalDailyReport"> | string | null
+    immediateActionsTaken?: StringNullableWithAggregatesFilter<"RegionalDailyReport"> | string | null
+    nextDayPlan?: StringNullableWithAggregatesFilter<"RegionalDailyReport"> | string | null
+    supportRequiredFromHO?: StringNullableWithAggregatesFilter<"RegionalDailyReport"> | string | null
   }
 
   export type CalendarNoteWhereInput = {
@@ -22973,11 +23405,32 @@ export namespace Prisma {
     updatedAt?: Date | string
     reportYmd: string
     regionName: string
-    totalMeetings?: number | null
-    totalBranchesVisited?: number | null
-    marketingDaysPlanned?: number | null
-    dynamicData?: NullableJsonNullValueInput | InputJsonValue
-    remarks?: string | null
+    branchesVisitedToday?: string | null
+    keyObservations?: string | null
+    totalCollection?: number
+    activeCustomers?: number
+    expiredCustomers?: number
+    totalCustomerBase?: number
+    totalTickets?: number
+    pendingTickets?: number
+    ticketsClosedToday?: number
+    reasonPendingTickets?: string | null
+    totalNewConnections?: number
+    newConnectionsToday?: number
+    connectionPendingToday?: number
+    renewalsToday?: number
+    renewalPending?: number
+    reasonPendingConnection?: string | null
+    collectionTarget?: number
+    collectionAchievement?: number
+    newConnectionTarget?: number
+    newConnectionAchievementPct?: number
+    renewalTarget?: number
+    renewalAchievementPct?: number
+    issueDetails?: string | null
+    immediateActionsTaken?: string | null
+    nextDayPlan?: string | null
+    supportRequiredFromHO?: string | null
     author: UserCreateNestedOneWithoutRegionalReportsInput
   }
 
@@ -22988,11 +23441,32 @@ export namespace Prisma {
     authorId: number
     reportYmd: string
     regionName: string
-    totalMeetings?: number | null
-    totalBranchesVisited?: number | null
-    marketingDaysPlanned?: number | null
-    dynamicData?: NullableJsonNullValueInput | InputJsonValue
-    remarks?: string | null
+    branchesVisitedToday?: string | null
+    keyObservations?: string | null
+    totalCollection?: number
+    activeCustomers?: number
+    expiredCustomers?: number
+    totalCustomerBase?: number
+    totalTickets?: number
+    pendingTickets?: number
+    ticketsClosedToday?: number
+    reasonPendingTickets?: string | null
+    totalNewConnections?: number
+    newConnectionsToday?: number
+    connectionPendingToday?: number
+    renewalsToday?: number
+    renewalPending?: number
+    reasonPendingConnection?: string | null
+    collectionTarget?: number
+    collectionAchievement?: number
+    newConnectionTarget?: number
+    newConnectionAchievementPct?: number
+    renewalTarget?: number
+    renewalAchievementPct?: number
+    issueDetails?: string | null
+    immediateActionsTaken?: string | null
+    nextDayPlan?: string | null
+    supportRequiredFromHO?: string | null
   }
 
   export type RegionalDailyReportUpdateInput = {
@@ -23000,11 +23474,32 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     reportYmd?: StringFieldUpdateOperationsInput | string
     regionName?: StringFieldUpdateOperationsInput | string
-    totalMeetings?: NullableIntFieldUpdateOperationsInput | number | null
-    totalBranchesVisited?: NullableIntFieldUpdateOperationsInput | number | null
-    marketingDaysPlanned?: NullableIntFieldUpdateOperationsInput | number | null
-    dynamicData?: NullableJsonNullValueInput | InputJsonValue
-    remarks?: NullableStringFieldUpdateOperationsInput | string | null
+    branchesVisitedToday?: NullableStringFieldUpdateOperationsInput | string | null
+    keyObservations?: NullableStringFieldUpdateOperationsInput | string | null
+    totalCollection?: IntFieldUpdateOperationsInput | number
+    activeCustomers?: IntFieldUpdateOperationsInput | number
+    expiredCustomers?: IntFieldUpdateOperationsInput | number
+    totalCustomerBase?: IntFieldUpdateOperationsInput | number
+    totalTickets?: IntFieldUpdateOperationsInput | number
+    pendingTickets?: IntFieldUpdateOperationsInput | number
+    ticketsClosedToday?: IntFieldUpdateOperationsInput | number
+    reasonPendingTickets?: NullableStringFieldUpdateOperationsInput | string | null
+    totalNewConnections?: IntFieldUpdateOperationsInput | number
+    newConnectionsToday?: IntFieldUpdateOperationsInput | number
+    connectionPendingToday?: IntFieldUpdateOperationsInput | number
+    renewalsToday?: IntFieldUpdateOperationsInput | number
+    renewalPending?: IntFieldUpdateOperationsInput | number
+    reasonPendingConnection?: NullableStringFieldUpdateOperationsInput | string | null
+    collectionTarget?: IntFieldUpdateOperationsInput | number
+    collectionAchievement?: IntFieldUpdateOperationsInput | number
+    newConnectionTarget?: IntFieldUpdateOperationsInput | number
+    newConnectionAchievementPct?: FloatFieldUpdateOperationsInput | number
+    renewalTarget?: IntFieldUpdateOperationsInput | number
+    renewalAchievementPct?: FloatFieldUpdateOperationsInput | number
+    issueDetails?: NullableStringFieldUpdateOperationsInput | string | null
+    immediateActionsTaken?: NullableStringFieldUpdateOperationsInput | string | null
+    nextDayPlan?: NullableStringFieldUpdateOperationsInput | string | null
+    supportRequiredFromHO?: NullableStringFieldUpdateOperationsInput | string | null
     author?: UserUpdateOneRequiredWithoutRegionalReportsNestedInput
   }
 
@@ -23015,11 +23510,32 @@ export namespace Prisma {
     authorId?: IntFieldUpdateOperationsInput | number
     reportYmd?: StringFieldUpdateOperationsInput | string
     regionName?: StringFieldUpdateOperationsInput | string
-    totalMeetings?: NullableIntFieldUpdateOperationsInput | number | null
-    totalBranchesVisited?: NullableIntFieldUpdateOperationsInput | number | null
-    marketingDaysPlanned?: NullableIntFieldUpdateOperationsInput | number | null
-    dynamicData?: NullableJsonNullValueInput | InputJsonValue
-    remarks?: NullableStringFieldUpdateOperationsInput | string | null
+    branchesVisitedToday?: NullableStringFieldUpdateOperationsInput | string | null
+    keyObservations?: NullableStringFieldUpdateOperationsInput | string | null
+    totalCollection?: IntFieldUpdateOperationsInput | number
+    activeCustomers?: IntFieldUpdateOperationsInput | number
+    expiredCustomers?: IntFieldUpdateOperationsInput | number
+    totalCustomerBase?: IntFieldUpdateOperationsInput | number
+    totalTickets?: IntFieldUpdateOperationsInput | number
+    pendingTickets?: IntFieldUpdateOperationsInput | number
+    ticketsClosedToday?: IntFieldUpdateOperationsInput | number
+    reasonPendingTickets?: NullableStringFieldUpdateOperationsInput | string | null
+    totalNewConnections?: IntFieldUpdateOperationsInput | number
+    newConnectionsToday?: IntFieldUpdateOperationsInput | number
+    connectionPendingToday?: IntFieldUpdateOperationsInput | number
+    renewalsToday?: IntFieldUpdateOperationsInput | number
+    renewalPending?: IntFieldUpdateOperationsInput | number
+    reasonPendingConnection?: NullableStringFieldUpdateOperationsInput | string | null
+    collectionTarget?: IntFieldUpdateOperationsInput | number
+    collectionAchievement?: IntFieldUpdateOperationsInput | number
+    newConnectionTarget?: IntFieldUpdateOperationsInput | number
+    newConnectionAchievementPct?: FloatFieldUpdateOperationsInput | number
+    renewalTarget?: IntFieldUpdateOperationsInput | number
+    renewalAchievementPct?: FloatFieldUpdateOperationsInput | number
+    issueDetails?: NullableStringFieldUpdateOperationsInput | string | null
+    immediateActionsTaken?: NullableStringFieldUpdateOperationsInput | string | null
+    nextDayPlan?: NullableStringFieldUpdateOperationsInput | string | null
+    supportRequiredFromHO?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type RegionalDailyReportCreateManyInput = {
@@ -23029,11 +23545,32 @@ export namespace Prisma {
     authorId: number
     reportYmd: string
     regionName: string
-    totalMeetings?: number | null
-    totalBranchesVisited?: number | null
-    marketingDaysPlanned?: number | null
-    dynamicData?: NullableJsonNullValueInput | InputJsonValue
-    remarks?: string | null
+    branchesVisitedToday?: string | null
+    keyObservations?: string | null
+    totalCollection?: number
+    activeCustomers?: number
+    expiredCustomers?: number
+    totalCustomerBase?: number
+    totalTickets?: number
+    pendingTickets?: number
+    ticketsClosedToday?: number
+    reasonPendingTickets?: string | null
+    totalNewConnections?: number
+    newConnectionsToday?: number
+    connectionPendingToday?: number
+    renewalsToday?: number
+    renewalPending?: number
+    reasonPendingConnection?: string | null
+    collectionTarget?: number
+    collectionAchievement?: number
+    newConnectionTarget?: number
+    newConnectionAchievementPct?: number
+    renewalTarget?: number
+    renewalAchievementPct?: number
+    issueDetails?: string | null
+    immediateActionsTaken?: string | null
+    nextDayPlan?: string | null
+    supportRequiredFromHO?: string | null
   }
 
   export type RegionalDailyReportUpdateManyMutationInput = {
@@ -23041,11 +23578,32 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     reportYmd?: StringFieldUpdateOperationsInput | string
     regionName?: StringFieldUpdateOperationsInput | string
-    totalMeetings?: NullableIntFieldUpdateOperationsInput | number | null
-    totalBranchesVisited?: NullableIntFieldUpdateOperationsInput | number | null
-    marketingDaysPlanned?: NullableIntFieldUpdateOperationsInput | number | null
-    dynamicData?: NullableJsonNullValueInput | InputJsonValue
-    remarks?: NullableStringFieldUpdateOperationsInput | string | null
+    branchesVisitedToday?: NullableStringFieldUpdateOperationsInput | string | null
+    keyObservations?: NullableStringFieldUpdateOperationsInput | string | null
+    totalCollection?: IntFieldUpdateOperationsInput | number
+    activeCustomers?: IntFieldUpdateOperationsInput | number
+    expiredCustomers?: IntFieldUpdateOperationsInput | number
+    totalCustomerBase?: IntFieldUpdateOperationsInput | number
+    totalTickets?: IntFieldUpdateOperationsInput | number
+    pendingTickets?: IntFieldUpdateOperationsInput | number
+    ticketsClosedToday?: IntFieldUpdateOperationsInput | number
+    reasonPendingTickets?: NullableStringFieldUpdateOperationsInput | string | null
+    totalNewConnections?: IntFieldUpdateOperationsInput | number
+    newConnectionsToday?: IntFieldUpdateOperationsInput | number
+    connectionPendingToday?: IntFieldUpdateOperationsInput | number
+    renewalsToday?: IntFieldUpdateOperationsInput | number
+    renewalPending?: IntFieldUpdateOperationsInput | number
+    reasonPendingConnection?: NullableStringFieldUpdateOperationsInput | string | null
+    collectionTarget?: IntFieldUpdateOperationsInput | number
+    collectionAchievement?: IntFieldUpdateOperationsInput | number
+    newConnectionTarget?: IntFieldUpdateOperationsInput | number
+    newConnectionAchievementPct?: FloatFieldUpdateOperationsInput | number
+    renewalTarget?: IntFieldUpdateOperationsInput | number
+    renewalAchievementPct?: FloatFieldUpdateOperationsInput | number
+    issueDetails?: NullableStringFieldUpdateOperationsInput | string | null
+    immediateActionsTaken?: NullableStringFieldUpdateOperationsInput | string | null
+    nextDayPlan?: NullableStringFieldUpdateOperationsInput | string | null
+    supportRequiredFromHO?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type RegionalDailyReportUncheckedUpdateManyInput = {
@@ -23055,11 +23613,32 @@ export namespace Prisma {
     authorId?: IntFieldUpdateOperationsInput | number
     reportYmd?: StringFieldUpdateOperationsInput | string
     regionName?: StringFieldUpdateOperationsInput | string
-    totalMeetings?: NullableIntFieldUpdateOperationsInput | number | null
-    totalBranchesVisited?: NullableIntFieldUpdateOperationsInput | number | null
-    marketingDaysPlanned?: NullableIntFieldUpdateOperationsInput | number | null
-    dynamicData?: NullableJsonNullValueInput | InputJsonValue
-    remarks?: NullableStringFieldUpdateOperationsInput | string | null
+    branchesVisitedToday?: NullableStringFieldUpdateOperationsInput | string | null
+    keyObservations?: NullableStringFieldUpdateOperationsInput | string | null
+    totalCollection?: IntFieldUpdateOperationsInput | number
+    activeCustomers?: IntFieldUpdateOperationsInput | number
+    expiredCustomers?: IntFieldUpdateOperationsInput | number
+    totalCustomerBase?: IntFieldUpdateOperationsInput | number
+    totalTickets?: IntFieldUpdateOperationsInput | number
+    pendingTickets?: IntFieldUpdateOperationsInput | number
+    ticketsClosedToday?: IntFieldUpdateOperationsInput | number
+    reasonPendingTickets?: NullableStringFieldUpdateOperationsInput | string | null
+    totalNewConnections?: IntFieldUpdateOperationsInput | number
+    newConnectionsToday?: IntFieldUpdateOperationsInput | number
+    connectionPendingToday?: IntFieldUpdateOperationsInput | number
+    renewalsToday?: IntFieldUpdateOperationsInput | number
+    renewalPending?: IntFieldUpdateOperationsInput | number
+    reasonPendingConnection?: NullableStringFieldUpdateOperationsInput | string | null
+    collectionTarget?: IntFieldUpdateOperationsInput | number
+    collectionAchievement?: IntFieldUpdateOperationsInput | number
+    newConnectionTarget?: IntFieldUpdateOperationsInput | number
+    newConnectionAchievementPct?: FloatFieldUpdateOperationsInput | number
+    renewalTarget?: IntFieldUpdateOperationsInput | number
+    renewalAchievementPct?: FloatFieldUpdateOperationsInput | number
+    issueDetails?: NullableStringFieldUpdateOperationsInput | string | null
+    immediateActionsTaken?: NullableStringFieldUpdateOperationsInput | string | null
+    nextDayPlan?: NullableStringFieldUpdateOperationsInput | string | null
+    supportRequiredFromHO?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type CalendarNoteCreateInput = {
@@ -24137,28 +24716,16 @@ export namespace Prisma {
     totalExpireCustomer?: SortOrder
     outgoingCalls?: SortOrder
   }
-  export type JsonNullableFilter<$PrismaModel = never> =
-    | PatchUndefined<
-        Either<Required<JsonNullableFilterBase<$PrismaModel>>, Exclude<keyof Required<JsonNullableFilterBase<$PrismaModel>>, 'path'>>,
-        Required<JsonNullableFilterBase<$PrismaModel>>
-      >
-    | OptionalFlat<Omit<Required<JsonNullableFilterBase<$PrismaModel>>, 'path'>>
 
-  export type JsonNullableFilterBase<$PrismaModel = never> = {
-    equals?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
-    path?: string[]
-    mode?: QueryMode | EnumQueryModeFieldRefInput<$PrismaModel>
-    string_contains?: string | StringFieldRefInput<$PrismaModel>
-    string_starts_with?: string | StringFieldRefInput<$PrismaModel>
-    string_ends_with?: string | StringFieldRefInput<$PrismaModel>
-    array_starts_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
-    array_ends_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
-    array_contains?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
-    lt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
-    lte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
-    gt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
-    gte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
-    not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+  export type FloatFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel>
+    in?: number[] | ListFloatFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel>
+    lt?: number | FloatFieldRefInput<$PrismaModel>
+    lte?: number | FloatFieldRefInput<$PrismaModel>
+    gt?: number | FloatFieldRefInput<$PrismaModel>
+    gte?: number | FloatFieldRefInput<$PrismaModel>
+    not?: NestedFloatFilter<$PrismaModel> | number
   }
 
   export type RegionalDailyReportAuthorIdReportYmdCompoundUniqueInput = {
@@ -24173,19 +24740,55 @@ export namespace Prisma {
     authorId?: SortOrder
     reportYmd?: SortOrder
     regionName?: SortOrder
-    totalMeetings?: SortOrder
-    totalBranchesVisited?: SortOrder
-    marketingDaysPlanned?: SortOrder
-    dynamicData?: SortOrder
-    remarks?: SortOrder
+    branchesVisitedToday?: SortOrder
+    keyObservations?: SortOrder
+    totalCollection?: SortOrder
+    activeCustomers?: SortOrder
+    expiredCustomers?: SortOrder
+    totalCustomerBase?: SortOrder
+    totalTickets?: SortOrder
+    pendingTickets?: SortOrder
+    ticketsClosedToday?: SortOrder
+    reasonPendingTickets?: SortOrder
+    totalNewConnections?: SortOrder
+    newConnectionsToday?: SortOrder
+    connectionPendingToday?: SortOrder
+    renewalsToday?: SortOrder
+    renewalPending?: SortOrder
+    reasonPendingConnection?: SortOrder
+    collectionTarget?: SortOrder
+    collectionAchievement?: SortOrder
+    newConnectionTarget?: SortOrder
+    newConnectionAchievementPct?: SortOrder
+    renewalTarget?: SortOrder
+    renewalAchievementPct?: SortOrder
+    issueDetails?: SortOrder
+    immediateActionsTaken?: SortOrder
+    nextDayPlan?: SortOrder
+    supportRequiredFromHO?: SortOrder
   }
 
   export type RegionalDailyReportAvgOrderByAggregateInput = {
     id?: SortOrder
     authorId?: SortOrder
-    totalMeetings?: SortOrder
-    totalBranchesVisited?: SortOrder
-    marketingDaysPlanned?: SortOrder
+    totalCollection?: SortOrder
+    activeCustomers?: SortOrder
+    expiredCustomers?: SortOrder
+    totalCustomerBase?: SortOrder
+    totalTickets?: SortOrder
+    pendingTickets?: SortOrder
+    ticketsClosedToday?: SortOrder
+    totalNewConnections?: SortOrder
+    newConnectionsToday?: SortOrder
+    connectionPendingToday?: SortOrder
+    renewalsToday?: SortOrder
+    renewalPending?: SortOrder
+    collectionTarget?: SortOrder
+    collectionAchievement?: SortOrder
+    newConnectionTarget?: SortOrder
+    newConnectionAchievementPct?: SortOrder
+    renewalTarget?: SortOrder
+    renewalAchievementPct?: SortOrder
   }
 
   export type RegionalDailyReportMaxOrderByAggregateInput = {
@@ -24195,10 +24798,32 @@ export namespace Prisma {
     authorId?: SortOrder
     reportYmd?: SortOrder
     regionName?: SortOrder
-    totalMeetings?: SortOrder
-    totalBranchesVisited?: SortOrder
-    marketingDaysPlanned?: SortOrder
-    remarks?: SortOrder
+    branchesVisitedToday?: SortOrder
+    keyObservations?: SortOrder
+    totalCollection?: SortOrder
+    activeCustomers?: SortOrder
+    expiredCustomers?: SortOrder
+    totalCustomerBase?: SortOrder
+    totalTickets?: SortOrder
+    pendingTickets?: SortOrder
+    ticketsClosedToday?: SortOrder
+    reasonPendingTickets?: SortOrder
+    totalNewConnections?: SortOrder
+    newConnectionsToday?: SortOrder
+    connectionPendingToday?: SortOrder
+    renewalsToday?: SortOrder
+    renewalPending?: SortOrder
+    reasonPendingConnection?: SortOrder
+    collectionTarget?: SortOrder
+    collectionAchievement?: SortOrder
+    newConnectionTarget?: SortOrder
+    newConnectionAchievementPct?: SortOrder
+    renewalTarget?: SortOrder
+    renewalAchievementPct?: SortOrder
+    issueDetails?: SortOrder
+    immediateActionsTaken?: SortOrder
+    nextDayPlan?: SortOrder
+    supportRequiredFromHO?: SortOrder
   }
 
   export type RegionalDailyReportMinOrderByAggregateInput = {
@@ -24208,44 +24833,71 @@ export namespace Prisma {
     authorId?: SortOrder
     reportYmd?: SortOrder
     regionName?: SortOrder
-    totalMeetings?: SortOrder
-    totalBranchesVisited?: SortOrder
-    marketingDaysPlanned?: SortOrder
-    remarks?: SortOrder
+    branchesVisitedToday?: SortOrder
+    keyObservations?: SortOrder
+    totalCollection?: SortOrder
+    activeCustomers?: SortOrder
+    expiredCustomers?: SortOrder
+    totalCustomerBase?: SortOrder
+    totalTickets?: SortOrder
+    pendingTickets?: SortOrder
+    ticketsClosedToday?: SortOrder
+    reasonPendingTickets?: SortOrder
+    totalNewConnections?: SortOrder
+    newConnectionsToday?: SortOrder
+    connectionPendingToday?: SortOrder
+    renewalsToday?: SortOrder
+    renewalPending?: SortOrder
+    reasonPendingConnection?: SortOrder
+    collectionTarget?: SortOrder
+    collectionAchievement?: SortOrder
+    newConnectionTarget?: SortOrder
+    newConnectionAchievementPct?: SortOrder
+    renewalTarget?: SortOrder
+    renewalAchievementPct?: SortOrder
+    issueDetails?: SortOrder
+    immediateActionsTaken?: SortOrder
+    nextDayPlan?: SortOrder
+    supportRequiredFromHO?: SortOrder
   }
 
   export type RegionalDailyReportSumOrderByAggregateInput = {
     id?: SortOrder
     authorId?: SortOrder
-    totalMeetings?: SortOrder
-    totalBranchesVisited?: SortOrder
-    marketingDaysPlanned?: SortOrder
+    totalCollection?: SortOrder
+    activeCustomers?: SortOrder
+    expiredCustomers?: SortOrder
+    totalCustomerBase?: SortOrder
+    totalTickets?: SortOrder
+    pendingTickets?: SortOrder
+    ticketsClosedToday?: SortOrder
+    totalNewConnections?: SortOrder
+    newConnectionsToday?: SortOrder
+    connectionPendingToday?: SortOrder
+    renewalsToday?: SortOrder
+    renewalPending?: SortOrder
+    collectionTarget?: SortOrder
+    collectionAchievement?: SortOrder
+    newConnectionTarget?: SortOrder
+    newConnectionAchievementPct?: SortOrder
+    renewalTarget?: SortOrder
+    renewalAchievementPct?: SortOrder
   }
-  export type JsonNullableWithAggregatesFilter<$PrismaModel = never> =
-    | PatchUndefined<
-        Either<Required<JsonNullableWithAggregatesFilterBase<$PrismaModel>>, Exclude<keyof Required<JsonNullableWithAggregatesFilterBase<$PrismaModel>>, 'path'>>,
-        Required<JsonNullableWithAggregatesFilterBase<$PrismaModel>>
-      >
-    | OptionalFlat<Omit<Required<JsonNullableWithAggregatesFilterBase<$PrismaModel>>, 'path'>>
 
-  export type JsonNullableWithAggregatesFilterBase<$PrismaModel = never> = {
-    equals?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
-    path?: string[]
-    mode?: QueryMode | EnumQueryModeFieldRefInput<$PrismaModel>
-    string_contains?: string | StringFieldRefInput<$PrismaModel>
-    string_starts_with?: string | StringFieldRefInput<$PrismaModel>
-    string_ends_with?: string | StringFieldRefInput<$PrismaModel>
-    array_starts_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
-    array_ends_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
-    array_contains?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
-    lt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
-    lte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
-    gt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
-    gte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
-    not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
-    _count?: NestedIntNullableFilter<$PrismaModel>
-    _min?: NestedJsonNullableFilter<$PrismaModel>
-    _max?: NestedJsonNullableFilter<$PrismaModel>
+  export type FloatWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel>
+    in?: number[] | ListFloatFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel>
+    lt?: number | FloatFieldRefInput<$PrismaModel>
+    lte?: number | FloatFieldRefInput<$PrismaModel>
+    gt?: number | FloatFieldRefInput<$PrismaModel>
+    gte?: number | FloatFieldRefInput<$PrismaModel>
+    not?: NestedFloatWithAggregatesFilter<$PrismaModel> | number
+    _count?: NestedIntFilter<$PrismaModel>
+    _avg?: NestedFloatFilter<$PrismaModel>
+    _sum?: NestedFloatFilter<$PrismaModel>
+    _min?: NestedFloatFilter<$PrismaModel>
+    _max?: NestedFloatFilter<$PrismaModel>
   }
 
   export type EnumCalendarNoteTypeFilter<$PrismaModel = never> = {
@@ -25843,6 +26495,14 @@ export namespace Prisma {
     connect?: UserWhereUniqueInput
   }
 
+  export type FloatFieldUpdateOperationsInput = {
+    set?: number
+    increment?: number
+    decrement?: number
+    multiply?: number
+    divide?: number
+  }
+
   export type UserUpdateOneRequiredWithoutRegionalReportsNestedInput = {
     create?: XOR<UserCreateWithoutRegionalReportsInput, UserUncheckedCreateWithoutRegionalReportsInput>
     connectOrCreate?: UserCreateOrConnectWithoutRegionalReportsInput
@@ -26117,28 +26777,21 @@ export namespace Prisma {
     _min?: NestedDateTimeNullableFilter<$PrismaModel>
     _max?: NestedDateTimeNullableFilter<$PrismaModel>
   }
-  export type NestedJsonNullableFilter<$PrismaModel = never> =
-    | PatchUndefined<
-        Either<Required<NestedJsonNullableFilterBase<$PrismaModel>>, Exclude<keyof Required<NestedJsonNullableFilterBase<$PrismaModel>>, 'path'>>,
-        Required<NestedJsonNullableFilterBase<$PrismaModel>>
-      >
-    | OptionalFlat<Omit<Required<NestedJsonNullableFilterBase<$PrismaModel>>, 'path'>>
 
-  export type NestedJsonNullableFilterBase<$PrismaModel = never> = {
-    equals?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
-    path?: string[]
-    mode?: QueryMode | EnumQueryModeFieldRefInput<$PrismaModel>
-    string_contains?: string | StringFieldRefInput<$PrismaModel>
-    string_starts_with?: string | StringFieldRefInput<$PrismaModel>
-    string_ends_with?: string | StringFieldRefInput<$PrismaModel>
-    array_starts_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
-    array_ends_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
-    array_contains?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
-    lt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
-    lte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
-    gt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
-    gte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
-    not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+  export type NestedFloatWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel>
+    in?: number[] | ListFloatFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel>
+    lt?: number | FloatFieldRefInput<$PrismaModel>
+    lte?: number | FloatFieldRefInput<$PrismaModel>
+    gt?: number | FloatFieldRefInput<$PrismaModel>
+    gte?: number | FloatFieldRefInput<$PrismaModel>
+    not?: NestedFloatWithAggregatesFilter<$PrismaModel> | number
+    _count?: NestedIntFilter<$PrismaModel>
+    _avg?: NestedFloatFilter<$PrismaModel>
+    _sum?: NestedFloatFilter<$PrismaModel>
+    _min?: NestedFloatFilter<$PrismaModel>
+    _max?: NestedFloatFilter<$PrismaModel>
   }
 
   export type NestedEnumCalendarNoteTypeFilter<$PrismaModel = never> = {
@@ -26557,11 +27210,32 @@ export namespace Prisma {
     updatedAt?: Date | string
     reportYmd: string
     regionName: string
-    totalMeetings?: number | null
-    totalBranchesVisited?: number | null
-    marketingDaysPlanned?: number | null
-    dynamicData?: NullableJsonNullValueInput | InputJsonValue
-    remarks?: string | null
+    branchesVisitedToday?: string | null
+    keyObservations?: string | null
+    totalCollection?: number
+    activeCustomers?: number
+    expiredCustomers?: number
+    totalCustomerBase?: number
+    totalTickets?: number
+    pendingTickets?: number
+    ticketsClosedToday?: number
+    reasonPendingTickets?: string | null
+    totalNewConnections?: number
+    newConnectionsToday?: number
+    connectionPendingToday?: number
+    renewalsToday?: number
+    renewalPending?: number
+    reasonPendingConnection?: string | null
+    collectionTarget?: number
+    collectionAchievement?: number
+    newConnectionTarget?: number
+    newConnectionAchievementPct?: number
+    renewalTarget?: number
+    renewalAchievementPct?: number
+    issueDetails?: string | null
+    immediateActionsTaken?: string | null
+    nextDayPlan?: string | null
+    supportRequiredFromHO?: string | null
   }
 
   export type RegionalDailyReportUncheckedCreateWithoutAuthorInput = {
@@ -26570,11 +27244,32 @@ export namespace Prisma {
     updatedAt?: Date | string
     reportYmd: string
     regionName: string
-    totalMeetings?: number | null
-    totalBranchesVisited?: number | null
-    marketingDaysPlanned?: number | null
-    dynamicData?: NullableJsonNullValueInput | InputJsonValue
-    remarks?: string | null
+    branchesVisitedToday?: string | null
+    keyObservations?: string | null
+    totalCollection?: number
+    activeCustomers?: number
+    expiredCustomers?: number
+    totalCustomerBase?: number
+    totalTickets?: number
+    pendingTickets?: number
+    ticketsClosedToday?: number
+    reasonPendingTickets?: string | null
+    totalNewConnections?: number
+    newConnectionsToday?: number
+    connectionPendingToday?: number
+    renewalsToday?: number
+    renewalPending?: number
+    reasonPendingConnection?: string | null
+    collectionTarget?: number
+    collectionAchievement?: number
+    newConnectionTarget?: number
+    newConnectionAchievementPct?: number
+    renewalTarget?: number
+    renewalAchievementPct?: number
+    issueDetails?: string | null
+    immediateActionsTaken?: string | null
+    nextDayPlan?: string | null
+    supportRequiredFromHO?: string | null
   }
 
   export type RegionalDailyReportCreateOrConnectWithoutAuthorInput = {
@@ -27053,11 +27748,32 @@ export namespace Prisma {
     authorId?: IntFilter<"RegionalDailyReport"> | number
     reportYmd?: StringFilter<"RegionalDailyReport"> | string
     regionName?: StringFilter<"RegionalDailyReport"> | string
-    totalMeetings?: IntNullableFilter<"RegionalDailyReport"> | number | null
-    totalBranchesVisited?: IntNullableFilter<"RegionalDailyReport"> | number | null
-    marketingDaysPlanned?: IntNullableFilter<"RegionalDailyReport"> | number | null
-    dynamicData?: JsonNullableFilter<"RegionalDailyReport">
-    remarks?: StringNullableFilter<"RegionalDailyReport"> | string | null
+    branchesVisitedToday?: StringNullableFilter<"RegionalDailyReport"> | string | null
+    keyObservations?: StringNullableFilter<"RegionalDailyReport"> | string | null
+    totalCollection?: IntFilter<"RegionalDailyReport"> | number
+    activeCustomers?: IntFilter<"RegionalDailyReport"> | number
+    expiredCustomers?: IntFilter<"RegionalDailyReport"> | number
+    totalCustomerBase?: IntFilter<"RegionalDailyReport"> | number
+    totalTickets?: IntFilter<"RegionalDailyReport"> | number
+    pendingTickets?: IntFilter<"RegionalDailyReport"> | number
+    ticketsClosedToday?: IntFilter<"RegionalDailyReport"> | number
+    reasonPendingTickets?: StringNullableFilter<"RegionalDailyReport"> | string | null
+    totalNewConnections?: IntFilter<"RegionalDailyReport"> | number
+    newConnectionsToday?: IntFilter<"RegionalDailyReport"> | number
+    connectionPendingToday?: IntFilter<"RegionalDailyReport"> | number
+    renewalsToday?: IntFilter<"RegionalDailyReport"> | number
+    renewalPending?: IntFilter<"RegionalDailyReport"> | number
+    reasonPendingConnection?: StringNullableFilter<"RegionalDailyReport"> | string | null
+    collectionTarget?: IntFilter<"RegionalDailyReport"> | number
+    collectionAchievement?: IntFilter<"RegionalDailyReport"> | number
+    newConnectionTarget?: IntFilter<"RegionalDailyReport"> | number
+    newConnectionAchievementPct?: FloatFilter<"RegionalDailyReport"> | number
+    renewalTarget?: IntFilter<"RegionalDailyReport"> | number
+    renewalAchievementPct?: FloatFilter<"RegionalDailyReport"> | number
+    issueDetails?: StringNullableFilter<"RegionalDailyReport"> | string | null
+    immediateActionsTaken?: StringNullableFilter<"RegionalDailyReport"> | string | null
+    nextDayPlan?: StringNullableFilter<"RegionalDailyReport"> | string | null
+    supportRequiredFromHO?: StringNullableFilter<"RegionalDailyReport"> | string | null
   }
 
   export type CalendarNoteUpsertWithWhereUniqueWithoutUserInput = {
@@ -30180,11 +30896,32 @@ export namespace Prisma {
     updatedAt?: Date | string
     reportYmd: string
     regionName: string
-    totalMeetings?: number | null
-    totalBranchesVisited?: number | null
-    marketingDaysPlanned?: number | null
-    dynamicData?: NullableJsonNullValueInput | InputJsonValue
-    remarks?: string | null
+    branchesVisitedToday?: string | null
+    keyObservations?: string | null
+    totalCollection?: number
+    activeCustomers?: number
+    expiredCustomers?: number
+    totalCustomerBase?: number
+    totalTickets?: number
+    pendingTickets?: number
+    ticketsClosedToday?: number
+    reasonPendingTickets?: string | null
+    totalNewConnections?: number
+    newConnectionsToday?: number
+    connectionPendingToday?: number
+    renewalsToday?: number
+    renewalPending?: number
+    reasonPendingConnection?: string | null
+    collectionTarget?: number
+    collectionAchievement?: number
+    newConnectionTarget?: number
+    newConnectionAchievementPct?: number
+    renewalTarget?: number
+    renewalAchievementPct?: number
+    issueDetails?: string | null
+    immediateActionsTaken?: string | null
+    nextDayPlan?: string | null
+    supportRequiredFromHO?: string | null
   }
 
   export type CalendarNoteCreateManyUserInput = {
@@ -30568,11 +31305,32 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     reportYmd?: StringFieldUpdateOperationsInput | string
     regionName?: StringFieldUpdateOperationsInput | string
-    totalMeetings?: NullableIntFieldUpdateOperationsInput | number | null
-    totalBranchesVisited?: NullableIntFieldUpdateOperationsInput | number | null
-    marketingDaysPlanned?: NullableIntFieldUpdateOperationsInput | number | null
-    dynamicData?: NullableJsonNullValueInput | InputJsonValue
-    remarks?: NullableStringFieldUpdateOperationsInput | string | null
+    branchesVisitedToday?: NullableStringFieldUpdateOperationsInput | string | null
+    keyObservations?: NullableStringFieldUpdateOperationsInput | string | null
+    totalCollection?: IntFieldUpdateOperationsInput | number
+    activeCustomers?: IntFieldUpdateOperationsInput | number
+    expiredCustomers?: IntFieldUpdateOperationsInput | number
+    totalCustomerBase?: IntFieldUpdateOperationsInput | number
+    totalTickets?: IntFieldUpdateOperationsInput | number
+    pendingTickets?: IntFieldUpdateOperationsInput | number
+    ticketsClosedToday?: IntFieldUpdateOperationsInput | number
+    reasonPendingTickets?: NullableStringFieldUpdateOperationsInput | string | null
+    totalNewConnections?: IntFieldUpdateOperationsInput | number
+    newConnectionsToday?: IntFieldUpdateOperationsInput | number
+    connectionPendingToday?: IntFieldUpdateOperationsInput | number
+    renewalsToday?: IntFieldUpdateOperationsInput | number
+    renewalPending?: IntFieldUpdateOperationsInput | number
+    reasonPendingConnection?: NullableStringFieldUpdateOperationsInput | string | null
+    collectionTarget?: IntFieldUpdateOperationsInput | number
+    collectionAchievement?: IntFieldUpdateOperationsInput | number
+    newConnectionTarget?: IntFieldUpdateOperationsInput | number
+    newConnectionAchievementPct?: FloatFieldUpdateOperationsInput | number
+    renewalTarget?: IntFieldUpdateOperationsInput | number
+    renewalAchievementPct?: FloatFieldUpdateOperationsInput | number
+    issueDetails?: NullableStringFieldUpdateOperationsInput | string | null
+    immediateActionsTaken?: NullableStringFieldUpdateOperationsInput | string | null
+    nextDayPlan?: NullableStringFieldUpdateOperationsInput | string | null
+    supportRequiredFromHO?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type RegionalDailyReportUncheckedUpdateWithoutAuthorInput = {
@@ -30581,11 +31339,32 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     reportYmd?: StringFieldUpdateOperationsInput | string
     regionName?: StringFieldUpdateOperationsInput | string
-    totalMeetings?: NullableIntFieldUpdateOperationsInput | number | null
-    totalBranchesVisited?: NullableIntFieldUpdateOperationsInput | number | null
-    marketingDaysPlanned?: NullableIntFieldUpdateOperationsInput | number | null
-    dynamicData?: NullableJsonNullValueInput | InputJsonValue
-    remarks?: NullableStringFieldUpdateOperationsInput | string | null
+    branchesVisitedToday?: NullableStringFieldUpdateOperationsInput | string | null
+    keyObservations?: NullableStringFieldUpdateOperationsInput | string | null
+    totalCollection?: IntFieldUpdateOperationsInput | number
+    activeCustomers?: IntFieldUpdateOperationsInput | number
+    expiredCustomers?: IntFieldUpdateOperationsInput | number
+    totalCustomerBase?: IntFieldUpdateOperationsInput | number
+    totalTickets?: IntFieldUpdateOperationsInput | number
+    pendingTickets?: IntFieldUpdateOperationsInput | number
+    ticketsClosedToday?: IntFieldUpdateOperationsInput | number
+    reasonPendingTickets?: NullableStringFieldUpdateOperationsInput | string | null
+    totalNewConnections?: IntFieldUpdateOperationsInput | number
+    newConnectionsToday?: IntFieldUpdateOperationsInput | number
+    connectionPendingToday?: IntFieldUpdateOperationsInput | number
+    renewalsToday?: IntFieldUpdateOperationsInput | number
+    renewalPending?: IntFieldUpdateOperationsInput | number
+    reasonPendingConnection?: NullableStringFieldUpdateOperationsInput | string | null
+    collectionTarget?: IntFieldUpdateOperationsInput | number
+    collectionAchievement?: IntFieldUpdateOperationsInput | number
+    newConnectionTarget?: IntFieldUpdateOperationsInput | number
+    newConnectionAchievementPct?: FloatFieldUpdateOperationsInput | number
+    renewalTarget?: IntFieldUpdateOperationsInput | number
+    renewalAchievementPct?: FloatFieldUpdateOperationsInput | number
+    issueDetails?: NullableStringFieldUpdateOperationsInput | string | null
+    immediateActionsTaken?: NullableStringFieldUpdateOperationsInput | string | null
+    nextDayPlan?: NullableStringFieldUpdateOperationsInput | string | null
+    supportRequiredFromHO?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type RegionalDailyReportUncheckedUpdateManyWithoutAuthorInput = {
@@ -30594,11 +31373,32 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     reportYmd?: StringFieldUpdateOperationsInput | string
     regionName?: StringFieldUpdateOperationsInput | string
-    totalMeetings?: NullableIntFieldUpdateOperationsInput | number | null
-    totalBranchesVisited?: NullableIntFieldUpdateOperationsInput | number | null
-    marketingDaysPlanned?: NullableIntFieldUpdateOperationsInput | number | null
-    dynamicData?: NullableJsonNullValueInput | InputJsonValue
-    remarks?: NullableStringFieldUpdateOperationsInput | string | null
+    branchesVisitedToday?: NullableStringFieldUpdateOperationsInput | string | null
+    keyObservations?: NullableStringFieldUpdateOperationsInput | string | null
+    totalCollection?: IntFieldUpdateOperationsInput | number
+    activeCustomers?: IntFieldUpdateOperationsInput | number
+    expiredCustomers?: IntFieldUpdateOperationsInput | number
+    totalCustomerBase?: IntFieldUpdateOperationsInput | number
+    totalTickets?: IntFieldUpdateOperationsInput | number
+    pendingTickets?: IntFieldUpdateOperationsInput | number
+    ticketsClosedToday?: IntFieldUpdateOperationsInput | number
+    reasonPendingTickets?: NullableStringFieldUpdateOperationsInput | string | null
+    totalNewConnections?: IntFieldUpdateOperationsInput | number
+    newConnectionsToday?: IntFieldUpdateOperationsInput | number
+    connectionPendingToday?: IntFieldUpdateOperationsInput | number
+    renewalsToday?: IntFieldUpdateOperationsInput | number
+    renewalPending?: IntFieldUpdateOperationsInput | number
+    reasonPendingConnection?: NullableStringFieldUpdateOperationsInput | string | null
+    collectionTarget?: IntFieldUpdateOperationsInput | number
+    collectionAchievement?: IntFieldUpdateOperationsInput | number
+    newConnectionTarget?: IntFieldUpdateOperationsInput | number
+    newConnectionAchievementPct?: FloatFieldUpdateOperationsInput | number
+    renewalTarget?: IntFieldUpdateOperationsInput | number
+    renewalAchievementPct?: FloatFieldUpdateOperationsInput | number
+    issueDetails?: NullableStringFieldUpdateOperationsInput | string | null
+    immediateActionsTaken?: NullableStringFieldUpdateOperationsInput | string | null
+    nextDayPlan?: NullableStringFieldUpdateOperationsInput | string | null
+    supportRequiredFromHO?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type CalendarNoteUpdateWithoutUserInput = {
