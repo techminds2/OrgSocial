@@ -107,8 +107,7 @@ export default function RegionalReportComposer({
   const theme = useMantineTheme();
   const { colorScheme } = useMantineColorScheme();
 
-  const canAccess =
-    viewerRole === "manager" && viewerId === userId;
+  const canAccess = viewerRole === "manager" && viewerId === userId;
 
   const [opened, setOpened] = useState(false);
   const [loadingPrefill, setLoadingPrefill] = useState(false);
@@ -208,7 +207,7 @@ export default function RegionalReportComposer({
 
     setSaving(true);
     try {
-      const res = await fetch("/api/regional-reports/upsert-today", {
+      const res = await fetch("/api/regional-report/upsert-today", {
         method: "POST",
         credentials: "include",
         headers: { "Content-Type": "application/json" },
