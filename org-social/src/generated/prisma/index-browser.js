@@ -251,6 +251,18 @@ exports.Prisma.DailyReportScalarFieldEnum = {
   trunkIssueRemarks: 'trunkIssueRemarks'
 };
 
+exports.Prisma.RegionalMonthlyTargetScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  month: 'month',
+  year: 'year',
+  collectionTarget: 'collectionTarget',
+  newConnectionTarget: 'newConnectionTarget',
+  renewalTarget: 'renewalTarget',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.RegionalDailyReportScalarFieldEnum = {
   id: 'id',
   createdAt: 'createdAt',
@@ -343,6 +355,7 @@ exports.Prisma.ModelName = {
   Todo: 'Todo',
   PostSeen: 'PostSeen',
   DailyReport: 'DailyReport',
+  RegionalMonthlyTarget: 'RegionalMonthlyTarget',
   RegionalDailyReport: 'RegionalDailyReport',
   CalendarNote: 'CalendarNote'
 };

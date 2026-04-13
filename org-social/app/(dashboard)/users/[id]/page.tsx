@@ -2,6 +2,9 @@ import { redirect } from "next/navigation";
 import { cookies } from "next/headers";
 import { Avatar, Container, Paper, Text } from "@mantine/core";
 import DailyReportViewer from "@/components/DailyReportViewer";
+import RegionalReportComposer from "@/components/RegionalReportComposer";
+import RegionalReportViewer from "@/components/RegionalReportViewer";
+import RegionalMonthlyTargetForm from "@/components/RegionalMonthlyTargetForm";
 import {
   cleanToken,
   getUserFromCookies,
@@ -38,14 +41,6 @@ export default async function UserProfilePage({ params }: PageProps) {
     redirect("/team-directory");
   }
 
-  if (viewer.role !== "admin" && viewer.role !== "branch_manager") {
-    redirect("/team-directory");
-  }
-
-  if (viewer.role === "branch_manager" && viewer.user_id !== targetUserId) {
-    redirect("/team-directory");
-  }
-
   const cookieStore = await cookies();
   const raw = cookieStore.get("accessToken")?.value;
 
@@ -60,21 +55,46 @@ export default async function UserProfilePage({ params }: PageProps) {
     redirect("/team-directory");
   }
 
-  const targetRole = (targetUser?.role ?? null) as string | null;
+  const viewerRole = (viewer.role ?? null) as string | null;
+  const targetRole = (targetUser.role ?? null) as string | null;
 
-  const allowed = canViewDailyReports({
-    viewerRole: viewer.role,
-    viewerId: viewer.user_id,
-    targetUserId,
-    targetUserRole: targetRole,
-  });
+  // ---- access rules ----
+  // admin can open both branch_manager and manager profiles
+  // branch_manager can only open self
+  // manager can only open self
 
-  if (!allowed) {
+  const canViewOwnProfile =
+    (viewerRole === "branch_manager" || viewerRole === "manager") &&
+    viewer.user_id === targetUserId;
+
+  const canAdminViewTarget =
+    viewerRole === "admin" &&
+    (targetRole === "branch_manager" || targetRole === "manager");
+
+  if (!canViewOwnProfile && !canAdminViewTarget) {
     redirect("/team-directory");
   }
 
+  // daily report visibility
+  const canViewDaily =
+    targetRole === "branch_manager" &&
+    canViewDailyReports({
+      viewerRole,
+      viewerId: viewer.user_id,
+      targetUserId,
+      targetUserRole: targetRole,
+    });
+
+  // regional report visibility
+  const canViewRegional =
+    (viewerRole === "admin" && targetRole === "manager") ||
+    (viewerRole === "manager" && viewer.user_id === targetUserId);
+
   const fullName =
-    [targetUser.first_name, targetUser.last_name].filter(Boolean).join(" ").trim() ||
+    [targetUser.first_name, targetUser.last_name]
+      .filter(Boolean)
+      .join(" ")
+      .trim() ||
     targetUser.username ||
     "Unknown User";
 
@@ -84,7 +104,8 @@ export default async function UserProfilePage({ params }: PageProps) {
   const department = targetUser.department ?? null;
   const organizationUnit = targetUser.organization_unit ?? null;
   const staffSince = targetUser.staff_since ?? null;
-  const profilePhoto = targetUser.profile_photo ?? targetUser.profileImage ?? null;
+  const profilePhoto =
+    targetUser.profile_photo ?? targetUser.profileImage ?? null;
 
   return (
     <Container size="sm" className="py-10">
@@ -132,12 +153,38 @@ export default async function UserProfilePage({ params }: PageProps) {
         </div>
       </Paper>
 
-      <DailyReportViewer
-        userId={targetUserId}
-        userRole={targetRole}
-        viewerId={viewer.user_id}
-        viewerRole={viewer.role}
-      />
+      {canViewDaily && (
+        <DailyReportViewer
+          userId={targetUserId}
+          userRole={targetRole}
+          viewerId={viewer.user_id}
+          viewerRole={viewerRole}
+        />
+      )}
+
+      {canViewRegional && (
+        <>
+          {viewerRole === "admin" && (
+            <RegionalMonthlyTargetForm
+              userId={targetUserId}
+              viewerRole={viewerRole}
+            />
+          )}
+
+          <RegionalReportComposer
+            userId={targetUserId}
+            viewerId={viewer.user_id}
+            viewerRole={viewerRole}
+          />
+
+          <RegionalReportViewer
+            userId={targetUserId}
+            userRole={targetRole}
+            viewerId={viewer.user_id}
+            viewerRole={viewerRole}
+          />
+        </>
+      )}
     </Container>
   );
 }

@@ -2,44 +2,40 @@ import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { requireViewer } from "@/lib/requireAuth";
 
-export const runtime = "nodejs";
-export const dynamic = "force-dynamic";
-export const revalidate = 0;
-
-function noStoreJson(body: any, status = 200) {
-  return NextResponse.json(body, {
-    status,
-    headers: { "Cache-Control": "no-store, max-age=0" },
-  });
-}
-
-const isYmd = (v: string) => /^\d{4}-\d{2}-\d{2}$/.test(v);
-
 export async function GET(
   req: NextRequest,
-  ctx: { params: Promise<{ id: string }> },
+  context: { params: Promise<{ id: string }> },
 ) {
   try {
     const viewer = await requireViewer(req);
-    if (!viewer) return noStoreJson({ error: "Unauthorized" }, 401);
-
-    const params = await ctx.params;
-    const userId = Number(params.id);
-    if (!Number.isFinite(userId)) {
-      return noStoreJson({ error: "Invalid user id" }, 400);
+    if (!viewer) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const viewerUserId = Number((viewer as any).userId);
-    const viewerRole = String(viewer.role || "").toLowerCase();
+    const { id } = await context.params;
+    const userId = Number(id);
+    const date = String(req.nextUrl.searchParams.get("date") || "").trim();
+
+    if (!Number.isFinite(userId) || userId <= 0 || !/^\d{4}-\d{2}-\d{2}$/.test(date)) {
+      return NextResponse.json({ error: "Invalid request" }, { status: 400 });
+    }
+
+    const targetUser = await prisma.user.findUnique({
+      where: { id: userId },
+      select: { id: true, role: true },
+    });
+
+    if (!targetUser) {
+      return NextResponse.json({ error: "User not found" }, { status: 404 });
+    }
 
     const canView =
-      (viewerRole === "manager" && viewerUserId === userId) ||
-      viewerRole === "admin";
+      (viewer.role === "manager" && viewer.userId === userId) ||
+      (viewer.role === "admin" && targetUser.role === "manager");
 
-    if (!canView) return noStoreJson({ error: "Forbidden" }, 403);
-
-    const date = String(req.nextUrl.searchParams.get("date") || "");
-    if (!isYmd(date)) return noStoreJson({ error: "Invalid date" }, 400);
+    if (!canView) {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    }
 
     const report = await prisma.regionalDailyReport.findUnique({
       where: {
@@ -50,9 +46,12 @@ export async function GET(
       },
     });
 
-    return noStoreJson({ report });
-  } catch (e) {
-    console.error("REGIONAL REPORT BY DATE ERROR:", e);
-    return noStoreJson({ error: "Server error" }, 500);
+    return NextResponse.json({ report });
+  } catch (error) {
+    console.error("regional-reports/by-date GET error:", error);
+    return NextResponse.json(
+      { error: "Failed to load regional report by date" },
+      { status: 500 },
+    );
   }
 }

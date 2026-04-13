@@ -17,6 +17,7 @@ import DailyReportComposer from "@/components/DailyReportComposer";
 import DailyReportViewer from "@/components/DailyReportViewer";
 import RegionalReportComposer from "@/components/RegionalReportComposer";
 import RegionalReportViewer from "@/components/RegionalReportViewer";
+import RegionalMonthlyTargetForm from "@/components/RegionalMonthlyTargetForm";
 
 type User = {
   id: number;
@@ -324,6 +325,7 @@ export default function ProfilePage() {
         viewerId={user.id}
         viewerRole={user.role}
       />
+      <RegionalMonthlyTargetForm userId={user.id} viewerRole={user.role} />
       <Divider className="mb-4" />
       <Group justify="left" mb="md">
         <Button

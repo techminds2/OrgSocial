@@ -2,117 +2,175 @@ import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { requireViewer } from "@/lib/requireAuth";
 import { todayNepalYmd } from "@/lib/dailyReport";
+import { monthFromYmd, safePercent } from "@/lib/regionalTargets";
 
-export const runtime = "nodejs";
-export const dynamic = "force-dynamic";
-export const revalidate = 0;
-
-function noStoreJson(body: any, status = 200) {
-  return NextResponse.json(body, {
-    status,
-    headers: { "Cache-Control": "no-store, max-age=0" },
-  });
+function toInt(v: unknown) {
+  const n = Number(v ?? 0);
+  if (!Number.isFinite(n)) return 0;
+  return Math.max(0, Math.trunc(n));
 }
-
-const int0 = (v: any) => {
-  const n = typeof v === "string" && v.trim() !== "" ? Number(v) : Number(v);
-  if (!Number.isFinite(n) || n < 0) return 0;
-  return Math.trunc(n);
-};
-
-const float0 = (v: any) => {
-  const n = typeof v === "string" && v.trim() !== "" ? Number(v) : Number(v);
-  if (!Number.isFinite(n) || n < 0) return 0;
-  return n;
-};
-
-const cleanStr = (v: any) => (typeof v === "string" ? v.trim() : "");
-const cleanRegion = (s: string) => s.replace(/[^a-zA-Z0-9\s-]/g, "").trim();
 
 export async function POST(req: NextRequest) {
   try {
     const viewer = await requireViewer(req);
-    if (!viewer) return noStoreJson({ error: "Unauthorized" }, 401);
+    if (!viewer) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
 
     if (viewer.role !== "manager") {
-      return noStoreJson({ error: "Forbidden" }, 403);
+      return NextResponse.json(
+        { error: "Only managers can save regional report" },
+        { status: 403 },
+      );
     }
 
-    const viewerUserId = Number((viewer as any).userId);
-    if (!Number.isFinite(viewerUserId)) {
-      return noStoreJson({ error: "Unauthorized" }, 401);
+    const body = await req.json().catch(() => null);
+    if (!body) {
+      return NextResponse.json({ error: "Invalid body" }, { status: 400 });
     }
 
-    const body = await req.json().catch(() => ({}));
+    const reportYmd = String(body.reportYmd || "").trim();
+    const todayYmd = todayNepalYmd();
 
-    const reportYmd = cleanStr(body?.reportYmd) || todayNepalYmd();
-    const regionName = cleanRegion(cleanStr(body?.regionName));
+    if (!reportYmd || reportYmd !== todayYmd) {
+      return NextResponse.json(
+        { error: "Regional report can only be saved for today" },
+        { status: 400 },
+      );
+    }
 
+    const regionName = String(body.regionName || "").trim();
     if (!regionName) {
-      return noStoreJson({ error: "Region Name is required" }, 400);
+      return NextResponse.json(
+        { error: "Region name is required" },
+        { status: 400 },
+      );
     }
 
-    const data = {
-      reportYmd,
-      regionName,
+    const month = monthFromYmd(reportYmd);
 
-      branchesVisitedToday: cleanStr(body?.branchesVisitedToday) || null,
-      keyObservations: cleanStr(body?.keyObservations) || null,
+    const monthlyTarget = await prisma.regionalMonthlyTarget.findUnique({
+      where: {
+        userId_month: {
+          userId: viewer.userId,
+          month,
+        },
+      },
+    });
 
-      totalCollection: int0(body?.totalCollection),
-      activeCustomers: int0(body?.activeCustomers),
-      expiredCustomers: int0(body?.expiredCustomers),
-      totalCustomerBase: int0(body?.totalCustomerBase),
+    const collectionTarget = monthlyTarget?.collectionTarget ?? 0;
+    const newConnectionTarget = monthlyTarget?.newConnectionTarget ?? 0;
+    const renewalTarget = monthlyTarget?.renewalTarget ?? 0;
 
-      totalTickets: int0(body?.totalTickets),
-      pendingTickets: int0(body?.pendingTickets),
-      ticketsClosedToday: int0(body?.ticketsClosedToday),
-      reasonPendingTickets: cleanStr(body?.reasonPendingTickets) || null,
+    const totalCollection = toInt(body.totalCollection);
+    const newConnectionsToday = toInt(body.newConnectionsToday);
+    const renewalsToday = toInt(body.renewalsToday);
 
-      totalNewConnections: int0(body?.totalNewConnections),
-      newConnectionsToday: int0(body?.newConnectionsToday),
-      connectionPendingToday: int0(body?.connectionPendingToday),
-      renewalsToday: int0(body?.renewalsToday),
-      renewalPending: int0(body?.renewalPending),
-      reasonPendingConnection: cleanStr(body?.reasonPendingConnection) || null,
-
-      collectionTarget: int0(body?.collectionTarget),
-      collectionAchievement: int0(body?.collectionAchievement),
-      newConnectionTarget: int0(body?.newConnectionTarget),
-      newConnectionAchievementPct: float0(body?.newConnectionAchievementPct),
-      renewalTarget: int0(body?.renewalTarget),
-      renewalAchievementPct: float0(body?.renewalAchievementPct),
-
-      issueDetails: cleanStr(body?.issueDetails) || null,
-
-      immediateActionsTaken: cleanStr(body?.immediateActionsTaken) || null,
-      nextDayPlan: cleanStr(body?.nextDayPlan) || null,
-      supportRequiredFromHO: cleanStr(body?.supportRequiredFromHO) || null,
-    };
+    const collectionAchievement = totalCollection;
+    const newConnectionAchievementPct = safePercent(
+      newConnectionsToday,
+      newConnectionTarget,
+    );
+    const renewalAchievementPct = safePercent(
+      renewalsToday,
+      renewalTarget,
+    );
 
     const report = await prisma.regionalDailyReport.upsert({
       where: {
         authorId_reportYmd: {
-          authorId: viewerUserId,
+          authorId: viewer.userId,
           reportYmd,
         },
       },
-      create: {
-        authorId: viewerUserId,
-        ...data,
+      update: {
+        regionName,
+
+        branchesVisitedToday: String(body.branchesVisitedToday || "").trim() || null,
+        keyObservations: String(body.keyObservations || "").trim() || null,
+
+        totalCollection,
+        activeCustomers: toInt(body.activeCustomers),
+        expiredCustomers: toInt(body.expiredCustomers),
+        totalCustomerBase: toInt(body.totalCustomerBase),
+
+        totalTickets: toInt(body.totalTickets),
+        pendingTickets: toInt(body.pendingTickets),
+        ticketsClosedToday: toInt(body.ticketsClosedToday),
+        reasonPendingTickets:
+          String(body.reasonPendingTickets || "").trim() || null,
+
+        totalNewConnections: toInt(body.totalNewConnections),
+        newConnectionsToday,
+        connectionPendingToday: toInt(body.connectionPendingToday),
+        renewalsToday,
+        renewalPending: toInt(body.renewalPending),
+        reasonPendingConnection:
+          String(body.reasonPendingConnection || "").trim() || null,
+
+        collectionTarget,
+        collectionAchievement,
+        newConnectionTarget,
+        newConnectionAchievementPct,
+        renewalTarget,
+        renewalAchievementPct,
+
+        issueDetails: String(body.issueDetails || "").trim() || null,
+        immediateActionsTaken:
+          String(body.immediateActionsTaken || "").trim() || null,
+        nextDayPlan: String(body.nextDayPlan || "").trim() || null,
+        supportRequiredFromHO:
+          String(body.supportRequiredFromHO || "").trim() || null,
       },
-      update: data,
+      create: {
+        authorId: viewer.userId,
+        reportYmd,
+        regionName,
+
+        branchesVisitedToday: String(body.branchesVisitedToday || "").trim() || null,
+        keyObservations: String(body.keyObservations || "").trim() || null,
+
+        totalCollection,
+        activeCustomers: toInt(body.activeCustomers),
+        expiredCustomers: toInt(body.expiredCustomers),
+        totalCustomerBase: toInt(body.totalCustomerBase),
+
+        totalTickets: toInt(body.totalTickets),
+        pendingTickets: toInt(body.pendingTickets),
+        ticketsClosedToday: toInt(body.ticketsClosedToday),
+        reasonPendingTickets:
+          String(body.reasonPendingTickets || "").trim() || null,
+
+        totalNewConnections: toInt(body.totalNewConnections),
+        newConnectionsToday,
+        connectionPendingToday: toInt(body.connectionPendingToday),
+        renewalsToday,
+        renewalPending: toInt(body.renewalPending),
+        reasonPendingConnection:
+          String(body.reasonPendingConnection || "").trim() || null,
+
+        collectionTarget,
+        collectionAchievement,
+        newConnectionTarget,
+        newConnectionAchievementPct,
+        renewalTarget,
+        renewalAchievementPct,
+
+        issueDetails: String(body.issueDetails || "").trim() || null,
+        immediateActionsTaken:
+          String(body.immediateActionsTaken || "").trim() || null,
+        nextDayPlan: String(body.nextDayPlan || "").trim() || null,
+        supportRequiredFromHO:
+          String(body.supportRequiredFromHO || "").trim() || null,
+      },
     });
 
-    return noStoreJson({ reportYmd, report }, 200);
-  } catch (e) {
-    console.error("REGIONAL REPORT UPSERT ERROR:", e);
-    return noStoreJson(
-      {
-        error: "Server error",
-        debug: String(e),
-      },
-      500,
+    return NextResponse.json({ ok: true, report });
+  } catch (error) {
+    console.error("regional-report upsert error:", error);
+    return NextResponse.json(
+      { error: "Failed to save regional report" },
+      { status: 500 },
     );
   }
 }

@@ -79,6 +79,11 @@ export type PostSeen = $Result.DefaultSelection<Prisma.$PostSeenPayload>
  */
 export type DailyReport = $Result.DefaultSelection<Prisma.$DailyReportPayload>
 /**
+ * Model RegionalMonthlyTarget
+ * 
+ */
+export type RegionalMonthlyTarget = $Result.DefaultSelection<Prisma.$RegionalMonthlyTargetPayload>
+/**
  * Model RegionalDailyReport
  * 
  */
@@ -379,6 +384,16 @@ export class PrismaClient<
     * ```
     */
   get dailyReport(): Prisma.DailyReportDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.regionalMonthlyTarget`: Exposes CRUD operations for the **RegionalMonthlyTarget** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more RegionalMonthlyTargets
+    * const regionalMonthlyTargets = await prisma.regionalMonthlyTarget.findMany()
+    * ```
+    */
+  get regionalMonthlyTarget(): Prisma.RegionalMonthlyTargetDelegate<ExtArgs, ClientOptions>;
 
   /**
    * `prisma.regionalDailyReport`: Exposes CRUD operations for the **RegionalDailyReport** model.
@@ -853,6 +868,7 @@ export namespace Prisma {
     Todo: 'Todo',
     PostSeen: 'PostSeen',
     DailyReport: 'DailyReport',
+    RegionalMonthlyTarget: 'RegionalMonthlyTarget',
     RegionalDailyReport: 'RegionalDailyReport',
     CalendarNote: 'CalendarNote'
   };
@@ -873,7 +889,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "user" | "post" | "comment" | "reaction" | "file" | "channel" | "channelMember" | "joinRequest" | "notification" | "savedPost" | "todo" | "postSeen" | "dailyReport" | "regionalDailyReport" | "calendarNote"
+      modelProps: "user" | "post" | "comment" | "reaction" | "file" | "channel" | "channelMember" | "joinRequest" | "notification" | "savedPost" | "todo" | "postSeen" | "dailyReport" | "regionalMonthlyTarget" | "regionalDailyReport" | "calendarNote"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -1839,6 +1855,80 @@ export namespace Prisma {
           }
         }
       }
+      RegionalMonthlyTarget: {
+        payload: Prisma.$RegionalMonthlyTargetPayload<ExtArgs>
+        fields: Prisma.RegionalMonthlyTargetFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.RegionalMonthlyTargetFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RegionalMonthlyTargetPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.RegionalMonthlyTargetFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RegionalMonthlyTargetPayload>
+          }
+          findFirst: {
+            args: Prisma.RegionalMonthlyTargetFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RegionalMonthlyTargetPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.RegionalMonthlyTargetFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RegionalMonthlyTargetPayload>
+          }
+          findMany: {
+            args: Prisma.RegionalMonthlyTargetFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RegionalMonthlyTargetPayload>[]
+          }
+          create: {
+            args: Prisma.RegionalMonthlyTargetCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RegionalMonthlyTargetPayload>
+          }
+          createMany: {
+            args: Prisma.RegionalMonthlyTargetCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.RegionalMonthlyTargetCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RegionalMonthlyTargetPayload>[]
+          }
+          delete: {
+            args: Prisma.RegionalMonthlyTargetDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RegionalMonthlyTargetPayload>
+          }
+          update: {
+            args: Prisma.RegionalMonthlyTargetUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RegionalMonthlyTargetPayload>
+          }
+          deleteMany: {
+            args: Prisma.RegionalMonthlyTargetDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.RegionalMonthlyTargetUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.RegionalMonthlyTargetUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RegionalMonthlyTargetPayload>[]
+          }
+          upsert: {
+            args: Prisma.RegionalMonthlyTargetUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RegionalMonthlyTargetPayload>
+          }
+          aggregate: {
+            args: Prisma.RegionalMonthlyTargetAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateRegionalMonthlyTarget>
+          }
+          groupBy: {
+            args: Prisma.RegionalMonthlyTargetGroupByArgs<ExtArgs>
+            result: $Utils.Optional<RegionalMonthlyTargetGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.RegionalMonthlyTargetCountArgs<ExtArgs>
+            result: $Utils.Optional<RegionalMonthlyTargetCountAggregateOutputType> | number
+          }
+        }
+      }
       RegionalDailyReport: {
         payload: Prisma.$RegionalDailyReportPayload<ExtArgs>
         fields: Prisma.RegionalDailyReportFieldRefs
@@ -2096,6 +2186,7 @@ export namespace Prisma {
     todo?: TodoOmit
     postSeen?: PostSeenOmit
     dailyReport?: DailyReportOmit
+    regionalMonthlyTarget?: RegionalMonthlyTargetOmit
     regionalDailyReport?: RegionalDailyReportOmit
     calendarNote?: CalendarNoteOmit
   }
@@ -2191,6 +2282,7 @@ export namespace Prisma {
     notificationsActed: number
     dailyReports: number
     regionalReports: number
+    regionalMonthlyTargets: number
     calendarNotesForUser: number
     calendarNotesCreated: number
   }
@@ -2209,6 +2301,7 @@ export namespace Prisma {
     notificationsActed?: boolean | UserCountOutputTypeCountNotificationsActedArgs
     dailyReports?: boolean | UserCountOutputTypeCountDailyReportsArgs
     regionalReports?: boolean | UserCountOutputTypeCountRegionalReportsArgs
+    regionalMonthlyTargets?: boolean | UserCountOutputTypeCountRegionalMonthlyTargetsArgs
     calendarNotesForUser?: boolean | UserCountOutputTypeCountCalendarNotesForUserArgs
     calendarNotesCreated?: boolean | UserCountOutputTypeCountCalendarNotesCreatedArgs
   }
@@ -2313,6 +2406,13 @@ export namespace Prisma {
    */
   export type UserCountOutputTypeCountRegionalReportsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: RegionalDailyReportWhereInput
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountRegionalMonthlyTargetsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: RegionalMonthlyTargetWhereInput
   }
 
   /**
@@ -2740,6 +2840,7 @@ export namespace Prisma {
     notificationsActed?: boolean | User$notificationsActedArgs<ExtArgs>
     dailyReports?: boolean | User$dailyReportsArgs<ExtArgs>
     regionalReports?: boolean | User$regionalReportsArgs<ExtArgs>
+    regionalMonthlyTargets?: boolean | User$regionalMonthlyTargetsArgs<ExtArgs>
     calendarNotesForUser?: boolean | User$calendarNotesForUserArgs<ExtArgs>
     calendarNotesCreated?: boolean | User$calendarNotesCreatedArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
@@ -2793,6 +2894,7 @@ export namespace Prisma {
     notificationsActed?: boolean | User$notificationsActedArgs<ExtArgs>
     dailyReports?: boolean | User$dailyReportsArgs<ExtArgs>
     regionalReports?: boolean | User$regionalReportsArgs<ExtArgs>
+    regionalMonthlyTargets?: boolean | User$regionalMonthlyTargetsArgs<ExtArgs>
     calendarNotesForUser?: boolean | User$calendarNotesForUserArgs<ExtArgs>
     calendarNotesCreated?: boolean | User$calendarNotesCreatedArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
@@ -2821,6 +2923,7 @@ export namespace Prisma {
       notificationsActed: Prisma.$NotificationPayload<ExtArgs>[]
       dailyReports: Prisma.$DailyReportPayload<ExtArgs>[]
       regionalReports: Prisma.$RegionalDailyReportPayload<ExtArgs>[]
+      regionalMonthlyTargets: Prisma.$RegionalMonthlyTargetPayload<ExtArgs>[]
       calendarNotesForUser: Prisma.$CalendarNotePayload<ExtArgs>[]
       calendarNotesCreated: Prisma.$CalendarNotePayload<ExtArgs>[]
     }
@@ -3240,6 +3343,7 @@ export namespace Prisma {
     notificationsActed<T extends User$notificationsActedArgs<ExtArgs> = {}>(args?: Subset<T, User$notificationsActedArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$NotificationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     dailyReports<T extends User$dailyReportsArgs<ExtArgs> = {}>(args?: Subset<T, User$dailyReportsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$DailyReportPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     regionalReports<T extends User$regionalReportsArgs<ExtArgs> = {}>(args?: Subset<T, User$regionalReportsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$RegionalDailyReportPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    regionalMonthlyTargets<T extends User$regionalMonthlyTargetsArgs<ExtArgs> = {}>(args?: Subset<T, User$regionalMonthlyTargetsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$RegionalMonthlyTargetPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     calendarNotesForUser<T extends User$calendarNotesForUserArgs<ExtArgs> = {}>(args?: Subset<T, User$calendarNotesForUserArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CalendarNotePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     calendarNotesCreated<T extends User$calendarNotesCreatedArgs<ExtArgs> = {}>(args?: Subset<T, User$calendarNotesCreatedArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CalendarNotePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
@@ -4002,6 +4106,30 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: RegionalDailyReportScalarFieldEnum | RegionalDailyReportScalarFieldEnum[]
+  }
+
+  /**
+   * User.regionalMonthlyTargets
+   */
+  export type User$regionalMonthlyTargetsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the RegionalMonthlyTarget
+     */
+    select?: RegionalMonthlyTargetSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the RegionalMonthlyTarget
+     */
+    omit?: RegionalMonthlyTargetOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RegionalMonthlyTargetInclude<ExtArgs> | null
+    where?: RegionalMonthlyTargetWhereInput
+    orderBy?: RegionalMonthlyTargetOrderByWithRelationInput | RegionalMonthlyTargetOrderByWithRelationInput[]
+    cursor?: RegionalMonthlyTargetWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: RegionalMonthlyTargetScalarFieldEnum | RegionalMonthlyTargetScalarFieldEnum[]
   }
 
   /**
@@ -18130,6 +18258,1170 @@ export namespace Prisma {
 
 
   /**
+   * Model RegionalMonthlyTarget
+   */
+
+  export type AggregateRegionalMonthlyTarget = {
+    _count: RegionalMonthlyTargetCountAggregateOutputType | null
+    _avg: RegionalMonthlyTargetAvgAggregateOutputType | null
+    _sum: RegionalMonthlyTargetSumAggregateOutputType | null
+    _min: RegionalMonthlyTargetMinAggregateOutputType | null
+    _max: RegionalMonthlyTargetMaxAggregateOutputType | null
+  }
+
+  export type RegionalMonthlyTargetAvgAggregateOutputType = {
+    id: number | null
+    userId: number | null
+    year: number | null
+    collectionTarget: number | null
+    newConnectionTarget: number | null
+    renewalTarget: number | null
+  }
+
+  export type RegionalMonthlyTargetSumAggregateOutputType = {
+    id: number | null
+    userId: number | null
+    year: number | null
+    collectionTarget: number | null
+    newConnectionTarget: number | null
+    renewalTarget: number | null
+  }
+
+  export type RegionalMonthlyTargetMinAggregateOutputType = {
+    id: number | null
+    userId: number | null
+    month: string | null
+    year: number | null
+    collectionTarget: number | null
+    newConnectionTarget: number | null
+    renewalTarget: number | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type RegionalMonthlyTargetMaxAggregateOutputType = {
+    id: number | null
+    userId: number | null
+    month: string | null
+    year: number | null
+    collectionTarget: number | null
+    newConnectionTarget: number | null
+    renewalTarget: number | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type RegionalMonthlyTargetCountAggregateOutputType = {
+    id: number
+    userId: number
+    month: number
+    year: number
+    collectionTarget: number
+    newConnectionTarget: number
+    renewalTarget: number
+    createdAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type RegionalMonthlyTargetAvgAggregateInputType = {
+    id?: true
+    userId?: true
+    year?: true
+    collectionTarget?: true
+    newConnectionTarget?: true
+    renewalTarget?: true
+  }
+
+  export type RegionalMonthlyTargetSumAggregateInputType = {
+    id?: true
+    userId?: true
+    year?: true
+    collectionTarget?: true
+    newConnectionTarget?: true
+    renewalTarget?: true
+  }
+
+  export type RegionalMonthlyTargetMinAggregateInputType = {
+    id?: true
+    userId?: true
+    month?: true
+    year?: true
+    collectionTarget?: true
+    newConnectionTarget?: true
+    renewalTarget?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type RegionalMonthlyTargetMaxAggregateInputType = {
+    id?: true
+    userId?: true
+    month?: true
+    year?: true
+    collectionTarget?: true
+    newConnectionTarget?: true
+    renewalTarget?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type RegionalMonthlyTargetCountAggregateInputType = {
+    id?: true
+    userId?: true
+    month?: true
+    year?: true
+    collectionTarget?: true
+    newConnectionTarget?: true
+    renewalTarget?: true
+    createdAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type RegionalMonthlyTargetAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which RegionalMonthlyTarget to aggregate.
+     */
+    where?: RegionalMonthlyTargetWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of RegionalMonthlyTargets to fetch.
+     */
+    orderBy?: RegionalMonthlyTargetOrderByWithRelationInput | RegionalMonthlyTargetOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: RegionalMonthlyTargetWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` RegionalMonthlyTargets from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` RegionalMonthlyTargets.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned RegionalMonthlyTargets
+    **/
+    _count?: true | RegionalMonthlyTargetCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: RegionalMonthlyTargetAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: RegionalMonthlyTargetSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: RegionalMonthlyTargetMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: RegionalMonthlyTargetMaxAggregateInputType
+  }
+
+  export type GetRegionalMonthlyTargetAggregateType<T extends RegionalMonthlyTargetAggregateArgs> = {
+        [P in keyof T & keyof AggregateRegionalMonthlyTarget]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateRegionalMonthlyTarget[P]>
+      : GetScalarType<T[P], AggregateRegionalMonthlyTarget[P]>
+  }
+
+
+
+
+  export type RegionalMonthlyTargetGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: RegionalMonthlyTargetWhereInput
+    orderBy?: RegionalMonthlyTargetOrderByWithAggregationInput | RegionalMonthlyTargetOrderByWithAggregationInput[]
+    by: RegionalMonthlyTargetScalarFieldEnum[] | RegionalMonthlyTargetScalarFieldEnum
+    having?: RegionalMonthlyTargetScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: RegionalMonthlyTargetCountAggregateInputType | true
+    _avg?: RegionalMonthlyTargetAvgAggregateInputType
+    _sum?: RegionalMonthlyTargetSumAggregateInputType
+    _min?: RegionalMonthlyTargetMinAggregateInputType
+    _max?: RegionalMonthlyTargetMaxAggregateInputType
+  }
+
+  export type RegionalMonthlyTargetGroupByOutputType = {
+    id: number
+    userId: number
+    month: string
+    year: number
+    collectionTarget: number
+    newConnectionTarget: number
+    renewalTarget: number
+    createdAt: Date
+    updatedAt: Date
+    _count: RegionalMonthlyTargetCountAggregateOutputType | null
+    _avg: RegionalMonthlyTargetAvgAggregateOutputType | null
+    _sum: RegionalMonthlyTargetSumAggregateOutputType | null
+    _min: RegionalMonthlyTargetMinAggregateOutputType | null
+    _max: RegionalMonthlyTargetMaxAggregateOutputType | null
+  }
+
+  type GetRegionalMonthlyTargetGroupByPayload<T extends RegionalMonthlyTargetGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<RegionalMonthlyTargetGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof RegionalMonthlyTargetGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], RegionalMonthlyTargetGroupByOutputType[P]>
+            : GetScalarType<T[P], RegionalMonthlyTargetGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type RegionalMonthlyTargetSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    userId?: boolean
+    month?: boolean
+    year?: boolean
+    collectionTarget?: boolean
+    newConnectionTarget?: boolean
+    renewalTarget?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["regionalMonthlyTarget"]>
+
+  export type RegionalMonthlyTargetSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    userId?: boolean
+    month?: boolean
+    year?: boolean
+    collectionTarget?: boolean
+    newConnectionTarget?: boolean
+    renewalTarget?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["regionalMonthlyTarget"]>
+
+  export type RegionalMonthlyTargetSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    userId?: boolean
+    month?: boolean
+    year?: boolean
+    collectionTarget?: boolean
+    newConnectionTarget?: boolean
+    renewalTarget?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["regionalMonthlyTarget"]>
+
+  export type RegionalMonthlyTargetSelectScalar = {
+    id?: boolean
+    userId?: boolean
+    month?: boolean
+    year?: boolean
+    collectionTarget?: boolean
+    newConnectionTarget?: boolean
+    renewalTarget?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }
+
+  export type RegionalMonthlyTargetOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "userId" | "month" | "year" | "collectionTarget" | "newConnectionTarget" | "renewalTarget" | "createdAt" | "updatedAt", ExtArgs["result"]["regionalMonthlyTarget"]>
+  export type RegionalMonthlyTargetInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }
+  export type RegionalMonthlyTargetIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }
+  export type RegionalMonthlyTargetIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }
+
+  export type $RegionalMonthlyTargetPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "RegionalMonthlyTarget"
+    objects: {
+      user: Prisma.$UserPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: number
+      userId: number
+      month: string
+      year: number
+      collectionTarget: number
+      newConnectionTarget: number
+      renewalTarget: number
+      createdAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["regionalMonthlyTarget"]>
+    composites: {}
+  }
+
+  type RegionalMonthlyTargetGetPayload<S extends boolean | null | undefined | RegionalMonthlyTargetDefaultArgs> = $Result.GetResult<Prisma.$RegionalMonthlyTargetPayload, S>
+
+  type RegionalMonthlyTargetCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<RegionalMonthlyTargetFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: RegionalMonthlyTargetCountAggregateInputType | true
+    }
+
+  export interface RegionalMonthlyTargetDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['RegionalMonthlyTarget'], meta: { name: 'RegionalMonthlyTarget' } }
+    /**
+     * Find zero or one RegionalMonthlyTarget that matches the filter.
+     * @param {RegionalMonthlyTargetFindUniqueArgs} args - Arguments to find a RegionalMonthlyTarget
+     * @example
+     * // Get one RegionalMonthlyTarget
+     * const regionalMonthlyTarget = await prisma.regionalMonthlyTarget.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends RegionalMonthlyTargetFindUniqueArgs>(args: SelectSubset<T, RegionalMonthlyTargetFindUniqueArgs<ExtArgs>>): Prisma__RegionalMonthlyTargetClient<$Result.GetResult<Prisma.$RegionalMonthlyTargetPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one RegionalMonthlyTarget that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {RegionalMonthlyTargetFindUniqueOrThrowArgs} args - Arguments to find a RegionalMonthlyTarget
+     * @example
+     * // Get one RegionalMonthlyTarget
+     * const regionalMonthlyTarget = await prisma.regionalMonthlyTarget.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends RegionalMonthlyTargetFindUniqueOrThrowArgs>(args: SelectSubset<T, RegionalMonthlyTargetFindUniqueOrThrowArgs<ExtArgs>>): Prisma__RegionalMonthlyTargetClient<$Result.GetResult<Prisma.$RegionalMonthlyTargetPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first RegionalMonthlyTarget that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {RegionalMonthlyTargetFindFirstArgs} args - Arguments to find a RegionalMonthlyTarget
+     * @example
+     * // Get one RegionalMonthlyTarget
+     * const regionalMonthlyTarget = await prisma.regionalMonthlyTarget.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends RegionalMonthlyTargetFindFirstArgs>(args?: SelectSubset<T, RegionalMonthlyTargetFindFirstArgs<ExtArgs>>): Prisma__RegionalMonthlyTargetClient<$Result.GetResult<Prisma.$RegionalMonthlyTargetPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first RegionalMonthlyTarget that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {RegionalMonthlyTargetFindFirstOrThrowArgs} args - Arguments to find a RegionalMonthlyTarget
+     * @example
+     * // Get one RegionalMonthlyTarget
+     * const regionalMonthlyTarget = await prisma.regionalMonthlyTarget.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends RegionalMonthlyTargetFindFirstOrThrowArgs>(args?: SelectSubset<T, RegionalMonthlyTargetFindFirstOrThrowArgs<ExtArgs>>): Prisma__RegionalMonthlyTargetClient<$Result.GetResult<Prisma.$RegionalMonthlyTargetPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more RegionalMonthlyTargets that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {RegionalMonthlyTargetFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all RegionalMonthlyTargets
+     * const regionalMonthlyTargets = await prisma.regionalMonthlyTarget.findMany()
+     * 
+     * // Get first 10 RegionalMonthlyTargets
+     * const regionalMonthlyTargets = await prisma.regionalMonthlyTarget.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const regionalMonthlyTargetWithIdOnly = await prisma.regionalMonthlyTarget.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends RegionalMonthlyTargetFindManyArgs>(args?: SelectSubset<T, RegionalMonthlyTargetFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$RegionalMonthlyTargetPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a RegionalMonthlyTarget.
+     * @param {RegionalMonthlyTargetCreateArgs} args - Arguments to create a RegionalMonthlyTarget.
+     * @example
+     * // Create one RegionalMonthlyTarget
+     * const RegionalMonthlyTarget = await prisma.regionalMonthlyTarget.create({
+     *   data: {
+     *     // ... data to create a RegionalMonthlyTarget
+     *   }
+     * })
+     * 
+     */
+    create<T extends RegionalMonthlyTargetCreateArgs>(args: SelectSubset<T, RegionalMonthlyTargetCreateArgs<ExtArgs>>): Prisma__RegionalMonthlyTargetClient<$Result.GetResult<Prisma.$RegionalMonthlyTargetPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many RegionalMonthlyTargets.
+     * @param {RegionalMonthlyTargetCreateManyArgs} args - Arguments to create many RegionalMonthlyTargets.
+     * @example
+     * // Create many RegionalMonthlyTargets
+     * const regionalMonthlyTarget = await prisma.regionalMonthlyTarget.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends RegionalMonthlyTargetCreateManyArgs>(args?: SelectSubset<T, RegionalMonthlyTargetCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many RegionalMonthlyTargets and returns the data saved in the database.
+     * @param {RegionalMonthlyTargetCreateManyAndReturnArgs} args - Arguments to create many RegionalMonthlyTargets.
+     * @example
+     * // Create many RegionalMonthlyTargets
+     * const regionalMonthlyTarget = await prisma.regionalMonthlyTarget.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many RegionalMonthlyTargets and only return the `id`
+     * const regionalMonthlyTargetWithIdOnly = await prisma.regionalMonthlyTarget.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends RegionalMonthlyTargetCreateManyAndReturnArgs>(args?: SelectSubset<T, RegionalMonthlyTargetCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$RegionalMonthlyTargetPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a RegionalMonthlyTarget.
+     * @param {RegionalMonthlyTargetDeleteArgs} args - Arguments to delete one RegionalMonthlyTarget.
+     * @example
+     * // Delete one RegionalMonthlyTarget
+     * const RegionalMonthlyTarget = await prisma.regionalMonthlyTarget.delete({
+     *   where: {
+     *     // ... filter to delete one RegionalMonthlyTarget
+     *   }
+     * })
+     * 
+     */
+    delete<T extends RegionalMonthlyTargetDeleteArgs>(args: SelectSubset<T, RegionalMonthlyTargetDeleteArgs<ExtArgs>>): Prisma__RegionalMonthlyTargetClient<$Result.GetResult<Prisma.$RegionalMonthlyTargetPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one RegionalMonthlyTarget.
+     * @param {RegionalMonthlyTargetUpdateArgs} args - Arguments to update one RegionalMonthlyTarget.
+     * @example
+     * // Update one RegionalMonthlyTarget
+     * const regionalMonthlyTarget = await prisma.regionalMonthlyTarget.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends RegionalMonthlyTargetUpdateArgs>(args: SelectSubset<T, RegionalMonthlyTargetUpdateArgs<ExtArgs>>): Prisma__RegionalMonthlyTargetClient<$Result.GetResult<Prisma.$RegionalMonthlyTargetPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more RegionalMonthlyTargets.
+     * @param {RegionalMonthlyTargetDeleteManyArgs} args - Arguments to filter RegionalMonthlyTargets to delete.
+     * @example
+     * // Delete a few RegionalMonthlyTargets
+     * const { count } = await prisma.regionalMonthlyTarget.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends RegionalMonthlyTargetDeleteManyArgs>(args?: SelectSubset<T, RegionalMonthlyTargetDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more RegionalMonthlyTargets.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {RegionalMonthlyTargetUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many RegionalMonthlyTargets
+     * const regionalMonthlyTarget = await prisma.regionalMonthlyTarget.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends RegionalMonthlyTargetUpdateManyArgs>(args: SelectSubset<T, RegionalMonthlyTargetUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more RegionalMonthlyTargets and returns the data updated in the database.
+     * @param {RegionalMonthlyTargetUpdateManyAndReturnArgs} args - Arguments to update many RegionalMonthlyTargets.
+     * @example
+     * // Update many RegionalMonthlyTargets
+     * const regionalMonthlyTarget = await prisma.regionalMonthlyTarget.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more RegionalMonthlyTargets and only return the `id`
+     * const regionalMonthlyTargetWithIdOnly = await prisma.regionalMonthlyTarget.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends RegionalMonthlyTargetUpdateManyAndReturnArgs>(args: SelectSubset<T, RegionalMonthlyTargetUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$RegionalMonthlyTargetPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one RegionalMonthlyTarget.
+     * @param {RegionalMonthlyTargetUpsertArgs} args - Arguments to update or create a RegionalMonthlyTarget.
+     * @example
+     * // Update or create a RegionalMonthlyTarget
+     * const regionalMonthlyTarget = await prisma.regionalMonthlyTarget.upsert({
+     *   create: {
+     *     // ... data to create a RegionalMonthlyTarget
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the RegionalMonthlyTarget we want to update
+     *   }
+     * })
+     */
+    upsert<T extends RegionalMonthlyTargetUpsertArgs>(args: SelectSubset<T, RegionalMonthlyTargetUpsertArgs<ExtArgs>>): Prisma__RegionalMonthlyTargetClient<$Result.GetResult<Prisma.$RegionalMonthlyTargetPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of RegionalMonthlyTargets.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {RegionalMonthlyTargetCountArgs} args - Arguments to filter RegionalMonthlyTargets to count.
+     * @example
+     * // Count the number of RegionalMonthlyTargets
+     * const count = await prisma.regionalMonthlyTarget.count({
+     *   where: {
+     *     // ... the filter for the RegionalMonthlyTargets we want to count
+     *   }
+     * })
+    **/
+    count<T extends RegionalMonthlyTargetCountArgs>(
+      args?: Subset<T, RegionalMonthlyTargetCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], RegionalMonthlyTargetCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a RegionalMonthlyTarget.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {RegionalMonthlyTargetAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends RegionalMonthlyTargetAggregateArgs>(args: Subset<T, RegionalMonthlyTargetAggregateArgs>): Prisma.PrismaPromise<GetRegionalMonthlyTargetAggregateType<T>>
+
+    /**
+     * Group by RegionalMonthlyTarget.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {RegionalMonthlyTargetGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends RegionalMonthlyTargetGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: RegionalMonthlyTargetGroupByArgs['orderBy'] }
+        : { orderBy?: RegionalMonthlyTargetGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, RegionalMonthlyTargetGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetRegionalMonthlyTargetGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the RegionalMonthlyTarget model
+   */
+  readonly fields: RegionalMonthlyTargetFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for RegionalMonthlyTarget.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__RegionalMonthlyTargetClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the RegionalMonthlyTarget model
+   */
+  interface RegionalMonthlyTargetFieldRefs {
+    readonly id: FieldRef<"RegionalMonthlyTarget", 'Int'>
+    readonly userId: FieldRef<"RegionalMonthlyTarget", 'Int'>
+    readonly month: FieldRef<"RegionalMonthlyTarget", 'String'>
+    readonly year: FieldRef<"RegionalMonthlyTarget", 'Int'>
+    readonly collectionTarget: FieldRef<"RegionalMonthlyTarget", 'Int'>
+    readonly newConnectionTarget: FieldRef<"RegionalMonthlyTarget", 'Int'>
+    readonly renewalTarget: FieldRef<"RegionalMonthlyTarget", 'Int'>
+    readonly createdAt: FieldRef<"RegionalMonthlyTarget", 'DateTime'>
+    readonly updatedAt: FieldRef<"RegionalMonthlyTarget", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * RegionalMonthlyTarget findUnique
+   */
+  export type RegionalMonthlyTargetFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the RegionalMonthlyTarget
+     */
+    select?: RegionalMonthlyTargetSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the RegionalMonthlyTarget
+     */
+    omit?: RegionalMonthlyTargetOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RegionalMonthlyTargetInclude<ExtArgs> | null
+    /**
+     * Filter, which RegionalMonthlyTarget to fetch.
+     */
+    where: RegionalMonthlyTargetWhereUniqueInput
+  }
+
+  /**
+   * RegionalMonthlyTarget findUniqueOrThrow
+   */
+  export type RegionalMonthlyTargetFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the RegionalMonthlyTarget
+     */
+    select?: RegionalMonthlyTargetSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the RegionalMonthlyTarget
+     */
+    omit?: RegionalMonthlyTargetOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RegionalMonthlyTargetInclude<ExtArgs> | null
+    /**
+     * Filter, which RegionalMonthlyTarget to fetch.
+     */
+    where: RegionalMonthlyTargetWhereUniqueInput
+  }
+
+  /**
+   * RegionalMonthlyTarget findFirst
+   */
+  export type RegionalMonthlyTargetFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the RegionalMonthlyTarget
+     */
+    select?: RegionalMonthlyTargetSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the RegionalMonthlyTarget
+     */
+    omit?: RegionalMonthlyTargetOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RegionalMonthlyTargetInclude<ExtArgs> | null
+    /**
+     * Filter, which RegionalMonthlyTarget to fetch.
+     */
+    where?: RegionalMonthlyTargetWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of RegionalMonthlyTargets to fetch.
+     */
+    orderBy?: RegionalMonthlyTargetOrderByWithRelationInput | RegionalMonthlyTargetOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for RegionalMonthlyTargets.
+     */
+    cursor?: RegionalMonthlyTargetWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` RegionalMonthlyTargets from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` RegionalMonthlyTargets.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of RegionalMonthlyTargets.
+     */
+    distinct?: RegionalMonthlyTargetScalarFieldEnum | RegionalMonthlyTargetScalarFieldEnum[]
+  }
+
+  /**
+   * RegionalMonthlyTarget findFirstOrThrow
+   */
+  export type RegionalMonthlyTargetFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the RegionalMonthlyTarget
+     */
+    select?: RegionalMonthlyTargetSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the RegionalMonthlyTarget
+     */
+    omit?: RegionalMonthlyTargetOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RegionalMonthlyTargetInclude<ExtArgs> | null
+    /**
+     * Filter, which RegionalMonthlyTarget to fetch.
+     */
+    where?: RegionalMonthlyTargetWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of RegionalMonthlyTargets to fetch.
+     */
+    orderBy?: RegionalMonthlyTargetOrderByWithRelationInput | RegionalMonthlyTargetOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for RegionalMonthlyTargets.
+     */
+    cursor?: RegionalMonthlyTargetWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` RegionalMonthlyTargets from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` RegionalMonthlyTargets.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of RegionalMonthlyTargets.
+     */
+    distinct?: RegionalMonthlyTargetScalarFieldEnum | RegionalMonthlyTargetScalarFieldEnum[]
+  }
+
+  /**
+   * RegionalMonthlyTarget findMany
+   */
+  export type RegionalMonthlyTargetFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the RegionalMonthlyTarget
+     */
+    select?: RegionalMonthlyTargetSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the RegionalMonthlyTarget
+     */
+    omit?: RegionalMonthlyTargetOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RegionalMonthlyTargetInclude<ExtArgs> | null
+    /**
+     * Filter, which RegionalMonthlyTargets to fetch.
+     */
+    where?: RegionalMonthlyTargetWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of RegionalMonthlyTargets to fetch.
+     */
+    orderBy?: RegionalMonthlyTargetOrderByWithRelationInput | RegionalMonthlyTargetOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing RegionalMonthlyTargets.
+     */
+    cursor?: RegionalMonthlyTargetWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` RegionalMonthlyTargets from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` RegionalMonthlyTargets.
+     */
+    skip?: number
+    distinct?: RegionalMonthlyTargetScalarFieldEnum | RegionalMonthlyTargetScalarFieldEnum[]
+  }
+
+  /**
+   * RegionalMonthlyTarget create
+   */
+  export type RegionalMonthlyTargetCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the RegionalMonthlyTarget
+     */
+    select?: RegionalMonthlyTargetSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the RegionalMonthlyTarget
+     */
+    omit?: RegionalMonthlyTargetOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RegionalMonthlyTargetInclude<ExtArgs> | null
+    /**
+     * The data needed to create a RegionalMonthlyTarget.
+     */
+    data: XOR<RegionalMonthlyTargetCreateInput, RegionalMonthlyTargetUncheckedCreateInput>
+  }
+
+  /**
+   * RegionalMonthlyTarget createMany
+   */
+  export type RegionalMonthlyTargetCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many RegionalMonthlyTargets.
+     */
+    data: RegionalMonthlyTargetCreateManyInput | RegionalMonthlyTargetCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * RegionalMonthlyTarget createManyAndReturn
+   */
+  export type RegionalMonthlyTargetCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the RegionalMonthlyTarget
+     */
+    select?: RegionalMonthlyTargetSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the RegionalMonthlyTarget
+     */
+    omit?: RegionalMonthlyTargetOmit<ExtArgs> | null
+    /**
+     * The data used to create many RegionalMonthlyTargets.
+     */
+    data: RegionalMonthlyTargetCreateManyInput | RegionalMonthlyTargetCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RegionalMonthlyTargetIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * RegionalMonthlyTarget update
+   */
+  export type RegionalMonthlyTargetUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the RegionalMonthlyTarget
+     */
+    select?: RegionalMonthlyTargetSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the RegionalMonthlyTarget
+     */
+    omit?: RegionalMonthlyTargetOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RegionalMonthlyTargetInclude<ExtArgs> | null
+    /**
+     * The data needed to update a RegionalMonthlyTarget.
+     */
+    data: XOR<RegionalMonthlyTargetUpdateInput, RegionalMonthlyTargetUncheckedUpdateInput>
+    /**
+     * Choose, which RegionalMonthlyTarget to update.
+     */
+    where: RegionalMonthlyTargetWhereUniqueInput
+  }
+
+  /**
+   * RegionalMonthlyTarget updateMany
+   */
+  export type RegionalMonthlyTargetUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update RegionalMonthlyTargets.
+     */
+    data: XOR<RegionalMonthlyTargetUpdateManyMutationInput, RegionalMonthlyTargetUncheckedUpdateManyInput>
+    /**
+     * Filter which RegionalMonthlyTargets to update
+     */
+    where?: RegionalMonthlyTargetWhereInput
+    /**
+     * Limit how many RegionalMonthlyTargets to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * RegionalMonthlyTarget updateManyAndReturn
+   */
+  export type RegionalMonthlyTargetUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the RegionalMonthlyTarget
+     */
+    select?: RegionalMonthlyTargetSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the RegionalMonthlyTarget
+     */
+    omit?: RegionalMonthlyTargetOmit<ExtArgs> | null
+    /**
+     * The data used to update RegionalMonthlyTargets.
+     */
+    data: XOR<RegionalMonthlyTargetUpdateManyMutationInput, RegionalMonthlyTargetUncheckedUpdateManyInput>
+    /**
+     * Filter which RegionalMonthlyTargets to update
+     */
+    where?: RegionalMonthlyTargetWhereInput
+    /**
+     * Limit how many RegionalMonthlyTargets to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RegionalMonthlyTargetIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * RegionalMonthlyTarget upsert
+   */
+  export type RegionalMonthlyTargetUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the RegionalMonthlyTarget
+     */
+    select?: RegionalMonthlyTargetSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the RegionalMonthlyTarget
+     */
+    omit?: RegionalMonthlyTargetOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RegionalMonthlyTargetInclude<ExtArgs> | null
+    /**
+     * The filter to search for the RegionalMonthlyTarget to update in case it exists.
+     */
+    where: RegionalMonthlyTargetWhereUniqueInput
+    /**
+     * In case the RegionalMonthlyTarget found by the `where` argument doesn't exist, create a new RegionalMonthlyTarget with this data.
+     */
+    create: XOR<RegionalMonthlyTargetCreateInput, RegionalMonthlyTargetUncheckedCreateInput>
+    /**
+     * In case the RegionalMonthlyTarget was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<RegionalMonthlyTargetUpdateInput, RegionalMonthlyTargetUncheckedUpdateInput>
+  }
+
+  /**
+   * RegionalMonthlyTarget delete
+   */
+  export type RegionalMonthlyTargetDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the RegionalMonthlyTarget
+     */
+    select?: RegionalMonthlyTargetSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the RegionalMonthlyTarget
+     */
+    omit?: RegionalMonthlyTargetOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RegionalMonthlyTargetInclude<ExtArgs> | null
+    /**
+     * Filter which RegionalMonthlyTarget to delete.
+     */
+    where: RegionalMonthlyTargetWhereUniqueInput
+  }
+
+  /**
+   * RegionalMonthlyTarget deleteMany
+   */
+  export type RegionalMonthlyTargetDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which RegionalMonthlyTargets to delete
+     */
+    where?: RegionalMonthlyTargetWhereInput
+    /**
+     * Limit how many RegionalMonthlyTargets to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * RegionalMonthlyTarget without action
+   */
+  export type RegionalMonthlyTargetDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the RegionalMonthlyTarget
+     */
+    select?: RegionalMonthlyTargetSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the RegionalMonthlyTarget
+     */
+    omit?: RegionalMonthlyTargetOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RegionalMonthlyTargetInclude<ExtArgs> | null
+  }
+
+
+  /**
    * Model RegionalDailyReport
    */
 
@@ -20991,6 +22283,21 @@ export namespace Prisma {
   export type DailyReportScalarFieldEnum = (typeof DailyReportScalarFieldEnum)[keyof typeof DailyReportScalarFieldEnum]
 
 
+  export const RegionalMonthlyTargetScalarFieldEnum: {
+    id: 'id',
+    userId: 'userId',
+    month: 'month',
+    year: 'year',
+    collectionTarget: 'collectionTarget',
+    newConnectionTarget: 'newConnectionTarget',
+    renewalTarget: 'renewalTarget',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type RegionalMonthlyTargetScalarFieldEnum = (typeof RegionalMonthlyTargetScalarFieldEnum)[keyof typeof RegionalMonthlyTargetScalarFieldEnum]
+
+
   export const RegionalDailyReportScalarFieldEnum: {
     id: 'id',
     createdAt: 'createdAt',
@@ -21206,6 +22513,7 @@ export namespace Prisma {
     notificationsActed?: NotificationListRelationFilter
     dailyReports?: DailyReportListRelationFilter
     regionalReports?: RegionalDailyReportListRelationFilter
+    regionalMonthlyTargets?: RegionalMonthlyTargetListRelationFilter
     calendarNotesForUser?: CalendarNoteListRelationFilter
     calendarNotesCreated?: CalendarNoteListRelationFilter
   }
@@ -21232,6 +22540,7 @@ export namespace Prisma {
     notificationsActed?: NotificationOrderByRelationAggregateInput
     dailyReports?: DailyReportOrderByRelationAggregateInput
     regionalReports?: RegionalDailyReportOrderByRelationAggregateInput
+    regionalMonthlyTargets?: RegionalMonthlyTargetOrderByRelationAggregateInput
     calendarNotesForUser?: CalendarNoteOrderByRelationAggregateInput
     calendarNotesCreated?: CalendarNoteOrderByRelationAggregateInput
   }
@@ -21261,6 +22570,7 @@ export namespace Prisma {
     notificationsActed?: NotificationListRelationFilter
     dailyReports?: DailyReportListRelationFilter
     regionalReports?: RegionalDailyReportListRelationFilter
+    regionalMonthlyTargets?: RegionalMonthlyTargetListRelationFilter
     calendarNotesForUser?: CalendarNoteListRelationFilter
     calendarNotesCreated?: CalendarNoteListRelationFilter
   }, "id" | "username" | "email">
@@ -22172,6 +23482,84 @@ export namespace Prisma {
     trunkIssueRemarks?: StringNullableWithAggregatesFilter<"DailyReport"> | string | null
   }
 
+  export type RegionalMonthlyTargetWhereInput = {
+    AND?: RegionalMonthlyTargetWhereInput | RegionalMonthlyTargetWhereInput[]
+    OR?: RegionalMonthlyTargetWhereInput[]
+    NOT?: RegionalMonthlyTargetWhereInput | RegionalMonthlyTargetWhereInput[]
+    id?: IntFilter<"RegionalMonthlyTarget"> | number
+    userId?: IntFilter<"RegionalMonthlyTarget"> | number
+    month?: StringFilter<"RegionalMonthlyTarget"> | string
+    year?: IntFilter<"RegionalMonthlyTarget"> | number
+    collectionTarget?: IntFilter<"RegionalMonthlyTarget"> | number
+    newConnectionTarget?: IntFilter<"RegionalMonthlyTarget"> | number
+    renewalTarget?: IntFilter<"RegionalMonthlyTarget"> | number
+    createdAt?: DateTimeFilter<"RegionalMonthlyTarget"> | Date | string
+    updatedAt?: DateTimeFilter<"RegionalMonthlyTarget"> | Date | string
+    user?: XOR<UserScalarRelationFilter, UserWhereInput>
+  }
+
+  export type RegionalMonthlyTargetOrderByWithRelationInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    month?: SortOrder
+    year?: SortOrder
+    collectionTarget?: SortOrder
+    newConnectionTarget?: SortOrder
+    renewalTarget?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    user?: UserOrderByWithRelationInput
+  }
+
+  export type RegionalMonthlyTargetWhereUniqueInput = Prisma.AtLeast<{
+    id?: number
+    userId_month?: RegionalMonthlyTargetUserIdMonthCompoundUniqueInput
+    AND?: RegionalMonthlyTargetWhereInput | RegionalMonthlyTargetWhereInput[]
+    OR?: RegionalMonthlyTargetWhereInput[]
+    NOT?: RegionalMonthlyTargetWhereInput | RegionalMonthlyTargetWhereInput[]
+    userId?: IntFilter<"RegionalMonthlyTarget"> | number
+    month?: StringFilter<"RegionalMonthlyTarget"> | string
+    year?: IntFilter<"RegionalMonthlyTarget"> | number
+    collectionTarget?: IntFilter<"RegionalMonthlyTarget"> | number
+    newConnectionTarget?: IntFilter<"RegionalMonthlyTarget"> | number
+    renewalTarget?: IntFilter<"RegionalMonthlyTarget"> | number
+    createdAt?: DateTimeFilter<"RegionalMonthlyTarget"> | Date | string
+    updatedAt?: DateTimeFilter<"RegionalMonthlyTarget"> | Date | string
+    user?: XOR<UserScalarRelationFilter, UserWhereInput>
+  }, "id" | "userId_month">
+
+  export type RegionalMonthlyTargetOrderByWithAggregationInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    month?: SortOrder
+    year?: SortOrder
+    collectionTarget?: SortOrder
+    newConnectionTarget?: SortOrder
+    renewalTarget?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: RegionalMonthlyTargetCountOrderByAggregateInput
+    _avg?: RegionalMonthlyTargetAvgOrderByAggregateInput
+    _max?: RegionalMonthlyTargetMaxOrderByAggregateInput
+    _min?: RegionalMonthlyTargetMinOrderByAggregateInput
+    _sum?: RegionalMonthlyTargetSumOrderByAggregateInput
+  }
+
+  export type RegionalMonthlyTargetScalarWhereWithAggregatesInput = {
+    AND?: RegionalMonthlyTargetScalarWhereWithAggregatesInput | RegionalMonthlyTargetScalarWhereWithAggregatesInput[]
+    OR?: RegionalMonthlyTargetScalarWhereWithAggregatesInput[]
+    NOT?: RegionalMonthlyTargetScalarWhereWithAggregatesInput | RegionalMonthlyTargetScalarWhereWithAggregatesInput[]
+    id?: IntWithAggregatesFilter<"RegionalMonthlyTarget"> | number
+    userId?: IntWithAggregatesFilter<"RegionalMonthlyTarget"> | number
+    month?: StringWithAggregatesFilter<"RegionalMonthlyTarget"> | string
+    year?: IntWithAggregatesFilter<"RegionalMonthlyTarget"> | number
+    collectionTarget?: IntWithAggregatesFilter<"RegionalMonthlyTarget"> | number
+    newConnectionTarget?: IntWithAggregatesFilter<"RegionalMonthlyTarget"> | number
+    renewalTarget?: IntWithAggregatesFilter<"RegionalMonthlyTarget"> | number
+    createdAt?: DateTimeWithAggregatesFilter<"RegionalMonthlyTarget"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"RegionalMonthlyTarget"> | Date | string
+  }
+
   export type RegionalDailyReportWhereInput = {
     AND?: RegionalDailyReportWhereInput | RegionalDailyReportWhereInput[]
     OR?: RegionalDailyReportWhereInput[]
@@ -22465,6 +23853,7 @@ export namespace Prisma {
     notificationsActed?: NotificationCreateNestedManyWithoutActorInput
     dailyReports?: DailyReportCreateNestedManyWithoutAuthorInput
     regionalReports?: RegionalDailyReportCreateNestedManyWithoutAuthorInput
+    regionalMonthlyTargets?: RegionalMonthlyTargetCreateNestedManyWithoutUserInput
     calendarNotesForUser?: CalendarNoteCreateNestedManyWithoutUserInput
     calendarNotesCreated?: CalendarNoteCreateNestedManyWithoutCreatedByInput
   }
@@ -22490,6 +23879,7 @@ export namespace Prisma {
     notificationsActed?: NotificationUncheckedCreateNestedManyWithoutActorInput
     dailyReports?: DailyReportUncheckedCreateNestedManyWithoutAuthorInput
     regionalReports?: RegionalDailyReportUncheckedCreateNestedManyWithoutAuthorInput
+    regionalMonthlyTargets?: RegionalMonthlyTargetUncheckedCreateNestedManyWithoutUserInput
     calendarNotesForUser?: CalendarNoteUncheckedCreateNestedManyWithoutUserInput
     calendarNotesCreated?: CalendarNoteUncheckedCreateNestedManyWithoutCreatedByInput
   }
@@ -22514,6 +23904,7 @@ export namespace Prisma {
     notificationsActed?: NotificationUpdateManyWithoutActorNestedInput
     dailyReports?: DailyReportUpdateManyWithoutAuthorNestedInput
     regionalReports?: RegionalDailyReportUpdateManyWithoutAuthorNestedInput
+    regionalMonthlyTargets?: RegionalMonthlyTargetUpdateManyWithoutUserNestedInput
     calendarNotesForUser?: CalendarNoteUpdateManyWithoutUserNestedInput
     calendarNotesCreated?: CalendarNoteUpdateManyWithoutCreatedByNestedInput
   }
@@ -22539,6 +23930,7 @@ export namespace Prisma {
     notificationsActed?: NotificationUncheckedUpdateManyWithoutActorNestedInput
     dailyReports?: DailyReportUncheckedUpdateManyWithoutAuthorNestedInput
     regionalReports?: RegionalDailyReportUncheckedUpdateManyWithoutAuthorNestedInput
+    regionalMonthlyTargets?: RegionalMonthlyTargetUncheckedUpdateManyWithoutUserNestedInput
     calendarNotesForUser?: CalendarNoteUncheckedUpdateManyWithoutUserNestedInput
     calendarNotesCreated?: CalendarNoteUncheckedUpdateManyWithoutCreatedByNestedInput
   }
@@ -23400,6 +24792,86 @@ export namespace Prisma {
     trunkIssueRemarks?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
+  export type RegionalMonthlyTargetCreateInput = {
+    month: string
+    year: number
+    collectionTarget?: number
+    newConnectionTarget?: number
+    renewalTarget?: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    user: UserCreateNestedOneWithoutRegionalMonthlyTargetsInput
+  }
+
+  export type RegionalMonthlyTargetUncheckedCreateInput = {
+    id?: number
+    userId: number
+    month: string
+    year: number
+    collectionTarget?: number
+    newConnectionTarget?: number
+    renewalTarget?: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type RegionalMonthlyTargetUpdateInput = {
+    month?: StringFieldUpdateOperationsInput | string
+    year?: IntFieldUpdateOperationsInput | number
+    collectionTarget?: IntFieldUpdateOperationsInput | number
+    newConnectionTarget?: IntFieldUpdateOperationsInput | number
+    renewalTarget?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    user?: UserUpdateOneRequiredWithoutRegionalMonthlyTargetsNestedInput
+  }
+
+  export type RegionalMonthlyTargetUncheckedUpdateInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    userId?: IntFieldUpdateOperationsInput | number
+    month?: StringFieldUpdateOperationsInput | string
+    year?: IntFieldUpdateOperationsInput | number
+    collectionTarget?: IntFieldUpdateOperationsInput | number
+    newConnectionTarget?: IntFieldUpdateOperationsInput | number
+    renewalTarget?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type RegionalMonthlyTargetCreateManyInput = {
+    id?: number
+    userId: number
+    month: string
+    year: number
+    collectionTarget?: number
+    newConnectionTarget?: number
+    renewalTarget?: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type RegionalMonthlyTargetUpdateManyMutationInput = {
+    month?: StringFieldUpdateOperationsInput | string
+    year?: IntFieldUpdateOperationsInput | number
+    collectionTarget?: IntFieldUpdateOperationsInput | number
+    newConnectionTarget?: IntFieldUpdateOperationsInput | number
+    renewalTarget?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type RegionalMonthlyTargetUncheckedUpdateManyInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    userId?: IntFieldUpdateOperationsInput | number
+    month?: StringFieldUpdateOperationsInput | string
+    year?: IntFieldUpdateOperationsInput | number
+    collectionTarget?: IntFieldUpdateOperationsInput | number
+    newConnectionTarget?: IntFieldUpdateOperationsInput | number
+    renewalTarget?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type RegionalDailyReportCreateInput = {
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -23854,6 +25326,12 @@ export namespace Prisma {
     none?: RegionalDailyReportWhereInput
   }
 
+  export type RegionalMonthlyTargetListRelationFilter = {
+    every?: RegionalMonthlyTargetWhereInput
+    some?: RegionalMonthlyTargetWhereInput
+    none?: RegionalMonthlyTargetWhereInput
+  }
+
   export type CalendarNoteListRelationFilter = {
     every?: CalendarNoteWhereInput
     some?: CalendarNoteWhereInput
@@ -23910,6 +25388,10 @@ export namespace Prisma {
   }
 
   export type RegionalDailyReportOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type RegionalMonthlyTargetOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -24717,6 +26199,65 @@ export namespace Prisma {
     outgoingCalls?: SortOrder
   }
 
+  export type RegionalMonthlyTargetUserIdMonthCompoundUniqueInput = {
+    userId: number
+    month: string
+  }
+
+  export type RegionalMonthlyTargetCountOrderByAggregateInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    month?: SortOrder
+    year?: SortOrder
+    collectionTarget?: SortOrder
+    newConnectionTarget?: SortOrder
+    renewalTarget?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type RegionalMonthlyTargetAvgOrderByAggregateInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    year?: SortOrder
+    collectionTarget?: SortOrder
+    newConnectionTarget?: SortOrder
+    renewalTarget?: SortOrder
+  }
+
+  export type RegionalMonthlyTargetMaxOrderByAggregateInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    month?: SortOrder
+    year?: SortOrder
+    collectionTarget?: SortOrder
+    newConnectionTarget?: SortOrder
+    renewalTarget?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type RegionalMonthlyTargetMinOrderByAggregateInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    month?: SortOrder
+    year?: SortOrder
+    collectionTarget?: SortOrder
+    newConnectionTarget?: SortOrder
+    renewalTarget?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type RegionalMonthlyTargetSumOrderByAggregateInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    year?: SortOrder
+    collectionTarget?: SortOrder
+    newConnectionTarget?: SortOrder
+    renewalTarget?: SortOrder
+  }
+
   export type FloatFilter<$PrismaModel = never> = {
     equals?: number | FloatFieldRefInput<$PrismaModel>
     in?: number[] | ListFloatFieldRefInput<$PrismaModel>
@@ -25062,6 +26603,13 @@ export namespace Prisma {
     connect?: RegionalDailyReportWhereUniqueInput | RegionalDailyReportWhereUniqueInput[]
   }
 
+  export type RegionalMonthlyTargetCreateNestedManyWithoutUserInput = {
+    create?: XOR<RegionalMonthlyTargetCreateWithoutUserInput, RegionalMonthlyTargetUncheckedCreateWithoutUserInput> | RegionalMonthlyTargetCreateWithoutUserInput[] | RegionalMonthlyTargetUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: RegionalMonthlyTargetCreateOrConnectWithoutUserInput | RegionalMonthlyTargetCreateOrConnectWithoutUserInput[]
+    createMany?: RegionalMonthlyTargetCreateManyUserInputEnvelope
+    connect?: RegionalMonthlyTargetWhereUniqueInput | RegionalMonthlyTargetWhereUniqueInput[]
+  }
+
   export type CalendarNoteCreateNestedManyWithoutUserInput = {
     create?: XOR<CalendarNoteCreateWithoutUserInput, CalendarNoteUncheckedCreateWithoutUserInput> | CalendarNoteCreateWithoutUserInput[] | CalendarNoteUncheckedCreateWithoutUserInput[]
     connectOrCreate?: CalendarNoteCreateOrConnectWithoutUserInput | CalendarNoteCreateOrConnectWithoutUserInput[]
@@ -25165,6 +26713,13 @@ export namespace Prisma {
     connectOrCreate?: RegionalDailyReportCreateOrConnectWithoutAuthorInput | RegionalDailyReportCreateOrConnectWithoutAuthorInput[]
     createMany?: RegionalDailyReportCreateManyAuthorInputEnvelope
     connect?: RegionalDailyReportWhereUniqueInput | RegionalDailyReportWhereUniqueInput[]
+  }
+
+  export type RegionalMonthlyTargetUncheckedCreateNestedManyWithoutUserInput = {
+    create?: XOR<RegionalMonthlyTargetCreateWithoutUserInput, RegionalMonthlyTargetUncheckedCreateWithoutUserInput> | RegionalMonthlyTargetCreateWithoutUserInput[] | RegionalMonthlyTargetUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: RegionalMonthlyTargetCreateOrConnectWithoutUserInput | RegionalMonthlyTargetCreateOrConnectWithoutUserInput[]
+    createMany?: RegionalMonthlyTargetCreateManyUserInputEnvelope
+    connect?: RegionalMonthlyTargetWhereUniqueInput | RegionalMonthlyTargetWhereUniqueInput[]
   }
 
   export type CalendarNoteUncheckedCreateNestedManyWithoutUserInput = {
@@ -25383,6 +26938,20 @@ export namespace Prisma {
     update?: RegionalDailyReportUpdateWithWhereUniqueWithoutAuthorInput | RegionalDailyReportUpdateWithWhereUniqueWithoutAuthorInput[]
     updateMany?: RegionalDailyReportUpdateManyWithWhereWithoutAuthorInput | RegionalDailyReportUpdateManyWithWhereWithoutAuthorInput[]
     deleteMany?: RegionalDailyReportScalarWhereInput | RegionalDailyReportScalarWhereInput[]
+  }
+
+  export type RegionalMonthlyTargetUpdateManyWithoutUserNestedInput = {
+    create?: XOR<RegionalMonthlyTargetCreateWithoutUserInput, RegionalMonthlyTargetUncheckedCreateWithoutUserInput> | RegionalMonthlyTargetCreateWithoutUserInput[] | RegionalMonthlyTargetUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: RegionalMonthlyTargetCreateOrConnectWithoutUserInput | RegionalMonthlyTargetCreateOrConnectWithoutUserInput[]
+    upsert?: RegionalMonthlyTargetUpsertWithWhereUniqueWithoutUserInput | RegionalMonthlyTargetUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: RegionalMonthlyTargetCreateManyUserInputEnvelope
+    set?: RegionalMonthlyTargetWhereUniqueInput | RegionalMonthlyTargetWhereUniqueInput[]
+    disconnect?: RegionalMonthlyTargetWhereUniqueInput | RegionalMonthlyTargetWhereUniqueInput[]
+    delete?: RegionalMonthlyTargetWhereUniqueInput | RegionalMonthlyTargetWhereUniqueInput[]
+    connect?: RegionalMonthlyTargetWhereUniqueInput | RegionalMonthlyTargetWhereUniqueInput[]
+    update?: RegionalMonthlyTargetUpdateWithWhereUniqueWithoutUserInput | RegionalMonthlyTargetUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: RegionalMonthlyTargetUpdateManyWithWhereWithoutUserInput | RegionalMonthlyTargetUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: RegionalMonthlyTargetScalarWhereInput | RegionalMonthlyTargetScalarWhereInput[]
   }
 
   export type CalendarNoteUpdateManyWithoutUserNestedInput = {
@@ -25609,6 +27178,20 @@ export namespace Prisma {
     update?: RegionalDailyReportUpdateWithWhereUniqueWithoutAuthorInput | RegionalDailyReportUpdateWithWhereUniqueWithoutAuthorInput[]
     updateMany?: RegionalDailyReportUpdateManyWithWhereWithoutAuthorInput | RegionalDailyReportUpdateManyWithWhereWithoutAuthorInput[]
     deleteMany?: RegionalDailyReportScalarWhereInput | RegionalDailyReportScalarWhereInput[]
+  }
+
+  export type RegionalMonthlyTargetUncheckedUpdateManyWithoutUserNestedInput = {
+    create?: XOR<RegionalMonthlyTargetCreateWithoutUserInput, RegionalMonthlyTargetUncheckedCreateWithoutUserInput> | RegionalMonthlyTargetCreateWithoutUserInput[] | RegionalMonthlyTargetUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: RegionalMonthlyTargetCreateOrConnectWithoutUserInput | RegionalMonthlyTargetCreateOrConnectWithoutUserInput[]
+    upsert?: RegionalMonthlyTargetUpsertWithWhereUniqueWithoutUserInput | RegionalMonthlyTargetUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: RegionalMonthlyTargetCreateManyUserInputEnvelope
+    set?: RegionalMonthlyTargetWhereUniqueInput | RegionalMonthlyTargetWhereUniqueInput[]
+    disconnect?: RegionalMonthlyTargetWhereUniqueInput | RegionalMonthlyTargetWhereUniqueInput[]
+    delete?: RegionalMonthlyTargetWhereUniqueInput | RegionalMonthlyTargetWhereUniqueInput[]
+    connect?: RegionalMonthlyTargetWhereUniqueInput | RegionalMonthlyTargetWhereUniqueInput[]
+    update?: RegionalMonthlyTargetUpdateWithWhereUniqueWithoutUserInput | RegionalMonthlyTargetUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: RegionalMonthlyTargetUpdateManyWithWhereWithoutUserInput | RegionalMonthlyTargetUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: RegionalMonthlyTargetScalarWhereInput | RegionalMonthlyTargetScalarWhereInput[]
   }
 
   export type CalendarNoteUncheckedUpdateManyWithoutUserNestedInput = {
@@ -26489,6 +28072,20 @@ export namespace Prisma {
     update?: XOR<XOR<UserUpdateToOneWithWhereWithoutDailyReportsInput, UserUpdateWithoutDailyReportsInput>, UserUncheckedUpdateWithoutDailyReportsInput>
   }
 
+  export type UserCreateNestedOneWithoutRegionalMonthlyTargetsInput = {
+    create?: XOR<UserCreateWithoutRegionalMonthlyTargetsInput, UserUncheckedCreateWithoutRegionalMonthlyTargetsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutRegionalMonthlyTargetsInput
+    connect?: UserWhereUniqueInput
+  }
+
+  export type UserUpdateOneRequiredWithoutRegionalMonthlyTargetsNestedInput = {
+    create?: XOR<UserCreateWithoutRegionalMonthlyTargetsInput, UserUncheckedCreateWithoutRegionalMonthlyTargetsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutRegionalMonthlyTargetsInput
+    upsert?: UserUpsertWithoutRegionalMonthlyTargetsInput
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutRegionalMonthlyTargetsInput, UserUpdateWithoutRegionalMonthlyTargetsInput>, UserUncheckedUpdateWithoutRegionalMonthlyTargetsInput>
+  }
+
   export type UserCreateNestedOneWithoutRegionalReportsInput = {
     create?: XOR<UserCreateWithoutRegionalReportsInput, UserUncheckedCreateWithoutRegionalReportsInput>
     connectOrCreate?: UserCreateOrConnectWithoutRegionalReportsInput
@@ -27282,6 +28879,37 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type RegionalMonthlyTargetCreateWithoutUserInput = {
+    month: string
+    year: number
+    collectionTarget?: number
+    newConnectionTarget?: number
+    renewalTarget?: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type RegionalMonthlyTargetUncheckedCreateWithoutUserInput = {
+    id?: number
+    month: string
+    year: number
+    collectionTarget?: number
+    newConnectionTarget?: number
+    renewalTarget?: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type RegionalMonthlyTargetCreateOrConnectWithoutUserInput = {
+    where: RegionalMonthlyTargetWhereUniqueInput
+    create: XOR<RegionalMonthlyTargetCreateWithoutUserInput, RegionalMonthlyTargetUncheckedCreateWithoutUserInput>
+  }
+
+  export type RegionalMonthlyTargetCreateManyUserInputEnvelope = {
+    data: RegionalMonthlyTargetCreateManyUserInput | RegionalMonthlyTargetCreateManyUserInput[]
+    skipDuplicates?: boolean
+  }
+
   export type CalendarNoteCreateWithoutUserInput = {
     noteDate: string
     title: string
@@ -27776,6 +29404,37 @@ export namespace Prisma {
     supportRequiredFromHO?: StringNullableFilter<"RegionalDailyReport"> | string | null
   }
 
+  export type RegionalMonthlyTargetUpsertWithWhereUniqueWithoutUserInput = {
+    where: RegionalMonthlyTargetWhereUniqueInput
+    update: XOR<RegionalMonthlyTargetUpdateWithoutUserInput, RegionalMonthlyTargetUncheckedUpdateWithoutUserInput>
+    create: XOR<RegionalMonthlyTargetCreateWithoutUserInput, RegionalMonthlyTargetUncheckedCreateWithoutUserInput>
+  }
+
+  export type RegionalMonthlyTargetUpdateWithWhereUniqueWithoutUserInput = {
+    where: RegionalMonthlyTargetWhereUniqueInput
+    data: XOR<RegionalMonthlyTargetUpdateWithoutUserInput, RegionalMonthlyTargetUncheckedUpdateWithoutUserInput>
+  }
+
+  export type RegionalMonthlyTargetUpdateManyWithWhereWithoutUserInput = {
+    where: RegionalMonthlyTargetScalarWhereInput
+    data: XOR<RegionalMonthlyTargetUpdateManyMutationInput, RegionalMonthlyTargetUncheckedUpdateManyWithoutUserInput>
+  }
+
+  export type RegionalMonthlyTargetScalarWhereInput = {
+    AND?: RegionalMonthlyTargetScalarWhereInput | RegionalMonthlyTargetScalarWhereInput[]
+    OR?: RegionalMonthlyTargetScalarWhereInput[]
+    NOT?: RegionalMonthlyTargetScalarWhereInput | RegionalMonthlyTargetScalarWhereInput[]
+    id?: IntFilter<"RegionalMonthlyTarget"> | number
+    userId?: IntFilter<"RegionalMonthlyTarget"> | number
+    month?: StringFilter<"RegionalMonthlyTarget"> | string
+    year?: IntFilter<"RegionalMonthlyTarget"> | number
+    collectionTarget?: IntFilter<"RegionalMonthlyTarget"> | number
+    newConnectionTarget?: IntFilter<"RegionalMonthlyTarget"> | number
+    renewalTarget?: IntFilter<"RegionalMonthlyTarget"> | number
+    createdAt?: DateTimeFilter<"RegionalMonthlyTarget"> | Date | string
+    updatedAt?: DateTimeFilter<"RegionalMonthlyTarget"> | Date | string
+  }
+
   export type CalendarNoteUpsertWithWhereUniqueWithoutUserInput = {
     where: CalendarNoteWhereUniqueInput
     update: XOR<CalendarNoteUpdateWithoutUserInput, CalendarNoteUncheckedUpdateWithoutUserInput>
@@ -27842,6 +29501,7 @@ export namespace Prisma {
     notificationsActed?: NotificationCreateNestedManyWithoutActorInput
     dailyReports?: DailyReportCreateNestedManyWithoutAuthorInput
     regionalReports?: RegionalDailyReportCreateNestedManyWithoutAuthorInput
+    regionalMonthlyTargets?: RegionalMonthlyTargetCreateNestedManyWithoutUserInput
     calendarNotesForUser?: CalendarNoteCreateNestedManyWithoutUserInput
     calendarNotesCreated?: CalendarNoteCreateNestedManyWithoutCreatedByInput
   }
@@ -27866,6 +29526,7 @@ export namespace Prisma {
     notificationsActed?: NotificationUncheckedCreateNestedManyWithoutActorInput
     dailyReports?: DailyReportUncheckedCreateNestedManyWithoutAuthorInput
     regionalReports?: RegionalDailyReportUncheckedCreateNestedManyWithoutAuthorInput
+    regionalMonthlyTargets?: RegionalMonthlyTargetUncheckedCreateNestedManyWithoutUserInput
     calendarNotesForUser?: CalendarNoteUncheckedCreateNestedManyWithoutUserInput
     calendarNotesCreated?: CalendarNoteUncheckedCreateNestedManyWithoutCreatedByInput
   }
@@ -28048,6 +29709,7 @@ export namespace Prisma {
     notificationsActed?: NotificationUpdateManyWithoutActorNestedInput
     dailyReports?: DailyReportUpdateManyWithoutAuthorNestedInput
     regionalReports?: RegionalDailyReportUpdateManyWithoutAuthorNestedInput
+    regionalMonthlyTargets?: RegionalMonthlyTargetUpdateManyWithoutUserNestedInput
     calendarNotesForUser?: CalendarNoteUpdateManyWithoutUserNestedInput
     calendarNotesCreated?: CalendarNoteUpdateManyWithoutCreatedByNestedInput
   }
@@ -28072,6 +29734,7 @@ export namespace Prisma {
     notificationsActed?: NotificationUncheckedUpdateManyWithoutActorNestedInput
     dailyReports?: DailyReportUncheckedUpdateManyWithoutAuthorNestedInput
     regionalReports?: RegionalDailyReportUncheckedUpdateManyWithoutAuthorNestedInput
+    regionalMonthlyTargets?: RegionalMonthlyTargetUncheckedUpdateManyWithoutUserNestedInput
     calendarNotesForUser?: CalendarNoteUncheckedUpdateManyWithoutUserNestedInput
     calendarNotesCreated?: CalendarNoteUncheckedUpdateManyWithoutCreatedByNestedInput
   }
@@ -28255,6 +29918,7 @@ export namespace Prisma {
     notificationsActed?: NotificationCreateNestedManyWithoutActorInput
     dailyReports?: DailyReportCreateNestedManyWithoutAuthorInput
     regionalReports?: RegionalDailyReportCreateNestedManyWithoutAuthorInput
+    regionalMonthlyTargets?: RegionalMonthlyTargetCreateNestedManyWithoutUserInput
     calendarNotesForUser?: CalendarNoteCreateNestedManyWithoutUserInput
     calendarNotesCreated?: CalendarNoteCreateNestedManyWithoutCreatedByInput
   }
@@ -28279,6 +29943,7 @@ export namespace Prisma {
     notificationsActed?: NotificationUncheckedCreateNestedManyWithoutActorInput
     dailyReports?: DailyReportUncheckedCreateNestedManyWithoutAuthorInput
     regionalReports?: RegionalDailyReportUncheckedCreateNestedManyWithoutAuthorInput
+    regionalMonthlyTargets?: RegionalMonthlyTargetUncheckedCreateNestedManyWithoutUserInput
     calendarNotesForUser?: CalendarNoteUncheckedCreateNestedManyWithoutUserInput
     calendarNotesCreated?: CalendarNoteUncheckedCreateNestedManyWithoutCreatedByInput
   }
@@ -28354,6 +30019,7 @@ export namespace Prisma {
     notificationsActed?: NotificationUpdateManyWithoutActorNestedInput
     dailyReports?: DailyReportUpdateManyWithoutAuthorNestedInput
     regionalReports?: RegionalDailyReportUpdateManyWithoutAuthorNestedInput
+    regionalMonthlyTargets?: RegionalMonthlyTargetUpdateManyWithoutUserNestedInput
     calendarNotesForUser?: CalendarNoteUpdateManyWithoutUserNestedInput
     calendarNotesCreated?: CalendarNoteUpdateManyWithoutCreatedByNestedInput
   }
@@ -28378,6 +30044,7 @@ export namespace Prisma {
     notificationsActed?: NotificationUncheckedUpdateManyWithoutActorNestedInput
     dailyReports?: DailyReportUncheckedUpdateManyWithoutAuthorNestedInput
     regionalReports?: RegionalDailyReportUncheckedUpdateManyWithoutAuthorNestedInput
+    regionalMonthlyTargets?: RegionalMonthlyTargetUncheckedUpdateManyWithoutUserNestedInput
     calendarNotesForUser?: CalendarNoteUncheckedUpdateManyWithoutUserNestedInput
     calendarNotesCreated?: CalendarNoteUncheckedUpdateManyWithoutCreatedByNestedInput
   }
@@ -28431,6 +30098,7 @@ export namespace Prisma {
     notificationsActed?: NotificationCreateNestedManyWithoutActorInput
     dailyReports?: DailyReportCreateNestedManyWithoutAuthorInput
     regionalReports?: RegionalDailyReportCreateNestedManyWithoutAuthorInput
+    regionalMonthlyTargets?: RegionalMonthlyTargetCreateNestedManyWithoutUserInput
     calendarNotesForUser?: CalendarNoteCreateNestedManyWithoutUserInput
     calendarNotesCreated?: CalendarNoteCreateNestedManyWithoutCreatedByInput
   }
@@ -28455,6 +30123,7 @@ export namespace Prisma {
     notificationsActed?: NotificationUncheckedCreateNestedManyWithoutActorInput
     dailyReports?: DailyReportUncheckedCreateNestedManyWithoutAuthorInput
     regionalReports?: RegionalDailyReportUncheckedCreateNestedManyWithoutAuthorInput
+    regionalMonthlyTargets?: RegionalMonthlyTargetUncheckedCreateNestedManyWithoutUserInput
     calendarNotesForUser?: CalendarNoteUncheckedCreateNestedManyWithoutUserInput
     calendarNotesCreated?: CalendarNoteUncheckedCreateNestedManyWithoutCreatedByInput
   }
@@ -28530,6 +30199,7 @@ export namespace Prisma {
     notificationsActed?: NotificationUpdateManyWithoutActorNestedInput
     dailyReports?: DailyReportUpdateManyWithoutAuthorNestedInput
     regionalReports?: RegionalDailyReportUpdateManyWithoutAuthorNestedInput
+    regionalMonthlyTargets?: RegionalMonthlyTargetUpdateManyWithoutUserNestedInput
     calendarNotesForUser?: CalendarNoteUpdateManyWithoutUserNestedInput
     calendarNotesCreated?: CalendarNoteUpdateManyWithoutCreatedByNestedInput
   }
@@ -28554,6 +30224,7 @@ export namespace Prisma {
     notificationsActed?: NotificationUncheckedUpdateManyWithoutActorNestedInput
     dailyReports?: DailyReportUncheckedUpdateManyWithoutAuthorNestedInput
     regionalReports?: RegionalDailyReportUncheckedUpdateManyWithoutAuthorNestedInput
+    regionalMonthlyTargets?: RegionalMonthlyTargetUncheckedUpdateManyWithoutUserNestedInput
     calendarNotesForUser?: CalendarNoteUncheckedUpdateManyWithoutUserNestedInput
     calendarNotesCreated?: CalendarNoteUncheckedUpdateManyWithoutCreatedByNestedInput
   }
@@ -28643,6 +30314,7 @@ export namespace Prisma {
     notificationsActed?: NotificationCreateNestedManyWithoutActorInput
     dailyReports?: DailyReportCreateNestedManyWithoutAuthorInput
     regionalReports?: RegionalDailyReportCreateNestedManyWithoutAuthorInput
+    regionalMonthlyTargets?: RegionalMonthlyTargetCreateNestedManyWithoutUserInput
     calendarNotesForUser?: CalendarNoteCreateNestedManyWithoutUserInput
     calendarNotesCreated?: CalendarNoteCreateNestedManyWithoutCreatedByInput
   }
@@ -28667,6 +30339,7 @@ export namespace Prisma {
     notificationsActed?: NotificationUncheckedCreateNestedManyWithoutActorInput
     dailyReports?: DailyReportUncheckedCreateNestedManyWithoutAuthorInput
     regionalReports?: RegionalDailyReportUncheckedCreateNestedManyWithoutAuthorInput
+    regionalMonthlyTargets?: RegionalMonthlyTargetUncheckedCreateNestedManyWithoutUserInput
     calendarNotesForUser?: CalendarNoteUncheckedCreateNestedManyWithoutUserInput
     calendarNotesCreated?: CalendarNoteUncheckedCreateNestedManyWithoutCreatedByInput
   }
@@ -28801,6 +30474,7 @@ export namespace Prisma {
     notificationsActed?: NotificationCreateNestedManyWithoutActorInput
     dailyReports?: DailyReportCreateNestedManyWithoutAuthorInput
     regionalReports?: RegionalDailyReportCreateNestedManyWithoutAuthorInput
+    regionalMonthlyTargets?: RegionalMonthlyTargetCreateNestedManyWithoutUserInput
     calendarNotesForUser?: CalendarNoteCreateNestedManyWithoutUserInput
     calendarNotesCreated?: CalendarNoteCreateNestedManyWithoutCreatedByInput
   }
@@ -28825,6 +30499,7 @@ export namespace Prisma {
     notificationsActed?: NotificationUncheckedCreateNestedManyWithoutActorInput
     dailyReports?: DailyReportUncheckedCreateNestedManyWithoutAuthorInput
     regionalReports?: RegionalDailyReportUncheckedCreateNestedManyWithoutAuthorInput
+    regionalMonthlyTargets?: RegionalMonthlyTargetUncheckedCreateNestedManyWithoutUserInput
     calendarNotesForUser?: CalendarNoteUncheckedCreateNestedManyWithoutUserInput
     calendarNotesCreated?: CalendarNoteUncheckedCreateNestedManyWithoutCreatedByInput
   }
@@ -28902,6 +30577,7 @@ export namespace Prisma {
     notificationsActed?: NotificationUpdateManyWithoutActorNestedInput
     dailyReports?: DailyReportUpdateManyWithoutAuthorNestedInput
     regionalReports?: RegionalDailyReportUpdateManyWithoutAuthorNestedInput
+    regionalMonthlyTargets?: RegionalMonthlyTargetUpdateManyWithoutUserNestedInput
     calendarNotesForUser?: CalendarNoteUpdateManyWithoutUserNestedInput
     calendarNotesCreated?: CalendarNoteUpdateManyWithoutCreatedByNestedInput
   }
@@ -28926,6 +30602,7 @@ export namespace Prisma {
     notificationsActed?: NotificationUncheckedUpdateManyWithoutActorNestedInput
     dailyReports?: DailyReportUncheckedUpdateManyWithoutAuthorNestedInput
     regionalReports?: RegionalDailyReportUncheckedUpdateManyWithoutAuthorNestedInput
+    regionalMonthlyTargets?: RegionalMonthlyTargetUncheckedUpdateManyWithoutUserNestedInput
     calendarNotesForUser?: CalendarNoteUncheckedUpdateManyWithoutUserNestedInput
     calendarNotesCreated?: CalendarNoteUncheckedUpdateManyWithoutCreatedByNestedInput
   }
@@ -29092,6 +30769,7 @@ export namespace Prisma {
     notificationsActed?: NotificationCreateNestedManyWithoutActorInput
     dailyReports?: DailyReportCreateNestedManyWithoutAuthorInput
     regionalReports?: RegionalDailyReportCreateNestedManyWithoutAuthorInput
+    regionalMonthlyTargets?: RegionalMonthlyTargetCreateNestedManyWithoutUserInput
     calendarNotesForUser?: CalendarNoteCreateNestedManyWithoutUserInput
     calendarNotesCreated?: CalendarNoteCreateNestedManyWithoutCreatedByInput
   }
@@ -29116,6 +30794,7 @@ export namespace Prisma {
     notificationsActed?: NotificationUncheckedCreateNestedManyWithoutActorInput
     dailyReports?: DailyReportUncheckedCreateNestedManyWithoutAuthorInput
     regionalReports?: RegionalDailyReportUncheckedCreateNestedManyWithoutAuthorInput
+    regionalMonthlyTargets?: RegionalMonthlyTargetUncheckedCreateNestedManyWithoutUserInput
     calendarNotesForUser?: CalendarNoteUncheckedCreateNestedManyWithoutUserInput
     calendarNotesCreated?: CalendarNoteUncheckedCreateNestedManyWithoutCreatedByInput
   }
@@ -29195,6 +30874,7 @@ export namespace Prisma {
     notificationsActed?: NotificationUpdateManyWithoutActorNestedInput
     dailyReports?: DailyReportUpdateManyWithoutAuthorNestedInput
     regionalReports?: RegionalDailyReportUpdateManyWithoutAuthorNestedInput
+    regionalMonthlyTargets?: RegionalMonthlyTargetUpdateManyWithoutUserNestedInput
     calendarNotesForUser?: CalendarNoteUpdateManyWithoutUserNestedInput
     calendarNotesCreated?: CalendarNoteUpdateManyWithoutCreatedByNestedInput
   }
@@ -29219,6 +30899,7 @@ export namespace Prisma {
     notificationsActed?: NotificationUncheckedUpdateManyWithoutActorNestedInput
     dailyReports?: DailyReportUncheckedUpdateManyWithoutAuthorNestedInput
     regionalReports?: RegionalDailyReportUncheckedUpdateManyWithoutAuthorNestedInput
+    regionalMonthlyTargets?: RegionalMonthlyTargetUncheckedUpdateManyWithoutUserNestedInput
     calendarNotesForUser?: CalendarNoteUncheckedUpdateManyWithoutUserNestedInput
     calendarNotesCreated?: CalendarNoteUncheckedUpdateManyWithoutCreatedByNestedInput
   }
@@ -29276,6 +30957,7 @@ export namespace Prisma {
     notificationsActed?: NotificationCreateNestedManyWithoutActorInput
     dailyReports?: DailyReportCreateNestedManyWithoutAuthorInput
     regionalReports?: RegionalDailyReportCreateNestedManyWithoutAuthorInput
+    regionalMonthlyTargets?: RegionalMonthlyTargetCreateNestedManyWithoutUserInput
     calendarNotesForUser?: CalendarNoteCreateNestedManyWithoutUserInput
     calendarNotesCreated?: CalendarNoteCreateNestedManyWithoutCreatedByInput
   }
@@ -29300,6 +30982,7 @@ export namespace Prisma {
     notificationsActed?: NotificationUncheckedCreateNestedManyWithoutActorInput
     dailyReports?: DailyReportUncheckedCreateNestedManyWithoutAuthorInput
     regionalReports?: RegionalDailyReportUncheckedCreateNestedManyWithoutAuthorInput
+    regionalMonthlyTargets?: RegionalMonthlyTargetUncheckedCreateNestedManyWithoutUserInput
     calendarNotesForUser?: CalendarNoteUncheckedCreateNestedManyWithoutUserInput
     calendarNotesCreated?: CalendarNoteUncheckedCreateNestedManyWithoutCreatedByInput
   }
@@ -29412,6 +31095,7 @@ export namespace Prisma {
     notificationsActed?: NotificationUpdateManyWithoutActorNestedInput
     dailyReports?: DailyReportUpdateManyWithoutAuthorNestedInput
     regionalReports?: RegionalDailyReportUpdateManyWithoutAuthorNestedInput
+    regionalMonthlyTargets?: RegionalMonthlyTargetUpdateManyWithoutUserNestedInput
     calendarNotesForUser?: CalendarNoteUpdateManyWithoutUserNestedInput
     calendarNotesCreated?: CalendarNoteUpdateManyWithoutCreatedByNestedInput
   }
@@ -29436,6 +31120,7 @@ export namespace Prisma {
     notificationsActed?: NotificationUncheckedUpdateManyWithoutActorNestedInput
     dailyReports?: DailyReportUncheckedUpdateManyWithoutAuthorNestedInput
     regionalReports?: RegionalDailyReportUncheckedUpdateManyWithoutAuthorNestedInput
+    regionalMonthlyTargets?: RegionalMonthlyTargetUncheckedUpdateManyWithoutUserNestedInput
     calendarNotesForUser?: CalendarNoteUncheckedUpdateManyWithoutUserNestedInput
     calendarNotesCreated?: CalendarNoteUncheckedUpdateManyWithoutCreatedByNestedInput
   }
@@ -29475,6 +31160,7 @@ export namespace Prisma {
     notificationsActed?: NotificationCreateNestedManyWithoutActorInput
     dailyReports?: DailyReportCreateNestedManyWithoutAuthorInput
     regionalReports?: RegionalDailyReportCreateNestedManyWithoutAuthorInput
+    regionalMonthlyTargets?: RegionalMonthlyTargetCreateNestedManyWithoutUserInput
     calendarNotesForUser?: CalendarNoteCreateNestedManyWithoutUserInput
     calendarNotesCreated?: CalendarNoteCreateNestedManyWithoutCreatedByInput
   }
@@ -29499,6 +31185,7 @@ export namespace Prisma {
     notificationsActed?: NotificationUncheckedCreateNestedManyWithoutActorInput
     dailyReports?: DailyReportUncheckedCreateNestedManyWithoutAuthorInput
     regionalReports?: RegionalDailyReportUncheckedCreateNestedManyWithoutAuthorInput
+    regionalMonthlyTargets?: RegionalMonthlyTargetUncheckedCreateNestedManyWithoutUserInput
     calendarNotesForUser?: CalendarNoteUncheckedCreateNestedManyWithoutUserInput
     calendarNotesCreated?: CalendarNoteUncheckedCreateNestedManyWithoutCreatedByInput
   }
@@ -29527,6 +31214,7 @@ export namespace Prisma {
     pinnedChannel?: ChannelCreateNestedOneWithoutPinnedByUsersInput
     dailyReports?: DailyReportCreateNestedManyWithoutAuthorInput
     regionalReports?: RegionalDailyReportCreateNestedManyWithoutAuthorInput
+    regionalMonthlyTargets?: RegionalMonthlyTargetCreateNestedManyWithoutUserInput
     calendarNotesForUser?: CalendarNoteCreateNestedManyWithoutUserInput
     calendarNotesCreated?: CalendarNoteCreateNestedManyWithoutCreatedByInput
   }
@@ -29551,6 +31239,7 @@ export namespace Prisma {
     postSeen?: PostSeenUncheckedCreateNestedManyWithoutUserInput
     dailyReports?: DailyReportUncheckedCreateNestedManyWithoutAuthorInput
     regionalReports?: RegionalDailyReportUncheckedCreateNestedManyWithoutAuthorInput
+    regionalMonthlyTargets?: RegionalMonthlyTargetUncheckedCreateNestedManyWithoutUserInput
     calendarNotesForUser?: CalendarNoteUncheckedCreateNestedManyWithoutUserInput
     calendarNotesCreated?: CalendarNoteUncheckedCreateNestedManyWithoutCreatedByInput
   }
@@ -29646,6 +31335,7 @@ export namespace Prisma {
     notificationsActed?: NotificationUpdateManyWithoutActorNestedInput
     dailyReports?: DailyReportUpdateManyWithoutAuthorNestedInput
     regionalReports?: RegionalDailyReportUpdateManyWithoutAuthorNestedInput
+    regionalMonthlyTargets?: RegionalMonthlyTargetUpdateManyWithoutUserNestedInput
     calendarNotesForUser?: CalendarNoteUpdateManyWithoutUserNestedInput
     calendarNotesCreated?: CalendarNoteUpdateManyWithoutCreatedByNestedInput
   }
@@ -29670,6 +31360,7 @@ export namespace Prisma {
     notificationsActed?: NotificationUncheckedUpdateManyWithoutActorNestedInput
     dailyReports?: DailyReportUncheckedUpdateManyWithoutAuthorNestedInput
     regionalReports?: RegionalDailyReportUncheckedUpdateManyWithoutAuthorNestedInput
+    regionalMonthlyTargets?: RegionalMonthlyTargetUncheckedUpdateManyWithoutUserNestedInput
     calendarNotesForUser?: CalendarNoteUncheckedUpdateManyWithoutUserNestedInput
     calendarNotesCreated?: CalendarNoteUncheckedUpdateManyWithoutCreatedByNestedInput
   }
@@ -29704,6 +31395,7 @@ export namespace Prisma {
     pinnedChannel?: ChannelUpdateOneWithoutPinnedByUsersNestedInput
     dailyReports?: DailyReportUpdateManyWithoutAuthorNestedInput
     regionalReports?: RegionalDailyReportUpdateManyWithoutAuthorNestedInput
+    regionalMonthlyTargets?: RegionalMonthlyTargetUpdateManyWithoutUserNestedInput
     calendarNotesForUser?: CalendarNoteUpdateManyWithoutUserNestedInput
     calendarNotesCreated?: CalendarNoteUpdateManyWithoutCreatedByNestedInput
   }
@@ -29728,6 +31420,7 @@ export namespace Prisma {
     postSeen?: PostSeenUncheckedUpdateManyWithoutUserNestedInput
     dailyReports?: DailyReportUncheckedUpdateManyWithoutAuthorNestedInput
     regionalReports?: RegionalDailyReportUncheckedUpdateManyWithoutAuthorNestedInput
+    regionalMonthlyTargets?: RegionalMonthlyTargetUncheckedUpdateManyWithoutUserNestedInput
     calendarNotesForUser?: CalendarNoteUncheckedUpdateManyWithoutUserNestedInput
     calendarNotesCreated?: CalendarNoteUncheckedUpdateManyWithoutCreatedByNestedInput
   }
@@ -29819,6 +31512,7 @@ export namespace Prisma {
     notificationsActed?: NotificationCreateNestedManyWithoutActorInput
     dailyReports?: DailyReportCreateNestedManyWithoutAuthorInput
     regionalReports?: RegionalDailyReportCreateNestedManyWithoutAuthorInput
+    regionalMonthlyTargets?: RegionalMonthlyTargetCreateNestedManyWithoutUserInput
     calendarNotesForUser?: CalendarNoteCreateNestedManyWithoutUserInput
     calendarNotesCreated?: CalendarNoteCreateNestedManyWithoutCreatedByInput
   }
@@ -29843,6 +31537,7 @@ export namespace Prisma {
     notificationsActed?: NotificationUncheckedCreateNestedManyWithoutActorInput
     dailyReports?: DailyReportUncheckedCreateNestedManyWithoutAuthorInput
     regionalReports?: RegionalDailyReportUncheckedCreateNestedManyWithoutAuthorInput
+    regionalMonthlyTargets?: RegionalMonthlyTargetUncheckedCreateNestedManyWithoutUserInput
     calendarNotesForUser?: CalendarNoteUncheckedCreateNestedManyWithoutUserInput
     calendarNotesCreated?: CalendarNoteUncheckedCreateNestedManyWithoutCreatedByInput
   }
@@ -29912,6 +31607,7 @@ export namespace Prisma {
     notificationsActed?: NotificationUpdateManyWithoutActorNestedInput
     dailyReports?: DailyReportUpdateManyWithoutAuthorNestedInput
     regionalReports?: RegionalDailyReportUpdateManyWithoutAuthorNestedInput
+    regionalMonthlyTargets?: RegionalMonthlyTargetUpdateManyWithoutUserNestedInput
     calendarNotesForUser?: CalendarNoteUpdateManyWithoutUserNestedInput
     calendarNotesCreated?: CalendarNoteUpdateManyWithoutCreatedByNestedInput
   }
@@ -29936,6 +31632,7 @@ export namespace Prisma {
     notificationsActed?: NotificationUncheckedUpdateManyWithoutActorNestedInput
     dailyReports?: DailyReportUncheckedUpdateManyWithoutAuthorNestedInput
     regionalReports?: RegionalDailyReportUncheckedUpdateManyWithoutAuthorNestedInput
+    regionalMonthlyTargets?: RegionalMonthlyTargetUncheckedUpdateManyWithoutUserNestedInput
     calendarNotesForUser?: CalendarNoteUncheckedUpdateManyWithoutUserNestedInput
     calendarNotesCreated?: CalendarNoteUncheckedUpdateManyWithoutCreatedByNestedInput
   }
@@ -29995,6 +31692,7 @@ export namespace Prisma {
     notificationsActed?: NotificationCreateNestedManyWithoutActorInput
     dailyReports?: DailyReportCreateNestedManyWithoutAuthorInput
     regionalReports?: RegionalDailyReportCreateNestedManyWithoutAuthorInput
+    regionalMonthlyTargets?: RegionalMonthlyTargetCreateNestedManyWithoutUserInput
     calendarNotesForUser?: CalendarNoteCreateNestedManyWithoutUserInput
     calendarNotesCreated?: CalendarNoteCreateNestedManyWithoutCreatedByInput
   }
@@ -30019,6 +31717,7 @@ export namespace Prisma {
     notificationsActed?: NotificationUncheckedCreateNestedManyWithoutActorInput
     dailyReports?: DailyReportUncheckedCreateNestedManyWithoutAuthorInput
     regionalReports?: RegionalDailyReportUncheckedCreateNestedManyWithoutAuthorInput
+    regionalMonthlyTargets?: RegionalMonthlyTargetUncheckedCreateNestedManyWithoutUserInput
     calendarNotesForUser?: CalendarNoteUncheckedCreateNestedManyWithoutUserInput
     calendarNotesCreated?: CalendarNoteUncheckedCreateNestedManyWithoutCreatedByInput
   }
@@ -30058,6 +31757,7 @@ export namespace Prisma {
     notificationsActed?: NotificationUpdateManyWithoutActorNestedInput
     dailyReports?: DailyReportUpdateManyWithoutAuthorNestedInput
     regionalReports?: RegionalDailyReportUpdateManyWithoutAuthorNestedInput
+    regionalMonthlyTargets?: RegionalMonthlyTargetUpdateManyWithoutUserNestedInput
     calendarNotesForUser?: CalendarNoteUpdateManyWithoutUserNestedInput
     calendarNotesCreated?: CalendarNoteUpdateManyWithoutCreatedByNestedInput
   }
@@ -30082,6 +31782,7 @@ export namespace Prisma {
     notificationsActed?: NotificationUncheckedUpdateManyWithoutActorNestedInput
     dailyReports?: DailyReportUncheckedUpdateManyWithoutAuthorNestedInput
     regionalReports?: RegionalDailyReportUncheckedUpdateManyWithoutAuthorNestedInput
+    regionalMonthlyTargets?: RegionalMonthlyTargetUncheckedUpdateManyWithoutUserNestedInput
     calendarNotesForUser?: CalendarNoteUncheckedUpdateManyWithoutUserNestedInput
     calendarNotesCreated?: CalendarNoteUncheckedUpdateManyWithoutCreatedByNestedInput
   }
@@ -30105,6 +31806,7 @@ export namespace Prisma {
     notificationsActed?: NotificationCreateNestedManyWithoutActorInput
     dailyReports?: DailyReportCreateNestedManyWithoutAuthorInput
     regionalReports?: RegionalDailyReportCreateNestedManyWithoutAuthorInput
+    regionalMonthlyTargets?: RegionalMonthlyTargetCreateNestedManyWithoutUserInput
     calendarNotesForUser?: CalendarNoteCreateNestedManyWithoutUserInput
     calendarNotesCreated?: CalendarNoteCreateNestedManyWithoutCreatedByInput
   }
@@ -30129,6 +31831,7 @@ export namespace Prisma {
     notificationsActed?: NotificationUncheckedCreateNestedManyWithoutActorInput
     dailyReports?: DailyReportUncheckedCreateNestedManyWithoutAuthorInput
     regionalReports?: RegionalDailyReportUncheckedCreateNestedManyWithoutAuthorInput
+    regionalMonthlyTargets?: RegionalMonthlyTargetUncheckedCreateNestedManyWithoutUserInput
     calendarNotesForUser?: CalendarNoteUncheckedCreateNestedManyWithoutUserInput
     calendarNotesCreated?: CalendarNoteUncheckedCreateNestedManyWithoutCreatedByInput
   }
@@ -30232,6 +31935,7 @@ export namespace Prisma {
     notificationsActed?: NotificationUpdateManyWithoutActorNestedInput
     dailyReports?: DailyReportUpdateManyWithoutAuthorNestedInput
     regionalReports?: RegionalDailyReportUpdateManyWithoutAuthorNestedInput
+    regionalMonthlyTargets?: RegionalMonthlyTargetUpdateManyWithoutUserNestedInput
     calendarNotesForUser?: CalendarNoteUpdateManyWithoutUserNestedInput
     calendarNotesCreated?: CalendarNoteUpdateManyWithoutCreatedByNestedInput
   }
@@ -30256,6 +31960,7 @@ export namespace Prisma {
     notificationsActed?: NotificationUncheckedUpdateManyWithoutActorNestedInput
     dailyReports?: DailyReportUncheckedUpdateManyWithoutAuthorNestedInput
     regionalReports?: RegionalDailyReportUncheckedUpdateManyWithoutAuthorNestedInput
+    regionalMonthlyTargets?: RegionalMonthlyTargetUncheckedUpdateManyWithoutUserNestedInput
     calendarNotesForUser?: CalendarNoteUncheckedUpdateManyWithoutUserNestedInput
     calendarNotesCreated?: CalendarNoteUncheckedUpdateManyWithoutCreatedByNestedInput
   }
@@ -30355,6 +32060,7 @@ export namespace Prisma {
     pinnedChannel?: ChannelCreateNestedOneWithoutPinnedByUsersInput
     notificationsActed?: NotificationCreateNestedManyWithoutActorInput
     regionalReports?: RegionalDailyReportCreateNestedManyWithoutAuthorInput
+    regionalMonthlyTargets?: RegionalMonthlyTargetCreateNestedManyWithoutUserInput
     calendarNotesForUser?: CalendarNoteCreateNestedManyWithoutUserInput
     calendarNotesCreated?: CalendarNoteCreateNestedManyWithoutCreatedByInput
   }
@@ -30379,6 +32085,7 @@ export namespace Prisma {
     postSeen?: PostSeenUncheckedCreateNestedManyWithoutUserInput
     notificationsActed?: NotificationUncheckedCreateNestedManyWithoutActorInput
     regionalReports?: RegionalDailyReportUncheckedCreateNestedManyWithoutAuthorInput
+    regionalMonthlyTargets?: RegionalMonthlyTargetUncheckedCreateNestedManyWithoutUserInput
     calendarNotesForUser?: CalendarNoteUncheckedCreateNestedManyWithoutUserInput
     calendarNotesCreated?: CalendarNoteUncheckedCreateNestedManyWithoutCreatedByInput
   }
@@ -30418,6 +32125,7 @@ export namespace Prisma {
     pinnedChannel?: ChannelUpdateOneWithoutPinnedByUsersNestedInput
     notificationsActed?: NotificationUpdateManyWithoutActorNestedInput
     regionalReports?: RegionalDailyReportUpdateManyWithoutAuthorNestedInput
+    regionalMonthlyTargets?: RegionalMonthlyTargetUpdateManyWithoutUserNestedInput
     calendarNotesForUser?: CalendarNoteUpdateManyWithoutUserNestedInput
     calendarNotesCreated?: CalendarNoteUpdateManyWithoutCreatedByNestedInput
   }
@@ -30442,6 +32150,121 @@ export namespace Prisma {
     postSeen?: PostSeenUncheckedUpdateManyWithoutUserNestedInput
     notificationsActed?: NotificationUncheckedUpdateManyWithoutActorNestedInput
     regionalReports?: RegionalDailyReportUncheckedUpdateManyWithoutAuthorNestedInput
+    regionalMonthlyTargets?: RegionalMonthlyTargetUncheckedUpdateManyWithoutUserNestedInput
+    calendarNotesForUser?: CalendarNoteUncheckedUpdateManyWithoutUserNestedInput
+    calendarNotesCreated?: CalendarNoteUncheckedUpdateManyWithoutCreatedByNestedInput
+  }
+
+  export type UserCreateWithoutRegionalMonthlyTargetsInput = {
+    username: string
+    email?: string | null
+    role: string
+    isStaff?: boolean
+    profileImage?: string | null
+    posts?: PostCreateNestedManyWithoutAuthorInput
+    comments?: CommentCreateNestedManyWithoutAuthorInput
+    reactions?: ReactionCreateNestedManyWithoutUserInput
+    channelMember?: ChannelMemberCreateNestedManyWithoutUserInput
+    createdChannels?: ChannelCreateNestedManyWithoutCreatedByInput
+    notifications?: NotificationCreateNestedManyWithoutUserInput
+    joinRequests?: JoinRequestCreateNestedManyWithoutUserInput
+    savedPosts?: SavedPostCreateNestedManyWithoutUserInput
+    todos?: TodoCreateNestedManyWithoutUserInput
+    postSeen?: PostSeenCreateNestedManyWithoutUserInput
+    pinnedChannel?: ChannelCreateNestedOneWithoutPinnedByUsersInput
+    notificationsActed?: NotificationCreateNestedManyWithoutActorInput
+    dailyReports?: DailyReportCreateNestedManyWithoutAuthorInput
+    regionalReports?: RegionalDailyReportCreateNestedManyWithoutAuthorInput
+    calendarNotesForUser?: CalendarNoteCreateNestedManyWithoutUserInput
+    calendarNotesCreated?: CalendarNoteCreateNestedManyWithoutCreatedByInput
+  }
+
+  export type UserUncheckedCreateWithoutRegionalMonthlyTargetsInput = {
+    id?: number
+    username: string
+    email?: string | null
+    role: string
+    isStaff?: boolean
+    profileImage?: string | null
+    pinnedChannelId?: number | null
+    posts?: PostUncheckedCreateNestedManyWithoutAuthorInput
+    comments?: CommentUncheckedCreateNestedManyWithoutAuthorInput
+    reactions?: ReactionUncheckedCreateNestedManyWithoutUserInput
+    channelMember?: ChannelMemberUncheckedCreateNestedManyWithoutUserInput
+    createdChannels?: ChannelUncheckedCreateNestedManyWithoutCreatedByInput
+    notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
+    joinRequests?: JoinRequestUncheckedCreateNestedManyWithoutUserInput
+    savedPosts?: SavedPostUncheckedCreateNestedManyWithoutUserInput
+    todos?: TodoUncheckedCreateNestedManyWithoutUserInput
+    postSeen?: PostSeenUncheckedCreateNestedManyWithoutUserInput
+    notificationsActed?: NotificationUncheckedCreateNestedManyWithoutActorInput
+    dailyReports?: DailyReportUncheckedCreateNestedManyWithoutAuthorInput
+    regionalReports?: RegionalDailyReportUncheckedCreateNestedManyWithoutAuthorInput
+    calendarNotesForUser?: CalendarNoteUncheckedCreateNestedManyWithoutUserInput
+    calendarNotesCreated?: CalendarNoteUncheckedCreateNestedManyWithoutCreatedByInput
+  }
+
+  export type UserCreateOrConnectWithoutRegionalMonthlyTargetsInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutRegionalMonthlyTargetsInput, UserUncheckedCreateWithoutRegionalMonthlyTargetsInput>
+  }
+
+  export type UserUpsertWithoutRegionalMonthlyTargetsInput = {
+    update: XOR<UserUpdateWithoutRegionalMonthlyTargetsInput, UserUncheckedUpdateWithoutRegionalMonthlyTargetsInput>
+    create: XOR<UserCreateWithoutRegionalMonthlyTargetsInput, UserUncheckedCreateWithoutRegionalMonthlyTargetsInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutRegionalMonthlyTargetsInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutRegionalMonthlyTargetsInput, UserUncheckedUpdateWithoutRegionalMonthlyTargetsInput>
+  }
+
+  export type UserUpdateWithoutRegionalMonthlyTargetsInput = {
+    username?: StringFieldUpdateOperationsInput | string
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: StringFieldUpdateOperationsInput | string
+    isStaff?: BoolFieldUpdateOperationsInput | boolean
+    profileImage?: NullableStringFieldUpdateOperationsInput | string | null
+    posts?: PostUpdateManyWithoutAuthorNestedInput
+    comments?: CommentUpdateManyWithoutAuthorNestedInput
+    reactions?: ReactionUpdateManyWithoutUserNestedInput
+    channelMember?: ChannelMemberUpdateManyWithoutUserNestedInput
+    createdChannels?: ChannelUpdateManyWithoutCreatedByNestedInput
+    notifications?: NotificationUpdateManyWithoutUserNestedInput
+    joinRequests?: JoinRequestUpdateManyWithoutUserNestedInput
+    savedPosts?: SavedPostUpdateManyWithoutUserNestedInput
+    todos?: TodoUpdateManyWithoutUserNestedInput
+    postSeen?: PostSeenUpdateManyWithoutUserNestedInput
+    pinnedChannel?: ChannelUpdateOneWithoutPinnedByUsersNestedInput
+    notificationsActed?: NotificationUpdateManyWithoutActorNestedInput
+    dailyReports?: DailyReportUpdateManyWithoutAuthorNestedInput
+    regionalReports?: RegionalDailyReportUpdateManyWithoutAuthorNestedInput
+    calendarNotesForUser?: CalendarNoteUpdateManyWithoutUserNestedInput
+    calendarNotesCreated?: CalendarNoteUpdateManyWithoutCreatedByNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutRegionalMonthlyTargetsInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    username?: StringFieldUpdateOperationsInput | string
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: StringFieldUpdateOperationsInput | string
+    isStaff?: BoolFieldUpdateOperationsInput | boolean
+    profileImage?: NullableStringFieldUpdateOperationsInput | string | null
+    pinnedChannelId?: NullableIntFieldUpdateOperationsInput | number | null
+    posts?: PostUncheckedUpdateManyWithoutAuthorNestedInput
+    comments?: CommentUncheckedUpdateManyWithoutAuthorNestedInput
+    reactions?: ReactionUncheckedUpdateManyWithoutUserNestedInput
+    channelMember?: ChannelMemberUncheckedUpdateManyWithoutUserNestedInput
+    createdChannels?: ChannelUncheckedUpdateManyWithoutCreatedByNestedInput
+    notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
+    joinRequests?: JoinRequestUncheckedUpdateManyWithoutUserNestedInput
+    savedPosts?: SavedPostUncheckedUpdateManyWithoutUserNestedInput
+    todos?: TodoUncheckedUpdateManyWithoutUserNestedInput
+    postSeen?: PostSeenUncheckedUpdateManyWithoutUserNestedInput
+    notificationsActed?: NotificationUncheckedUpdateManyWithoutActorNestedInput
+    dailyReports?: DailyReportUncheckedUpdateManyWithoutAuthorNestedInput
+    regionalReports?: RegionalDailyReportUncheckedUpdateManyWithoutAuthorNestedInput
     calendarNotesForUser?: CalendarNoteUncheckedUpdateManyWithoutUserNestedInput
     calendarNotesCreated?: CalendarNoteUncheckedUpdateManyWithoutCreatedByNestedInput
   }
@@ -30465,6 +32288,7 @@ export namespace Prisma {
     pinnedChannel?: ChannelCreateNestedOneWithoutPinnedByUsersInput
     notificationsActed?: NotificationCreateNestedManyWithoutActorInput
     dailyReports?: DailyReportCreateNestedManyWithoutAuthorInput
+    regionalMonthlyTargets?: RegionalMonthlyTargetCreateNestedManyWithoutUserInput
     calendarNotesForUser?: CalendarNoteCreateNestedManyWithoutUserInput
     calendarNotesCreated?: CalendarNoteCreateNestedManyWithoutCreatedByInput
   }
@@ -30489,6 +32313,7 @@ export namespace Prisma {
     postSeen?: PostSeenUncheckedCreateNestedManyWithoutUserInput
     notificationsActed?: NotificationUncheckedCreateNestedManyWithoutActorInput
     dailyReports?: DailyReportUncheckedCreateNestedManyWithoutAuthorInput
+    regionalMonthlyTargets?: RegionalMonthlyTargetUncheckedCreateNestedManyWithoutUserInput
     calendarNotesForUser?: CalendarNoteUncheckedCreateNestedManyWithoutUserInput
     calendarNotesCreated?: CalendarNoteUncheckedCreateNestedManyWithoutCreatedByInput
   }
@@ -30528,6 +32353,7 @@ export namespace Prisma {
     pinnedChannel?: ChannelUpdateOneWithoutPinnedByUsersNestedInput
     notificationsActed?: NotificationUpdateManyWithoutActorNestedInput
     dailyReports?: DailyReportUpdateManyWithoutAuthorNestedInput
+    regionalMonthlyTargets?: RegionalMonthlyTargetUpdateManyWithoutUserNestedInput
     calendarNotesForUser?: CalendarNoteUpdateManyWithoutUserNestedInput
     calendarNotesCreated?: CalendarNoteUpdateManyWithoutCreatedByNestedInput
   }
@@ -30552,6 +32378,7 @@ export namespace Prisma {
     postSeen?: PostSeenUncheckedUpdateManyWithoutUserNestedInput
     notificationsActed?: NotificationUncheckedUpdateManyWithoutActorNestedInput
     dailyReports?: DailyReportUncheckedUpdateManyWithoutAuthorNestedInput
+    regionalMonthlyTargets?: RegionalMonthlyTargetUncheckedUpdateManyWithoutUserNestedInput
     calendarNotesForUser?: CalendarNoteUncheckedUpdateManyWithoutUserNestedInput
     calendarNotesCreated?: CalendarNoteUncheckedUpdateManyWithoutCreatedByNestedInput
   }
@@ -30576,6 +32403,7 @@ export namespace Prisma {
     notificationsActed?: NotificationCreateNestedManyWithoutActorInput
     dailyReports?: DailyReportCreateNestedManyWithoutAuthorInput
     regionalReports?: RegionalDailyReportCreateNestedManyWithoutAuthorInput
+    regionalMonthlyTargets?: RegionalMonthlyTargetCreateNestedManyWithoutUserInput
     calendarNotesCreated?: CalendarNoteCreateNestedManyWithoutCreatedByInput
   }
 
@@ -30600,6 +32428,7 @@ export namespace Prisma {
     notificationsActed?: NotificationUncheckedCreateNestedManyWithoutActorInput
     dailyReports?: DailyReportUncheckedCreateNestedManyWithoutAuthorInput
     regionalReports?: RegionalDailyReportUncheckedCreateNestedManyWithoutAuthorInput
+    regionalMonthlyTargets?: RegionalMonthlyTargetUncheckedCreateNestedManyWithoutUserInput
     calendarNotesCreated?: CalendarNoteUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
@@ -30628,6 +32457,7 @@ export namespace Prisma {
     notificationsActed?: NotificationCreateNestedManyWithoutActorInput
     dailyReports?: DailyReportCreateNestedManyWithoutAuthorInput
     regionalReports?: RegionalDailyReportCreateNestedManyWithoutAuthorInput
+    regionalMonthlyTargets?: RegionalMonthlyTargetCreateNestedManyWithoutUserInput
     calendarNotesForUser?: CalendarNoteCreateNestedManyWithoutUserInput
   }
 
@@ -30652,6 +32482,7 @@ export namespace Prisma {
     notificationsActed?: NotificationUncheckedCreateNestedManyWithoutActorInput
     dailyReports?: DailyReportUncheckedCreateNestedManyWithoutAuthorInput
     regionalReports?: RegionalDailyReportUncheckedCreateNestedManyWithoutAuthorInput
+    regionalMonthlyTargets?: RegionalMonthlyTargetUncheckedCreateNestedManyWithoutUserInput
     calendarNotesForUser?: CalendarNoteUncheckedCreateNestedManyWithoutUserInput
   }
 
@@ -30691,6 +32522,7 @@ export namespace Prisma {
     notificationsActed?: NotificationUpdateManyWithoutActorNestedInput
     dailyReports?: DailyReportUpdateManyWithoutAuthorNestedInput
     regionalReports?: RegionalDailyReportUpdateManyWithoutAuthorNestedInput
+    regionalMonthlyTargets?: RegionalMonthlyTargetUpdateManyWithoutUserNestedInput
     calendarNotesCreated?: CalendarNoteUpdateManyWithoutCreatedByNestedInput
   }
 
@@ -30715,6 +32547,7 @@ export namespace Prisma {
     notificationsActed?: NotificationUncheckedUpdateManyWithoutActorNestedInput
     dailyReports?: DailyReportUncheckedUpdateManyWithoutAuthorNestedInput
     regionalReports?: RegionalDailyReportUncheckedUpdateManyWithoutAuthorNestedInput
+    regionalMonthlyTargets?: RegionalMonthlyTargetUncheckedUpdateManyWithoutUserNestedInput
     calendarNotesCreated?: CalendarNoteUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
@@ -30749,6 +32582,7 @@ export namespace Prisma {
     notificationsActed?: NotificationUpdateManyWithoutActorNestedInput
     dailyReports?: DailyReportUpdateManyWithoutAuthorNestedInput
     regionalReports?: RegionalDailyReportUpdateManyWithoutAuthorNestedInput
+    regionalMonthlyTargets?: RegionalMonthlyTargetUpdateManyWithoutUserNestedInput
     calendarNotesForUser?: CalendarNoteUpdateManyWithoutUserNestedInput
   }
 
@@ -30773,6 +32607,7 @@ export namespace Prisma {
     notificationsActed?: NotificationUncheckedUpdateManyWithoutActorNestedInput
     dailyReports?: DailyReportUncheckedUpdateManyWithoutAuthorNestedInput
     regionalReports?: RegionalDailyReportUncheckedUpdateManyWithoutAuthorNestedInput
+    regionalMonthlyTargets?: RegionalMonthlyTargetUncheckedUpdateManyWithoutUserNestedInput
     calendarNotesForUser?: CalendarNoteUncheckedUpdateManyWithoutUserNestedInput
   }
 
@@ -30922,6 +32757,17 @@ export namespace Prisma {
     immediateActionsTaken?: string | null
     nextDayPlan?: string | null
     supportRequiredFromHO?: string | null
+  }
+
+  export type RegionalMonthlyTargetCreateManyUserInput = {
+    id?: number
+    month: string
+    year: number
+    collectionTarget?: number
+    newConnectionTarget?: number
+    renewalTarget?: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
   }
 
   export type CalendarNoteCreateManyUserInput = {
@@ -31401,6 +33247,38 @@ export namespace Prisma {
     supportRequiredFromHO?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
+  export type RegionalMonthlyTargetUpdateWithoutUserInput = {
+    month?: StringFieldUpdateOperationsInput | string
+    year?: IntFieldUpdateOperationsInput | number
+    collectionTarget?: IntFieldUpdateOperationsInput | number
+    newConnectionTarget?: IntFieldUpdateOperationsInput | number
+    renewalTarget?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type RegionalMonthlyTargetUncheckedUpdateWithoutUserInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    month?: StringFieldUpdateOperationsInput | string
+    year?: IntFieldUpdateOperationsInput | number
+    collectionTarget?: IntFieldUpdateOperationsInput | number
+    newConnectionTarget?: IntFieldUpdateOperationsInput | number
+    renewalTarget?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type RegionalMonthlyTargetUncheckedUpdateManyWithoutUserInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    month?: StringFieldUpdateOperationsInput | string
+    year?: IntFieldUpdateOperationsInput | number
+    collectionTarget?: IntFieldUpdateOperationsInput | number
+    newConnectionTarget?: IntFieldUpdateOperationsInput | number
+    renewalTarget?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type CalendarNoteUpdateWithoutUserInput = {
     noteDate?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
@@ -31752,6 +33630,7 @@ export namespace Prisma {
     notificationsActed?: NotificationUpdateManyWithoutActorNestedInput
     dailyReports?: DailyReportUpdateManyWithoutAuthorNestedInput
     regionalReports?: RegionalDailyReportUpdateManyWithoutAuthorNestedInput
+    regionalMonthlyTargets?: RegionalMonthlyTargetUpdateManyWithoutUserNestedInput
     calendarNotesForUser?: CalendarNoteUpdateManyWithoutUserNestedInput
     calendarNotesCreated?: CalendarNoteUpdateManyWithoutCreatedByNestedInput
   }
@@ -31776,6 +33655,7 @@ export namespace Prisma {
     notificationsActed?: NotificationUncheckedUpdateManyWithoutActorNestedInput
     dailyReports?: DailyReportUncheckedUpdateManyWithoutAuthorNestedInput
     regionalReports?: RegionalDailyReportUncheckedUpdateManyWithoutAuthorNestedInput
+    regionalMonthlyTargets?: RegionalMonthlyTargetUncheckedUpdateManyWithoutUserNestedInput
     calendarNotesForUser?: CalendarNoteUncheckedUpdateManyWithoutUserNestedInput
     calendarNotesCreated?: CalendarNoteUncheckedUpdateManyWithoutCreatedByNestedInput
   }

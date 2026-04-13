@@ -38,13 +38,6 @@ type ReportState = {
   renewalPending: number;
   reasonPendingConnection: string;
 
-  collectionTarget: number;
-  collectionAchievement: number;
-  newConnectionTarget: number;
-  newConnectionAchievementPct: number;
-  renewalTarget: number;
-  renewalAchievementPct: number;
-
   issueDetails: string;
 
   immediateActionsTaken: string;
@@ -76,13 +69,6 @@ function initState(reportYmd = ""): ReportState {
     renewalsToday: 0,
     renewalPending: 0,
     reasonPendingConnection: "",
-
-    collectionTarget: 0,
-    collectionAchievement: 0,
-    newConnectionTarget: 0,
-    newConnectionAchievementPct: 0,
-    renewalTarget: 0,
-    renewalAchievementPct: 0,
 
     issueDetails: "",
 
@@ -163,17 +149,6 @@ export default function RegionalReportComposer({
           renewalsToday: r.renewalsToday ?? 0,
           renewalPending: r.renewalPending ?? 0,
           reasonPendingConnection: r.reasonPendingConnection ?? "",
-
-          collectionTarget: r.collectionTarget ?? 0,
-          collectionAchievement: r.collectionAchievement ?? 0,
-          newConnectionTarget: r.newConnectionTarget ?? 0,
-          newConnectionAchievementPct: Math.round(
-            Number(r.newConnectionAchievementPct ?? 0),
-          ),
-          renewalTarget: r.renewalTarget ?? 0,
-          renewalAchievementPct: Math.round(
-            Number(r.renewalAchievementPct ?? 0),
-          ),
 
           issueDetails: r.issueDetails ?? "",
 
@@ -436,36 +411,6 @@ export default function RegionalReportComposer({
                 </Table.Tr>
 
                 <Table.Tr>
-                  <Table.Td fw={700}>Collection Target</Table.Td>
-                  <Table.Td>{numInput("collectionTarget")}</Table.Td>
-                </Table.Tr>
-
-                <Table.Tr>
-                  <Table.Td fw={700}>Collection Achievement</Table.Td>
-                  <Table.Td>{numInput("collectionAchievement")}</Table.Td>
-                </Table.Tr>
-
-                <Table.Tr>
-                  <Table.Td fw={700}>New Connection Target</Table.Td>
-                  <Table.Td>{numInput("newConnectionTarget")}</Table.Td>
-                </Table.Tr>
-
-                <Table.Tr>
-                  <Table.Td fw={700}>New Connection Achievement %</Table.Td>
-                  <Table.Td>{numInput("newConnectionAchievementPct")}</Table.Td>
-                </Table.Tr>
-
-                <Table.Tr>
-                  <Table.Td fw={700}>Renewal Target</Table.Td>
-                  <Table.Td>{numInput("renewalTarget")}</Table.Td>
-                </Table.Tr>
-
-                <Table.Tr>
-                  <Table.Td fw={700}>Renewal Achievement %</Table.Td>
-                  <Table.Td>{numInput("renewalAchievementPct")}</Table.Td>
-                </Table.Tr>
-
-                <Table.Tr>
                   <Table.Td fw={700}>Issue Details</Table.Td>
                   <Table.Td>
                     <Textarea
@@ -525,12 +470,17 @@ export default function RegionalReportComposer({
 
             <Group justify="space-between" mt="md">
               <Text size="sm" c="dimmed">
-                Note: This is region-wise data for all branches in the region.
+                Note: Monthly targets are now set separately by admin from the user profile.
               </Text>
 
-              <Button onClick={save} loading={saving} disabled={!canSave}>
-                Save Report
-              </Button>
+              <Group>
+                <Button variant="default" onClick={() => setOpened(false)}>
+                  Cancel
+                </Button>
+                <Button onClick={save} loading={saving} disabled={!canSave}>
+                  Save Report
+                </Button>
+              </Group>
             </Group>
           </div>
         )}

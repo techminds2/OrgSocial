@@ -305,8 +305,13 @@ export default function RegionalReportViewer({
       if (selected) loadDay(selected);
     };
 
+    const onRegionalTargetUpdated = () => {
+      if (selected) loadDay(selected);
+    };
+
     window.addEventListener("regional-report-updated", onRegionalReportUpdated);
     window.addEventListener("calendar-note-updated", onCalendarNoteUpdated);
+    window.addEventListener("regional-target-updated", onRegionalTargetUpdated);
 
     return () => {
       window.removeEventListener(
@@ -316,6 +321,10 @@ export default function RegionalReportViewer({
       window.removeEventListener(
         "calendar-note-updated",
         onCalendarNoteUpdated,
+      );
+      window.removeEventListener(
+        "regional-target-updated",
+        onRegionalTargetUpdated,
       );
     };
   }, [month, selected]);
@@ -628,144 +637,154 @@ export default function RegionalReportViewer({
               </Group>
 
               {report ? (
-                <Table withTableBorder withColumnBorders>
-                  <Table.Tbody>
-                    <Table.Tr>
-                      <Table.Td fw={700}>Region Name</Table.Td>
-                      <Table.Td>{report.regionName || "-"}</Table.Td>
-                    </Table.Tr>
+                <>
+                  <Table withTableBorder withColumnBorders>
+                    <Table.Tbody>
+                      <Table.Tr>
+                        <Table.Td fw={700}>Region Name</Table.Td>
+                        <Table.Td>{report.regionName || "-"}</Table.Td>
+                      </Table.Tr>
 
-                    <Table.Tr>
-                      <Table.Td fw={700}>Branches Visited Today</Table.Td>
-                      <Table.Td>{report.branchesVisitedToday || "-"}</Table.Td>
-                    </Table.Tr>
+                      <Table.Tr>
+                        <Table.Td fw={700}>Branches Visited Today</Table.Td>
+                        <Table.Td>{report.branchesVisitedToday || "-"}</Table.Td>
+                      </Table.Tr>
 
-                    <Table.Tr>
-                      <Table.Td fw={700}>Key Observations</Table.Td>
-                      <Table.Td>{report.keyObservations || "-"}</Table.Td>
-                    </Table.Tr>
+                      <Table.Tr>
+                        <Table.Td fw={700}>Key Observations</Table.Td>
+                        <Table.Td>{report.keyObservations || "-"}</Table.Td>
+                      </Table.Tr>
 
-                    <Table.Tr>
-                      <Table.Td fw={700}>Total Collection</Table.Td>
-                      <Table.Td>{report.totalCollection ?? 0}</Table.Td>
-                    </Table.Tr>
+                      <Table.Tr>
+                        <Table.Td fw={700}>Total Collection</Table.Td>
+                        <Table.Td>{report.totalCollection ?? 0}</Table.Td>
+                      </Table.Tr>
 
-                    <Table.Tr>
-                      <Table.Td fw={700}>Active Customers</Table.Td>
-                      <Table.Td>{report.activeCustomers ?? 0}</Table.Td>
-                    </Table.Tr>
+                      <Table.Tr>
+                        <Table.Td fw={700}>Active Customers</Table.Td>
+                        <Table.Td>{report.activeCustomers ?? 0}</Table.Td>
+                      </Table.Tr>
 
-                    <Table.Tr>
-                      <Table.Td fw={700}>Expired Customers</Table.Td>
-                      <Table.Td>{report.expiredCustomers ?? 0}</Table.Td>
-                    </Table.Tr>
+                      <Table.Tr>
+                        <Table.Td fw={700}>Expired Customers</Table.Td>
+                        <Table.Td>{report.expiredCustomers ?? 0}</Table.Td>
+                      </Table.Tr>
 
-                    <Table.Tr>
-                      <Table.Td fw={700}>Total Customer Base</Table.Td>
-                      <Table.Td>{report.totalCustomerBase ?? 0}</Table.Td>
-                    </Table.Tr>
+                      <Table.Tr>
+                        <Table.Td fw={700}>Total Customer Base</Table.Td>
+                        <Table.Td>{report.totalCustomerBase ?? 0}</Table.Td>
+                      </Table.Tr>
 
-                    <Table.Tr>
-                      <Table.Td fw={700}>Total Tickets</Table.Td>
-                      <Table.Td>{report.totalTickets ?? 0}</Table.Td>
-                    </Table.Tr>
+                      <Table.Tr>
+                        <Table.Td fw={700}>Total Tickets</Table.Td>
+                        <Table.Td>{report.totalTickets ?? 0}</Table.Td>
+                      </Table.Tr>
 
-                    <Table.Tr>
-                      <Table.Td fw={700}>Pending Tickets</Table.Td>
-                      <Table.Td>{report.pendingTickets ?? 0}</Table.Td>
-                    </Table.Tr>
+                      <Table.Tr>
+                        <Table.Td fw={700}>Pending Tickets</Table.Td>
+                        <Table.Td>{report.pendingTickets ?? 0}</Table.Td>
+                      </Table.Tr>
 
-                    <Table.Tr>
-                      <Table.Td fw={700}>Tickets Closed Today</Table.Td>
-                      <Table.Td>{report.ticketsClosedToday ?? 0}</Table.Td>
-                    </Table.Tr>
+                      <Table.Tr>
+                        <Table.Td fw={700}>Tickets Closed Today</Table.Td>
+                        <Table.Td>{report.ticketsClosedToday ?? 0}</Table.Td>
+                      </Table.Tr>
 
-                    <Table.Tr>
-                      <Table.Td fw={700}>Reason for Pending Ticket</Table.Td>
-                      <Table.Td>{report.reasonPendingTickets || "-"}</Table.Td>
-                    </Table.Tr>
+                      <Table.Tr>
+                        <Table.Td fw={700}>Reason for Pending Ticket</Table.Td>
+                        <Table.Td>{report.reasonPendingTickets || "-"}</Table.Td>
+                      </Table.Tr>
 
-                    <Table.Tr>
-                      <Table.Td fw={700}>Total New Connections</Table.Td>
-                      <Table.Td>{report.totalNewConnections ?? 0}</Table.Td>
-                    </Table.Tr>
+                      <Table.Tr>
+                        <Table.Td fw={700}>Total New Connections</Table.Td>
+                        <Table.Td>{report.totalNewConnections ?? 0}</Table.Td>
+                      </Table.Tr>
 
-                    <Table.Tr>
-                      <Table.Td fw={700}>New Connections Today</Table.Td>
-                      <Table.Td>{report.newConnectionsToday ?? 0}</Table.Td>
-                    </Table.Tr>
+                      <Table.Tr>
+                        <Table.Td fw={700}>New Connections Today</Table.Td>
+                        <Table.Td>{report.newConnectionsToday ?? 0}</Table.Td>
+                      </Table.Tr>
 
-                    <Table.Tr>
-                      <Table.Td fw={700}>Connection Pending Today</Table.Td>
-                      <Table.Td>{report.connectionPendingToday ?? 0}</Table.Td>
-                    </Table.Tr>
+                      <Table.Tr>
+                        <Table.Td fw={700}>Connection Pending Today</Table.Td>
+                        <Table.Td>{report.connectionPendingToday ?? 0}</Table.Td>
+                      </Table.Tr>
 
-                    <Table.Tr>
-                      <Table.Td fw={700}>Renewals Today</Table.Td>
-                      <Table.Td>{report.renewalsToday ?? 0}</Table.Td>
-                    </Table.Tr>
+                      <Table.Tr>
+                        <Table.Td fw={700}>Renewals Today</Table.Td>
+                        <Table.Td>{report.renewalsToday ?? 0}</Table.Td>
+                      </Table.Tr>
 
-                    <Table.Tr>
-                      <Table.Td fw={700}>Renewal Pending</Table.Td>
-                      <Table.Td>{report.renewalPending ?? 0}</Table.Td>
-                    </Table.Tr>
+                      <Table.Tr>
+                        <Table.Td fw={700}>Renewal Pending</Table.Td>
+                        <Table.Td>{report.renewalPending ?? 0}</Table.Td>
+                      </Table.Tr>
 
-                    <Table.Tr>
-                      <Table.Td fw={700}>Reason for Pending Connection</Table.Td>
-                      <Table.Td>{report.reasonPendingConnection || "-"}</Table.Td>
-                    </Table.Tr>
+                      <Table.Tr>
+                        <Table.Td fw={700}>Reason for Pending Connection</Table.Td>
+                        <Table.Td>{report.reasonPendingConnection || "-"}</Table.Td>
+                      </Table.Tr>
 
-                    <Table.Tr>
-                      <Table.Td fw={700}>Collection Target</Table.Td>
-                      <Table.Td>{report.collectionTarget ?? 0}</Table.Td>
-                    </Table.Tr>
+                      <Table.Tr>
+                        <Table.Td fw={700}>Collection Target</Table.Td>
+                        <Table.Td>{report.collectionTarget ?? 0}</Table.Td>
+                      </Table.Tr>
 
-                    <Table.Tr>
-                      <Table.Td fw={700}>Collection Achievement</Table.Td>
-                      <Table.Td>{report.collectionAchievement ?? 0}</Table.Td>
-                    </Table.Tr>
+                      <Table.Tr>
+                        <Table.Td fw={700}>Collection Achievement</Table.Td>
+                        <Table.Td>{report.collectionAchievement ?? 0}</Table.Td>
+                      </Table.Tr>
 
-                    <Table.Tr>
-                      <Table.Td fw={700}>New Connection Target</Table.Td>
-                      <Table.Td>{report.newConnectionTarget ?? 0}</Table.Td>
-                    </Table.Tr>
+                      <Table.Tr>
+                        <Table.Td fw={700}>New Connection Target</Table.Td>
+                        <Table.Td>{report.newConnectionTarget ?? 0}</Table.Td>
+                      </Table.Tr>
 
-                    <Table.Tr>
-                      <Table.Td fw={700}>New Connection Achievement %</Table.Td>
-                      <Table.Td>{report.newConnectionAchievementPct ?? 0}</Table.Td>
-                    </Table.Tr>
+                      <Table.Tr>
+                        <Table.Td fw={700}>New Connection Achievement %</Table.Td>
+                        <Table.Td>
+                          {Math.round(Number(report.newConnectionAchievementPct ?? 0))}%
+                        </Table.Td>
+                      </Table.Tr>
 
-                    <Table.Tr>
-                      <Table.Td fw={700}>Renewal Target</Table.Td>
-                      <Table.Td>{report.renewalTarget ?? 0}</Table.Td>
-                    </Table.Tr>
+                      <Table.Tr>
+                        <Table.Td fw={700}>Renewal Target</Table.Td>
+                        <Table.Td>{report.renewalTarget ?? 0}</Table.Td>
+                      </Table.Tr>
 
-                    <Table.Tr>
-                      <Table.Td fw={700}>Renewal Achievement %</Table.Td>
-                      <Table.Td>{report.renewalAchievementPct ?? 0}</Table.Td>
-                    </Table.Tr>
+                      <Table.Tr>
+                        <Table.Td fw={700}>Renewal Achievement %</Table.Td>
+                        <Table.Td>
+                          {Math.round(Number(report.renewalAchievementPct ?? 0))}%
+                        </Table.Td>
+                      </Table.Tr>
 
-                    <Table.Tr>
-                      <Table.Td fw={700}>Issue Details</Table.Td>
-                      <Table.Td>{report.issueDetails || "-"}</Table.Td>
-                    </Table.Tr>
+                      <Table.Tr>
+                        <Table.Td fw={700}>Issue Details</Table.Td>
+                        <Table.Td>{report.issueDetails || "-"}</Table.Td>
+                      </Table.Tr>
 
-                    <Table.Tr>
-                      <Table.Td fw={700}>Immediate Actions Taken</Table.Td>
-                      <Table.Td>{report.immediateActionsTaken || "-"}</Table.Td>
-                    </Table.Tr>
+                      <Table.Tr>
+                        <Table.Td fw={700}>Immediate Actions Taken</Table.Td>
+                        <Table.Td>{report.immediateActionsTaken || "-"}</Table.Td>
+                      </Table.Tr>
 
-                    <Table.Tr>
-                      <Table.Td fw={700}>Next Day Plan</Table.Td>
-                      <Table.Td>{report.nextDayPlan || "-"}</Table.Td>
-                    </Table.Tr>
+                      <Table.Tr>
+                        <Table.Td fw={700}>Next Day Plan</Table.Td>
+                        <Table.Td>{report.nextDayPlan || "-"}</Table.Td>
+                      </Table.Tr>
 
-                    <Table.Tr>
-                      <Table.Td fw={700}>Support Required From HO</Table.Td>
-                      <Table.Td>{report.supportRequiredFromHO || "-"}</Table.Td>
-                    </Table.Tr>
-                  </Table.Tbody>
-                </Table>
+                      <Table.Tr>
+                        <Table.Td fw={700}>Support Required From HO</Table.Td>
+                        <Table.Td>{report.supportRequiredFromHO || "-"}</Table.Td>
+                      </Table.Tr>
+                    </Table.Tbody>
+                  </Table>
+
+                  <Text size="xs" c="dimmed" mt="sm">
+                    Target values shown here are the monthly admin targets snapped into the daily report at save time.
+                  </Text>
+                </>
               ) : (
                 <Text c="dimmed">No regional report for this date.</Text>
               )}

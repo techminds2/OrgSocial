@@ -45,6 +45,7 @@ model User {
 
   dailyReports         DailyReport[]
   regionalReports      RegionalDailyReport[]
+  regionalMonthlyTargets RegionalMonthlyTarget[]
   calendarNotesForUser CalendarNote[] @relation("CalendarNotesForUser")
   calendarNotesCreated CalendarNote[] @relation("CalendarNotesCreated")
 }
@@ -110,7 +111,7 @@ model Channel {
   createdBy   User @relation("ChannelCreator", fields: [createdById], references: [id])
 
   bannerKey        String?
-  visibility       String           @default("private") // "private" | "public"
+  visibility       String           @default("private")
   publicAccessMode PublicAccessMode @default(request)
 
   postSeen      PostSeen[]
@@ -125,7 +126,7 @@ model ChannelMember {
   id        Int    @id @default(autoincrement())
   channelId Int
   userId    Int
-  role      String @default("viewer") // "viewer" | "editor" | "admin"
+  role      String @default("viewer")
 
   channel Channel @relation(fields: [channelId], references: [id], onDelete: Cascade)
   user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -237,7 +238,6 @@ model DailyReport {
   author   User @relation(fields: [authorId], references: [id], onDelete: Cascade)
 
   reportYmd String
-
   branchName String
 
   newConnectionRequest    Int     @default(0)
@@ -262,6 +262,26 @@ model DailyReport {
   @@index([reportYmd])
 }
 
+model RegionalMonthlyTarget {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  month     String
+  year      Int
+
+  collectionTarget    Int @default(0)
+  newConnectionTarget Int @default(0)
+  renewalTarget       Int @default(0)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, month])
+  @@index([userId, month])
+  @@index([month])
+}
+
 model RegionalDailyReport {
   id        Int      @id @default(autoincrement())
   createdAt DateTime @default(now())
@@ -273,23 +293,19 @@ model RegionalDailyReport {
   reportYmd  String
   regionName String
 
-  // 1. Branch Visit Summary
   branchesVisitedToday String? @db.Text
   keyObservations      String? @db.Text
 
-  // 2. Regional Performance Overview
   totalCollection   Int @default(0)
   activeCustomers   Int @default(0)
   expiredCustomers  Int @default(0)
   totalCustomerBase Int @default(0)
 
-  // 3. Ticketing & Service Status
   totalTickets         Int     @default(0)
   pendingTickets       Int     @default(0)
   ticketsClosedToday   Int     @default(0)
   reasonPendingTickets String? @db.Text
 
-  // 4. Connection & Renewal Status
   totalNewConnections     Int     @default(0)
   newConnectionsToday     Int     @default(0)
   connectionPendingToday  Int     @default(0)
@@ -297,7 +313,6 @@ model RegionalDailyReport {
   renewalPending          Int     @default(0)
   reasonPendingConnection String? @db.Text
 
-  // 5. Daily Target vs Achievement
   collectionTarget            Int   @default(0)
   collectionAchievement       Int   @default(0)
   newConnectionTarget         Int   @default(0)
@@ -305,10 +320,8 @@ model RegionalDailyReport {
   renewalTarget               Int   @default(0)
   renewalAchievementPct       Float @default(0)
 
-  // 6. Major Issues of the Day
   issueDetails String? @db.Text
 
-  // 7. Action Plan & Follow-ups
   immediateActionsTaken String? @db.Text
   nextDayPlan           String? @db.Text
   supportRequiredFromHO String? @db.Text
