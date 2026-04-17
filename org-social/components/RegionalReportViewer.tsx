@@ -18,6 +18,7 @@ import {
 } from "@mantine/core";
 import { DatePicker } from "@mantine/dates";
 import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/outline";
+import useMounted from "@/lib/useMounted";
 
 type Item = {
   id: number;
@@ -442,6 +443,7 @@ export default function RegionalReportViewer({
       console.error(e);
     }
   };
+  const mounted = useMounted();
 
   return (
     <div className="space-y-4 mt-2">
@@ -466,16 +468,24 @@ export default function RegionalReportViewer({
                 <ChevronLeftIcon className="h-4 w-4" />
               </ActionIcon>
 
-              <Select
-                data={monthOptions}
-                value={month}
-                onChange={(v) => {
-                  if (!v) return;
-                  setMonth(v);
-                  setCalendarDate(monthToDate(v));
-                }}
-                w={130}
-              />
+              {mounted ? (
+                <Select
+                  id="regional-report-month-select"
+                  data={monthOptions}
+                  value={month}
+                  onChange={(v) => {
+                    if (!v) return;
+                    setMonth(v);
+                  }}
+                  placeholder="Select month"
+                  searchable={false}
+                  clearable={false}
+                />
+              ) : (
+                <div className="h-[36px] w-[140px] rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-400">
+                  Loading...
+                </div>
+              )}
 
               <ActionIcon
                 variant="light"
@@ -647,7 +657,9 @@ export default function RegionalReportViewer({
 
                       <Table.Tr>
                         <Table.Td fw={700}>Branches Visited Today</Table.Td>
-                        <Table.Td>{report.branchesVisitedToday || "-"}</Table.Td>
+                        <Table.Td>
+                          {report.branchesVisitedToday || "-"}
+                        </Table.Td>
                       </Table.Tr>
 
                       <Table.Tr>
@@ -692,7 +704,9 @@ export default function RegionalReportViewer({
 
                       <Table.Tr>
                         <Table.Td fw={700}>Reason for Pending Ticket</Table.Td>
-                        <Table.Td>{report.reasonPendingTickets || "-"}</Table.Td>
+                        <Table.Td>
+                          {report.reasonPendingTickets || "-"}
+                        </Table.Td>
                       </Table.Tr>
 
                       <Table.Tr>
@@ -707,7 +721,9 @@ export default function RegionalReportViewer({
 
                       <Table.Tr>
                         <Table.Td fw={700}>Connection Pending Today</Table.Td>
-                        <Table.Td>{report.connectionPendingToday ?? 0}</Table.Td>
+                        <Table.Td>
+                          {report.connectionPendingToday ?? 0}
+                        </Table.Td>
                       </Table.Tr>
 
                       <Table.Tr>
@@ -721,8 +737,12 @@ export default function RegionalReportViewer({
                       </Table.Tr>
 
                       <Table.Tr>
-                        <Table.Td fw={700}>Reason for Pending Connection</Table.Td>
-                        <Table.Td>{report.reasonPendingConnection || "-"}</Table.Td>
+                        <Table.Td fw={700}>
+                          Reason for Pending Connection
+                        </Table.Td>
+                        <Table.Td>
+                          {report.reasonPendingConnection || "-"}
+                        </Table.Td>
                       </Table.Tr>
 
                       <Table.Tr>
@@ -741,9 +761,14 @@ export default function RegionalReportViewer({
                       </Table.Tr>
 
                       <Table.Tr>
-                        <Table.Td fw={700}>New Connection Achievement %</Table.Td>
+                        <Table.Td fw={700}>
+                          New Connection Achievement %
+                        </Table.Td>
                         <Table.Td>
-                          {Math.round(Number(report.newConnectionAchievementPct ?? 0))}%
+                          {Math.round(
+                            Number(report.newConnectionAchievementPct ?? 0),
+                          )}
+                          %
                         </Table.Td>
                       </Table.Tr>
 
@@ -755,7 +780,10 @@ export default function RegionalReportViewer({
                       <Table.Tr>
                         <Table.Td fw={700}>Renewal Achievement %</Table.Td>
                         <Table.Td>
-                          {Math.round(Number(report.renewalAchievementPct ?? 0))}%
+                          {Math.round(
+                            Number(report.renewalAchievementPct ?? 0),
+                          )}
+                          %
                         </Table.Td>
                       </Table.Tr>
 
@@ -766,7 +794,9 @@ export default function RegionalReportViewer({
 
                       <Table.Tr>
                         <Table.Td fw={700}>Immediate Actions Taken</Table.Td>
-                        <Table.Td>{report.immediateActionsTaken || "-"}</Table.Td>
+                        <Table.Td>
+                          {report.immediateActionsTaken || "-"}
+                        </Table.Td>
                       </Table.Tr>
 
                       <Table.Tr>
@@ -776,13 +806,16 @@ export default function RegionalReportViewer({
 
                       <Table.Tr>
                         <Table.Td fw={700}>Support Required From HO</Table.Td>
-                        <Table.Td>{report.supportRequiredFromHO || "-"}</Table.Td>
+                        <Table.Td>
+                          {report.supportRequiredFromHO || "-"}
+                        </Table.Td>
                       </Table.Tr>
                     </Table.Tbody>
                   </Table>
 
                   <Text size="xs" c="dimmed" mt="sm">
-                    Target values shown here are the monthly admin targets snapped into the daily report at save time.
+                    Target values shown here are the monthly admin targets
+                    snapped into the daily report at save time.
                   </Text>
                 </>
               ) : (

@@ -4,7 +4,8 @@ import { Avatar, Container, Paper, Text } from "@mantine/core";
 import DailyReportViewer from "@/components/DailyReportViewer";
 import RegionalReportComposer from "@/components/RegionalReportComposer";
 import RegionalReportViewer from "@/components/RegionalReportViewer";
-import RegionalMonthlyTargetForm from "@/components/RegionalMonthlyTargetForm";
+import RegionalMonthlyTargetModal from "@/components/RegionalMonthlyTargetModal";
+import RegionalMonthlyProgressCard from "@/components/RegionalMonthlyProgressCard";
 import {
   cleanToken,
   getUserFromCookies,
@@ -30,9 +31,7 @@ function normalizeMediaUrl(u?: string | null) {
 export default async function UserProfilePage({ params }: PageProps) {
   const viewer = await getUserFromCookies();
 
-  if (!viewer?.user_id) {
-    redirect("/login");
-  }
+  if (!viewer?.user_id) redirect("/login");
 
   const { id } = await params;
   const targetUserId = Number(id);
@@ -43,25 +42,15 @@ export default async function UserProfilePage({ params }: PageProps) {
 
   const cookieStore = await cookies();
   const raw = cookieStore.get("accessToken")?.value;
-
-  if (!raw) {
-    redirect("/login");
-  }
+  if (!raw) redirect("/login");
 
   const token = cleanToken(raw);
   const targetUser = await fetchCorporateUserById(token, targetUserId);
 
-  if (!targetUser) {
-    redirect("/team-directory");
-  }
+  if (!targetUser) redirect("/team-directory");
 
-  const viewerRole = (viewer.role ?? null) as string | null;
-  const targetRole = (targetUser.role ?? null) as string | null;
-
-  // ---- access rules ----
-  // admin can open both branch_manager and manager profiles
-  // branch_manager can only open self
-  // manager can only open self
+  const viewerRole = String(viewer.role ?? "").trim().toLowerCase() || null;
+  const targetRole = String(targetUser.role ?? "").trim().toLowerCase() || null;
 
   const canViewOwnProfile =
     (viewerRole === "branch_manager" || viewerRole === "manager") &&
@@ -75,7 +64,6 @@ export default async function UserProfilePage({ params }: PageProps) {
     redirect("/team-directory");
   }
 
-  // daily report visibility
   const canViewDaily =
     targetRole === "branch_manager" &&
     canViewDailyReports({
@@ -85,7 +73,6 @@ export default async function UserProfilePage({ params }: PageProps) {
       targetUserRole: targetRole,
     });
 
-  // regional report visibility
   const canViewRegional =
     (viewerRole === "admin" && targetRole === "manager") ||
     (viewerRole === "manager" && viewer.user_id === targetUserId);
@@ -111,47 +98,36 @@ export default async function UserProfilePage({ params }: PageProps) {
     <Container size="sm" className="py-10">
       <Paper shadow="md" className="p-6 rounded-md mb-6">
         <div className="flex flex-col items-center gap-2">
-          <Avatar
-            size={100}
-            radius="xl"
-            src={normalizeMediaUrl(profilePhoto)}
-          />
+          <Avatar size={100} radius="xl" src={normalizeMediaUrl(profilePhoto)} />
 
           <Text className="text-lg font-semibold">
             {fullName} {username}
           </Text>
 
           {email && <Text className="text-sm text-gray-500">{email}</Text>}
-
-          {targetRole && (
-            <Text className="text-sm text-gray-500">Role: {targetRole}</Text>
-          )}
-
-          {jobTitle && (
-            <Text className="text-sm text-gray-500">
-              Job Title: {jobTitle}
-            </Text>
-          )}
-
-          {department && (
-            <Text className="text-sm text-gray-500">
-              Department: {String(department)}
-            </Text>
-          )}
-
-          {organizationUnit && (
-            <Text className="text-sm text-gray-500">
-              Organization Unit: {String(organizationUnit)}
-            </Text>
-          )}
-
-          {staffSince && (
-            <Text className="text-sm text-gray-500">
-              Staff Since: {staffSince}
-            </Text>
-          )}
+          {targetRole && <Text className="text-sm text-gray-500">Role: {targetRole}</Text>}
+          {jobTitle && <Text className="text-sm text-gray-500">Job Title: {jobTitle}</Text>}
+          {department && <Text className="text-sm text-gray-500">Department: {String(department)}</Text>}
+          {organizationUnit && <Text className="text-sm text-gray-500">Organization Unit: {String(organizationUnit)}</Text>}
+          {staffSince && <Text className="text-sm text-gray-500">Staff Since: {staffSince}</Text>}
         </div>
       </Paper>
+
+      {canViewRegional && viewerRole === "admin" && (
+        <RegionalMonthlyTargetModal
+          userId={targetUserId}
+          viewerRole={viewerRole}
+        />
+      )}
+
+      {canViewRegional && (
+        <div className="mb-6">
+          <RegionalMonthlyProgressCard
+            userId={targetUserId}
+            viewerRole={viewerRole}
+          />
+        </div>
+      )}
 
       {canViewDaily && (
         <DailyReportViewer
@@ -164,13 +140,6 @@ export default async function UserProfilePage({ params }: PageProps) {
 
       {canViewRegional && (
         <>
-          {viewerRole === "admin" && (
-            <RegionalMonthlyTargetForm
-              userId={targetUserId}
-              viewerRole={viewerRole}
-            />
-          )}
-
           <RegionalReportComposer
             userId={targetUserId}
             viewerId={viewer.user_id}

@@ -1,483 +1,568 @@
-  "use client";
+"use client";
 
-  import {
-    ScrollArea,
-    Button,
-    Text,
-    Modal,
-    TextInput,
-    FileInput,
-  } from "@mantine/core";
-  import Link from "next/link";
-  import { useEffect, useState, useCallback } from "react";
-  import Cropper from "react-easy-crop";
-  import { usePathname } from "next/navigation";
-  import getCroppedImg from "@/lib/getCroppedImg";
+import {
+  ScrollArea,
+  Button,
+  Text,
+  Modal,
+  TextInput,
+  FileInput,
+} from "@mantine/core";
+import Link from "next/link";
+import { useEffect, useState, useCallback } from "react";
+import Cropper from "react-easy-crop";
+import { usePathname } from "next/navigation";
+import getCroppedImg from "@/lib/getCroppedImg";
+import RegionalMonthlyProgressCard from "@/components/RegionalMonthlyProgressCard";
 
-  type Channel = {
-    id: number;
-    name: string;
-    createdAt: string;
-    bannerKey?: string | null;
+type Channel = {
+  id: number;
+  name: string;
+  createdAt: string;
+  bannerKey?: string | null;
+  bannerUrl?: string | null;
+  memberCount?: number;
+  visibility?: "public" | "private";
+  unseenCount?: number;
+};
+
+type PublicChannel = {
+  id: number;
+  name: string;
+  createdAt: string;
+  visibility: "public";
+  publicAccessMode?: "open" | "request";
+  memberCount: number;
+  isMember: boolean;
+  hasPendingRequest: boolean;
+  pendingRequestId: number | null;
+  bannerKey?: string | null;
+  bannerUrl?: string | null;
+};
+
+type UserPick = {
+  id: number;
+  username: string;
+  email?: string | null;
+};
+
+type MemberPick = {
+  userId: number;
+  username: string;
+  role: "viewer" | "editor" | "admin";
+};
+
+type ChannelsPanelProps = {
+  profileUserId?: number | null;
+};
+
+function isChannelActive(pathname: string, channelId: number) {
+  return pathname === `/channels/${channelId}`;
+}
+
+function buildFileUrl(key?: string | null) {
+  if (!key) return undefined;
+  const clean = String(key).trim().replace(/^\/+/, "");
+  if (!clean) return undefined;
+  if (clean.startsWith("http://") || clean.startsWith("https://")) return clean;
+
+  return `/api/files/${clean
+    .split("/")
+    .map((part) => encodeURIComponent(part))
+    .join("/")}`;
+}
+
+export default function ChannelsPanel({
+  profileUserId = null,
+}: ChannelsPanelProps) {
+  const pathname = usePathname() ?? "";
+
+  const [channels, setChannels] = useState<Channel[]>([]);
+  const [publicChannels, setPublicChannels] = useState<PublicChannel[]>([]);
+
+  const [newChannel, setNewChannel] = useState("");
+  const [visibility, setVisibility] = useState<"public" | "private">("private");
+  const [publicAccessMode, setPublicAccessMode] = useState<"open" | "request">(
+    "request",
+  );
+
+  const [banner, setBanner] = useState<File | null>(null);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+  const [userQuery, setUserQuery] = useState("");
+  const [userResults, setUserResults] = useState<UserPick[]>([]);
+  const [pickedMembers, setPickedMembers] = useState<MemberPick[]>([]);
+
+  const [cropModalOpen, setCropModalOpen] = useState(false);
+  const [cropImage, setCropImage] = useState<string | null>(null);
+  const [crop, setCrop] = useState({ x: 0, y: 0 });
+  const [zoom, setZoom] = useState(1);
+  const [croppedAreaPixels, setCroppedAreaPixels] = useState<any>(null);
+
+  const getBannerUrl = (item?: {
     bannerUrl?: string | null;
-    memberCount?: number;
-    visibility?: "public" | "private";
-    unseenCount?: number;
-  };
-
-  type PublicChannel = {
-    id: number;
-    name: string;
-    createdAt: string;
-    visibility: "public";
-    publicAccessMode?: "open" | "request";
-    memberCount: number;
-    isMember: boolean;
-    hasPendingRequest: boolean;
-    pendingRequestId: number | null;
     bannerKey?: string | null;
-    bannerUrl?: string | null;
+  }) => {
+    if (!item) return undefined;
+    if (item.bannerUrl) return item.bannerUrl;
+    return buildFileUrl(item.bannerKey);
   };
 
-  type UserPick = {
-    id: number;
-    username: string;
-    email?: string | null;
-  };
-
-  type MemberPick = {
-    userId: number;
-    username: string;
-    role: "viewer" | "editor" | "admin";
-  };
-
-  function isChannelActive(pathname: string, channelId: number) {
-    return pathname === `/channels/${channelId}`;
-  }
-
-  function buildFileUrl(key?: string | null) {
-    if (!key) return undefined;
-    const clean = String(key).trim().replace(/^\/+/, "");
-    if (!clean) return undefined;
-    if (clean.startsWith("http://") || clean.startsWith("https://")) return clean;
-
-    return `/api/files/${clean
-      .split("/")
-      .map((part) => encodeURIComponent(part))
-      .join("/")}`;
-  }
-
-  export default function ChannelsPanel() {
-    const pathname = usePathname() ?? "";
-
-    const [channels, setChannels] = useState<Channel[]>([]);
-    const [publicChannels, setPublicChannels] = useState<PublicChannel[]>([]);
-
-    const [newChannel, setNewChannel] = useState("");
-    const [visibility, setVisibility] = useState<"public" | "private">("private");
-    const [publicAccessMode, setPublicAccessMode] = useState<"open" | "request">(
-      "request"
-    );
-
-    const [banner, setBanner] = useState<File | null>(null);
-    const [modalOpen, setModalOpen] = useState(false);
-    const [loading, setLoading] = useState(false);
-
-    const [userQuery, setUserQuery] = useState("");
-    const [userResults, setUserResults] = useState<UserPick[]>([]);
-    const [pickedMembers, setPickedMembers] = useState<MemberPick[]>([]);
-
-    const [cropModalOpen, setCropModalOpen] = useState(false);
-    const [cropImage, setCropImage] = useState<string | null>(null);
-    const [crop, setCrop] = useState({ x: 0, y: 0 });
-    const [zoom, setZoom] = useState(1);
-    const [croppedAreaPixels, setCroppedAreaPixels] = useState<any>(null);
-
-    const getBannerUrl = (item?: { bannerUrl?: string | null; bannerKey?: string | null }) => {
-      if (!item) return undefined;
-      if (item.bannerUrl) return item.bannerUrl;
-      return buildFileUrl(item.bannerKey);
-    };
-
-    async function loadChannels() {
-      try {
-        const [joinedRes, publicRes] = await Promise.all([
-          fetch("/api/channels", { credentials: "include", cache: "no-store" }),
-          fetch("/api/channels/public", {
-            credentials: "include",
-            cache: "no-store",
-          }),
-        ]);
-
-        if (!joinedRes.ok) {
-          throw new Error("Failed to fetch channels");
-        }
-
-        const joinedData = await joinedRes.json();
-        const publicData = publicRes.ok ? await publicRes.json() : { channels: [] };
-
-        const joinedChannels: Channel[] = (joinedData.channels || []).map((ch: any) => ({
-          id: ch.id,
-          name: ch.name,
-          createdAt: ch.createdAt,
-          bannerKey: ch.bannerKey ?? null,
-          bannerUrl: ch.bannerUrl ?? null,
-          memberCount: ch.memberCount,
-          visibility: ch.visibility,
-          unseenCount: ch.unseenCount ?? 0,
-        }));
-
-        const openPublicChannels: Channel[] = (publicData.channels || [])
-          .filter((c: any) => c.publicAccessMode === "open")
-          .map((c: any) => ({
-            id: c.id,
-            name: c.name,
-            createdAt: c.createdAt,
-            bannerKey: c.bannerKey ?? null,
-            bannerUrl: c.bannerUrl ?? null,
-            memberCount: c.memberCount,
-            visibility: c.visibility,
-            unseenCount: 0,
-          }));
-
-        const merged = [...joinedChannels];
-        const seen = new Set(joinedChannels.map((c) => c.id));
-
-        for (const ch of openPublicChannels) {
-          if (!seen.has(ch.id)) {
-            merged.push(ch);
-            seen.add(ch.id);
-          }
-        }
-
-        setChannels(merged);
-      } catch (e) {
-        console.error("Load channels failed:", e);
-      }
-    }
-
-    async function loadPublicChannels() {
-      try {
-        const res = await fetch("/api/channels/public", {
+  async function loadChannels() {
+    try {
+      const [joinedRes, publicRes] = await Promise.all([
+        fetch("/api/channels", { credentials: "include", cache: "no-store" }),
+        fetch("/api/channels/public", {
           credentials: "include",
           cache: "no-store",
-        });
-        if (!res.ok) return;
+        }),
+      ]);
 
-        const data = await res.json();
-
-        const requestOnly = (data.channels || []).filter(
-          (c: PublicChannel) => c.publicAccessMode !== "open"
-        );
-
-        setPublicChannels(requestOnly);
-      } catch (e) {
-        console.error("Load public channels failed:", e);
+      if (!joinedRes.ok) {
+        throw new Error("Failed to fetch channels");
       }
+
+      const joinedData = await joinedRes.json();
+      const publicData = publicRes.ok ? await publicRes.json() : { channels: [] };
+
+      const joinedChannels: Channel[] = (joinedData.channels || []).map((ch: any) => ({
+        id: ch.id,
+        name: ch.name,
+        createdAt: ch.createdAt,
+        bannerKey: ch.bannerKey ?? null,
+        bannerUrl: ch.bannerUrl ?? null,
+        memberCount: ch.memberCount,
+        visibility: ch.visibility,
+        unseenCount: ch.unseenCount ?? 0,
+      }));
+
+      const openPublicChannels: Channel[] = (publicData.channels || [])
+        .filter((c: any) => c.publicAccessMode === "open")
+        .map((c: any) => ({
+          id: c.id,
+          name: c.name,
+          createdAt: c.createdAt,
+          bannerKey: c.bannerKey ?? null,
+          bannerUrl: c.bannerUrl ?? null,
+          memberCount: c.memberCount,
+          visibility: c.visibility,
+          unseenCount: 0,
+        }));
+
+      const merged = [...joinedChannels];
+      const seen = new Set(joinedChannels.map((c) => c.id));
+
+      for (const ch of openPublicChannels) {
+        if (!seen.has(ch.id)) {
+          merged.push(ch);
+          seen.add(ch.id);
+        }
+      }
+
+      setChannels(merged);
+    } catch (e) {
+      console.error("Load channels failed:", e);
+    }
+  }
+
+  async function loadPublicChannels() {
+    try {
+      const res = await fetch("/api/channels/public", {
+        credentials: "include",
+        cache: "no-store",
+      });
+      if (!res.ok) return;
+
+      const data = await res.json();
+
+      const requestOnly = (data.channels || []).filter(
+        (c: PublicChannel) => c.publicAccessMode !== "open",
+      );
+
+      setPublicChannels(requestOnly);
+    } catch (e) {
+      console.error("Load public channels failed:", e);
+    }
+  }
+
+  const moveChannelToJoined = useCallback(
+    (channelId: number, payload?: Partial<PublicChannel>) => {
+      setPublicChannels((prev) => prev.filter((c) => c.id !== channelId));
+
+      const fromPrev =
+        publicChannels.find((c) => c.id === channelId) ||
+        (payload as PublicChannel | undefined);
+
+      if (!fromPrev) return;
+
+      setChannels((prev) => {
+        if (prev.some((x) => x.id === channelId)) return prev;
+
+        return [
+          ...prev,
+          {
+            id: fromPrev.id,
+            name: fromPrev.name,
+            createdAt: fromPrev.createdAt,
+            bannerKey: fromPrev.bannerKey ?? null,
+            bannerUrl: fromPrev.bannerUrl ?? null,
+            memberCount: fromPrev.memberCount,
+            visibility: fromPrev.visibility,
+          },
+        ];
+      });
+    },
+    [publicChannels],
+  );
+
+  useEffect(() => {
+    loadChannels();
+    loadPublicChannels();
+
+    const raw = new URLSearchParams(window.location.search).get("deletedChannelId");
+    if (!raw) return;
+
+    const id = Number(raw);
+    if (!Number.isFinite(id)) return;
+
+    setChannels((prev) => prev.filter((c) => c.id !== id));
+    setPublicChannels((prev) => prev.filter((c) => c.id !== id));
+
+    window.history.replaceState({}, "", "/dashboard");
+  }, []);
+
+  async function searchUsers(q: string) {
+    const qq = q.trim();
+    if (!qq) {
+      setUserResults([]);
+      return;
     }
 
-    const moveChannelToJoined = useCallback(
-      (channelId: number, payload?: Partial<PublicChannel>) => {
-        setPublicChannels((prev) => prev.filter((c) => c.id !== channelId));
+    try {
+      const res = await fetch(`/api/users/search?q=${encodeURIComponent(qq)}`, {
+        credentials: "include",
+      });
+      const data = await res.json().catch(() => ({}));
+      setUserResults(data.users || []);
+    } catch (e) {
+      console.error("User search failed:", e);
+    }
+  }
 
-        const fromPrev =
-          publicChannels.find((c) => c.id === channelId) ||
-          (payload as PublicChannel | undefined);
+  useEffect(() => {
+    const t = setTimeout(() => searchUsers(userQuery), 300);
+    return () => clearTimeout(t);
+  }, [userQuery]);
 
-        if (!fromPrev) return;
-
-        setChannels((prev) => {
-          if (prev.some((x) => x.id === channelId)) return prev;
-
-          return [
-            ...prev,
-            {
-              id: fromPrev.id,
-              name: fromPrev.name,
-              createdAt: fromPrev.createdAt,
-              bannerKey: fromPrev.bannerKey ?? null,
-              bannerUrl: fromPrev.bannerUrl ?? null,
-              memberCount: fromPrev.memberCount,
-              visibility: fromPrev.visibility,
-            },
-          ];
-        });
-      },
-      [publicChannels]
-    );
-
-    useEffect(() => {
-      loadChannels();
-      loadPublicChannels();
-
-      const raw = new URLSearchParams(window.location.search).get("deletedChannelId");
-      if (!raw) return;
-
-      const id = Number(raw);
+  useEffect(() => {
+    const handler = (e: any) => {
+      const id = Number(e?.detail?.id);
       if (!Number.isFinite(id)) return;
 
       setChannels((prev) => prev.filter((c) => c.id !== id));
       setPublicChannels((prev) => prev.filter((c) => c.id !== id));
+    };
 
-      window.history.replaceState({}, "", "/dashboard");
-    }, []);
+    window.addEventListener("channel-deleted", handler as any);
+    return () => window.removeEventListener("channel-deleted", handler as any);
+  }, []);
 
-    async function searchUsers(q: string) {
-      const qq = q.trim();
-      if (!qq) {
-        setUserResults([]);
+  useEffect(() => {
+    const onJoinAccepted = (e: any) => {
+      const id = Number(e?.detail?.channelId ?? e?.detail?.id);
+      if (!Number.isFinite(id)) return;
+
+      const payload = (e?.detail?.channel || e?.detail) as
+        | Partial<PublicChannel>
+        | undefined;
+
+      moveChannelToJoined(id, payload);
+
+      setPublicChannels((prev) =>
+        prev.map((c) =>
+          c.id === id ? { ...c, isMember: true, hasPendingRequest: false } : c,
+        ),
+      );
+    };
+
+    window.addEventListener("channel-join-accepted", onJoinAccepted as any);
+    return () =>
+      window.removeEventListener("channel-join-accepted", onJoinAccepted as any);
+  }, [moveChannelToJoined]);
+
+  const addChannel = async () => {
+    const trimmed = newChannel.trim();
+    if (!trimmed) return;
+
+    setLoading(true);
+
+    try {
+      const formData = new FormData();
+      formData.append("name", trimmed);
+      formData.append("visibility", visibility);
+
+      if (visibility === "public") {
+        formData.append("publicAccessMode", publicAccessMode);
+      }
+
+      if (banner) {
+        formData.append("banner", banner);
+      }
+
+      formData.append(
+        "members",
+        JSON.stringify(
+          pickedMembers.map((m) => ({ userId: m.userId, role: m.role })),
+        ),
+      );
+
+      const res = await fetch("/api/channels", {
+        method: "POST",
+        body: formData,
+        credentials: "include",
+      });
+
+      if (!res.ok) {
+        const t = await res.text().catch(() => "");
+        console.error("CREATE CHANNEL FAILED:", res.status, t);
         return;
       }
 
-      try {
-        const res = await fetch(`/api/users/search?q=${encodeURIComponent(qq)}`, {
-          credentials: "include",
-        });
-        const data = await res.json().catch(() => ({}));
-        setUserResults(data.users || []);
-      } catch (e) {
-        console.error("User search failed:", e);
-      }
-    }
+      const data = await res.json();
 
-    useEffect(() => {
-      const t = setTimeout(() => searchUsers(userQuery), 300);
-      return () => clearTimeout(t);
-    }, [userQuery]);
-
-    useEffect(() => {
-      const handler = (e: any) => {
-        const id = Number(e?.detail?.id);
-        if (!Number.isFinite(id)) return;
-
-        setChannels((prev) => prev.filter((c) => c.id !== id));
-        setPublicChannels((prev) => prev.filter((c) => c.id !== id));
+      const created: Channel = {
+        id: data.channel.id,
+        name: data.channel.name,
+        createdAt: data.channel.createdAt,
+        bannerKey: data.channel.bannerKey ?? null,
+        bannerUrl: data.channel.bannerUrl ?? null,
+        memberCount: data.channel.members?.length,
+        visibility: data.channel.visibility,
       };
 
-      window.addEventListener("channel-deleted", handler as any);
-      return () => window.removeEventListener("channel-deleted", handler as any);
-    }, []);
+      setChannels((prev) => {
+        if (prev.some((c) => c.id === created.id)) return prev;
+        return [...prev, created];
+      });
 
-    useEffect(() => {
-      const onJoinAccepted = (e: any) => {
-        const id = Number(e?.detail?.channelId ?? e?.detail?.id);
-        if (!Number.isFinite(id)) return;
-
-        const payload = (e?.detail?.channel || e?.detail) as
-          | Partial<PublicChannel>
-          | undefined;
-
-        moveChannelToJoined(id, payload);
-
-        setPublicChannels((prev) =>
-          prev.map((c) =>
-            c.id === id ? { ...c, isMember: true, hasPendingRequest: false } : c
-          )
-        );
-      };
-
-      window.addEventListener("channel-join-accepted", onJoinAccepted as any);
-      return () =>
-        window.removeEventListener("channel-join-accepted", onJoinAccepted as any);
-    }, [moveChannelToJoined]);
-
-    const addChannel = async () => {
-      const trimmed = newChannel.trim();
-      if (!trimmed) return;
-
-      setLoading(true);
-
-      try {
-        const formData = new FormData();
-        formData.append("name", trimmed);
-        formData.append("visibility", visibility);
-
-        if (visibility === "public") {
-          formData.append("publicAccessMode", publicAccessMode);
-        }
-
-        if (banner) {
-          formData.append("banner", banner);
-        }
-
-        formData.append(
-          "members",
-          JSON.stringify(
-            pickedMembers.map((m) => ({ userId: m.userId, role: m.role }))
-          )
-        );
-
-        const res = await fetch("/api/channels", {
-          method: "POST",
-          body: formData,
-          credentials: "include",
-        });
-
-        if (!res.ok) {
-          const t = await res.text().catch(() => "");
-          console.error("CREATE CHANNEL FAILED:", res.status, t);
-          return;
-        }
-
-        const data = await res.json();
-
-        const created: Channel = {
-          id: data.channel.id,
-          name: data.channel.name,
-          createdAt: data.channel.createdAt,
-          bannerKey: data.channel.bannerKey ?? null,
-          bannerUrl: data.channel.bannerUrl ?? null,
-          memberCount: data.channel.members?.length,
-          visibility: data.channel.visibility,
-        };
-
-        setChannels((prev) => {
-          if (prev.some((c) => c.id === created.id)) return prev;
-          return [...prev, created];
-        });
-
-        setNewChannel("");
-        setBanner(null);
-        setVisibility("private");
-        setPublicAccessMode("request");
-        setUserQuery("");
-        setUserResults([]);
-        setPickedMembers([]);
-        setCropImage(null);
-        setCropModalOpen(false);
-        setModalOpen(false);
-
-        loadChannels();
-        loadPublicChannels();
-      } catch (e) {
-        console.error("Create channel error:", e);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    const onBannerChange = (file: File | null) => {
-      if (!file) {
-        setBanner(null);
-        return;
-      }
-
-      const reader = new FileReader();
-      reader.onload = () => {
-        setCropImage(reader.result as string);
-        setCropModalOpen(true);
-      };
-      reader.readAsDataURL(file);
-    };
-
-    const onCropComplete = useCallback((_: any, croppedPixels: any) => {
-      setCroppedAreaPixels(croppedPixels);
-    }, []);
-
-    const handleCropSave = useCallback(async () => {
-      if (!cropImage || !croppedAreaPixels) return;
-      const croppedFile = await getCroppedImg(cropImage, croppedAreaPixels);
-      setBanner(croppedFile);
+      setNewChannel("");
+      setBanner(null);
+      setVisibility("private");
+      setPublicAccessMode("request");
+      setUserQuery("");
+      setUserResults([]);
+      setPickedMembers([]);
+      setCropImage(null);
       setCropModalOpen(false);
-    }, [cropImage, croppedAreaPixels]);
+      setModalOpen(false);
 
-    async function requestJoin(channelId: number) {
-      try {
-        const res = await fetch(`/api/channels/${channelId}/join-request`, {
-          method: "POST",
-          credentials: "include",
-        });
+      loadChannels();
+      loadPublicChannels();
+    } catch (e) {
+      console.error("Create channel error:", e);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-        if (!res.ok) {
-          const t = await res.text().catch(() => "");
-          console.error("REQUEST JOIN FAILED:", res.status, t);
-          return;
-        }
-
-        setPublicChannels((prev) =>
-          prev.map((c) =>
-            c.id === channelId
-              ? {
-                  ...c,
-                  hasPendingRequest: true,
-                }
-              : c
-          )
-        );
-      } catch (e) {
-        console.error("Request join error:", e);
-      }
+  const onBannerChange = (file: File | null) => {
+    if (!file) {
+      setBanner(null);
+      return;
     }
 
-    async function cancelJoinRequest(channelId: number) {
-      try {
-        const res = await fetch(`/api/channels/${channelId}/join-request`, {
-          method: "DELETE",
-          credentials: "include",
-        });
+    const reader = new FileReader();
+    reader.onload = () => {
+      setCropImage(reader.result as string);
+      setCropModalOpen(true);
+    };
+    reader.readAsDataURL(file);
+  };
 
-        if (!res.ok) return;
+  const onCropComplete = useCallback((_: any, croppedPixels: any) => {
+    setCroppedAreaPixels(croppedPixels);
+  }, []);
 
-        setPublicChannels((prev) =>
-          prev.map((c) =>
-            c.id === channelId
-              ? {
-                  ...c,
-                  hasPendingRequest: false,
-                  pendingRequestId: null,
-                }
-              : c
-          )
-        );
-      } catch (e) {
-        console.error("Cancel join request error:", e);
+  const handleCropSave = useCallback(async () => {
+    if (!cropImage || !croppedAreaPixels) return;
+    const croppedFile = await getCroppedImg(cropImage, croppedAreaPixels);
+    setBanner(croppedFile);
+    setCropModalOpen(false);
+  }, [cropImage, croppedAreaPixels]);
+
+  async function requestJoin(channelId: number) {
+    try {
+      const res = await fetch(`/api/channels/${channelId}/join-request`, {
+        method: "POST",
+        credentials: "include",
+      });
+
+      if (!res.ok) {
+        const t = await res.text().catch(() => "");
+        console.error("REQUEST JOIN FAILED:", res.status, t);
+        return;
       }
+
+      setPublicChannels((prev) =>
+        prev.map((c) =>
+          c.id === channelId
+            ? {
+                ...c,
+                hasPendingRequest: true,
+              }
+            : c,
+        ),
+      );
+    } catch (e) {
+      console.error("Request join error:", e);
     }
+  }
 
-    return (
-      <div className="w-64 bg-gray-50 p-3 flex flex-col h-screen">
-        <div className="flex justify-between items-center mb-3">
-          <Text fw={600}>Channels</Text>
-          <Button
-            size="xs"
-            variant="filled"
-            onClick={() => setModalOpen(true)}
-            style={{
-              backgroundColor: "var(--color-primary)",
-              color: "white",
-              transition: "background-color 0.2s",
-            }}
-            onMouseEnter={(e) =>
-              (e.currentTarget.style.backgroundColor = "var(--color-secondary)")
-            }
-            onMouseLeave={(e) =>
-              (e.currentTarget.style.backgroundColor = "var(--color-primary)")
-            }
-          >
-            + Add
-          </Button>
-        </div>
+  async function cancelJoinRequest(channelId: number) {
+    try {
+      const res = await fetch(`/api/channels/${channelId}/join-request`, {
+        method: "DELETE",
+        credentials: "include",
+      });
 
-        <ScrollArea className="flex-1">
-          <div className="flex flex-col gap-2">
-            {channels.map((ch) => {
-              const active = isChannelActive(pathname, ch.id);
-              const bannerSrc = getBannerUrl(ch);
+      if (!res.ok) return;
 
-              return (
-                <Link key={ch.id} href={`/channels/${ch.id}`}>
+      setPublicChannels((prev) =>
+        prev.map((c) =>
+          c.id === channelId
+            ? {
+                ...c,
+                hasPendingRequest: false,
+                pendingRequestId: null,
+              }
+            : c,
+        ),
+      );
+    } catch (e) {
+      console.error("Cancel join request error:", e);
+    }
+  }
+
+  return (
+    <div className="w-64 bg-gray-50 p-3 flex flex-col h-screen">
+      <div className="flex justify-between items-center mb-3">
+        <Text fw={600}>Channels</Text>
+        <Button
+          size="xs"
+          variant="filled"
+          onClick={() => setModalOpen(true)}
+          style={{
+            backgroundColor: "var(--color-primary)",
+            color: "white",
+            transition: "background-color 0.2s",
+          }}
+          onMouseEnter={(e) =>
+            (e.currentTarget.style.backgroundColor = "var(--color-secondary)")
+          }
+          onMouseLeave={(e) =>
+            (e.currentTarget.style.backgroundColor = "var(--color-primary)")
+          }
+        >
+          + Add
+        </Button>
+      </div>
+
+      <ScrollArea className="flex-1">
+        <div className="flex flex-col gap-2">
+          {channels.map((ch) => {
+            const active = isChannelActive(pathname, ch.id);
+            const bannerSrc = getBannerUrl(ch);
+
+            return (
+              <Link key={ch.id} href={`/channels/${ch.id}`}>
+                <div
+                  className={`px-2 py-2 rounded cursor-pointer flex justify-between items-center gap-2 transition ${
+                    active
+                      ? "bg-blue-100 border border-blue-200"
+                      : "hover:bg-gray-200"
+                  }`}
+                >
+                  <div className="flex items-center gap-2 min-w-0">
+                    {bannerSrc ? (
+                      <img
+                        src={bannerSrc}
+                        alt={ch.name}
+                        className="w-6 h-6 rounded object-cover flex-shrink-0"
+                      />
+                    ) : (
+                      <div
+                        className={`w-6 h-6 rounded flex items-center justify-center text-xs flex-shrink-0 ${
+                          active
+                            ? "bg-blue-200 text-blue-700"
+                            : "bg-gray-300 text-gray-600"
+                        }`}
+                      >
+                        #
+                      </div>
+                    )}
+
+                    <div className="truncate">
+                      <div
+                        className={`truncate text-sm ${
+                          active ? "text-blue-700 font-semibold" : "text-gray-800"
+                        }`}
+                      >
+                        {ch.name}
+                      </div>
+
+                      {active && (
+                        <div className="text-[11px] text-blue-600">
+                          Current channel
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-2 flex-shrink-0">
+                    {ch.visibility === "public" && (
+                      <span className="text-[10px] px-1 py-[1px] rounded bg-green-100 text-green-700">
+                        public
+                      </span>
+                    )}
+
+                    {(ch.unseenCount ?? 0) > 0 && (
+                      <span className="text-[11px] px-2 py-[2px] rounded-full bg-blue-600 text-white">
+                        {ch.unseenCount}
+                      </span>
+                    )}
+                  </div>
+                </div>
+              </Link>
+            );
+          })}
+
+          <div className="mt-4 pt-3">
+            <Text size="sm" fw={600} className="mb-2">
+              Public channels
+            </Text>
+
+            {publicChannels.length === 0 ? (
+              <div className="text-xs text-gray-500">No public channels</div>
+            ) : (
+              publicChannels.map((c) => {
+                const active = isChannelActive(pathname, c.id);
+                const bannerSrc = getBannerUrl(c);
+
+                return (
                   <div
-                    className={`px-2 py-2 rounded cursor-pointer flex justify-between items-center gap-2 transition ${
+                    key={c.id}
+                    className={`px-2 py-2 rounded flex justify-between items-center gap-2 transition ${
                       active
                         ? "bg-blue-100 border border-blue-200"
-                        : "hover:bg-gray-200"
+                        : "hover:bg-gray-100"
                     }`}
                   >
                     <div className="flex items-center gap-2 min-w-0">
                       {bannerSrc ? (
                         <img
                           src={bannerSrc}
-                          alt={ch.name}
+                          alt={c.name}
                           className="w-6 h-6 rounded object-cover flex-shrink-0"
                         />
                       ) : (
@@ -492,354 +577,289 @@
                         </div>
                       )}
 
-                      <div className="truncate">
+                      <div className="text-sm min-w-0">
                         <div
-                          className={`truncate text-sm ${
-                            active ? "text-blue-700 font-semibold" : "text-gray-800"
+                          className={`font-medium truncate ${
+                            active ? "text-blue-700" : ""
                           }`}
                         >
-                          {ch.name}
+                          {c.name}
                         </div>
-
-                        {active && (
-                          <div className="text-[11px] text-blue-600">
-                            Current channel
-                          </div>
-                        )}
-                      </div>
-                    </div>
-
-                    <div className="flex items-center gap-2 flex-shrink-0">
-                      {ch.visibility === "public" && (
-                        <span className="text-[10px] px-1 py-[1px] rounded bg-green-100 text-green-700">
-                          public
-                        </span>
-                      )}
-
-                      {(ch.unseenCount ?? 0) > 0 && (
-                        <span className="text-[11px] px-2 py-[2px] rounded-full bg-blue-600 text-white">
-                          {ch.unseenCount}
-                        </span>
-                      )}
-                    </div>
-                  </div>
-                </Link>
-              );
-            })}
-
-            <div className="mt-4 pt-3">
-              <Text size="sm" fw={600} className="mb-2">
-                Public channels
-              </Text>
-
-              {publicChannels.length === 0 ? (
-                <div className="text-xs text-gray-500">No public channels</div>
-              ) : (
-                publicChannels.map((c) => {
-                  const active = isChannelActive(pathname, c.id);
-                  const bannerSrc = getBannerUrl(c);
-
-                  return (
-                    <div
-                      key={c.id}
-                      className={`px-2 py-2 rounded flex justify-between items-center gap-2 transition ${
-                        active
-                          ? "bg-blue-100 border border-blue-200"
-                          : "hover:bg-gray-100"
-                      }`}
-                    >
-                      <div className="flex items-center gap-2 min-w-0">
-                        {bannerSrc ? (
-                          <img
-                            src={bannerSrc}
-                            alt={c.name}
-                            className="w-6 h-6 rounded object-cover flex-shrink-0"
-                          />
-                        ) : (
-                          <div
-                            className={`w-6 h-6 rounded flex items-center justify-center text-xs flex-shrink-0 ${
-                              active
-                                ? "bg-blue-200 text-blue-700"
-                                : "bg-gray-300 text-gray-600"
-                            }`}
-                          >
-                            #
-                          </div>
-                        )}
-
-                        <div className="text-sm min-w-0">
-                          <div
-                            className={`font-medium truncate ${
-                              active ? "text-blue-700" : ""
-                            }`}
-                          >
-                            {c.name}
-                          </div>
-                          <div
-                            className={`text-xs ${
-                              active ? "text-blue-600" : "text-gray-500"
-                            }`}
-                          >
-                            {active
-                              ? "Current channel"
-                              : `Requires request • ${c.memberCount} members`}
-                          </div>
+                        <div
+                          className={`text-xs ${
+                            active ? "text-blue-600" : "text-gray-500"
+                          }`}
+                        >
+                          {active
+                            ? "Current channel"
+                            : `Requires request • ${c.memberCount} members`}
                         </div>
                       </div>
-
-                      {c.isMember ? (
-                        <Link href={`/channels/${c.id}`}>
-                          <Button size="xs" variant={active ? "filled" : "light"}>
-                            {active ? "Opened" : "Open"}
-                          </Button>
-                        </Link>
-                      ) : c.hasPendingRequest ? (
-                        <Button
-                          size="xs"
-                          variant="light"
-                          color="red"
-                          onClick={() => cancelJoinRequest(c.id)}
-                        >
-                          Cancel
-                        </Button>
-                      ) : (
-                        <Button
-                          size="xs"
-                          variant="light"
-                          onClick={() => requestJoin(c.id)}
-                        >
-                          Request
-                        </Button>
-                      )}
-                    </div>
-                  );
-                })
-              )}
-            </div>
-          </div>
-        </ScrollArea>
-
-        <Modal
-          opened={modalOpen}
-          onClose={() => setModalOpen(false)}
-          title="Add Channel"
-          size="sm"
-          centered
-        >
-          <TextInput
-            placeholder="Channel name"
-            value={newChannel}
-            onChange={(e) => setNewChannel(e.currentTarget.value)}
-            mb="sm"
-          />
-
-          <div className="mb-3">
-            <label className="text-sm font-medium block mb-1">Visibility</label>
-            <select
-              className="border rounded px-2 py-2 w-full text-sm"
-              value={visibility}
-              onChange={(e) =>
-                setVisibility(e.currentTarget.value as "public" | "private")
-              }
-            >
-              <option value="private">Private</option>
-              <option value="public">Public</option>
-            </select>
-
-            <div className="text-xs text-gray-500 mt-1">
-              {visibility === "public"
-                ? "Public channel selected."
-                : "Private: only added members can access."}
-            </div>
-          </div>
-
-          {visibility === "public" && (
-            <div className="mb-3">
-              <label className="text-sm font-medium block mb-1">
-                Public access
-              </label>
-              <select
-                className="border rounded px-2 py-2 w-full text-sm"
-                value={publicAccessMode}
-                onChange={(e) =>
-                  setPublicAccessMode(
-                    e.currentTarget.value as "open" | "request"
-                  )
-                }
-              >
-                <option value="request">Require join request</option>
-                <option value="open">Open to everyone</option>
-              </select>
-
-              <div className="text-xs text-gray-500 mt-1">
-                {publicAccessMode === "request"
-                  ? "Users must request access and wait for approval."
-                  : "Users can access this channel immediately."}
-              </div>
-            </div>
-          )}
-
-          <FileInput
-            label="Banner photo (optional)"
-            placeholder="Pick banner image"
-            value={banner}
-            onChange={onBannerChange}
-            accept="image/*"
-            mb="sm"
-          />
-
-          <TextInput
-            label="Add members"
-            placeholder="Search username/email..."
-            value={userQuery}
-            onChange={(e) => setUserQuery(e.currentTarget.value)}
-            mb="xs"
-          />
-
-          <div
-            className="border rounded p-2 mb-3"
-            style={{ maxHeight: 140, overflow: "auto" }}
-          >
-            {userResults.length === 0 ? (
-              <div className="text-sm text-gray-500">No results</div>
-            ) : (
-              userResults.map((u) => {
-                const already = pickedMembers.some((m) => m.userId === u.id);
-
-                return (
-                  <div
-                    key={u.id}
-                    className="flex items-center justify-between py-1"
-                  >
-                    <div className="text-sm">
-                      <div className="font-medium">{u.username}</div>
-                      {u.email && (
-                        <div className="text-xs text-gray-500">{u.email}</div>
-                      )}
                     </div>
 
-                    <Button
-                      size="xs"
-                      variant="light"
-                      disabled={already}
-                      onClick={() =>
-                        setPickedMembers((prev) => [
-                          ...prev,
-                          { userId: u.id, username: u.username, role: "viewer" },
-                        ])
-                      }
-                    >
-                      Add
-                    </Button>
+                    {c.isMember ? (
+                      <Link href={`/channels/${c.id}`}>
+                        <Button size="xs" variant={active ? "filled" : "light"}>
+                          {active ? "Opened" : "Open"}
+                        </Button>
+                      </Link>
+                    ) : c.hasPendingRequest ? (
+                      <Button
+                        size="xs"
+                        variant="light"
+                        color="red"
+                        onClick={() => cancelJoinRequest(c.id)}
+                      >
+                        Cancel
+                      </Button>
+                    ) : (
+                      <Button
+                        size="xs"
+                        variant="light"
+                        onClick={() => requestJoin(c.id)}
+                      >
+                        Request
+                      </Button>
+                    )}
                   </div>
                 );
               })
             )}
           </div>
 
-          <Text fw={600} size="sm" mb={6}>
-            Selected members
-          </Text>
-
-          <div className="flex flex-col gap-2 mb-4">
-            {pickedMembers.length === 0 ? (
-              <div className="text-sm text-gray-500">No members selected</div>
-            ) : (
-              pickedMembers.map((m) => (
-                <div
-                  key={m.userId}
-                  className="flex items-center justify-between border rounded p-2"
-                >
-                  <div className="text-sm font-medium">{m.username}</div>
-
-                  <div className="flex items-center gap-2">
-                    <select
-                      className="border rounded px-2 py-1 text-sm"
-                      value={m.role}
-                      onChange={(e) => {
-                        const role = e.currentTarget.value as MemberPick["role"];
-                        setPickedMembers((prev) =>
-                          prev.map((x) =>
-                            x.userId === m.userId ? { ...x, role } : x
-                          )
-                        );
-                      }}
-                    >
-                      <option value="viewer">viewer</option>
-                      <option value="editor">editor</option>
-                      <option value="admin">admin</option>
-                    </select>
-
-                    <Button
-                      size="xs"
-                      color="red"
-                      variant="light"
-                      onClick={() =>
-                        setPickedMembers((prev) =>
-                          prev.filter((x) => x.userId !== m.userId)
-                        )
-                      }
-                    >
-                      Remove
-                    </Button>
-                  </div>
-                </div>
-              ))
-            )}
-          </div>
-
-          <Button
-            fullWidth
-            onClick={addChannel}
-            loading={loading}
-            style={{
-              backgroundColor: "var(--color-primary)",
-              color: "white",
-              transition: "background-color 0.2s",
-            }}
-            onMouseEnter={(e) =>
-              (e.currentTarget.style.backgroundColor = "var(--color-secondary)")
-            }
-            onMouseLeave={(e) =>
-              (e.currentTarget.style.backgroundColor = "var(--color-primary)")
-            }
-          >
-            Create
-          </Button>
-
-          <Text size="xs" c="dimmed" mt="xs">
-            Note: You (creator) will automatically be added as <b>admin</b>.
-          </Text>
-        </Modal>
-
-        <Modal
-          opened={cropModalOpen}
-          onClose={() => setCropModalOpen(false)}
-          title="Crop Banner"
-          size="lg"
-          centered
-        >
-          {cropImage && (
-            <div className="relative w-full h-96 bg-gray-200">
-              <Cropper
-                image={cropImage}
-                crop={crop}
-                zoom={zoom}
-                aspect={16 / 9}
-                onCropChange={setCrop}
-                onZoomChange={setZoom}
-                onCropComplete={onCropComplete}
+          {profileUserId ? (
+            <div className="mt-4 pt-3">
+              <RegionalMonthlyProgressCard
+                userId={profileUserId}
+                viewerRole="admin"
+                compact
               />
             </div>
-          )}
+          ) : null}
+        </div>
+      </ScrollArea>
 
-          <div className="mt-4 flex justify-end gap-2">
-            <Button variant="outline" onClick={() => setCropModalOpen(false)}>
-              Cancel
-            </Button>
-            <Button onClick={handleCropSave}>Save</Button>
+      <Modal
+        opened={modalOpen}
+        onClose={() => setModalOpen(false)}
+        title="Add Channel"
+        size="sm"
+        centered
+      >
+        <TextInput
+          placeholder="Channel name"
+          value={newChannel}
+          onChange={(e) => setNewChannel(e.currentTarget.value)}
+          mb="sm"
+        />
+
+        <div className="mb-3">
+          <label className="text-sm font-medium block mb-1">Visibility</label>
+          <select
+            className="border rounded px-2 py-2 w-full text-sm"
+            value={visibility}
+            onChange={(e) =>
+              setVisibility(e.currentTarget.value as "public" | "private")
+            }
+          >
+            <option value="private">Private</option>
+            <option value="public">Public</option>
+          </select>
+
+          <div className="text-xs text-gray-500 mt-1">
+            {visibility === "public"
+              ? "Public channel selected."
+              : "Private: only added members can access."}
           </div>
-        </Modal>
-      </div>
-    );
-  }
+        </div>
+
+        {visibility === "public" && (
+          <div className="mb-3">
+            <label className="text-sm font-medium block mb-1">
+              Public access
+            </label>
+            <select
+              className="border rounded px-2 py-2 w-full text-sm"
+              value={publicAccessMode}
+              onChange={(e) =>
+                setPublicAccessMode(
+                  e.currentTarget.value as "open" | "request",
+                )
+              }
+            >
+              <option value="request">Require join request</option>
+              <option value="open">Open to everyone</option>
+            </select>
+
+            <div className="text-xs text-gray-500 mt-1">
+              {publicAccessMode === "request"
+                ? "Users must request access and wait for approval."
+                : "Users can access this channel immediately."}
+            </div>
+          </div>
+        )}
+
+        <FileInput
+          label="Banner photo (optional)"
+          placeholder="Pick banner image"
+          value={banner}
+          onChange={onBannerChange}
+          accept="image/*"
+          mb="sm"
+        />
+
+        <TextInput
+          label="Add members"
+          placeholder="Search username/email..."
+          value={userQuery}
+          onChange={(e) => setUserQuery(e.currentTarget.value)}
+          mb="xs"
+        />
+
+        <div
+          className="border rounded p-2 mb-3"
+          style={{ maxHeight: 140, overflow: "auto" }}
+        >
+          {userResults.length === 0 ? (
+            <div className="text-sm text-gray-500">No results</div>
+          ) : (
+            userResults.map((u) => {
+              const already = pickedMembers.some((m) => m.userId === u.id);
+
+              return (
+                <div
+                  key={u.id}
+                  className="flex items-center justify-between py-1"
+                >
+                  <div className="text-sm">
+                    <div className="font-medium">{u.username}</div>
+                    {u.email && (
+                      <div className="text-xs text-gray-500">{u.email}</div>
+                    )}
+                  </div>
+
+                  <Button
+                    size="xs"
+                    variant="light"
+                    disabled={already}
+                    onClick={() =>
+                      setPickedMembers((prev) => [
+                        ...prev,
+                        { userId: u.id, username: u.username, role: "viewer" },
+                      ])
+                    }
+                  >
+                    Add
+                  </Button>
+                </div>
+              );
+            })
+          )}
+        </div>
+
+        <Text fw={600} size="sm" mb={6}>
+          Selected members
+        </Text>
+
+        <div className="flex flex-col gap-2 mb-4">
+          {pickedMembers.length === 0 ? (
+            <div className="text-sm text-gray-500">No members selected</div>
+          ) : (
+            pickedMembers.map((m) => (
+              <div
+                key={m.userId}
+                className="flex items-center justify-between border rounded p-2"
+              >
+                <div className="text-sm font-medium">{m.username}</div>
+
+                <div className="flex items-center gap-2">
+                  <select
+                    className="border rounded px-2 py-1 text-sm"
+                    value={m.role}
+                    onChange={(e) => {
+                      const role = e.currentTarget.value as MemberPick["role"];
+                      setPickedMembers((prev) =>
+                        prev.map((x) =>
+                          x.userId === m.userId ? { ...x, role } : x,
+                        ),
+                      );
+                    }}
+                  >
+                    <option value="viewer">viewer</option>
+                    <option value="editor">editor</option>
+                    <option value="admin">admin</option>
+                  </select>
+
+                  <Button
+                    size="xs"
+                    color="red"
+                    variant="light"
+                    onClick={() =>
+                      setPickedMembers((prev) =>
+                        prev.filter((x) => x.userId !== m.userId),
+                      )
+                    }
+                  >
+                    Remove
+                  </Button>
+                </div>
+              </div>
+            ))
+          )}
+        </div>
+
+        <Button
+          fullWidth
+          onClick={addChannel}
+          loading={loading}
+          style={{
+            backgroundColor: "var(--color-primary)",
+            color: "white",
+            transition: "background-color 0.2s",
+          }}
+          onMouseEnter={(e) =>
+            (e.currentTarget.style.backgroundColor = "var(--color-secondary)")
+          }
+          onMouseLeave={(e) =>
+            (e.currentTarget.style.backgroundColor = "var(--color-primary)")
+          }
+        >
+          Create
+        </Button>
+
+        <Text size="xs" c="dimmed" mt="xs">
+          Note: You (creator) will automatically be added as <b>admin</b>.
+        </Text>
+      </Modal>
+
+      <Modal
+        opened={cropModalOpen}
+        onClose={() => setCropModalOpen(false)}
+        title="Crop Banner"
+        size="lg"
+        centered
+      >
+        {cropImage && (
+          <div className="relative w-full h-96 bg-gray-200">
+            <Cropper
+              image={cropImage}
+              crop={crop}
+              zoom={zoom}
+              aspect={16 / 9}
+              onCropChange={setCrop}
+              onZoomChange={setZoom}
+              onCropComplete={onCropComplete}
+            />
+          </div>
+        )}
+
+        <div className="mt-4 flex justify-end gap-2">
+          <Button variant="outline" onClick={() => setCropModalOpen(false)}>
+            Cancel
+          </Button>
+          <Button onClick={handleCropSave}>Save</Button>
+        </div>
+      </Modal>
+    </div>
+  );
+}
